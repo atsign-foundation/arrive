@@ -11,27 +11,24 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [],
-      child: MaterialApp(
-        title: 'AtSign Atmosphere App',
-        debugShowCheckedModeBanner: false,
-        initialRoute: SetupRoutes.initialRoute,
-        navigatorKey: NavService.navKey,
-        theme: ThemeData(
-          fontFamily: 'HelveticaNeu',
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: AppBarTheme(
-            color: Colors.white,
-            elevation: 0,
-            iconTheme: IconThemeData(color: Colors.black),
-          ),
-          buttonBarTheme: ButtonBarThemeData(
-            alignment: MainAxisAlignment.center,
-          ),
+    return MaterialApp(
+      title: 'AtSign Atmosphere App',
+      debugShowCheckedModeBanner: false,
+      initialRoute: SetupRoutes.initialRoute,
+      navigatorKey: NavService.navKey,
+      theme: ThemeData(
+        fontFamily: 'HelveticaNeu',
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: AppBarTheme(
+          color: Colors.white,
+          elevation: 0,
+          iconTheme: IconThemeData(color: Colors.black),
         ),
-        routes: SetupRoutes.routes,
+        buttonBarTheme: ButtonBarThemeData(
+          alignment: MainAxisAlignment.center,
+        ),
       ),
+      routes: SetupRoutes.routes,
     );
   }
 }
