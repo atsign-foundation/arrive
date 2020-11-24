@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:atsign_location_app/services/size_config.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -8,6 +9,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(

@@ -1,6 +1,5 @@
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
-import 'package:atsign_location_app/services/size_config.dart';
 import 'package:flutter/material.dart';
 
 class MyApp extends StatefulWidget {
@@ -11,7 +10,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
     return MaterialApp(
       title: 'AtSign Atmosphere App',
       debugShowCheckedModeBanner: false,
