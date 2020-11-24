@@ -25,7 +25,9 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.0
   provider: ^4.3.2+2
-
+  map: ^0.2.0+1
+  cached_network_image: ^2.3.3
+  latlng: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

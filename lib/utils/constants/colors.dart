@@ -13,4 +13,12 @@ class AllColors {
   Color DARK_GREY = Color(0xFF868A92);
   // ignore: non_constant_identifier_names
   Color ORANGE = Color(0xFFE0732F);
+  // ignore: non_constant_identifier_names
+  Color PURPLE = Color(0xFFD9D9FF);
+  // ignore: non_constant_identifier_names
+  Color LIGHT_BLUE = Color(0xFFCFFFFF);
+  // ignore: non_constant_identifier_names
+  Color LIGHT_PINK = Color(0xFFFED2CF);
+  // ignore: non_constant_identifier_names
+  Color GREY = Colors.grey[400]; // Change it to Hex Later
 }

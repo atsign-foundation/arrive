@@ -1,5 +1,5 @@
 import 'package:atsign_location_app/routes/route_names.dart';
-import 'package:atsign_location_app/screens/home_screen.dart';
+import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class SetupRoutes {
