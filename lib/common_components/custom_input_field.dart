@@ -8,13 +8,15 @@ class CustomInputField extends StatelessWidget {
   final double width;
   final double height;
   final IconData icon;
+  final Function onTap;
 
   CustomInputField(
       {this.hintText = '',
       this.isIcon = false,
       this.height = 50,
       this.width = 300,
-      this.icon});
+      this.icon,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +33,16 @@ class CustomInputField extends StatelessWidget {
           Expanded(
             child: TextField(
               decoration: InputDecoration(
-                  hintText: hintText,
-                  enabledBorder: InputBorder.none,
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: AllColors().DARK_GREY)),
+                hintText: hintText,
+                enabledBorder: InputBorder.none,
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: AllColors().DARK_GREY),
+              ),
+              onTap: () {
+                if (onTap != null) {
+                  onTap();
+                }
+              },
             ),
           ),
           isIcon

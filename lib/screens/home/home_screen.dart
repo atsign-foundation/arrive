@@ -1,5 +1,8 @@
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
+import 'package:atsign_location_app/screens/create_event/create_event.dart';
+import 'package:atsign_location_app/screens/request_location/request_location.dart';
+import 'package:atsign_location_app/screens/share_location/share_location.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
@@ -213,9 +216,28 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Tasks(task: 'Create Event', color: AllColors().PURPLE),
-          Tasks(task: 'Request Location', color: AllColors().LIGHT_BLUE),
-          Tasks(task: 'Share Location', color: AllColors().LIGHT_PINK)
+          InkWell(
+            onTap: () {
+              homeBottomSheet(context, CreateEvent(),
+                  MediaQuery.of(context).size.height * 0.9);
+            },
+            child: Tasks(task: 'Create Event', color: AllColors().PURPLE),
+          ),
+          InkWell(
+            onTap: () {
+              homeBottomSheet(context, RequestLocation(),
+                  MediaQuery.of(context).size.height * 0.5);
+            },
+            child:
+                Tasks(task: 'Request Location', color: AllColors().LIGHT_BLUE),
+          ),
+          InkWell(
+            onTap: () {
+              homeBottomSheet(context, ShareLocation(),
+                  MediaQuery.of(context).size.height * 0.6);
+            },
+            child: Tasks(task: 'Share Location', color: AllColors().LIGHT_PINK),
+          )
         ],
       ),
     );
@@ -280,4 +302,29 @@ class Tasks extends StatelessWidget {
       ],
     );
   }
+}
+
+void homeBottomSheet(BuildContext context, T, double height) {
+  showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          height: height,
+          decoration: new BoxDecoration(
+            color: AllColors().WHITE,
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(10.0),
+              topRight: const Radius.circular(10.0),
+            ),
+          ),
+          child: T,
+        );
+      });
 }
