@@ -268,13 +268,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
-  sliding_panel:
+  sliding_up_panel:
     dependency: "direct main"
     description:
-      name: sliding_panel
+      name: sliding_up_panel
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.3.2"
+    version: "1.0.2"
   source_span:
     dependency: transitive
     description:
