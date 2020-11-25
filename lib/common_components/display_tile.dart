@@ -15,9 +15,9 @@ class DisplayTile extends StatelessWidget {
         children: [
           Container(
             height: 55.toHeight,
-            width: 55.toWidth,
+            width: 50.toWidth,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40.0),
+                borderRadius: BorderRadius.circular(27.toHeight),
                 color: number != null
                     ? AllColors().DARK_GREY
                     : AllColors().LIGHT_GREY),
