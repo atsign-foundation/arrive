@@ -1,10 +1,10 @@
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
 class DisplayTile extends StatelessWidget {
-  final String title;
-  final String subTitle;
+  final String title, subTitle;
   final int number;
   DisplayTile({@required this.title, @required this.subTitle, this.number});
   @override
@@ -44,11 +44,11 @@ class DisplayTile extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: TextStyle(color: AllColors().DARK_GREY, fontSize: 16.toFont),
+        style: CustomTextStyles().darkGrey16,
       ),
       subtitle: Text(
         subTitle,
-        style: TextStyle(color: AllColors().GREY, fontSize: 14.toFont),
+        style: CustomTextStyles().grey14,
       ),
     );
   }

@@ -1,10 +1,14 @@
 import 'package:atsign_location_app/common_components/display_tile.dart';
+import 'package:atsign_location_app/common_components/show_drawer.dart';
+import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/screens/create_event/create_event.dart';
 import 'package:atsign_location_app/screens/request_location/request_location.dart';
 import 'package:atsign_location_app/screens/share_location/share_location.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -36,10 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Map(
                 controller: controller,
                 builder: (context, x, y, z) {
-                  final url =
-                      'https://www.google.com/maps/vt/pb=!1m4!1m3!1i$z!2i$x!3i$y!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425';
                   return CachedNetworkImage(
-                    imageUrl: url,
+                    imageUrl: AllText().URL(x, y, z),
                     fit: BoxFit.cover,
                   );
                 },
@@ -68,9 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Text(
                                 'See 9 more ',
-                                style: TextStyle(
-                                    color: AllColors().DARK_GREY,
-                                    fontSize: 14.toFont),
+                                style: CustomTextStyles().darkGrey14,
                               ),
                               Icon(Icons.keyboard_arrow_down)
                             ],
@@ -170,8 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Text(
                 'Locations',
-                style: TextStyle(
-                    color: AllColors().DARK_GREY, fontSize: 16.toFont),
+                style: CustomTextStyles().darkGrey16,
               ),
               SizedBox(
                 height: 7.toHeight,
@@ -240,66 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-    );
-  }
-}
-
-class ShowDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 50.toHeight,
-      width: 50.toWidth,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(6.0),
-        ),
-        color: AllColors().WHITE,
-        boxShadow: [
-          BoxShadow(
-            color: AllColors().DARK_GREY,
-            blurRadius: 2.0,
-            spreadRadius: 2.0,
-            offset: Offset(0.0, 0.0),
-          )
-        ],
-      ),
-      child: IconButton(
-          padding: EdgeInsets.all(10),
-          //iconSize: 20.toHeight,
-          icon: Icon(
-            Icons.grid_view,
-            size: 27.toFont,
-          ),
-          onPressed: () {
-            Scaffold.of(context).openEndDrawer();
-          }),
-    );
-  }
-}
-
-class Tasks extends StatelessWidget {
-  final Color color;
-  final String task;
-  Tasks({@required this.task, @required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: 55.toHeight,
-          width: 55.toWidth,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(40.0), color: color),
-        ),
-        SizedBox(
-          height: 5.toHeight,
-        ),
-        Text(
-          task,
-          style: TextStyle(color: AllColors().DARK_GREY),
-        )
-      ],
     );
   }
 }

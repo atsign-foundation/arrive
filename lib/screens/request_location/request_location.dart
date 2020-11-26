@@ -44,7 +44,7 @@ class _RequestLocationState extends State<RequestLocation> {
                   SizedBox(
                     height: 25,
                   ),
-                  Text('Request From', style: CustomTextStyles().darkGrey14),
+                  Text('Request From', style: CustomTextStyles().greyLabel14),
                   SizedBox(height: 10),
                   CustomInputField(
                     width: 330,

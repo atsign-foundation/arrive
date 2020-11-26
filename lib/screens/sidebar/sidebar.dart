@@ -1,4 +1,5 @@
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
@@ -21,16 +22,14 @@ class _SideBarState extends State<SideBar> {
           children: [
             Text(
               'Terms and Conditions',
-              style:
-                  TextStyle(color: AllColors().DARK_GREY, fontSize: 16.toFont),
+              style: CustomTextStyles().darkGrey16,
             ),
             SizedBox(
               height: 20.toHeight,
             ),
             Text(
               'FAQ',
-              style:
-                  TextStyle(color: AllColors().DARK_GREY, fontSize: 16.toFont),
+              style: CustomTextStyles().darkGrey16,
             ),
             SizedBox(
               height: 14.toHeight,
@@ -40,8 +39,7 @@ class _SideBarState extends State<SideBar> {
               children: [
                 Text(
                   'Share Location',
-                  style: TextStyle(
-                      color: AllColors().DARK_GREY, fontSize: 16.toFont),
+                  style: CustomTextStyles().darkGrey16,
                 ),
                 Switch(
                     value: state,
@@ -58,8 +56,7 @@ class _SideBarState extends State<SideBar> {
             Flexible(
                 child: Text(
               'Enabling this will show your location in all the groups you have accepted to join.',
-              style:
-                  TextStyle(color: AllColors().DARK_GREY, fontSize: 12.toFont),
+              style: CustomTextStyles().darkGrey12,
             )),
             Expanded(
                 child: Container(
@@ -67,8 +64,7 @@ class _SideBarState extends State<SideBar> {
             )),
             Text(
               'Switch Atsign',
-              style:
-                  TextStyle(color: AllColors().DARK_GREY, fontSize: 16.toFont),
+              style: CustomTextStyles().darkGrey16,
             )
           ],
         ),
