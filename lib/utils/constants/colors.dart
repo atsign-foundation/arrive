@@ -8,9 +8,12 @@ class AllColors {
   // ignore: non_constant_identifier_names
   Color WHITE = Color(0xFFFFFFFF);
   // ignore: non_constant_identifier_names
-  Color LIGHT_GREY = Color(0xFFF7F7FF);
+  // Color LIGHT_GREY = Color(0xFFF7F7FF);
+  Color LIGHT_GREY = Color(0xFFBEC0C8);
   // ignore: non_constant_identifier_names
-  Color DARK_GREY = Color(0xFF868A92);
+  // Color DARK_GREY = Color(0xFF868A92);
+  Color DARK_GREY = Color(0xFF6D6D79);
+
   // ignore: non_constant_identifier_names
   Color ORANGE = Color(0xFFFC7A30);
   // ignore: non_constant_identifier_names
@@ -18,9 +21,11 @@ class AllColors {
   // ignore: non_constant_identifier_names
   Color LIGHT_BLUE = Color(0xFFCFFFFF);
   // ignore: non_constant_identifier_names
+  Color BLUE = Color(0xFFC1D9E9);
+  // ignore: non_constant_identifier_names
   Color LIGHT_PINK = Color(0xFFFED2CF);
   // ignore: non_constant_identifier_names
-  Color GREY = Colors.grey[400]; // Change it to Hex Later
+  Color GREY = Color(0xFF868A92); // Change it to Hex Later
   // ignore: non_constant_identifier_names
   Color Black = Color(0xFF000000);
   // ignore: non_constant_identifier_names

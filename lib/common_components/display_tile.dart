@@ -16,7 +16,10 @@ class DisplayTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: semiTitle == null ? 46.toHeight : 56.toHeight,
+      padding: EdgeInsets.only(bottom: 10.5.toHeight),
+      height: semiTitle == null
+          ? 56.toHeight
+          : 56.toHeight, //semiTitle == null ? 46.toHeight // was cropping the circle
       child: Row(
         children: [
           Stack(
@@ -25,6 +28,7 @@ class DisplayTile extends StatelessWidget {
                 image,
                 width: 46.toWidth,
                 height: 46.toHeight,
+                fit: BoxFit.cover,
               ),
               number != null
                   ? Positioned(
@@ -36,7 +40,7 @@ class DisplayTile extends StatelessWidget {
                         width: 28.toWidth,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15.0),
-                            color: AllColors().LIGHT_GREY),
+                            color: AllColors().BLUE),
                         child: Text('+$number'),
                       ),
                     )
@@ -50,7 +54,7 @@ class DisplayTile extends StatelessWidget {
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(

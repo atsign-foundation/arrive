@@ -3,8 +3,6 @@ import 'package:atsign_location_app/common_components/show_drawer.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/screens/create_event/create_event.dart';
-import 'package:atsign_location_app/screens/request_location/request_location.dart';
-import 'package:atsign_location_app/screens/share_location/share_location.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -24,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController _scrollController = new ScrollController(
     initialScrollOffset: 0.0,
-    keepScrollOffset: true,
+    keepScrollOffset: false,
   );
   PanelController pc = PanelController();
   final controller = MapController(
@@ -32,11 +30,10 @@ class _HomeScreenState extends State<HomeScreen> {
   );
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
           endDrawer: Container(
-            width: 220.toWidth,
+            width: 250.toWidth,
             child: SideBar(),
           ),
           body: Stack(
@@ -51,14 +48,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               Positioned(top: 0, right: 0, child: ShowDrawer()),
-              Positioned(bottom: 280.toHeight, child: header()),
+              // Positioned(bottom: 277.toHeight, child: header()),
+              Positioned(bottom: 264.toHeight, child: header()),
               SlidingUpPanel(
-                color: Colors.transparent,
+                //color: Colors.transparent,
                 controller: pc,
-                minHeight: 267.toHeight,
+                minHeight: 254.toHeight,
+                // minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
                 collapsed: Container(
-                  height: 267.toHeight,
+                  height: 254.toHeight,
+                  // height: 267.toHeight,
                   //padding: EdgeInsets.only(bottom: 2.toHeight),
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,8 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               height: length == 2 ? 245.toHeight : 530.toHeight,
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 0),
-                controller: _scrollController,
+                // padding: EdgeInsets.only(top: 5.toHeight),
+
+                //controller: _scrollController,
                 physics: length == 2
                     ? NeverScrollableScrollPhysics()
                     : AlwaysScrollableScrollPhysics(),
@@ -122,9 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: AllColors().DARK_GREY,
                             )),
                       ),
-                      Text(
-                        'Locations',
-                        style: CustomTextStyles().darkGrey14,
+                      SizedBox(
+                        height: 5.toHeight,
                       ),
                       DisplayTile(
                         image: GroupData().group[0].image,
@@ -171,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   pc.open();
                                 },
                                 child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'See 9 more ',
@@ -190,11 +191,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget header() {
     return Container(
-      width: SizeConfig().screenWidth - 30.toWidth,
+      height: 77.toHeight,
+      width: 356.toWidth,
       margin:
-          EdgeInsets.symmetric(horizontal: 15.toWidth, vertical: 10.toHeight),
-      padding:
           EdgeInsets.symmetric(horizontal: 10.toWidth, vertical: 10.toHeight),
+      // padding:
+      //     EdgeInsets.symmetric(horizontal: 24.toWidth, vertical: 16.toHeight),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         color: AllColors().WHITE,
@@ -211,28 +213,27 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          InkWell(
-            onTap: () {
-              homeBottomSheet(
-                  context, CreateEvent(), SizeConfig().screenHeight * 0.9);
-            },
-            child: Tasks(task: 'Create Event', color: AllColors().PURPLE),
-          ),
-          InkWell(
-            onTap: () {
-              homeBottomSheet(
-                  context, RequestLocation(), SizeConfig().screenHeight * 0.5);
-            },
-            child:
-                Tasks(task: 'Request Location', color: AllColors().LIGHT_BLUE),
-          ),
-          InkWell(
-            onTap: () {
-              homeBottomSheet(
-                  context, ShareLocation(), SizeConfig().screenHeight * 0.6);
-            },
-            child: Tasks(task: 'Share Location', color: AllColors().LIGHT_PINK),
-          )
+          Tasks(
+              task: 'Create Event',
+              icon: Icons.event,
+              onTap: () {
+                homeBottomSheet(
+                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+              }),
+          Tasks(
+              task: 'Request Location',
+              icon: Icons.refresh,
+              onTap: () {
+                homeBottomSheet(
+                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+              }),
+          Tasks(
+              task: 'Share Location',
+              icon: Icons.person_add,
+              onTap: () {
+                homeBottomSheet(
+                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+              })
         ],
       ),
     );
