@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
 class CustomButton extends StatelessWidget {
-  final double width;
-  final double height;
+  final double width, height, radius;
   final EdgeInsets padding;
   final Widget child;
   final Function onTap;
   final Color bgColor;
-  final double radius;
   final Border border;
   final bool useDefaultRadius;
 
