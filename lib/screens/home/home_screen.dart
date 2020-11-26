@@ -259,8 +259,8 @@ void homeBottomSheet(BuildContext context, T, double height) {
           decoration: new BoxDecoration(
             color: AllColors().WHITE,
             borderRadius: new BorderRadius.only(
-              topLeft: const Radius.circular(10.0),
-              topRight: const Radius.circular(10.0),
+              topLeft: const Radius.circular(12.0),
+              topRight: const Radius.circular(12.0),
             ),
           ),
           child: T,

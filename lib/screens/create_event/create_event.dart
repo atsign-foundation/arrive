@@ -77,47 +77,6 @@ class _CreateEventState extends State<CreateEvent> {
                     isIcon: false,
                   ),
                   SizedBox(height: 25),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: <Widget>[
-                  // CustomInputField(
-                  //   width: 150,
-                  //   hintText: 'Select a date',
-                  //   isIcon: true,
-                  //   icon: Icons.calendar_today,
-                  //   onTap: () async {
-                  //     DateTime selectedDate = await showDatePicker(
-                  //       context: context,
-                  //       initialDate: DateTime.now(),
-                  //       firstDate: DateTime(2020),
-                  //       lastDate: DateTime.now(),
-                  //       initialEntryMode: DatePickerEntryMode.calendar,
-                  //     );
-
-                  //     if (selectedDate != null) {
-                  //       print('selected date: $selectedDate');
-                  //     }
-                  //   },
-                  // ),
-                  // CustomInputField(
-                  //   width: 150,
-                  //   hintText: 'Select a time',
-                  //   isIcon: true,
-                  //   icon: Icons.calendar_today,
-                  //   onTap: () async {
-                  //     TimeOfDay selectedTime = await showTimePicker(
-                  //       context: context,
-                  //       initialTime: TimeOfDay(hour: 00, minute: 00),
-                  //     );
-
-                  //     if (selectedTime != null) {
-                  //       print('selected time: ${selectedTime}');
-                  //     }
-                  //   },
-                  // ),
-                  // ],
-                  // ),
-
                   Row(
                     children: <Widget>[
                       Expanded(
