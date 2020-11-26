@@ -17,7 +17,7 @@ class _RequestLocationState extends State<RequestLocation> {
       padding: EdgeInsets.all(25),
       child: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: SizeConfig().screenHeight * 0.4,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

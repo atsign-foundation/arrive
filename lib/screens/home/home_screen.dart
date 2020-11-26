@@ -48,13 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
               SlidingUpPanel(
                 color: Colors.transparent,
                 controller: pc,
-                minHeight: MediaQuery.of(context).size.height * 0.55,
-                maxHeight: MediaQuery.of(context).size.height * 0.9,
+                minHeight: SizeConfig().screenHeight * 0.55,
+                maxHeight: SizeConfig().screenHeight * 0.9,
                 collapsed: Column(children: [
                   collapsedContent(),
                   Expanded(
                     child: Container(
-                        width: MediaQuery.of(context).size.width,
+                        width: SizeConfig().screenWidth,
                         padding: EdgeInsets.fromLTRB(
                             80.toWidth, 0.toHeight, 0.toWidth, 7.toHeight),
                         decoration: BoxDecoration(
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       header(),
                       Container(
-                        width: MediaQuery.of(context).size.width,
+                        width: SizeConfig().screenWidth,
                         padding: EdgeInsets.symmetric(
                             horizontal: 15.toWidth, vertical: 10.toHeight),
                         decoration: BoxDecoration(
@@ -156,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Container(
                 height: 6.toHeight,
-                width: MediaQuery.of(context).size.width,
+                width: SizeConfig().screenWidth,
                 alignment: Alignment.center,
                 child: Container(
                     width: 60.toWidth,
@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget header() {
     return Container(
-      width: MediaQuery.of(context).size.width - 30.toWidth,
+      width: SizeConfig().screenWidth - 30.toWidth,
       margin:
           EdgeInsets.symmetric(horizontal: 15.toWidth, vertical: 10.toHeight),
       padding:
@@ -218,23 +218,23 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           InkWell(
             onTap: () {
-              homeBottomSheet(context, CreateEvent(),
-                  MediaQuery.of(context).size.height * 0.9);
+              homeBottomSheet(
+                  context, CreateEvent(), SizeConfig().screenHeight * 0.9);
             },
             child: Tasks(task: 'Create Event', color: AllColors().PURPLE),
           ),
           InkWell(
             onTap: () {
-              homeBottomSheet(context, RequestLocation(),
-                  MediaQuery.of(context).size.height * 0.5);
+              homeBottomSheet(
+                  context, RequestLocation(), SizeConfig().screenHeight * 0.5);
             },
             child:
                 Tasks(task: 'Request Location', color: AllColors().LIGHT_BLUE),
           ),
           InkWell(
             onTap: () {
-              homeBottomSheet(context, ShareLocation(),
-                  MediaQuery.of(context).size.height * 0.6);
+              homeBottomSheet(
+                  context, ShareLocation(), SizeConfig().screenHeight * 0.6);
             },
             child: Tasks(task: 'Share Location', color: AllColors().LIGHT_PINK),
           )
@@ -320,8 +320,8 @@ void homeBottomSheet(BuildContext context, T, double height) {
           decoration: new BoxDecoration(
             color: AllColors().WHITE,
             borderRadius: new BorderRadius.only(
-              topLeft: const Radius.circular(10.0),
-              topRight: const Radius.circular(10.0),
+              topLeft: const Radius.circular(12.0),
+              topRight: const Radius.circular(12.0),
             ),
           ),
           child: T,
