@@ -5,8 +5,7 @@ import 'package:atsign_location_app/services/size_config.dart';
 class CustomInputField extends StatelessWidget {
   final String hintText;
   final bool isIcon;
-  final double width;
-  final double height;
+  final double width, height;
   final IconData icon;
   final Function onTap;
 
