@@ -44,7 +44,7 @@ class _CreateEventState extends State<CreateEvent> {
                   SizedBox(
                     height: 25,
                   ),
-                  Text('Send To', style: CustomTextStyles().darkGrey14),
+                  Text('Send To', style: CustomTextStyles().greyLabel14),
                   SizedBox(height: 6.toHeight),
                   CustomInputField(
                     width: 330,
@@ -56,7 +56,7 @@ class _CreateEventState extends State<CreateEvent> {
                   SizedBox(height: 25),
                   Text(
                     'Title',
-                    style: CustomTextStyles().darkGrey14,
+                    style: CustomTextStyles().greyLabel14,
                   ),
                   SizedBox(height: 6.toHeight),
                   CustomInputField(
@@ -67,7 +67,7 @@ class _CreateEventState extends State<CreateEvent> {
                   SizedBox(height: 25),
                   Text(
                     'Add Venue',
-                    style: CustomTextStyles().darkGrey14,
+                    style: CustomTextStyles().greyLabel14,
                   ),
                   SizedBox(height: 6.toHeight),
                   CustomInputField(
@@ -122,7 +122,7 @@ class _CreateEventState extends State<CreateEvent> {
                     children: <Widget>[
                       Expanded(
                         child: Text('One Day Event',
-                            style: CustomTextStyles().darkGrey14),
+                            style: CustomTextStyles().greyLabel14),
                       ),
                       Checkbox(
                         value: true,
@@ -140,7 +140,7 @@ class _CreateEventState extends State<CreateEvent> {
                       Expanded(
                         child: Text(
                           'Recurring Event',
-                          style: CustomTextStyles().darkGrey14,
+                          style: CustomTextStyles().greyLabel14,
                         ),
                       ),
                       Checkbox(

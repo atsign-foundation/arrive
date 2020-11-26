@@ -44,7 +44,7 @@ class _ShareLocationState extends State<ShareLocation> {
                   SizedBox(
                     height: 25,
                   ),
-                  Text('Share with', style: CustomTextStyles().darkGrey14),
+                  Text('Share with', style: CustomTextStyles().greyLabel14),
                   SizedBox(height: 10),
                   CustomInputField(
                     width: 330,
@@ -56,7 +56,7 @@ class _ShareLocationState extends State<ShareLocation> {
                   SizedBox(height: 25),
                   Text(
                     'Duration',
-                    style: CustomTextStyles().darkGrey14,
+                    style: CustomTextStyles().greyLabel14,
                   ),
                   SizedBox(height: 10),
                   CustomInputField(
