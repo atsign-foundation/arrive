@@ -22,6 +22,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  ScrollController _scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
   PanelController pc = PanelController();
   final controller = MapController(
     location: LatLng(35.68, 51.41),
@@ -47,81 +51,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               Positioned(top: 0, right: 0, child: ShowDrawer()),
+              Positioned(bottom: 280.toHeight, child: header()),
               SlidingUpPanel(
                 color: Colors.transparent,
                 controller: pc,
-                minHeight: SizeConfig().screenHeight * 0.55,
-                maxHeight: SizeConfig().screenHeight * 0.9,
-                collapsed: Column(children: [
-                  collapsedContent(),
-                  Expanded(
-                    child: Container(
-                        width: SizeConfig().screenWidth,
-                        padding: EdgeInsets.fromLTRB(
-                            80.toWidth, 0.toHeight, 0.toWidth, 7.toHeight),
-                        decoration: BoxDecoration(
-                          color: AllColors().WHITE,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            pc.open();
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'See 9 more ',
-                                style: CustomTextStyles().darkGrey14,
-                              ),
-                              Icon(Icons.keyboard_arrow_down)
-                            ],
-                          ),
-                        )),
-                  )
-                ]),
+                minHeight: 267.toHeight,
+                maxHeight: 530.toHeight,
+                collapsed: Container(
+                  height: 267.toHeight,
+                  //padding: EdgeInsets.only(bottom: 2.toHeight),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        collapsedContent(2),
+                      ]),
+                ),
                 panel: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: 0),
                   child: Column(
                     children: [
-                      header(),
-                      Container(
-                        width: SizeConfig().screenWidth,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 15.toWidth, vertical: 10.toHeight),
-                        decoration: BoxDecoration(
-                          color: AllColors().WHITE,
-                        ),
-                        child:
-                            // Column(
-                            //   children: GroupData().group.map((user) {
-                            //     return DisplayTile(
-                            //       title: 'Event @ Group Name',
-                            //       subTitle: 'Sharing my location until 20:00',
-                            //       number: 10,
-                            //     );
-                            //   }).toList(),
-                            // )
-
-                            ListView.builder(
-                                //controller: myscrollController,
-                                physics: AlwaysScrollableScrollPhysics(),
-                                itemCount: GroupData().group.length,
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Column(
-                                    children: [
-                                      DisplayTile(
-                                        title:
-                                            GroupData().group[index].username,
-                                        subTitle: GroupData()
-                                                .group[index]
-                                                .canSeeLocation
-                                            ? 'Can see my location'
-                                            : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
-                                      ),
-                                      Divider(),
-                                    ],
-                                  );
-                                }),
-                      ),
+                      collapsedContent(GroupData().group.length),
                     ],
                   ),
                 ),
@@ -131,13 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget collapsedContent() {
+  Widget collapsedContent(int length) {
     return Column(
       children: [
-        header(),
         Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: 15.toWidth, vertical: 10.toHeight),
+            padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10.0),
@@ -152,42 +99,91 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             ),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Container(
-                height: 6.toHeight,
-                width: SizeConfig().screenWidth,
-                alignment: Alignment.center,
-                child: Container(
-                    width: 60.toWidth,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(7.toHeight),
-                      color: AllColors().DARK_GREY,
-                    )),
+            child: Container(
+              height: length == 2 ? 245.toHeight : 530.toHeight,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(bottom: 0),
+                controller: _scrollController,
+                physics: length == 2
+                    ? NeverScrollableScrollPhysics()
+                    : AlwaysScrollableScrollPhysics(),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 6.toHeight,
+                        width: SizeConfig().screenWidth,
+                        alignment: Alignment.center,
+                        child: Container(
+                            width: 60.toWidth,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.toHeight),
+                              color: AllColors().DARK_GREY,
+                            )),
+                      ),
+                      Text(
+                        'Locations',
+                        style: CustomTextStyles().darkGrey14,
+                      ),
+                      DisplayTile(
+                        image: GroupData().group[0].image,
+                        title: 'Event @ Group Name',
+                        semiTitle: 'Action required',
+                        subTitle: 'Sharing my location until 20:00',
+                        number: 10,
+                      ),
+                      Divider(),
+                      ListView.builder(
+                          padding: EdgeInsets.only(bottom: 0),
+                          // primary: false,
+                          //controller: myscrollController,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: length,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              children: [
+                                DisplayTile(
+                                  image: GroupData().group[index].image,
+                                  title: GroupData().group[index].username,
+                                  subTitle: GroupData()
+                                          .group[index]
+                                          .canSeeLocation
+                                      ? 'Can see my location'
+                                      : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
+                                ),
+                                Divider(),
+                              ],
+                            );
+                          }),
+                      length == 2
+                          ? Container(
+                              height: 16.toHeight,
+                              width: SizeConfig().screenWidth,
+                              padding: EdgeInsets.fromLTRB(60.toWidth,
+                                  0.toHeight, 0.toWidth, 0.toHeight),
+                              decoration: BoxDecoration(
+                                color: AllColors().WHITE,
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  pc.open();
+                                },
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'See 9 more ',
+                                      style: CustomTextStyles().darkGrey14,
+                                    ),
+                                    Icon(Icons.keyboard_arrow_down)
+                                  ],
+                                ),
+                              ))
+                          : SizedBox()
+                    ]),
               ),
-              SizedBox(
-                height: 7.toHeight,
-              ),
-              Text(
-                'Locations',
-                style: CustomTextStyles().darkGrey16,
-              ),
-              SizedBox(
-                height: 7.toHeight,
-              ),
-              DisplayTile(
-                title: 'Event @ Group Name',
-                subTitle: 'Sharing my location until 20:00',
-                number: 10,
-              ),
-              Divider(),
-              DisplayTile(title: 'User Name', subTitle: 'Can see my location'),
-              Divider(),
-              DisplayTile(
-                  title: 'User Name',
-                  subTitle: 'Sharing his location until 21:45'),
-              Divider(),
-            ])),
+            )),
       ],
     );
   }

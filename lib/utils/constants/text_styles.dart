@@ -22,6 +22,11 @@ class CustomTextStyles {
     fontSize: 16.toFont,
   );
 
+  TextStyle orange12 = TextStyle(
+    color: AllColors().ORANGE,
+    fontSize: 12.toFont,
+  );
+
   TextStyle hintText = TextStyle(
     color: AllColors().DARK_GREY,
     fontSize: 15.toFont,

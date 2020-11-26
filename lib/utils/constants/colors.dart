@@ -12,7 +12,7 @@ class AllColors {
   // ignore: non_constant_identifier_names
   Color DARK_GREY = Color(0xFF868A92);
   // ignore: non_constant_identifier_names
-  Color ORANGE = Color(0xFFE0732F);
+  Color ORANGE = Color(0xFFFC7A30);
   // ignore: non_constant_identifier_names
   Color PURPLE = Color(0xFFD9D9FF);
   // ignore: non_constant_identifier_names

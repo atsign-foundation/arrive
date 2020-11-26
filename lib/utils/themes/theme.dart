@@ -7,7 +7,7 @@ class Themes {
   factory Themes() => _instance;
   // ignore: non_constant_identifier_names
   ThemeData PRIMARY_THEME = ThemeData(
-    primaryColor: AllColors().ORANGE,
+    primaryColor: AllColors().Black,
     fontFamily: 'HelveticaNeu',
     visualDensity: VisualDensity.adaptivePlatformDensity,
   );
