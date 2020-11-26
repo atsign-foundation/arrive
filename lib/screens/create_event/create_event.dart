@@ -17,7 +17,7 @@ class _CreateEventState extends State<CreateEvent> {
       padding: EdgeInsets.all(25),
       child: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.8,
+          height: SizeConfig().screenHeight * 0.8,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

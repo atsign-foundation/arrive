@@ -17,7 +17,7 @@ class _ShareLocationState extends State<ShareLocation> {
       padding: EdgeInsets.all(25),
       child: SingleChildScrollView(
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: SizeConfig().screenHeight * 0.5,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

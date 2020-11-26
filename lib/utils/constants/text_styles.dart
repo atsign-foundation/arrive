@@ -7,7 +7,7 @@ class CustomTextStyles {
   static CustomTextStyles _instance = CustomTextStyles._();
   factory CustomTextStyles() => _instance;
 
-  TextStyle darkGrey14 = TextStyle(
+  TextStyle greyLabel14 = TextStyle(
     color: AllColors().GREY_LABEL,
     fontSize: 14.toFont,
   );
@@ -26,4 +26,15 @@ class CustomTextStyles {
     color: AllColors().DARK_GREY,
     fontSize: 15.toFont,
   );
+
+  TextStyle darkGrey14 =
+      TextStyle(color: AllColors().DARK_GREY, fontSize: 14.toFont);
+
+  TextStyle darkGrey16 =
+      TextStyle(color: AllColors().DARK_GREY, fontSize: 16.toFont);
+
+  TextStyle darkGrey12 =
+      TextStyle(color: AllColors().DARK_GREY, fontSize: 12.toFont);
+
+  TextStyle grey14 = TextStyle(color: AllColors().GREY, fontSize: 14.toFont);
 }
