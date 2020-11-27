@@ -1,5 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/person_tile/person_horizontal_tile.dart';
+import 'package:atsign_location_app/routes/route_names.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/group/empty_group/empty_group.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -15,9 +17,14 @@ class GroupList extends StatelessWidget {
           showBackIcon: true,
           centerTitle: true,
           title: 'Groups',
-          action: Icon(
-            Icons.add,
-            color: AllColors().ORANGE,
+          action: InkWell(
+            onTap: () {
+              SetupRoutes.push(context, Routes.NEW_GROUP);
+            },
+            child: Icon(
+              Icons.add,
+              color: AllColors().ORANGE,
+            ),
           ),
         ),
         //body: EmptyGroup(),

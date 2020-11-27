@@ -31,4 +31,6 @@ class AllColors {
   Color GREY_LABEL = Color(0xFF747481);
   // ignore: non_constant_identifier_names
   Color EVENT_MEMBERS = Color(0xFFC1D9E9);
+  // ignore: non_constant_identifier_names
+  Color MILD_GREY = Color(0xFFE4E4E4);
 }

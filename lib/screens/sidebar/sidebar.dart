@@ -63,23 +63,25 @@ class _SideBarState extends State<SideBar> {
                 ],
               ),
             ),
-            iconText('Events', Icons.arrow_upward),
+            iconText('Events', Icons.arrow_upward, () {}),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Contacts', Icons.contacts_rounded),
+            iconText('Contacts', Icons.contacts_rounded, () {}),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Groups', Icons.group),
+            iconText('Groups', Icons.group, () {
+              SetupRoutes.push(context, Routes.GROUP_LIST);
+            }),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('FAQ', Icons.question_answer),
+            iconText('FAQ', Icons.question_answer, () {}),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Terms and Conditions', Icons.text_format_outlined),
+            iconText('Terms and Conditions', Icons.text_format_outlined, () {}),
             SizedBox(
               height: 25.toHeight,
             ),
@@ -114,18 +116,16 @@ class _SideBarState extends State<SideBar> {
                 child: Container(
               height: 0,
             )),
-            iconText('Switch @sign', Icons.logout),
+            iconText('Switch @sign', Icons.logout, () {}),
           ],
         ),
       ),
     );
   }
 
-  Widget iconText(String text, IconData icon) {
+  Widget iconText(String text, IconData icon, Function onTap) {
     return InkWell(
-      onTap: () {
-        SetupRoutes.push(context, Routes.GROUP_LIST);
-      },
+      onTap: onTap,
       child: Row(
         children: [
           Icon(

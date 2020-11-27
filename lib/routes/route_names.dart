@@ -3,4 +3,5 @@ class Routes {
   static const String HOME = 'home';
   static const String EVENT_LOG = 'event_log';
   static const String GROUP_LIST = 'group_list';
+  static const String NEW_GROUP = 'new_group';
 }

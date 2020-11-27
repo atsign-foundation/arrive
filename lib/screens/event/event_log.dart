@@ -51,7 +51,7 @@ class _EventLogState extends State<EventLog> {
                       ),
                       Container(
                         padding: EdgeInsets.only(top: 20.toHeight),
-                        height: SizeConfig().screenHeight - 205.toHeight,
+                        height: SizeConfig().screenHeight - 180.toHeight,
                         child: TabBarView(
                           children: [
                             ListView.builder(
