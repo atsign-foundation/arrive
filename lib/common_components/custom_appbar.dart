@@ -27,7 +27,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       toolbarHeight: 60.toHeight,
       elevation: elevation ?? 0,
-      leadingWidth: (leadingWidget != null) ? 100.toWidth : 50.toWidth,
+      leadingWidth: (leadingWidget != null)
+          ? 100.toWidth
+          : (showBackIcon)
+              ? 50.toWidth
+              : 0,
       leading: (showBackIcon)
           ? IconButton(
               icon: Icon(
@@ -39,7 +43,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               })
           : Container(
               alignment: Alignment.center,
-              padding: EdgeInsets.only(left: 16.toWidth),
+              padding: leadingWidget != null
+                  ? EdgeInsets.only(left: 16.toWidth)
+                  : EdgeInsets.only(left: 0.toWidth),
               child: leadingWidget ?? null),
       centerTitle: centerTitle,
       title: Text(title, style: CustomTextStyles().black18),

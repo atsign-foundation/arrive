@@ -16,7 +16,7 @@ class NewGroup extends StatelessWidget {
         body: Container(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 50.toHeight),
+              SizedBox(height: 20.toHeight),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -55,7 +55,7 @@ class NewGroup extends StatelessWidget {
               Divider(),
               SizedBox(height: 13.toHeight),
               Container(
-                height: SizeConfig().screenHeight - 300.toHeight,
+                height: SizeConfig().screenHeight - 290.toHeight,
                 width: double.infinity,
                 // color: Colors.red,
                 child: SingleChildScrollView(
@@ -65,8 +65,8 @@ class NewGroup extends StatelessWidget {
                     crossAxisCount: 4,
                     crossAxisSpacing: 15.toWidth,
                     mainAxisSpacing: 38.toHeight,
-                    childAspectRatio: (85.toWidth / 95.toWidth),
-                    children: List.generate(100, (index) {
+                    childAspectRatio: (85.toWidth / 105.toHeight),
+                    children: List.generate(20, (index) {
                       return CustomPersonVerticalTile(
                         imageLocation: AllImages().PERSON1,
                         title: 'Thomas',
