@@ -25,8 +25,8 @@ class DisplayTile extends StatelessWidget {
             children: [
               Image.asset(
                 image,
-                width: 46.toHeight,
-                height: 46.toHeight,
+                width: 46,
+                height: 46,
                 fit: BoxFit.cover,
               ),
               number != null
@@ -35,8 +35,8 @@ class DisplayTile extends StatelessWidget {
                       bottom: 0,
                       child: Container(
                         alignment: Alignment.center,
-                        height: 28.toHeight,
-                        width: 28.toHeight,
+                        height: 28,
+                        width: 28,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15.0),
                             color: AllColors().BLUE),
