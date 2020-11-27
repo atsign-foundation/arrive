@@ -1,5 +1,6 @@
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/screens/event/event_log.dart';
+import 'package:atsign_location_app/screens/group/group_list.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,8 @@ class SetupRoutes {
     return {
       Routes.SPLASH: (context) => Splash(),
       Routes.HOME: (context) => HomeScreen(),
-      Routes.EVENT_LOG: (context) => EventLog()
+      Routes.EVENT_LOG: (context) => EventLog(),
+      Routes.GROUP_LIST: (context) => GroupList()
     };
   }
 

@@ -30,7 +30,7 @@ class CustomTextStyles {
   TextStyle black18 = TextStyle(
     color: AllColors().Black,
     fontSize: 18.toFont,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w700,
   );
 
   TextStyle black10 = TextStyle(

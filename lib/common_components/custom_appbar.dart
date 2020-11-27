@@ -20,13 +20,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       this.elevation = 0,
       this.action});
   @override
-  Size get preferredSize => Size.fromHeight(55.toHeight);
+  Size get preferredSize => Size.fromHeight(60.toHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      toolbarHeight: 60.toHeight,
       elevation: elevation ?? 0,
-      leadingWidth: (showBackIcon || (leadingWidget != null)) ? 100.toWidth : 0,
+      leadingWidth: (leadingWidget != null) ? 100.toWidth : 50.toWidth,
       leading: (showBackIcon)
           ? IconButton(
               icon: Icon(

@@ -1,3 +1,5 @@
+import 'package:atsign_location_app/routes/route_names.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -120,22 +122,27 @@ class _SideBarState extends State<SideBar> {
   }
 
   Widget iconText(String text, IconData icon) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: AllColors().DARK_GREY,
-        ),
-        SizedBox(
-          width: 15.toWidth,
-        ),
-        Flexible(
-          child: Text(
-            text,
-            style: CustomTextStyles().darkGrey16,
+    return InkWell(
+      onTap: () {
+        SetupRoutes.push(context, Routes.GROUP_LIST);
+      },
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: AllColors().DARK_GREY,
           ),
-        ),
-      ],
+          SizedBox(
+            width: 15.toWidth,
+          ),
+          Flexible(
+            child: Text(
+              text,
+              style: CustomTextStyles().darkGrey16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
