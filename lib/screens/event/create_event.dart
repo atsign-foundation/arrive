@@ -1,5 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
+import 'package:atsign_location_app/routes/route_names.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +117,9 @@ class _CreateEventState extends State<CreateEvent> {
               CustomButton(
                 child: Text('Create & Invite',
                     style: TextStyle(color: AllColors().WHITE)),
-                onTap: null,
+                onTap: () {
+                  SetupRoutes.push(context, Routes.EVENT_LOG);
+                },
                 bgColor: AllColors().Black,
                 width: 160,
                 height: 48,

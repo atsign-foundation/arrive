@@ -2,7 +2,9 @@ import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/show_drawer.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
-import 'package:atsign_location_app/screens/create_event/create_event.dart';
+import 'package:atsign_location_app/screens/event/create_event.dart';
+import 'package:atsign_location_app/screens/request_location/request_location.dart';
+import 'package:atsign_location_app/screens/share_location/share_location.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -224,15 +226,15 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Request Location',
               icon: Icons.refresh,
               onTap: () {
-                homeBottomSheet(
-                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+                homeBottomSheet(context, RequestLocation(),
+                    SizeConfig().screenHeight * 0.5);
               }),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
                 homeBottomSheet(
-                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+                    context, ShareLocation(), SizeConfig().screenHeight * 0.6);
               })
         ],
       ),

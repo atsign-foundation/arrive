@@ -17,16 +17,16 @@ class DisplayTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(bottom: 10.5.toHeight),
-      height: semiTitle == null
-          ? 56.toHeight
-          : 56.toHeight, //semiTitle == null ? 46.toHeight // was cropping the circle
+      // height: semiTitle == null
+      //     ? 56.toHeight
+      //     : 56.toHeight, //semiTitle == null ? 46.toHeight // was cropping the circle
       child: Row(
         children: [
           Stack(
             children: [
               Image.asset(
                 image,
-                width: 46.toWidth,
+                width: 46.toHeight,
                 height: 46.toHeight,
                 fit: BoxFit.cover,
               ),
@@ -37,11 +37,14 @@ class DisplayTile extends StatelessWidget {
                       child: Container(
                         alignment: Alignment.center,
                         height: 28.toHeight,
-                        width: 28.toWidth,
+                        width: 28.toHeight,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15.0),
                             color: AllColors().BLUE),
-                        child: Text('+$number'),
+                        child: Text(
+                          '+$number',
+                          style: CustomTextStyles().black10,
+                        ),
                       ),
                     )
                   : Container(
