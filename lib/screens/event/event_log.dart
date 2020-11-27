@@ -1,5 +1,6 @@
+import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_event_card.dart';
-import 'package:atsign_location_app/common_components/custom_header.dart';
+import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -16,24 +17,13 @@ class _EventLogState extends State<EventLog> {
     return Container(
       child: SafeArea(
         child: Scaffold(
+          appBar: CustomAppBar(
+            centerTitle: true,
+            title: 'Events',
+            action: PopButton(label: 'Close'),
+          ),
           body: Column(
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 27),
-                child: CustomHeader(
-                  title: Text('Events', style: CustomTextStyles().black18),
-                  action: Text(
-                    'Close',
-                    style: CustomTextStyles().orange18,
-                  ),
-                  actionEvent: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              SizedBox(
-                height: 30.toHeight,
-              ),
               Container(
                 child: DefaultTabController(
                   length: 2,

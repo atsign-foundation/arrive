@@ -1,5 +1,7 @@
+import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
+import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -26,22 +28,10 @@ class _CreateEventState extends State<CreateEvent> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text('Create an event',
-                            style: CustomTextStyles().black16),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          'Cancel',
-                          style: CustomTextStyles().orange16,
-                        ),
-                      )
-                    ],
+                  CustomAppBar(
+                    centerTitle: false,
+                    title: 'Create an event',
+                    action: PopButton(label: 'Cancel'),
                   ),
                   SizedBox(
                     height: 25,

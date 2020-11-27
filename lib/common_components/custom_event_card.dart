@@ -11,22 +11,23 @@ class CustomEventCard extends StatelessWidget {
       eventDate;
 
   CustomEventCard({
-    this.eventAndGroupName = const Text(''),
-    this.invitedByLabel = const Text(''),
-    this.shareLocationDurationLable = const Text(''),
-    this.eventDate = const Text(''),
+    this.eventAndGroupName,
+    this.invitedByLabel,
+    this.shareLocationDurationLable,
+    this.eventDate,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(left: 10.toWidth),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            height: 70,
-            width: 100,
+            height: 60.toWidth,
+            width: 60.toWidth,
             decoration: new BoxDecoration(
               shape: BoxShape.circle,
               image: new DecorationImage(
@@ -37,11 +38,11 @@ class CustomEventCard extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned(
-                  left: 60,
-                  top: 40,
+                  right: 0,
+                  bottom: 0,
                   child: Container(
-                    width: 30,
-                    height: 30,
+                    width: 30.toWidth,
+                    height: 30.toWidth,
                     decoration: new BoxDecoration(
                       color: AllColors().EVENT_MEMBERS,
                       shape: BoxShape.circle,
@@ -57,18 +58,21 @@ class CustomEventCard extends StatelessWidget {
               ],
             ),
           ),
+          SizedBox(width: 10.toWidth),
           Expanded(
             child: Container(
+              //color: Colors.red,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  eventAndGroupName,
+                  eventAndGroupName ?? SizedBox(),
                   SizedBox(height: 6.toHeight),
-                  shareLocationDurationLable,
+                  shareLocationDurationLable ?? SizedBox(),
                   SizedBox(height: 6.toHeight),
-                  eventDate,
-                  SizedBox(height: 10.toHeight),
-                  invitedByLabel,
+                  eventDate ?? SizedBox(),
+                  SizedBox(height: eventDate != null ? 10.toHeight : 0),
+                  invitedByLabel ?? SizedBox(),
                 ],
               ),
             ),

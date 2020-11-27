@@ -55,11 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
               SlidingUpPanel(
                 //color: Colors.transparent,
                 controller: pc,
-                minHeight: 254.toHeight,
+                minHeight: 267.toHeight,
                 // minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
                 collapsed: Container(
-                  height: 254.toHeight,
+                  height: 267.toHeight,
+                  color: AllColors().WHITE,
                   // height: 267.toHeight,
                   //padding: EdgeInsets.only(bottom: 2.toHeight),
                   child: Column(
@@ -102,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             child: Container(
-              height: length == 2 ? 245.toHeight : 530.toHeight,
+              height: length == 2 ? 260.toHeight : 530.toHeight,
               child: SingleChildScrollView(
                 // padding: EdgeInsets.only(top: 5.toHeight),
 
@@ -155,15 +156,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ? 'Can see my location'
                                       : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
                                 ),
-                                Divider(),
+                                index == (length - 1) ? SizedBox() : Divider(),
                               ],
                             );
                           }),
                       length == 2
                           ? Container(
-                              height: 16.toHeight,
+                              //height: 16.toHeight,
+                              alignment: Alignment.topCenter,
                               width: SizeConfig().screenWidth,
-                              padding: EdgeInsets.fromLTRB(60.toWidth,
+                              padding: EdgeInsets.fromLTRB(56.toHeight,
                                   0.toHeight, 0.toWidth, 0.toHeight),
                               decoration: BoxDecoration(
                                 color: AllColors().WHITE,

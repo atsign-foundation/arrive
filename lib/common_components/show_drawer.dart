@@ -7,7 +7,7 @@ class ShowDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50.toHeight,
-      width: 50.toWidth,
+      width: 50.toHeight,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(10.0),
@@ -23,7 +23,7 @@ class ShowDrawer extends StatelessWidget {
         ],
       ),
       child: IconButton(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10.toHeight),
           //iconSize: 20.toHeight,
           icon: Icon(
             Icons.table_rows,
