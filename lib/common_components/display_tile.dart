@@ -1,3 +1,4 @@
+import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +24,9 @@ class DisplayTile extends StatelessWidget {
         children: [
           Stack(
             children: [
-              Image.asset(
-                image,
-                width: 46,
-                height: 46,
-                fit: BoxFit.cover,
+              CustomCircleAvatar(
+                image: image,
+                size: 46,
               ),
               number != null
                   ? Positioned(
@@ -46,10 +45,7 @@ class DisplayTile extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Container(
-                      height: 0,
-                      width: 0,
-                    ),
+                  : SizedBox(),
             ],
           ),
           Flexible(

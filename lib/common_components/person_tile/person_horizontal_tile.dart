@@ -1,3 +1,4 @@
+import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
@@ -22,14 +23,9 @@ class CustomPersonHorizontalTile extends StatelessWidget {
         children: <Widget>[
           Stack(
             children: [
-              Container(
-                height: 60,
-                width: 60,
-                child: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: AssetImage(imageLocation),
-                ),
+              CustomCircleAvatar(
+                size: 60,
+                image: imageLocation,
               ),
               icon != null
                   ? Positioned(

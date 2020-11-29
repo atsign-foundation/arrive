@@ -1,3 +1,4 @@
+import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
@@ -26,12 +27,9 @@ class CustomPersonVerticalTile extends StatelessWidget {
               SizedBox(
                 height: 60,
                 width: 60,
-                child: CircleAvatar(
-                  radius: 80.toWidth,
-                  backgroundColor: Colors.transparent,
-                  backgroundImage: AssetImage(
-                    imageLocation,
-                  ),
+                child: CustomCircleAvatar(
+                  size: 60,
+                  image: imageLocation,
                 ),
               ),
               icon != null
