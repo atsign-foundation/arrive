@@ -137,29 +137,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         number: 10,
                       ),
                       Divider(),
-                      ListView.builder(
-                          padding: EdgeInsets.only(bottom: 0),
-                          // primary: false,
-                          //controller: myscrollController,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: length,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Column(
-                              children: [
-                                DisplayTile(
-                                  image: GroupData().group[index].image,
-                                  title: GroupData().group[index].username,
-                                  subTitle: GroupData()
-                                          .group[index]
-                                          .canSeeLocation
-                                      ? 'Can see my location'
-                                      : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
-                                ),
-                                index == (length - 1) ? SizedBox() : Divider(),
-                              ],
-                            );
-                          }),
+                      ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: length,
+                        shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return DisplayTile(
+                            image: GroupData().group[index].image,
+                            title: GroupData().group[index].username,
+                            subTitle: GroupData().group[index].canSeeLocation
+                                ? 'Can see my location'
+                                : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          return Divider();
+                        },
+                      ),
                       length == 2
                           ? Container(
                               //height: 16.toHeight,

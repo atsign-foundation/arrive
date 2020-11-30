@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
   final Text title, action;
-  //final IconData actionIcon;
   final Function actionEvent;
   CustomHeader(
       {this.title = const Text(''),

@@ -72,8 +72,8 @@ class Splash extends StatelessWidget {
                 bottom: 130.toHeight,
                 right: 36.toWidth,
                 child: CustomButton(
-                    height: 40.toHeight,
-                    width: 120.toWidth,
+                    height: 40,
+                    width: 120,
                     radius: 100.toHeight,
                     child: Text(
                       'Explore',

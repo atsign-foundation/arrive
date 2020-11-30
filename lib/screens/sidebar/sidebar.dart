@@ -1,3 +1,4 @@
+import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -28,15 +29,9 @@ class _SideBarState extends State<SideBar> {
                   horizontal: 0.toWidth, vertical: 50.toHeight),
               child: Row(
                 children: [
-                  Stack(
-                    children: [
-                      Image.asset(
-                        AllImages().PERSON1,
-                        width: 60.toWidth,
-                        height: 60.toHeight,
-                        fit: BoxFit.cover,
-                      ),
-                    ],
+                  CustomCircleAvatar(
+                    size: 60,
+                    image: AllImages().PERSON1,
                   ),
                   Flexible(
                       child: Padding(
@@ -77,11 +72,15 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('FAQ', Icons.question_answer, () {}),
+            iconText('FAQ', Icons.question_answer, () {
+              SetupRoutes.push(context, Routes.FAQS);
+            }),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Terms and Conditions', Icons.text_format_outlined, () {}),
+            iconText('Terms and Conditions', Icons.text_format_outlined, () {
+              SetupRoutes.push(context, Routes.TERMS_CONDITIONS_SCREEN);
+            }),
             SizedBox(
               height: 25.toHeight,
             ),
