@@ -29,17 +29,22 @@ class GroupList extends StatelessWidget {
         ),
         //body: EmptyGroup(),
         body: GridView.count(
-          childAspectRatio: 150.toWidth / 60.toHeight, // width/height
+          childAspectRatio: 150 / 60, // width/height
           primary: false,
           padding: const EdgeInsets.all(20.0),
           crossAxisSpacing: 10.0,
           mainAxisSpacing: 20.toHeight,
           crossAxisCount: 2,
           children: List.generate(14, (index) {
-            return CustomPersonHorizontalTile(
-              imageLocation: AllImages().PERSON1,
-              title: 'Alexa Team',
-              subTitle: '7 members',
+            return InkWell(
+              onTap: () {
+                SetupRoutes.push(context, Routes.GROUP_VIEW);
+              },
+              child: CustomPersonHorizontalTile(
+                imageLocation: AllImages().PERSON1,
+                title: 'Alexa Team',
+                subTitle: '7 members',
+              ),
             );
           }),
         ),

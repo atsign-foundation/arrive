@@ -64,8 +64,8 @@ class NewGroup extends StatelessWidget {
                     shrinkWrap: true,
                     crossAxisCount: 4,
                     crossAxisSpacing: 15.toWidth,
-                    mainAxisSpacing: 38.toHeight,
-                    childAspectRatio: (85.toWidth / 105.toHeight),
+                    // mainAxisSpacing: 38.toHeight,
+                    childAspectRatio: (85 / 120),
                     children: List.generate(20, (index) {
                       return CustomPersonVerticalTile(
                         imageLocation: AllImages().PERSON1,

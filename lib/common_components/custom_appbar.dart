@@ -37,12 +37,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               })
           : Container(
               alignment: Alignment.center,
-              padding: leadingWidget != null
-                  ? EdgeInsets.only(left: 16.toWidth)
-                  : EdgeInsets.only(left: 0.toWidth),
+              // padding: leadingWidget != null
+              //     ? EdgeInsets.only(left: 0.toWidth)
+              //     : EdgeInsets.only(left: 0.toWidth),
               child: leadingWidget ?? null),
       centerTitle: centerTitle,
-      title: Text(title, style: CustomTextStyles().black18),
+      title: title != null
+          ? Text(title, style: CustomTextStyles().black18)
+          : SizedBox(),
       actions: [
         Container(
             alignment: Alignment.center,
