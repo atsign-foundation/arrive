@@ -10,4 +10,5 @@ class Routes {
   static const String GROUP_EDIT = 'group_edit';
   static const String GROUP_MEMBERS = 'group_members';
   static const String SHARE_LOCATION_EVENT = 'share_location_event';
+  static const String SELECTED_LOCATION = 'selected_location';
 }

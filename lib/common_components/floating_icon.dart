@@ -2,7 +2,14 @@ import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
-class ShowDrawer extends StatelessWidget {
+class FloatingIcon extends StatelessWidget {
+  final Color bgColor, iconColor;
+  final IconData icon;
+  final bool isTopLeft;
+
+  FloatingIcon(
+      {this.bgColor, this.iconColor, this.icon, this.isTopLeft = false});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -10,12 +17,13 @@ class ShowDrawer extends StatelessWidget {
       width: 50.toHeight,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(10.0),
+          bottomLeft: !isTopLeft ? Radius.circular(10.0) : Radius.circular(0),
+          bottomRight: isTopLeft ? Radius.circular(10.0) : Radius.circular(0),
         ),
-        color: AllColors().Black,
+        color: bgColor != null ? bgColor : AllColors().Black,
         boxShadow: [
           BoxShadow(
-            color: AllColors().GREY,
+            color: iconColor != null ? iconColor : AllColors().GREY,
             blurRadius: 2.0,
             spreadRadius: 2.0,
             offset: Offset(0.0, 0.0),
@@ -26,13 +34,11 @@ class ShowDrawer extends StatelessWidget {
           padding: EdgeInsets.all(10.toHeight),
           //iconSize: 20.toHeight,
           icon: Icon(
-            Icons.table_rows,
-            color: AllColors().WHITE,
+            icon != null ? icon : Icons.table_rows,
+            color: iconColor != null ? iconColor : AllColors().WHITE,
             size: 27.toFont,
           ),
-          onPressed: () {
-            Scaffold.of(context).openEndDrawer();
-          }),
+          onPressed: () => Scaffold.of(context).openEndDrawer()),
     );
   }
 }

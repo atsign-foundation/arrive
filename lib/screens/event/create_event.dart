@@ -1,9 +1,11 @@
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
+import 'package:atsign_location_app/screens/event/select_location_bottomsheet.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -108,7 +110,8 @@ class _CreateEventState extends State<CreateEvent> {
                 child: Text('Create & Invite',
                     style: TextStyle(color: AllColors().WHITE)),
                 onTap: () {
-                  SetupRoutes.push(context, Routes.EVENT_LOG);
+                  bottomSheet(context, SelectLocation(),
+                      SizeConfig().screenHeight * 0.9);
                 },
                 bgColor: AllColors().Black,
                 width: 160,

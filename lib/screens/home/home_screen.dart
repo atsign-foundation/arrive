@@ -1,5 +1,6 @@
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
-import 'package:atsign_location_app/common_components/show_drawer.dart';
+import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/screens/event/create_event.dart';
@@ -49,7 +50,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              Positioned(top: 0, right: 0, child: ShowDrawer()),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: FloatingIcon(
+                    bgColor: AllColors().Black,
+                    icon: Icons.table_rows,
+                    iconColor: AllColors().GREY),
+              ),
               // Positioned(bottom: 277.toHeight, child: header()),
               Positioned(bottom: 264.toHeight, child: header()),
               SlidingUpPanel(
@@ -215,50 +223,25 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Create Event',
               icon: Icons.event,
               onTap: () {
-                homeBottomSheet(
+                bottomSheet(
                     context, CreateEvent(), SizeConfig().screenHeight * 0.9);
               }),
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
               onTap: () {
-                homeBottomSheet(context, RequestLocation(),
+                bottomSheet(context, RequestLocation(),
                     SizeConfig().screenHeight * 0.5);
               }),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
-                homeBottomSheet(
+                bottomSheet(
                     context, ShareLocation(), SizeConfig().screenHeight * 0.6);
               })
         ],
       ),
     );
   }
-}
-
-void homeBottomSheet(BuildContext context, T, double height) {
-  showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return Container(
-          height: height,
-          decoration: new BoxDecoration(
-            color: AllColors().WHITE,
-            borderRadius: new BorderRadius.only(
-              topLeft: const Radius.circular(12.0),
-              topRight: const Radius.circular(12.0),
-            ),
-          ),
-          child: T,
-        );
-      });
 }

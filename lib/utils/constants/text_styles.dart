@@ -17,6 +17,15 @@ class CustomTextStyles {
     fontSize: 14.toFont,
   );
 
+  TextStyle greyLabel12 = TextStyle(
+    color: AllColors().GREY_LABEL,
+    fontSize: 14.toFont,
+  );
+
+  TextStyle lightGreyLabel12 = TextStyle(
+    color: AllColors().LIGHT_GREY_LABEL,
+    fontSize: 12.toFont,
+  );
   TextStyle black16 = TextStyle(
     color: AllColors().Black,
     fontSize: 16.toFont,
@@ -82,6 +91,11 @@ class CustomTextStyles {
 
   TextStyle darkGrey16 = TextStyle(
     color: AllColors().DARK_GREY,
+    fontSize: 16.toFont,
+  );
+
+  TextStyle grey16 = TextStyle(
+    color: AllColors().GREY,
     fontSize: 16.toFont,
   );
 
