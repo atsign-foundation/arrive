@@ -7,6 +7,7 @@ import 'package:atsign_location_app/screens/group/members/group_members.dart';
 import 'package:atsign_location_app/screens/group/group_view/group_view.dart';
 import 'package:atsign_location_app/screens/group/new_group/new_group.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
+import 'package:atsign_location_app/screens/share_location/share_location_event/share_location_event.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
 import 'package:atsign_location_app/screens/terms_conditions/terms_conditions_screen.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class SetupRoutes {
       Routes.GROUP_VIEW: (context) => GroupView(),
       Routes.GROUP_EDIT: (context) => GroupEdit(),
       Routes.GROUP_MEMBERS: (context) => GroupMembers(),
+      Routes.SHARE_LOCATION_EVENT: (context) => ShareLocationEvent(),
     };
   }
 

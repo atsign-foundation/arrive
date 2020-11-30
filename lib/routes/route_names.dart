@@ -9,4 +9,5 @@ class Routes {
   static const String GROUP_VIEW = 'group_view';
   static const String GROUP_EDIT = 'group_edit';
   static const String GROUP_MEMBERS = 'group_members';
+  static const String SHARE_LOCATION_EVENT = 'share_location_event';
 }
