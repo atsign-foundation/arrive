@@ -1,7 +1,8 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
-import 'package:atsign_location_app/common_components/custom_event_card.dart';
+import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
@@ -50,59 +51,40 @@ class _EventLogState extends State<EventLog> {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.only(top: 20.toHeight),
-                        height: SizeConfig().screenHeight - 180.toHeight,
+                        padding: EdgeInsets.fromLTRB(
+                            20.toWidth, 20.toHeight, 10.toWidth, 5.toHeight),
+                        height: SizeConfig().screenHeight - 190.toHeight,
                         child: TabBarView(
                           children: [
-                            ListView.builder(
+                            ListView.separated(
                               scrollDirection: Axis.vertical,
                               itemCount: 10,
+                              separatorBuilder: (context, index) {
+                                return Divider();
+                              },
                               itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    CustomEventCard(
-                                      eventAndGroupName: Text(
-                                        'Event @ Group Name',
-                                        style: CustomTextStyles().black14,
-                                      ),
-                                      shareLocationDurationLable: Text(
-                                          'Sharing my location untill 20:00',
-                                          style: CustomTextStyles().grey12),
-                                      eventDate: Text('Event on May 11',
-                                          style: CustomTextStyles().grey12),
-                                      invitedByLabel: Text(
-                                          'Invited bt Username',
-                                          style: CustomTextStyles().grey14),
-                                    ),
-                                    SizedBox(height: 10.toHeight),
-                                    Divider(),
-                                  ],
+                                return DisplayTile(
+                                  title: 'Event @ Group Name',
+                                  number: 10,
+                                  image: AllImages().PERSON2,
+                                  subTitle: 'Sharing my location untill 20:00',
+                                  invitedBy: 'Invited bt Username',
                                 );
                               },
                             ),
-                            ListView.builder(
+                            ListView.separated(
                               scrollDirection: Axis.vertical,
-                              itemCount: 3,
+                              itemCount: 10,
+                              separatorBuilder: (context, index) {
+                                return Divider();
+                              },
                               itemBuilder: (context, index) {
-                                return Column(
-                                  children: [
-                                    CustomEventCard(
-                                      eventAndGroupName: Text(
-                                        'Event @ Group Name',
-                                        style: CustomTextStyles().black14,
-                                      ),
-                                      shareLocationDurationLable: Text(
-                                          'Sharing my location untill 20:00',
-                                          style: CustomTextStyles().grey12),
-                                      eventDate: Text('Event on May 11',
-                                          style: CustomTextStyles().grey12),
-                                      invitedByLabel: Text(
-                                          'Invited bt Username',
-                                          style: CustomTextStyles().grey14),
-                                    ),
-                                    SizedBox(height: 10.toHeight),
-                                    Divider(),
-                                  ],
+                                return DisplayTile(
+                                  title: 'Event @ Group Name',
+                                  number: 10,
+                                  image: AllImages().PERSON2,
+                                  subTitle: 'Sharing my location untill 20:00',
+                                  invitedBy: 'Invited bt Username',
                                 );
                               },
                             )

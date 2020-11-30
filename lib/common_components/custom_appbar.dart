@@ -5,19 +5,14 @@ import 'package:atsign_location_app/services/size_config.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final bool showBackIcon;
-  final Widget leadingWidget;
-  final bool centerTitle;
-  final Widget action;
-
-  final double elevation;
+  final bool showBackIcon, centerTitle;
+  final Widget leadingWidget, action;
 
   const CustomAppBar(
       {this.title,
       this.centerTitle = false,
       this.showBackIcon = false,
       this.leadingWidget,
-      this.elevation = 0,
       this.action});
   @override
   Size get preferredSize => Size.fromHeight(60.toHeight);
@@ -26,7 +21,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       toolbarHeight: 60.toHeight,
-      elevation: elevation ?? 0,
       leadingWidth: (leadingWidget != null)
           ? 100.toWidth
           : (showBackIcon)
