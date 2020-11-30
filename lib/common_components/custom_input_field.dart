@@ -23,7 +23,7 @@ class CustomInputField extends StatelessWidget {
       width: width.toWidth,
       height: height.toHeight,
       decoration: BoxDecoration(
-        color: AllColors().LIGHT_GREY,
+        color: AllColors().INPUT_GREY_BACKGROUND,
         borderRadius: BorderRadius.circular(5),
       ),
       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),

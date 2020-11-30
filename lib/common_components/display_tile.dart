@@ -1,30 +1,30 @@
+import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
-import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
 class DisplayTile extends StatelessWidget {
-  final String title, semiTitle, subTitle, image;
+  final String title, semiTitle, subTitle, image, invitedBy;
   final int number;
   DisplayTile(
       {@required this.title,
       @required this.image,
       @required this.subTitle,
       this.semiTitle,
+      this.invitedBy,
       this.number});
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: semiTitle == null ? 46.toHeight : 56.toHeight,
+      padding: EdgeInsets.only(bottom: 10.5.toHeight),
       child: Row(
         children: [
           Stack(
             children: [
-              Image.asset(
-                image,
-                width: 46.toWidth,
-                height: 46.toHeight,
+              CustomCircleAvatar(
+                image: image,
+                size: 46,
               ),
               number != null
                   ? Positioned(
@@ -32,25 +32,25 @@ class DisplayTile extends StatelessWidget {
                       bottom: 0,
                       child: Container(
                         alignment: Alignment.center,
-                        height: 28.toHeight,
-                        width: 28.toWidth,
+                        height: 28,
+                        width: 28,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15.0),
-                            color: AllColors().LIGHT_GREY),
-                        child: Text('+$number'),
+                            color: AllColors().BLUE),
+                        child: Text(
+                          '+$number',
+                          style: CustomTextStyles().black10,
+                        ),
                       ),
                     )
-                  : Container(
-                      height: 0,
-                      width: 0,
-                    ),
+                  : SizedBox(),
             ],
           ),
           Flexible(
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -58,6 +58,9 @@ class DisplayTile extends StatelessWidget {
                   style: CustomTextStyles().darkGrey14,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(
+                  height: 3.toHeight,
                 ),
                 semiTitle != null
                     ? Text(
@@ -67,60 +70,27 @@ class DisplayTile extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       )
                     : SizedBox(),
+                SizedBox(
+                  height: 3.toHeight,
+                ),
                 Text(
                   subTitle,
                   style: CustomTextStyles().darkGrey12,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                invitedBy != null
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child:
+                            Text(invitedBy, style: CustomTextStyles().grey14),
+                      )
+                    : SizedBox()
               ],
             ),
           )),
         ],
       ),
     );
-
-    // ListTile(
-    //   contentPadding: EdgeInsets.all(0),
-    //   leading: Stack(
-    //     children: [
-    //       Container(
-    //         height: 55.toHeight,
-    //         width: 50.toWidth,
-    //         decoration: BoxDecoration(
-    //             borderRadius: BorderRadius.circular(27.toHeight),
-    //             color: number != null
-    //                 ? AllColors().DARK_GREY
-    //                 : AllColors().LIGHT_GREY),
-    //       ),
-    //       number != null
-    //           ? Positioned(
-    //               right: 0,
-    //               bottom: 0,
-    //               child: Container(
-    //                 alignment: Alignment.center,
-    //                 height: 30.toHeight,
-    //                 width: 30.toWidth,
-    //                 decoration: BoxDecoration(
-    //                     borderRadius: BorderRadius.circular(15.0),
-    //                     color: AllColors().LIGHT_GREY),
-    //                 child: Text('+$number'),
-    //               ),
-    //             )
-    //           : Container(
-    //               height: 0,
-    //               width: 0,
-    //             ),
-    //     ],
-    //   ),
-    //   title: Text(
-    //     title,
-    //     style: CustomTextStyles().darkGrey16,
-    //   ),
-    //   subtitle: Text(
-    //     subTitle,
-    //     style: CustomTextStyles().grey14,
-    //   ),
-    // );
   }
 }

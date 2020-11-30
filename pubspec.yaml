@@ -47,7 +47,8 @@ flutter:
     - assets/images/person1.png
     - assets/images/person2.png
     - assets/images/splash_bg.png
-
+    - assets/images/empty_group.png
+    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see
@@ -70,6 +71,9 @@ flutter:
           weight: 700
         - asset: assets/fonts/HelveticaExtraBold.ttf
           weight: 800
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/Playfair_Display/PlayfairDisplay-Bold.ttf
   # fonts:
   #   - family: Schyler
   #     fonts:

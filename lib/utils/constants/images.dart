@@ -9,4 +9,6 @@ class AllImages {
   String PERSON1 = "assets/images/person1.png";
   // ignore: non_constant_identifier_names
   String PERSON2 = "assets/images/person2.png";
+  // ignore: non_constant_identifier_names
+  String EMPTY_GROUP = "assets/images/empty_group.png";
 }

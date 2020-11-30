@@ -7,15 +7,15 @@ class ShowDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 50.toHeight,
-      width: 50.toWidth,
+      width: 50.toHeight,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(6.0),
+          bottomLeft: Radius.circular(10.0),
         ),
-        color: AllColors().WHITE,
+        color: AllColors().Black,
         boxShadow: [
           BoxShadow(
-            color: AllColors().DARK_GREY,
+            color: AllColors().GREY,
             blurRadius: 2.0,
             spreadRadius: 2.0,
             offset: Offset(0.0, 0.0),
@@ -23,10 +23,11 @@ class ShowDrawer extends StatelessWidget {
         ],
       ),
       child: IconButton(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10.toHeight),
           //iconSize: 20.toHeight,
           icon: Icon(
-            Icons.grid_view,
+            Icons.table_rows,
+            color: AllColors().WHITE,
             size: 27.toFont,
           ),
           onPressed: () {
