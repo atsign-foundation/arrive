@@ -32,9 +32,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Icons.arrow_back,
                 color: AllColors().Black,
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              })
+              onPressed: () => Navigator.pop(context))
           : Container(
               alignment: Alignment.center,
               // padding: leadingWidget != null

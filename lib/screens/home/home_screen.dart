@@ -173,9 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: AllColors().WHITE,
                               ),
                               child: InkWell(
-                                onTap: () {
-                                  pc.open();
-                                },
+                                onTap: () => pc.open(),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -222,24 +220,18 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Create Event',
               icon: Icons.event,
-              onTap: () {
-                bottomSheet(
-                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
-              }),
+              onTap: () => bottomSheet(
+                  context, CreateEvent(), SizeConfig().screenHeight * 0.9)),
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
-              onTap: () {
-                bottomSheet(context, RequestLocation(),
-                    SizeConfig().screenHeight * 0.5);
-              }),
+              onTap: () => bottomSheet(
+                  context, RequestLocation(), SizeConfig().screenHeight * 0.5)),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
-              onTap: () {
-                bottomSheet(
-                    context, ShareLocation(), SizeConfig().screenHeight * 0.6);
-              })
+              onTap: () => bottomSheet(
+                  context, ShareLocation(), SizeConfig().screenHeight * 0.6))
         ],
       ),
     );

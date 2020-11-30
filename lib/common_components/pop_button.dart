@@ -8,9 +8,7 @@ class PopButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-          Navigator.pop(context);
-        },
+        onTap: () => Navigator.pop(context),
         child: Text(label, style: textStyle ?? CustomTextStyles().orange16));
   }
 }

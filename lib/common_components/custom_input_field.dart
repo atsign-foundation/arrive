@@ -37,11 +37,7 @@ class CustomInputField extends StatelessWidget {
                 border: InputBorder.none,
                 hintStyle: TextStyle(color: AllColors().DARK_GREY),
               ),
-              onTap: () {
-                if (onTap != null) {
-                  onTap();
-                }
-              },
+              onTap: onTap ?? null,
             ),
           ),
           isIcon

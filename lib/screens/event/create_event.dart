@@ -109,10 +109,8 @@ class _CreateEventState extends State<CreateEvent> {
               CustomButton(
                 child: Text('Create & Invite',
                     style: TextStyle(color: AllColors().WHITE)),
-                onTap: () {
-                  bottomSheet(context, SelectLocation(),
-                      SizeConfig().screenHeight * 0.9);
-                },
+                onTap: () => bottomSheet(
+                    context, SelectLocation(), SizeConfig().screenHeight * 0.9),
                 bgColor: AllColors().Black,
                 width: 160,
                 height: 48,

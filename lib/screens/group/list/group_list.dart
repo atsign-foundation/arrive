@@ -2,7 +2,6 @@ import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/person_tile/person_horizontal_tile.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
-import 'package:atsign_location_app/screens/group/empty_group/empty_group.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:flutter/material.dart';
@@ -18,9 +17,7 @@ class GroupList extends StatelessWidget {
           centerTitle: true,
           title: 'Groups',
           action: InkWell(
-            onTap: () {
-              SetupRoutes.push(context, Routes.NEW_GROUP);
-            },
+            onTap: () => SetupRoutes.push(context, Routes.NEW_GROUP),
             child: Icon(
               Icons.add,
               color: AllColors().ORANGE,
@@ -37,9 +34,7 @@ class GroupList extends StatelessWidget {
           crossAxisCount: 2,
           children: List.generate(14, (index) {
             return InkWell(
-              onTap: () {
-                SetupRoutes.push(context, Routes.GROUP_VIEW);
-              },
+              onTap: () => SetupRoutes.push(context, Routes.GROUP_VIEW),
               child: CustomPersonHorizontalTile(
                 imageLocation: AllImages().PERSON1,
                 title: 'Alexa Team',

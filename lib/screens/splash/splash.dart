@@ -79,9 +79,7 @@ class Splash extends StatelessWidget {
                       'Explore',
                       style: CustomTextStyles().white15,
                     ),
-                    onTap: () {
-                      SetupRoutes.push(context, Routes.HOME);
-                    },
+                    onTap: () => SetupRoutes.push(context, Routes.HOME),
                     bgColor: AllColors().Black)),
           ],
         ),
