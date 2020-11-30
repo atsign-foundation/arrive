@@ -44,7 +44,7 @@ class EmptyGroup extends StatelessWidget {
                 'Create',
                 style: CustomTextStyles().white15,
               ),
-              onTap: () {},
+              onTap: null,
               bgColor: AllColors().Black)
         ],
       ),

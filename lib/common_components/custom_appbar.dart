@@ -32,17 +32,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Icons.arrow_back,
                 color: AllColors().Black,
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              })
+              onPressed: () => Navigator.pop(context))
           : Container(
               alignment: Alignment.center,
-              padding: leadingWidget != null
-                  ? EdgeInsets.only(left: 16.toWidth)
-                  : EdgeInsets.only(left: 0.toWidth),
+              // padding: leadingWidget != null
+              //     ? EdgeInsets.only(left: 0.toWidth)
+              //     : EdgeInsets.only(left: 0.toWidth),
               child: leadingWidget ?? null),
       centerTitle: centerTitle,
-      title: Text(title, style: CustomTextStyles().black18),
+      title: title != null
+          ? Text(title, style: CustomTextStyles().black18)
+          : SizedBox(),
       actions: [
         Container(
             alignment: Alignment.center,
