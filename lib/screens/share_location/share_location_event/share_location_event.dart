@@ -59,7 +59,7 @@ class ShareLocationEvent extends StatelessWidget {
           SlidingUpPanel(
             //color: Colors.transparent,
             controller: pc,
-            minHeight: 197,
+            minHeight: 205,
             maxHeight: 431,
             collapsed: collapsedContent(false, context),
             panel: collapsedContent(true, context),
@@ -71,7 +71,7 @@ class ShareLocationEvent extends StatelessWidget {
 
   Widget collapsedContent(bool expanded, BuildContext context) {
     return Container(
-        height: expanded ? 431 : 197,
+        height: expanded ? 431 : 205,
         padding: EdgeInsets.fromLTRB(15, 3, 15, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(

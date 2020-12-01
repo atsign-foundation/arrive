@@ -1,5 +1,5 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
-import 'package:atsign_location_app/common_components/person_tile/person_horizontal_tile.dart';
+import 'package:atsign_location_app/common_components/tiles/person_horizontal_tile.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';

@@ -1,6 +1,6 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
-import 'package:atsign_location_app/common_components/person_tile/person_vertical_tile.dart';
+import 'package:atsign_location_app/common_components/tiles/person_vertical_tile.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
-import 'package:atsign_location_app/common_components/person_tile/person_vertical_tile.dart';
+import 'package:atsign_location_app/common_components/tiles/person_vertical_tile.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
