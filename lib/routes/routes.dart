@@ -7,6 +7,7 @@ import 'package:atsign_location_app/screens/group/members/group_members.dart';
 import 'package:atsign_location_app/screens/group/group_view/group_view.dart';
 import 'package:atsign_location_app/screens/group/new_group/new_group.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
+import 'package:atsign_location_app/screens/request_location/request_location-event/request_location_event.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_event/share_location_event.dart';
 import 'package:atsign_location_app/screens/selected_location.dart/selected_location.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
@@ -29,6 +30,7 @@ class SetupRoutes {
       Routes.GROUP_MEMBERS: (context) => GroupMembers(),
       Routes.SHARE_LOCATION_EVENT: (context) => ShareLocationEvent(),
       Routes.SELECTED_LOCATION: (context) => SelectedLocation(),
+      Routes.REQUEST_LOCATION_EVENT: (context) => RequestLocationEvent(),
     };
   }
 

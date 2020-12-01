@@ -2,7 +2,7 @@ import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
-import 'package:atsign_location_app/common_components/participants.dart';
+import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/screens/chat_area/chat_area.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -15,7 +15,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:map/map.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
-class ShareLocationEvent extends StatelessWidget {
+class RequestLocationEvent extends StatelessWidget {
   final PanelController pc = PanelController();
   final controller = MapController(
     location: LatLng(35.68, 51.41),
@@ -59,8 +59,8 @@ class ShareLocationEvent extends StatelessWidget {
           SlidingUpPanel(
             //color: Colors.transparent,
             controller: pc,
-            minHeight: 197,
-            maxHeight: 431,
+            minHeight: 119,
+            maxHeight: 291,
             collapsed: collapsedContent(false, context),
             panel: collapsedContent(true, context),
           )
@@ -71,7 +71,8 @@ class ShareLocationEvent extends StatelessWidget {
 
   Widget collapsedContent(bool expanded, BuildContext context) {
     return Container(
-        height: expanded ? 431 : 197,
+        height: expanded ? 291 : 119,
+        width: SizeConfig().screenWidth,
         padding: EdgeInsets.fromLTRB(15, 3, 15, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -96,71 +97,93 @@ class ShareLocationEvent extends StatelessWidget {
                 height: 3,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'Tina\'s Birthday Party',
-                    style: CustomTextStyles().black18,
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DisplayTile(
+                            title: 'Levina Thomas',
+                            image: AllImages().PERSON2,
+                            subTitle: '@sign'),
+                        Text(
+                          'This user does not share his location',
+                          style: CustomTextStyles().grey12,
+                        ),
+                        Text(
+                          'Sharing my location until 20:35 today',
+                          style: CustomTextStyles().black12,
+                        )
+                      ],
+                    ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text('Edit', style: CustomTextStyles().orange16),
-                      Icon(Icons.edit, color: AllColors().ORANGE)
-                    ],
-                  )
-                ],
-              ),
-              Text(
-                '@ label',
-                style: CustomTextStyles().black14,
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              Text(
-                'Event on 14 August 2020',
-                style: CustomTextStyles().darkGrey14,
-              ),
-              SizedBox(
-                height: 3,
-              ),
-              Text(
-                '22:00 - 23:45',
-                style: CustomTextStyles().darkGrey14,
-              ),
-              Divider(),
-              DisplayTile(
-                  title: 'Levina Thomas and 9 more',
-                  image: AllImages().PERSON2,
-                  semiTitle: '10 people',
-                  subTitle: 'Share my location from 21:00 today',
-                  action: Transform.rotate(
+                  Transform.rotate(
                     angle: 5.8,
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: AllColors().ORANGE,
-                      ),
-                      child: Icon(
-                        Icons.send_outlined,
-                        color: AllColors().WHITE,
-                        size: 25.toFont,
+                    child: InkWell(
+                      onTap: () => bottomSheet(
+                          context,
+                          Container(
+                            height: 157.toHeight,
+                            padding: EdgeInsets.fromLTRB(15.toWidth, 5.toHeight,
+                                15.toWidth, 20.toHeight),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                        child: Text(
+                                      'Choose an application to navigate to the venue',
+                                      style: CustomTextStyles().grey14,
+                                    )),
+                                    SizedBox(
+                                      width: 10.toWidth,
+                                    ),
+                                    PopButton(label: 'Close')
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10.toWidth,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    'Google Map',
+                                    style: CustomTextStyles().darkGrey16,
+                                  ),
+                                ),
+                                Divider(),
+                                Expanded(
+                                  child: InkWell(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Text(
+                                      'Apple Map',
+                                      style: CustomTextStyles().darkGrey16,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          157),
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: AllColors().ORANGE,
+                        ),
+                        child: Icon(
+                          Icons.send_outlined,
+                          color: AllColors().WHITE,
+                          size: 25.toFont,
+                        ),
                       ),
                     ),
-                  )),
-              Padding(
-                padding: EdgeInsets.only(left: 56.toWidth),
-                child: InkWell(
-                  onTap: () => bottomSheet(context, Participants(), 422),
-                  child: Text(
-                    'See Participants',
-                    style: CustomTextStyles().orange14,
-                  ),
-                ),
+                  )
+                ],
               ),
               expanded
                   ? Expanded(
@@ -168,20 +191,6 @@ class ShareLocationEvent extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Divider(),
-                          Text(
-                            'Address',
-                            style: CustomTextStyles().darkGrey14,
-                          ),
-                          SizedBox(
-                            height: 3,
-                          ),
-                          Flexible(
-                            child: Text(
-                              '194, White Pane Lane, Troutile, Virginia, 24175',
-                              style: CustomTextStyles().darkGrey14,
-                            ),
-                          ),
                           Divider(),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,12 +206,9 @@ class ShareLocationEvent extends StatelessWidget {
                           ),
                           Divider(),
                           Expanded(
-                            child: InkWell(
-                              onTap: () => Navigator.pop(context),
-                              child: Text(
-                                'Exit Event',
-                                style: CustomTextStyles().orange16,
-                              ),
+                            child: Text(
+                              'Request Location',
+                              style: CustomTextStyles().darkGrey16,
                             ),
                           ),
                           Divider(),
@@ -210,11 +216,11 @@ class ShareLocationEvent extends StatelessWidget {
                             child: InkWell(
                               onTap: () => Navigator.pop(context),
                               child: Text(
-                                'Cancel Event',
+                                'Remove Person',
                                 style: CustomTextStyles().orange16,
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     )
