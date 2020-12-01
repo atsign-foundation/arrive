@@ -43,7 +43,6 @@ class NewGroup extends StatelessWidget {
                         SizedBox(height: 5),
                         CustomInputField(
                           icon: Icons.emoji_emotions_outlined,
-                          isIcon: true,
                           width: 240.toWidth,
                         ),
                       ],

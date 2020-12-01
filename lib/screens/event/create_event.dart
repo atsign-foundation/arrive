@@ -44,7 +44,6 @@ class _CreateEventState extends State<CreateEvent> {
                     width: 330,
                     height: 50,
                     hintText: 'Type @sign or search from contact',
-                    isIcon: true,
                     icon: Icons.contacts_rounded,
                   ),
                   SizedBox(height: 25),
@@ -68,7 +67,6 @@ class _CreateEventState extends State<CreateEvent> {
                     width: 330,
                     height: 50,
                     hintText: 'Start typing or select from map',
-                    isIcon: false,
                   ),
                   SizedBox(height: 25),
                   Row(

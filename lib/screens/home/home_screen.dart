@@ -1,5 +1,6 @@
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
+import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
@@ -56,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: FloatingIcon(
                     bgColor: AllColors().Black,
                     icon: Icons.table_rows,
-                    iconColor: AllColors().GREY),
+                    iconColor: AllColors().WHITE),
               ),
               // Positioned(bottom: 277.toHeight, child: header()),
               Positioned(bottom: 264.toHeight, child: header()),
@@ -64,27 +65,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 //color: Colors.transparent,
                 controller: pc,
                 minHeight: 267.toHeight,
-                // minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
-                collapsed: Container(
-                  height: 267.toHeight,
-                  color: AllColors().WHITE,
-                  // height: 267.toHeight,
-                  //padding: EdgeInsets.only(bottom: 2.toHeight),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        collapsedContent(2),
-                      ]),
-                ),
-                panel: SingleChildScrollView(
-                  padding: EdgeInsets.only(bottom: 0),
-                  child: Column(
-                    children: [
-                      collapsedContent(GroupData().group.length),
-                    ],
-                  ),
-                ),
+                collapsed: collapsedContent(2),
+                panel: collapsedContent(GroupData().group.length),
               )
             ],
           )),
@@ -92,105 +75,85 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget collapsedContent(int length) {
-    return Column(
-      children: [
-        Container(
-            padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0)),
-              color: AllColors().WHITE,
-              boxShadow: [
-                BoxShadow(
-                  color: AllColors().DARK_GREY,
-                  blurRadius: 10.0,
-                  spreadRadius: 1.0,
-                  offset: Offset(0.0, 0.0),
-                )
-              ],
-            ),
-            child: Container(
-              height: length == 2 ? 260.toHeight : 530.toHeight,
-              child: SingleChildScrollView(
-                // padding: EdgeInsets.only(top: 5.toHeight),
-
-                //controller: _scrollController,
-                physics: length == 2
-                    ? NeverScrollableScrollPhysics()
-                    : AlwaysScrollableScrollPhysics(),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 6.toHeight,
+    return Container(
+        height: length == 2 ? 260.toHeight : 530.toHeight,
+        padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+          color: AllColors().WHITE,
+          boxShadow: [
+            BoxShadow(
+              color: AllColors().DARK_GREY,
+              blurRadius: 10.0,
+              spreadRadius: 1.0,
+              offset: Offset(0.0, 0.0),
+            )
+          ],
+        ),
+        child: SingleChildScrollView(
+          physics: length == 2
+              ? NeverScrollableScrollPhysics()
+              : AlwaysScrollableScrollPhysics(),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                DraggableSymbol(),
+                SizedBox(
+                  height: 5.toHeight,
+                ),
+                DisplayTile(
+                  image: GroupData().group[0].image,
+                  title: 'Event @ Group Name',
+                  semiTitle: 'Action required',
+                  subTitle: 'Sharing my location until 20:00',
+                  number: 10,
+                ),
+                Divider(),
+                ListView.separated(
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: length,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return DisplayTile(
+                      image: GroupData().group[index].image,
+                      title: GroupData().group[index].username,
+                      subTitle: GroupData().group[index].canSeeLocation
+                          ? 'Can see my location'
+                          : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                ),
+                length == 2
+                    ? Container(
+                        //height: 16.toHeight,
+                        alignment: Alignment.topCenter,
                         width: SizeConfig().screenWidth,
-                        alignment: Alignment.center,
-                        child: Container(
-                            width: 60.toWidth,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(7.toHeight),
-                              color: AllColors().DARK_GREY,
-                            )),
-                      ),
-                      SizedBox(
-                        height: 5.toHeight,
-                      ),
-                      DisplayTile(
-                        image: GroupData().group[0].image,
-                        title: 'Event @ Group Name',
-                        semiTitle: 'Action required',
-                        subTitle: 'Sharing my location until 20:00',
-                        number: 10,
-                      ),
-                      Divider(),
-                      ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: length,
-                        shrinkWrap: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          return DisplayTile(
-                            image: GroupData().group[index].image,
-                            title: GroupData().group[index].username,
-                            subTitle: GroupData().group[index].canSeeLocation
-                                ? 'Can see my location'
-                                : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
-                          );
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return Divider();
-                        },
-                      ),
-                      length == 2
-                          ? Container(
-                              //height: 16.toHeight,
-                              alignment: Alignment.topCenter,
-                              width: SizeConfig().screenWidth,
-                              padding: EdgeInsets.fromLTRB(56.toHeight,
-                                  0.toHeight, 0.toWidth, 0.toHeight),
-                              decoration: BoxDecoration(
-                                color: AllColors().WHITE,
+                        padding: EdgeInsets.fromLTRB(
+                            56.toHeight, 0.toHeight, 0.toWidth, 0.toHeight),
+                        decoration: BoxDecoration(
+                          color: AllColors().WHITE,
+                        ),
+                        child: InkWell(
+                          onTap: () => pc.open(),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'See 9 more ',
+                                style: CustomTextStyles().darkGrey14,
                               ),
-                              child: InkWell(
-                                onTap: () => pc.open(),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'See 9 more ',
-                                      style: CustomTextStyles().darkGrey14,
-                                    ),
-                                    Icon(Icons.keyboard_arrow_down)
-                                  ],
-                                ),
-                              ))
-                          : SizedBox()
-                    ]),
-              ),
-            )),
-      ],
-    );
+                              Icon(Icons.keyboard_arrow_down)
+                            ],
+                          ),
+                        ))
+                    : SizedBox()
+              ]),
+        ));
   }
 
   Widget header() {

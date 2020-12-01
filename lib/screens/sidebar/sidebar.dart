@@ -58,7 +58,8 @@ class _SideBarState extends State<SideBar> {
                 ],
               ),
             ),
-            iconText('Events', Icons.arrow_upward, () {}),
+            iconText('Events', Icons.arrow_upward,
+                () => SetupRoutes.push(context, Routes.EVENT_LOG)),
             SizedBox(
               height: 25.toHeight,
             ),
@@ -66,21 +67,24 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Groups', Icons.group, () {
-              SetupRoutes.push(context, Routes.GROUP_LIST);
-            }),
+            iconText(
+              'Groups',
+              Icons.group,
+              () => SetupRoutes.push(context, Routes.GROUP_LIST),
+            ),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('FAQ', Icons.question_answer, () {
-              SetupRoutes.push(context, Routes.FAQS);
-            }),
+            iconText('FAQ', Icons.question_answer,
+                () => SetupRoutes.push(context, Routes.FAQS)),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Terms and Conditions', Icons.text_format_outlined, () {
-              SetupRoutes.push(context, Routes.TERMS_CONDITIONS_SCREEN);
-            }),
+            iconText(
+                'Terms and Conditions',
+                Icons.text_format_outlined,
+                () =>
+                    SetupRoutes.push(context, Routes.TERMS_CONDITIONS_SCREEN)),
             SizedBox(
               height: 25.toHeight,
             ),
@@ -96,11 +100,7 @@ class _SideBarState extends State<SideBar> {
                 ),
                 Switch(
                     value: state,
-                    onChanged: (value) {
-                      setState(() {
-                        state = value;
-                      });
-                    })
+                    onChanged: (value) => setState(() => state = value))
               ],
             ),
             SizedBox(

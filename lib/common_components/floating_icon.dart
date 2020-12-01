@@ -6,9 +6,14 @@ class FloatingIcon extends StatelessWidget {
   final Color bgColor, iconColor;
   final IconData icon;
   final bool isTopLeft;
+  final Function onPressed;
 
   FloatingIcon(
-      {this.bgColor, this.iconColor, this.icon, this.isTopLeft = false});
+      {this.bgColor,
+      this.iconColor,
+      this.icon,
+      this.isTopLeft = false,
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,7 @@ class FloatingIcon extends StatelessWidget {
             color: iconColor != null ? iconColor : AllColors().WHITE,
             size: 27.toFont,
           ),
-          onPressed: () => Scaffold.of(context).openEndDrawer()),
+          onPressed: onPressed ?? () => Scaffold.of(context).openEndDrawer()),
     );
   }
 }

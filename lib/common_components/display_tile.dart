@@ -7,17 +7,19 @@ import 'package:atsign_location_app/services/size_config.dart';
 class DisplayTile extends StatelessWidget {
   final String title, semiTitle, subTitle, image, invitedBy;
   final int number;
+  final Widget action;
   DisplayTile(
       {@required this.title,
       @required this.image,
       @required this.subTitle,
       this.semiTitle,
       this.invitedBy,
-      this.number});
+      this.number,
+      this.action});
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 10.5.toHeight),
+      padding: EdgeInsets.only(bottom: 10.5),
       child: Row(
         children: [
           Stack(
@@ -46,7 +48,7 @@ class DisplayTile extends StatelessWidget {
                   : SizedBox(),
             ],
           ),
-          Flexible(
+          Expanded(
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: Column(
@@ -60,18 +62,20 @@ class DisplayTile extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(
-                  height: 3.toHeight,
+                  height: 3,
                 ),
                 semiTitle != null
                     ? Text(
                         semiTitle,
-                        style: CustomTextStyles().orange12,
+                        style: semiTitle == 'Action required'
+                            ? CustomTextStyles().orange12
+                            : CustomTextStyles().darkGrey12,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       )
                     : SizedBox(),
                 SizedBox(
-                  height: 3.toHeight,
+                  height: 3,
                 ),
                 Text(
                   subTitle,
@@ -89,6 +93,7 @@ class DisplayTile extends StatelessWidget {
               ],
             ),
           )),
+          action ?? SizedBox()
         ],
       ),
     );

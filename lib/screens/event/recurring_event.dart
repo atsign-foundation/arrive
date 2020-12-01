@@ -44,14 +44,12 @@ class _RecurringEventState extends State<RecurringEvent> {
                             width: 155,
                             height: 50,
                             hintText: 'Start',
-                            isIcon: true,
                             icon: Icons.keyboard_arrow_down,
                           ),
                           CustomInputField(
                             width: 155,
                             height: 50,
                             hintText: 'Stop',
-                            isIcon: true,
                             icon: Icons.keyboard_arrow_down,
                           ),
                         ],
@@ -63,7 +61,6 @@ class _RecurringEventState extends State<RecurringEvent> {
                         width: 330,
                         height: 50,
                         hintText: 'Select Day',
-                        isIcon: true,
                         icon: Icons.keyboard_arrow_down,
                       ),
                       SizedBox(height: 25.toHeight),
@@ -77,14 +74,12 @@ class _RecurringEventState extends State<RecurringEvent> {
                             width: 155,
                             height: 50,
                             hintText: 'Start',
-                            isIcon: true,
                             icon: Icons.access_time,
                           ),
                           CustomInputField(
                             width: 155,
                             height: 50,
                             hintText: 'Stop',
-                            isIcon: true,
                             icon: Icons.access_time,
                           ),
                         ],
@@ -97,6 +92,7 @@ class _RecurringEventState extends State<RecurringEvent> {
                         children: <Widget>[
                           Text('Never', style: CustomTextStyles().black14),
                           Radio(
+                            groupValue: true,
                             toggleable: true,
                             value: true,
                             onChanged: (event) {
@@ -111,6 +107,7 @@ class _RecurringEventState extends State<RecurringEvent> {
                         children: <Widget>[
                           Text('On', style: CustomTextStyles().black14),
                           Radio(
+                            groupValue: true,
                             toggleable: true,
                             value: false,
                             onChanged: (event) {
@@ -124,7 +121,6 @@ class _RecurringEventState extends State<RecurringEvent> {
                         width: 330.toWidth,
                         height: 50,
                         hintText: 'Select a Date',
-                        isIcon: true,
                         icon: Icons.keyboard_arrow_down,
                       ),
                       SizedBox(height: 6.toHeight),

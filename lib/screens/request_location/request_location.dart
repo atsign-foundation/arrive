@@ -40,7 +40,6 @@ class _RequestLocationState extends State<RequestLocation> {
                     width: 330,
                     height: 50,
                     hintText: 'Type @sign or search from contact',
-                    isIcon: true,
                     icon: Icons.contacts_rounded,
                   ),
                 ],

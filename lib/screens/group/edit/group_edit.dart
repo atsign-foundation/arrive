@@ -65,7 +65,6 @@ class GroupEdit extends StatelessWidget {
                   horizontal: 27.toWidth, vertical: 2.toHeight),
               child: CustomInputField(
                 icon: Icons.emoji_emotions_outlined,
-                isIcon: true,
                 width: double.infinity,
               ),
             )
