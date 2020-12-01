@@ -20,14 +20,11 @@ class ConcurrentEventDialog extends StatelessWidget {
             // padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
             child: Column(
               children: <Widget>[
-                Text('You already have an event scheduled',
-                    style: CustomTextStyles().grey16),
-                SizedBox(height: 5),
-                Text('during this hours. Are you sure you',
-                    style: CustomTextStyles().grey16),
-                SizedBox(height: 5),
-                Text('want to create another?',
-                    style: CustomTextStyles().grey16),
+                Text(
+                  'User Name wants to share an event with you. Are you sure you want to join and share your location with the group?',
+                  style: CustomTextStyles().grey16,
+                  textAlign: TextAlign.center,
+                ),
                 SizedBox(height: 10),
                 Divider(),
                 SizedBox(height: 10),
