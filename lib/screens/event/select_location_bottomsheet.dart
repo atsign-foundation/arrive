@@ -16,65 +16,61 @@ class _SelectLocationState extends State<SelectLocation> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: SizeConfig().screenHeight * 0.8,
       child: SingleChildScrollView(
-        child: Container(
-          height: SizeConfig().screenHeight * 0.8,
-          padding: EdgeInsets.fromLTRB(28.toWidth, 20.toHeight, 17.toWidth, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: CustomInputField(
-                      hintText: 'Search an area, street name…',
-                    ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: CustomInputField(
+                    hintText: 'Search an area, street name…',
                   ),
-                  SizedBox(width: 10.toWidth),
-                  InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: Text(AllText().CANCEL,
-                          style: CustomTextStyles().orange16)),
-                ],
-              ),
-              SizedBox(height: 20.toHeight),
-              Divider(),
-              SizedBox(height: 18.toHeight),
-              Text('Current Location', style: CustomTextStyles().greyLabel14),
-              SizedBox(height: 5.toHeight),
-              Text('Using GPS', style: CustomTextStyles().greyLabel12),
-              SizedBox(height: 20.toHeight),
-              Divider(),
-              SizedBox(height: 20.toHeight),
-              Text('Search Results',
-                  style: CustomTextStyles().lightGreyLabel12),
-              SizedBox(height: 20.toHeight),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: 3,
-                  separatorBuilder: (context, index) {
-                    return Column(
-                      children: [
-                        SizedBox(height: 20),
-                        Divider(),
-                      ],
-                    );
-                  },
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () => onLocationSelect(context),
-                      child: LocationTile(
-                        icon: Icons.location_on,
-                        title: 'Central Park',
-                        subTitle:
-                            '194, White Pine Lane, Troutville, Virginia, 24175 ',
-                      ),
-                    );
-                  },
                 ),
+                SizedBox(width: 10.toWidth),
+                InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: Text(AllText().CANCEL,
+                        style: CustomTextStyles().orange16)),
+              ],
+            ),
+            SizedBox(height: 20.toHeight),
+            Divider(),
+            SizedBox(height: 18.toHeight),
+            Text('Current Location', style: CustomTextStyles().greyLabel14),
+            SizedBox(height: 5.toHeight),
+            Text('Using GPS', style: CustomTextStyles().greyLabel12),
+            SizedBox(height: 20.toHeight),
+            Divider(),
+            SizedBox(height: 20.toHeight),
+            Text('Search Results', style: CustomTextStyles().lightGreyLabel12),
+            SizedBox(height: 20.toHeight),
+            Expanded(
+              child: ListView.separated(
+                itemCount: 3,
+                separatorBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      SizedBox(height: 20),
+                      Divider(),
+                    ],
+                  );
+                },
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () => onLocationSelect(context),
+                    child: LocationTile(
+                      icon: Icons.location_on,
+                      title: 'Central Park',
+                      subTitle:
+                          '194, White Pine Lane, Troutville, Virginia, 24175 ',
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

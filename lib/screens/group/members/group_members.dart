@@ -14,6 +14,7 @@ class GroupMembers extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: CustomAppBar(
+          padding: true,
           title: 'Trusted Senders',
           centerTitle: true,
           showBackIcon: true,

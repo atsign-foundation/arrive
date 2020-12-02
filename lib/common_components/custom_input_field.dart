@@ -40,11 +40,12 @@ class CustomInputField extends StatelessWidget {
               onTap: onTap ?? null,
             ),
           ),
-          Icon(
-                icon,
-                color: iconColor ?? AllColors().DARK_GREY,
-              ) ??
-              SizedBox()
+          icon != null
+              ? Icon(
+                  icon,
+                  color: iconColor ?? AllColors().DARK_GREY,
+                )
+              : SizedBox()
         ],
       ),
     );

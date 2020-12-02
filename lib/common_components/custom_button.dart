@@ -8,18 +8,17 @@ class CustomButton extends StatelessWidget {
   final Function onTap;
   final Color bgColor;
   final Border border;
-  final bool useDefaultRadius;
 
-  CustomButton(
-      {@required this.child,
-      this.height = 50,
-      @required this.onTap,
-      this.padding,
-      this.width = 50,
-      @required this.bgColor,
-      this.radius,
-      this.border,
-      this.useDefaultRadius = true});
+  CustomButton({
+    @required this.child,
+    this.height = 50,
+    @required this.onTap,
+    this.padding,
+    this.width = 50,
+    @required this.bgColor,
+    this.radius,
+    this.border,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +33,7 @@ class CustomButton extends StatelessWidget {
         decoration: BoxDecoration(
             color: bgColor,
             border: border ?? Border(),
-            borderRadius:
-                useDefaultRadius ? BorderRadius.circular(radius ?? 30) : null),
+            borderRadius: BorderRadius.circular(radius ?? 30)),
       ),
     );
   }

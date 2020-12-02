@@ -5,12 +5,7 @@ void bottomSheet(BuildContext context, T, double height) {
   showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-        ),
-      ),
+      shape: StadiumBorder(),
       builder: (BuildContext context) {
         return Container(
           height: height,

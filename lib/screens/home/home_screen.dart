@@ -24,10 +24,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  ScrollController _scrollController = new ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: false,
-  );
   PanelController pc = PanelController();
   final controller = MapController(
     location: LatLng(35.68, 51.41),
@@ -59,10 +55,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icons.table_rows,
                     iconColor: AllColors().WHITE),
               ),
-              // Positioned(bottom: 277.toHeight, child: header()),
               Positioned(bottom: 264.toHeight, child: header()),
               SlidingUpPanel(
-                //color: Colors.transparent,
                 controller: pc,
                 minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
@@ -162,8 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
       width: 356.toWidth,
       margin:
           EdgeInsets.symmetric(horizontal: 10.toWidth, vertical: 10.toHeight),
-      // padding:
-      //     EdgeInsets.symmetric(horizontal: 24.toWidth, vertical: 16.toHeight),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         color: AllColors().WHITE,

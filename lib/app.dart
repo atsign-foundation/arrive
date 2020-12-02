@@ -11,7 +11,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AtSign Atmosphere App',
+      title: 'AtSign Location App',
       debugShowCheckedModeBanner: false,
       initialRoute: SetupRoutes.initialRoute,
       navigatorKey: NavService.navKey,

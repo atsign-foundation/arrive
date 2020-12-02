@@ -27,7 +27,6 @@ class ConcurrentEventRequest extends StatelessWidget {
         content: Container(
           child: SingleChildScrollView(
             child: Container(
-              width: 9000,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
@@ -91,20 +90,18 @@ class ConcurrentEventRequest extends StatelessWidget {
                   SizedBox(height: 20.toHeight),
                   CustomButton(
                     onTap: () => null,
-                    child:
-                        Text('Yes', style: TextStyle(color: AllColors().WHITE)),
+                    child: Text('Yes', style: CustomTextStyles().white15),
                     bgColor: AllColors().Black,
                     width: 164.toWidth,
                     height: 48.toHeight,
                   ),
                   SizedBox(height: 5),
-                  CustomButton(
-                    onTap: () => null,
-                    child:
-                        Text('No', style: TextStyle(color: AllColors().Black)),
-                    bgColor: AllColors().WHITE,
-                    width: 164.toWidth,
-                    height: 48.toHeight,
+                  InkWell(
+                    onTap: null,
+                    child: Text(
+                      'No',
+                      style: CustomTextStyles().black14,
+                    ),
                   ),
                 ],
               ),

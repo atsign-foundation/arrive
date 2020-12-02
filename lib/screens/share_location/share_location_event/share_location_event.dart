@@ -57,7 +57,6 @@ class ShareLocationEvent extends StatelessWidget {
             ),
           ),
           SlidingUpPanel(
-            //color: Colors.transparent,
             controller: pc,
             minHeight: 205,
             maxHeight: 431,

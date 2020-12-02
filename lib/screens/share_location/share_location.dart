@@ -18,57 +18,52 @@ class _ShareLocationState extends State<ShareLocation> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: SizeConfig().screenHeight * 0.5,
       padding: EdgeInsets.all(25),
-      child: SingleChildScrollView(
-        child: Container(
-          height: SizeConfig().screenHeight * 0.5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CustomAppBar(
-                    centerTitle: false,
-                    title: 'Share Location',
-                    action: PopButton(label: 'Cancel'),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text('Share with', style: CustomTextStyles().greyLabel14),
-                  SizedBox(height: 10),
-                  CustomInputField(
-                    width: 330,
-                    height: 50,
-                    hintText: 'Type @sign or search from contact',
-                    icon: Icons.contacts_rounded,
-                  ),
-                  SizedBox(height: 25),
-                  Text(
-                    'Duration',
-                    style: CustomTextStyles().greyLabel14,
-                  ),
-                  SizedBox(height: 10),
-                  CustomInputField(
-                      width: 330,
-                      height: 50,
-                      hintText: 'Select Duration',
-                      icon: Icons.keyboard_arrow_down),
-                ],
-              ),
-              CustomButton(
-                child:
-                    Text('Share', style: TextStyle(color: AllColors().WHITE)),
-                onTap: () =>
-                    SetupRoutes.push(context, Routes.SHARE_LOCATION_EVENT),
-                bgColor: AllColors().Black,
-                width: 164,
-                height: 48,
-              )
-            ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CustomAppBar(
+            centerTitle: false,
+            title: 'Share Location',
+            action: PopButton(label: 'Cancel'),
           ),
-        ),
+          SizedBox(
+            height: 25,
+          ),
+          Text('Share with', style: CustomTextStyles().greyLabel14),
+          SizedBox(height: 10),
+          CustomInputField(
+            width: 330,
+            height: 50,
+            hintText: 'Type @sign or search from contact',
+            icon: Icons.contacts_rounded,
+          ),
+          SizedBox(height: 25),
+          Text(
+            'Duration',
+            style: CustomTextStyles().greyLabel14,
+          ),
+          SizedBox(height: 10),
+          CustomInputField(
+              width: 330,
+              height: 50,
+              hintText: 'Select Duration',
+              icon: Icons.keyboard_arrow_down),
+          Expanded(child: SizedBox()),
+          Center(
+            child: CustomButton(
+              child: Text('Share', style: CustomTextStyles().white15),
+              onTap: () =>
+                  SetupRoutes.push(context, Routes.SHARE_LOCATION_EVENT),
+              bgColor: AllColors().Black,
+              width: 164,
+              height: 48,
+            ),
+          )
+        ],
       ),
     );
   }

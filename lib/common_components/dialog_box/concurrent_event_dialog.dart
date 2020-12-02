@@ -11,13 +11,11 @@ class ConcurrentEventDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 100,
       width: SizeConfig().screenWidth * 0.8,
       child: AlertDialog(
         contentPadding: EdgeInsets.fromLTRB(10, 20, 10, 0),
         content: SingleChildScrollView(
           child: Container(
-            // padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
             child: Column(
               children: <Widget>[
                 Text(
@@ -39,19 +37,18 @@ class ConcurrentEventDialog extends StatelessWidget {
                 CustomButton(
                   onTap: () => null,
                   child: Text('Yes! Create another',
-                      style: TextStyle(color: AllColors().WHITE)),
+                      style: CustomTextStyles().white15),
                   bgColor: AllColors().Black,
                   width: 164.toWidth,
                   height: 48.toHeight,
                 ),
                 SizedBox(height: 5),
-                CustomButton(
-                  onTap: () => null,
-                  child: Text('No! Cancel this',
-                      style: TextStyle(color: AllColors().Black)),
-                  bgColor: AllColors().WHITE,
-                  width: 164.toWidth,
-                  height: 48.toHeight,
+                InkWell(
+                  onTap: null,
+                  child: Text(
+                    'No! Cancel this',
+                    style: CustomTextStyles().black14,
+                  ),
                 ),
                 Divider(),
               ],

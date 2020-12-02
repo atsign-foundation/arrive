@@ -60,9 +60,7 @@ class InviteCard extends StatelessWidget {
               ],
             ),
           ),
-          Container(child: PopButton(label: 'Decide Later')
-              // Text('Decide Later', style: CustomTextStyles().orange16),
-              )
+          PopButton(label: 'Decide Later')
         ],
       ),
     );

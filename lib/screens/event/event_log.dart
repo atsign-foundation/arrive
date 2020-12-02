@@ -20,6 +20,7 @@ class _EventLogState extends State<EventLog> {
         child: Scaffold(
           appBar: CustomAppBar(
             centerTitle: true,
+            padding: true,
             title: 'Events',
             action: PopButton(label: 'Close'),
           ),

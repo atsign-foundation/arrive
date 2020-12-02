@@ -67,8 +67,7 @@ class OneDayEvent extends StatelessWidget {
                           event: 'Tina Birthday’s Party',
                           inviteCount: '10 people invited',
                           eventDate: '10:00 am on Nov, 14')),
-                  child:
-                      Text('Done', style: TextStyle(color: AllColors().WHITE)),
+                  child: Text('Done', style: CustomTextStyles().white15),
                   bgColor: AllColors().Black,
                   width: 164.toWidth,
                   height: 48.toHeight,

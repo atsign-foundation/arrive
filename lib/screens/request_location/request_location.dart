@@ -18,46 +18,40 @@ class _RequestLocationState extends State<RequestLocation> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: SizeConfig().screenHeight * 0.4,
       padding: EdgeInsets.all(25),
-      child: SingleChildScrollView(
-        child: Container(
-          height: SizeConfig().screenHeight * 0.4,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  CustomAppBar(
-                    centerTitle: false,
-                    title: 'Request Location',
-                    action: PopButton(label: 'Cancel'),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text('Request From', style: CustomTextStyles().greyLabel14),
-                  SizedBox(height: 10),
-                  CustomInputField(
-                    width: 330,
-                    height: 50,
-                    hintText: 'Type @sign or search from contact',
-                    icon: Icons.contacts_rounded,
-                  ),
-                ],
-              ),
-              CustomButton(
-                child:
-                    Text('Request', style: TextStyle(color: AllColors().WHITE)),
-                onTap: () =>
-                    SetupRoutes.push(context, Routes.REQUEST_LOCATION_EVENT),
-                bgColor: AllColors().Black,
-                width: 164,
-                height: 48,
-              )
-            ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomAppBar(
+            centerTitle: false,
+            title: 'Request Location',
+            action: PopButton(label: 'Cancel'),
           ),
-        ),
+          SizedBox(
+            height: 25,
+          ),
+          Text('Request From', style: CustomTextStyles().greyLabel14),
+          SizedBox(height: 10),
+          CustomInputField(
+            width: 330,
+            height: 50,
+            hintText: 'Type @sign or search from contact',
+            icon: Icons.contacts_rounded,
+          ),
+          Expanded(child: SizedBox()),
+          Center(
+            child: CustomButton(
+              child: Text('Request', style: CustomTextStyles().white15),
+              onTap: () =>
+                  SetupRoutes.push(context, Routes.REQUEST_LOCATION_EVENT),
+              bgColor: AllColors().Black,
+              width: 164,
+              height: 48,
+            ),
+          )
+        ],
       ),
     );
   }

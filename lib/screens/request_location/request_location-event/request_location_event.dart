@@ -123,50 +123,7 @@ class RequestLocationEvent extends StatelessWidget {
                     angle: 5.8,
                     child: InkWell(
                       onTap: () => bottomSheet(
-                          context,
-                          Container(
-                            height: 157.toHeight,
-                            padding: EdgeInsets.fromLTRB(15.toWidth, 5.toHeight,
-                                15.toWidth, 20.toHeight),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      'Choose an application to navigate to the venue',
-                                      style: CustomTextStyles().grey14,
-                                    )),
-                                    SizedBox(
-                                      width: 10.toWidth,
-                                    ),
-                                    PopButton(label: 'Close')
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: 10.toWidth,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'Google Map',
-                                    style: CustomTextStyles().darkGrey16,
-                                  ),
-                                ),
-                                Divider(),
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () => Navigator.pop(context),
-                                    child: Text(
-                                      'Apple Map',
-                                      style: CustomTextStyles().darkGrey16,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          157),
+                          context, bottomSheetContent(context), 157),
                       child: Container(
                         alignment: Alignment.center,
                         height: 40,
@@ -228,5 +185,50 @@ class RequestLocationEvent extends StatelessWidget {
                       height: 2,
                     )
             ]));
+  }
+
+  Widget bottomSheetContent(BuildContext context) {
+    return Container(
+      height: 157.toHeight,
+      padding:
+          EdgeInsets.fromLTRB(15.toWidth, 5.toHeight, 15.toWidth, 20.toHeight),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                  child: Text(
+                'Choose an application to navigate to the venue',
+                style: CustomTextStyles().grey14,
+              )),
+              SizedBox(
+                width: 10.toWidth,
+              ),
+              PopButton(label: 'Close')
+            ],
+          ),
+          SizedBox(
+            height: 10.toWidth,
+          ),
+          Expanded(
+            child: Text(
+              'Google Map',
+              style: CustomTextStyles().darkGrey16,
+            ),
+          ),
+          Divider(),
+          Expanded(
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              child: Text(
+                'Apple Map',
+                style: CustomTextStyles().darkGrey16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

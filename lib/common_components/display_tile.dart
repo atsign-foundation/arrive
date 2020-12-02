@@ -2,7 +2,6 @@ import 'package:atsign_location_app/common_components/custom_circle_avatar.dart'
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
 
 class DisplayTile extends StatelessWidget {
   final String title, semiTitle, subTitle, image, invitedBy;
