@@ -3,7 +3,9 @@ import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
-import 'package:atsign_location_app/screens/event/select_location_bottomsheet.dart';
+import 'package:atsign_location_app/screens/event/one_day_event.dart';
+import 'package:atsign_location_app/screens/event/recurring_event.dart';
+import 'package:atsign_location_app/screens/event/select_location.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +75,8 @@ class _CreateEventState extends State<CreateEvent> {
                 value: true,
                 onChanged: (value) {
                   print('$value');
+                  bottomSheet(
+                      context, OneDayEvent(), SizeConfig().screenHeight * 0.9);
                 },
               )
             ],
@@ -92,6 +96,8 @@ class _CreateEventState extends State<CreateEvent> {
                 value: false,
                 onChanged: (value) {
                   print('$value');
+                  bottomSheet(context, RecurringEvent(),
+                      SizeConfig().screenHeight * 0.9);
                 },
               )
             ],

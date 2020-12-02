@@ -38,9 +38,7 @@ class InviteCard extends StatelessWidget {
               )
             ],
           ),
-          SizedBox(
-            width: 10.toWidth,
-          ),
+          SizedBox(width: 10.toWidth),
           Expanded(
             flex: 2,
             child: Column(

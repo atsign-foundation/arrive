@@ -13,57 +13,54 @@ class NewGroup extends StatelessWidget {
       child: Scaffold(
         appBar: CustomAppBar(
             title: 'New Group', centerTitle: true, showBackIcon: true),
-        body: Container(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20.toHeight),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SizedBox(
-                    width: 15.toWidth,
+        body: Column(
+          children: <Widget>[
+            SizedBox(height: 20.toHeight),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  width: 15.toWidth,
+                ),
+                Container(
+                  width: 68.toWidth,
+                  height: 68.toWidth,
+                  decoration: new BoxDecoration(
+                    color: AllColors().MILD_GREY,
+                    shape: BoxShape.circle,
                   ),
-                  Container(
-                    width: 68.toWidth,
-                    height: 68.toWidth,
-                    decoration: new BoxDecoration(
-                      color: AllColors().MILD_GREY,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Icon(Icons.add, color: AllColors().ORANGE),
-                    ),
+                  child: Center(
+                    child: Icon(Icons.add, color: AllColors().ORANGE),
                   ),
-                  SizedBox(width: 10.toWidth),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Group name'),
-                        SizedBox(height: 5),
-                        CustomInputField(
-                          icon: Icons.emoji_emotions_outlined,
-                          width: 240.toWidth,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 13.toHeight),
-              Divider(),
-              SizedBox(height: 13.toHeight),
-              Container(
-                height: SizeConfig().screenHeight - 290.toHeight,
+                ),
+                SizedBox(width: 10.toWidth),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Group name'),
+                      SizedBox(height: 5),
+                      CustomInputField(
+                        icon: Icons.emoji_emotions_outlined,
+                        width: 240.toWidth,
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            SizedBox(height: 13.toHeight),
+            Divider(),
+            SizedBox(height: 13.toHeight),
+            Expanded(
+              child: Container(
                 width: double.infinity,
-                // color: Colors.red,
                 child: SingleChildScrollView(
                   child: GridView.count(
                     physics: ScrollPhysics(),
                     shrinkWrap: true,
                     crossAxisCount: 4,
                     crossAxisSpacing: 15.toWidth,
-                    // mainAxisSpacing: 38.toHeight,
                     childAspectRatio: (85 / 120),
                     children: List.generate(20, (index) {
                       return CustomPersonVerticalTile(
@@ -76,9 +73,9 @@ class NewGroup extends StatelessWidget {
                     }),
                   ),
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );

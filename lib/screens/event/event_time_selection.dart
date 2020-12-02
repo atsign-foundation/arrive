@@ -2,17 +2,15 @@ import 'package:atsign_location_app/common_components/invite_card.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
 import 'package:flutter/material.dart';
 
-class EventLocationTimeSelection extends StatefulWidget {
+class EventTimeSelection extends StatefulWidget {
   final String title;
-  EventLocationTimeSelection({this.title = ''});
+  EventTimeSelection({this.title});
 
   @override
-  _EventLocationTimeSelectionState createState() =>
-      _EventLocationTimeSelectionState();
+  _EventTimeSelectionState createState() => _EventTimeSelectionState();
 }
 
-class _EventLocationTimeSelectionState
-    extends State<EventLocationTimeSelection> {
+class _EventTimeSelectionState extends State<EventTimeSelection> {
   @override
   Widget build(BuildContext context) {
     return Container(

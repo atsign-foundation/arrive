@@ -5,8 +5,8 @@ import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/screens/event/create_event.dart';
-import 'package:atsign_location_app/screens/request_location/request_location.dart';
-import 'package:atsign_location_app/screens/share_location/share_location.dart';
+import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
+import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -180,13 +180,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
-              onTap: () => bottomSheet(
-                  context, RequestLocation(), SizeConfig().screenHeight * 0.5)),
+              onTap: () => bottomSheet(context, RequestLocationSheet(),
+                  SizeConfig().screenHeight * 0.5)),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
-              onTap: () => bottomSheet(
-                  context, ShareLocation(), SizeConfig().screenHeight * 0.6))
+              onTap: () => bottomSheet(context, ShareLocationSheet(),
+                  SizeConfig().screenHeight * 0.6))
         ],
       ),
     );

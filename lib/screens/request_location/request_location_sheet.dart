@@ -9,12 +9,12 @@ import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
-class RequestLocation extends StatefulWidget {
+class RequestLocationSheet extends StatefulWidget {
   @override
-  _RequestLocationState createState() => _RequestLocationState();
+  _RequestLocationSheetState createState() => _RequestLocationSheetState();
 }
 
-class _RequestLocationState extends State<RequestLocation> {
+class _RequestLocationSheetState extends State<RequestLocationSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(

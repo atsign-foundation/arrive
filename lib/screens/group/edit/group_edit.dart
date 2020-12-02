@@ -13,6 +13,7 @@ class GroupEdit extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: CustomAppBar(
           padding: true,
           leadingWidget: PopButton(

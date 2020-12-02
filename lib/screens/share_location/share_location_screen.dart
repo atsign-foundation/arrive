@@ -15,7 +15,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:map/map.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
-class ShareLocationEvent extends StatelessWidget {
+class ShareLocationScreen extends StatelessWidget {
   final PanelController pc = PanelController();
   final controller = MapController(
     location: LatLng(35.68, 51.41),

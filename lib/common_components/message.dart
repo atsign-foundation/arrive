@@ -6,19 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
 class Message extends StatelessWidget {
-  final bool send;
+  final bool isSend;
   final String text;
-  Message({@required this.send, @required this.text});
+  Message({@required this.isSend, @required this.text});
   @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.toHeight),
-        child: send
+        child: isSend
             ? Row(
                 children: [
-                  SizedBox(
-                    width: 60.toWidth,
-                  ),
+                  SizedBox(width: 60.toWidth),
                   Expanded(
                     child: Container(
                       padding: EdgeInsets.all(22),
@@ -57,9 +55,7 @@ class Message extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 60.toWidth,
-                  )
+                  SizedBox(width: 60.toWidth)
                 ],
               ));
   }

@@ -9,12 +9,12 @@ import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
-class ShareLocation extends StatefulWidget {
+class ShareLocationSheet extends StatefulWidget {
   @override
-  _ShareLocationState createState() => _ShareLocationState();
+  _ShareLocationSheetState createState() => _ShareLocationSheetState();
 }
 
-class _ShareLocationState extends State<ShareLocation> {
+class _ShareLocationSheetState extends State<ShareLocationSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -29,11 +29,11 @@ class _ChatAreaState extends State<ChatArea> {
           SizedBox(
             height: 10.toHeight,
           ),
-          Message(send: false, text: 'Sed do eiusmod tempor.'),
-          Message(send: false, text: 'Okay'),
-          Message(send: true, text: 'okay'),
+          Message(isSend: false, text: 'Sed do eiusmod tempor.'),
+          Message(isSend: false, text: 'Okay'),
+          Message(isSend: true, text: 'okay'),
           Message(
-              send: true,
+              isSend: true,
               text: 'Excepteur sint occaecat cupidatat non proident.'),
           Expanded(child: SizedBox()),
           CustomInputField(
