@@ -35,14 +35,36 @@ class _SplashState extends State<Splash> {
     super.initState();
     // _notificationService = NotificationService();
     _initBackendService();
-    // _checkToOnboard();
+    _checkToOnboard();
     // acceptFiles();
     // _checkForPermissionStatus();
+  }
+
+  void _checkToOnboard() async {
+    // onboard call to get the already setup atsigns
+    await backendService.onboard().then((isChecked) async {
+      if (!isChecked) {
+        c.complete(true);
+        print("onboard returned: $isChecked");
+      } else {
+        await backendService.startMonitor();
+        onboardSuccess = true;
+        // // if (FilePickerProvider().selectedFiles.isNotEmpty) {
+        // //   BuildContext cd = NavService.navKey.currentContext;
+        // //   await Navigator.pushReplacementNamed(cd, Routes.WELCOME_SCREEN);
+        // }
+        c.complete(true);
+      }
+    }).catchError((error) async {
+      c.complete(true);
+      print("Error in authenticating: $error");
+    });
   }
 
   String state;
   void _initBackendService() {
     backendService = BackendService.getInstance();
+
     // _notificationService.setOnNotificationClick(onNotificationClick);
     SystemChannels.lifecycle.setMessageHandler((msg) {
       state = msg;
@@ -127,6 +149,8 @@ class _SplashState extends State<Splash> {
                       'Explore',
                       style: CustomTextStyles().white15,
                     ),
+                    // onTap: () => cramAuthWithoutQR(),
+
                     onTap: () =>
                         SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
                     bgColor: AllColors().Black)),
@@ -134,5 +158,29 @@ class _SplashState extends State<Splash> {
         ),
       ),
     );
+  }
+
+  void cramAuthWithoutQR() async {
+    // setStatus(cramWithoutQr, Status.Loading);
+    bool response = false;
+    try {
+      String colinSecret =
+          "540f1b5fa05b40a58ea7ef82d3cfcde9bb72db8baf4bc863f552f82695837b9fee631f773ab3e34dde05b51e900220e6ae6f7240ec9fc1d967252e1aea4064ba";
+      String kevinSecret =
+          'e0d06915c3f81561fb5f8929caae64a7231db34fdeaff939aacac3cb736be8328c2843b518a2fc7a58fcec8c0aa98c735c0ce5f8ce880e97cd61cf1f2751efc5';
+      response = await backendService.authenticateWithCram("@kevin🛠",
+          cramSecret: kevinSecret);
+      // .then((response) async {
+
+      print("auth successful $response");
+      if (response != null) {
+        await backendService.startMonitor();
+        SetupRoutes.push(context, Routes.SCAN_QR_SCREEN);
+      }
+      // setStatus(cramWithoutQr, Status.Done);
+    } catch (e) {
+      // setError(cramWithoutQr, e.toString());
+      print('ERROR IN CRAM=====>$e');
+    }
   }
 }

@@ -93,6 +93,7 @@ class BackendService {
 
   // first time setup with cram authentication
   Future<bool> authenticateWithCram(String atsign, {String cramSecret}) async {
+    print('atClientServiceInstance $atClientServiceInstance');
     var result = await atClientServiceInstance.authenticate(atsign,
         cramSecret: cramSecret);
     atClientInstance = await atClientServiceInstance.atClient;

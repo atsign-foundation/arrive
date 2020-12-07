@@ -172,10 +172,15 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
       //     return;
       //   }
       //   if (pickedFile.extension == 'zip') {
+
+      // File selectedFile =
+      //     File('/Users/nitesh/Downloads/baila82brilliant-atKeys.zip');
       File selectedFile =
-          File('/Users/nitesh/Downloads/baila82brilliant-atKeys.zip');
+          File('/Users/nitesh/Downloads/mixedmartialartsexcess-atKeys.zip');
+
       var bytes = selectedFile.readAsBytesSync();
       final archive = ZipDecoder().decodeBytes(bytes);
+
       for (var file in archive) {
         print(file.name);
         if (file.name.contains('atKeys')) {
@@ -191,12 +196,15 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
           var file1 = await File('$path' + 'test').create();
           file1.writeAsBytesSync(bytes);
           String result = await FlutterQrReader.imgScan(file1);
+          // String result =
+          //     ‘@baila82brilliant:ap61xrp0ykQfs5v+H/2MGL7ffet+rpNASrO2/2dhIP0=’;
           print('result - $result');
           List<String> params = result.split(':');
           atsign = params[0];
           aesKey = params[1];
           await File(path + 'test').delete();
           //read scan QRcode and extract atsign,aeskey
+
         }
       }
       // }
