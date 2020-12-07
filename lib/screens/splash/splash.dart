@@ -1,12 +1,60 @@
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
 
-class Splash extends StatelessWidget {
+import 'package:provider/provider.dart';
+
+class Splash extends StatefulWidget {
+  @override
+  _SplashState createState() => _SplashState();
+}
+
+class _SplashState extends State<Splash> {
+  // NotificationService _notificationService;
+  bool onboardSuccess = false;
+  bool sharingStatus = false;
+  BackendService backendService;
+  // bool userAcceptance;
+  final Permission _cameraPermission = Permission.camera;
+  final Permission _storagePermission = Permission.storage;
+  Completer c = Completer();
+  bool authenticating = false;
+  StreamSubscription _intentDataStreamSubscription;
+  // FilePickerProvider filePickerProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    // _notificationService = NotificationService();
+    _initBackendService();
+    // _checkToOnboard();
+    // acceptFiles();
+    // _checkForPermissionStatus();
+  }
+
+  String state;
+  void _initBackendService() {
+    backendService = BackendService.getInstance();
+    // _notificationService.setOnNotificationClick(onNotificationClick);
+    SystemChannels.lifecycle.setMessageHandler((msg) {
+      state = msg;
+      debugPrint('SystemChannels> $msg');
+      backendService.app_lifecycle_state = msg;
+      if (backendService.monitorConnection != null &&
+          backendService.monitorConnection.isInValid()) {
+        backendService.startMonitor();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -79,7 +127,8 @@ class Splash extends StatelessWidget {
                       'Explore',
                       style: CustomTextStyles().white15,
                     ),
-                    onTap: () => SetupRoutes.push(context, Routes.HOME),
+                    onTap: () =>
+                        SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
                     bgColor: AllColors().Black)),
           ],
         ),

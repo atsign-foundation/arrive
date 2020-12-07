@@ -63,7 +63,11 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Contacts', Icons.contacts_rounded, () {}),
+            iconText(
+              'Contacts',
+              Icons.contacts_rounded,
+              () => SetupRoutes.push(context, Routes.CONTACT_SCREEN),
+            ),
             SizedBox(
               height: 25.toHeight,
             ),

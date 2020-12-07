@@ -29,7 +29,37 @@ dependencies:
   map: ^0.2.0+1
   cached_network_image: ^2.3.3
   latlng: any
-
+  flutter_slidable: ^0.5.7
+  flutter_qr_reader: ^1.0.3
+  file_picker: ^2.0.10
+  archive: ^2.0.13
+  permission_handler: ^5.0.1+1
+  qr_flutter: ^3.2.0
+  share: ^0.6.5+2
+  at_client_mobile:
+    path: ../../../Downloads/Archive/atsign_foundation/at_client_mobile
+    # git:
+    #   url: git@github.com:atsign-foundation/at_client_sdk.git
+    #   path: at_client_mobile
+    #   ref: dev_env
+  at_contact: 
+    path: ../../../Downloads/Archive/atsign_foundation/at_contact
+    # git:
+    #   url: git@github.com:atsign-foundation/at_libraries.git
+    #   path: at_contact
+    #   ref: dev_env
+  at_commons:
+    path: ../../../Downloads/Archive/atsign_foundation/at_commons
+    # git:
+    #   url: git@github.com:atsign-company/atsign_foundation.git
+    #   path: at_commons
+    #   ref: dev_env
+  at_lookup:
+    path: ../../../Downloads/Archive/atsign_foundation/at_lookup
+    # git:
+    #   url: git@github.com:atsign-foundation/at_libraries.git
+    #   path: at_lookup
+    #   ref: dev_env
 dev_dependencies:
   flutter_test:
     sdk: flutter

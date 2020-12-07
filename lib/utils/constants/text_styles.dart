@@ -122,4 +122,7 @@ class CustomTextStyles {
     color: AllColors().GREY,
     fontSize: 14.toFont,
   );
+
+  // copied from atmosphere app
+
 }

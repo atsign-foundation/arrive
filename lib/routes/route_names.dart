@@ -12,4 +12,8 @@ class Routes {
   static const String SHARE_LOCATION_EVENT = 'share_location_event';
   static const String SELECTED_LOCATION = 'selected_location';
   static const String REQUEST_LOCATION_EVENT = 'request_location_event';
+  static const String PRIVATE_KEY_GEN_SCREEN = 'privateKeyGenScreen';
+  static const String CONTACT_SCREEN = 'contactScreen';
+  static const String ADD_CONTACT_SCREEN = 'addContactScreen';
+  static const String SCAN_QR_SCREEN = 'scanQrScreen';
 }
