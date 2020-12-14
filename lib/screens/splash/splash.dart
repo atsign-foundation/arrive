@@ -1,7 +1,12 @@
+import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:atsign_authentication_helper/atsign_authentication_helper.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
+import 'package:atsign_location_app/screens/home/home_screen.dart';
+// import 'package:atsign_location_app/screens/scan_qr/scan_qr.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -28,12 +33,14 @@ class _SplashState extends State<Splash> {
   Completer c = Completer();
   bool authenticating = false;
   StreamSubscription _intentDataStreamSubscription;
+  ClientSdkService clientSdkService = ClientSdkService.getInstance();
   // FilePickerProvider filePickerProvider;
 
   @override
   void initState() {
     super.initState();
     // _notificationService = NotificationService();
+
     _initBackendService();
     _checkToOnboard();
     // acceptFiles();
@@ -64,6 +71,10 @@ class _SplashState extends State<Splash> {
   String state;
   void _initBackendService() {
     backendService = BackendService.getInstance();
+    backendService.atClientServiceInstance = new AtClientService();
+    clientSdkService = ClientSdkService.getInstance();
+    // clientSdkService.atClientServiceInstance = new AtClientService();
+    clientSdkService.onboard();
 
     // _notificationService.setOnNotificationClick(onNotificationClick);
     SystemChannels.lifecycle.setMessageHandler((msg) {
@@ -139,21 +150,33 @@ class _SplashState extends State<Splash> {
               ),
             ),
             Positioned(
-                bottom: 130.toHeight,
-                right: 36.toWidth,
-                child: CustomButton(
-                    height: 40,
-                    width: 120,
-                    radius: 100.toHeight,
-                    child: Text(
-                      'Explore',
-                      style: CustomTextStyles().white15,
-                    ),
-                    // onTap: () => cramAuthWithoutQR(),
+              bottom: 130.toHeight,
+              right: 36.toWidth,
+              child: CustomButton(
+                  height: 40,
+                  width: 120,
+                  radius: 100.toHeight,
+                  child: Text(
+                    'Explore',
+                    style: CustomTextStyles().white15,
+                  ),
+                  // onTap: () => cramAuthWithoutQR(),
 
-                    onTap: () =>
-                        SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
-                    bgColor: AllColors().Black)),
+                  // onTap: () => SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
+                  onTap: () async {
+                    await Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScanQrScreen(
+                          atClientServiceInstance:
+                              clientSdkService.atClientServiceInstance,
+                          nextScreen: HomeScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  bgColor: AllColors().Black),
+            ),
           ],
         ),
       ),

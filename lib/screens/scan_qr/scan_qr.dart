@@ -176,7 +176,7 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
       // File selectedFile =
       //     File('/Users/nitesh/Downloads/baila82brilliant-atKeys.zip');
       File selectedFile =
-          File('/Users/nitesh/Downloads/mixedmartialartsexcess-atKeys.zip');
+          File('/Users/sachinsingh/Downloads/baila82brilliant-atKeys.zip');
 
       var bytes = selectedFile.readAsBytesSync();
       final archive = ZipDecoder().decodeBytes(bytes);
@@ -189,15 +189,13 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
         } else if (aesKey == null &&
             atsign == null &&
             file.name.contains('_private_key.png')) {
-          print(' not inside atKeys');
-
           var bytes = file.content as List<int>;
           var path = (await path_provider.getTemporaryDirectory()).path;
           var file1 = await File('$path' + 'test').create();
           file1.writeAsBytesSync(bytes);
-          String result = await FlutterQrReader.imgScan(file1);
-          // String result =
-          //     ‘@baila82brilliant:ap61xrp0ykQfs5v+H/2MGL7ffet+rpNASrO2/2dhIP0=’;
+          // String result = await FlutterQrReader.imgScan(file1);
+          String result =
+              '@baila82brilliant:ap61xrp0ykQfs5v+H/2MGL7ffet+rpNASrO2/2dhIP0=';
           print('result - $result');
           List<String> params = result.split(':');
           atsign = params[0];

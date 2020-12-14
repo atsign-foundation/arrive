@@ -32,59 +32,66 @@ packages:
   at_client:
     dependency: transitive
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_client"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_client"
       relative: true
     source: path
     version: "0.1.0"
   at_client_mobile:
     dependency: "direct main"
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_client_mobile"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_client_mobile"
       relative: true
     source: path
     version: "0.1.0"
   at_commons:
     dependency: "direct main"
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_commons"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_commons"
       relative: true
     source: path
     version: "0.1.0"
   at_contact:
     dependency: "direct main"
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_contact"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_contact"
       relative: true
     source: path
     version: "0.0.0"
   at_lookup:
     dependency: "direct main"
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_lookup"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_lookup"
       relative: true
     source: path
     version: "0.1.0"
   at_persistence_secondary_server:
     dependency: transitive
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_persistence_secondary_server"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_persistence_secondary_server"
       relative: true
     source: path
     version: "0.1.0"
   at_persistence_spec:
     dependency: transitive
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_persistence_spec"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_persistence_spec"
       relative: true
     source: path
     version: "0.1.0"
   at_utils:
     dependency: transitive
     description:
-      path: "../../../Downloads/Archive/atsign_foundation/at_utils"
+      path: "../../../../Downloads/Archive/atsign_foundation/at_utils"
       relative: true
     source: path
     version: "0.1.0"
+  atsign_authentication_helper:
+    dependency: "direct main"
+    description:
+      path: "../atsign-authentication-helper"
+      relative: true
+    source: path
+    version: "0.0.1"
   base2e15:
     dependency: transitive
     description:
@@ -524,7 +531,7 @@ packages:
       name: stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.0-nullsafety.1"
+    version: "1.10.0-nullsafety.2"
   stream_channel:
     dependency: transitive
     description:
@@ -588,6 +595,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0-nullsafety.3"
+  webview_flutter:
+    dependency: transitive
+    description:
+      name: webview_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.7"
   win32:
     dependency: transitive
     description:
@@ -610,5 +624,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.10.2 <2.11.0"
+  dart: ">=2.10.2 <=2.11.0-186.0.dev"
   flutter: ">=1.22.2 <2.0.0"

@@ -37,29 +37,47 @@ dependencies:
   qr_flutter: ^3.2.0
   share: ^0.6.5+2
   at_client_mobile:
-    path: ../../../Downloads/Archive/atsign_foundation/at_client_mobile
+    path: ../../../../Downloads/Archive/atsign_foundation/at_client_mobile
     # git:
     #   url: git@github.com:atsign-foundation/at_client_sdk.git
     #   path: at_client_mobile
     #   ref: dev_env
   at_contact: 
-    path: ../../../Downloads/Archive/atsign_foundation/at_contact
+    path: ../../../../Downloads/Archive/atsign_foundation/at_contact
     # git:
     #   url: git@github.com:atsign-foundation/at_libraries.git
     #   path: at_contact
     #   ref: dev_env
   at_commons:
-    path: ../../../Downloads/Archive/atsign_foundation/at_commons
+    path: ../../../../Downloads/Archive/atsign_foundation/at_commons
     # git:
     #   url: git@github.com:atsign-company/atsign_foundation.git
     #   path: at_commons
     #   ref: dev_env
   at_lookup:
-    path: ../../../Downloads/Archive/atsign_foundation/at_lookup
+    path: ../../../../Downloads/Archive/atsign_foundation/at_lookup
     # git:
     #   url: git@github.com:atsign-foundation/at_libraries.git
     #   path: at_lookup
     #   ref: dev_env
+
+  # atsign_authentication_helper:
+  #     path: ../../AtSign_plugins/atsign-authentication-helper
+
+  atsign_authentication_helper :
+    path: ../atsign-authentication-helper
+    # git:
+    #   url: https://sachins@git.geekyants.com/flutter-client-projects/atsign-authentication-helper.git
+    #   path: at_lookup
+    #   ref: master
+
+  # atsign_authentication_helper:
+  #     git:
+  #         url: git@github.com:atsign-foundation/at_widgets.git
+  #           path: atsign_authentication_helper
+  #           ref: master
+    
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
