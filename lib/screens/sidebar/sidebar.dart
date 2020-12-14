@@ -4,8 +4,10 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
+import 'package:provider/provider.dart';
 
 class SideBar extends StatefulWidget {
   @override
@@ -13,9 +15,13 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> {
-  bool state = true;
+  bool state = false;
   @override
   Widget build(BuildContext context) {
+    state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
+        ? true
+        : false;
+
     return Drawer(
       child: Padding(
         padding:
@@ -99,12 +105,23 @@ class _SideBarState extends State<SideBar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Share Location',
+                  'Dark Theme',
                   style: CustomTextStyles().darkGrey16,
                 ),
                 Switch(
-                    value: state,
-                    onChanged: (value) => setState(() => state = value))
+                  value: state,
+                  onChanged: (value) {
+                    value
+                        ? Provider.of<ThemeProvider>(context, listen: false)
+                            .setTheme(ThemeColor.Dark)
+                        : Provider.of<ThemeProvider>(context, listen: false)
+                            .setTheme(ThemeColor.Light);
+
+                    setState(() {
+                      state = value;
+                    });
+                  },
+                )
               ],
             ),
             SizedBox(
