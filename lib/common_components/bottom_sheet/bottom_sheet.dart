@@ -10,7 +10,7 @@ void bottomSheet(BuildContext context, T, double height) {
         return Container(
           height: height,
           decoration: new BoxDecoration(
-            color: AllColors().WHITE,
+            color: Theme.of(context).primaryColor,
             borderRadius: new BorderRadius.only(
               topLeft: const Radius.circular(12.0),
               topRight: const Radius.circular(12.0),
