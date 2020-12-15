@@ -36,6 +36,8 @@ dependencies:
   permission_handler: ^5.0.1+1
   qr_flutter: ^3.2.0
   share: ^0.6.5+2
+  hive: ^1.4.4+1
+  hive_flutter: ^0.3.1
   at_client_mobile:
     path: ../../../../Downloads/Archive/atsign_foundation/at_client_mobile
     # git:
@@ -77,6 +79,14 @@ dependencies:
   #           path: atsign_authentication_helper
   #           ref: master
     
+  atsign_events:
+    path: ../atsign-events
+
+  # atsign_contacts_group:
+  #   git:
+  #     url: git@git.geekyants.com:flutter-client-projects/atsign-contact-groups.git
+  #     ref: staging
+
 
 dev_dependencies:
   flutter_test:
