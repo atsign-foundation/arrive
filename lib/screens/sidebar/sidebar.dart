@@ -23,7 +23,8 @@ class _SideBarState extends State<SideBar> {
         : false;
 
     return Drawer(
-      child: Padding(
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
         padding:
             EdgeInsets.symmetric(horizontal: 30.toWidth, vertical: 0.toHeight),
         child: Column(

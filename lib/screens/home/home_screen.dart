@@ -1,10 +1,10 @@
+import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
-import 'package:atsign_location_app/screens/event/create_event.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          color: AllColors().WHITE,
+          color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
               color: AllColors().DARK_GREY,
@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: EdgeInsets.fromLTRB(
                             56.toHeight, 0.toHeight, 0.toWidth, 0.toHeight),
                         decoration: BoxDecoration(
-                          color: AllColors().WHITE,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                         ),
                         child: InkWell(
                           onTap: () => pc.open(),
@@ -158,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
           EdgeInsets.symmetric(horizontal: 10.toWidth, vertical: 10.toHeight),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
-        color: AllColors().WHITE,
+        color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
             color: AllColors().DARK_GREY,

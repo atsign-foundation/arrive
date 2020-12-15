@@ -56,7 +56,7 @@ class DisplayTile extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: CustomTextStyles().black14,
+                  style: Theme.of(context).textTheme.headline2,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

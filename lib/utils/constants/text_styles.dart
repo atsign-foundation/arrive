@@ -30,6 +30,12 @@ class CustomTextStyles {
     color: AllColors().Black,
     fontSize: 16.toFont,
   );
+
+  TextStyle black16bold = TextStyle(
+    color: AllColors().Black,
+    fontSize: 16.toFont,
+    fontWeight: FontWeight.w700,
+  );
   TextStyle black12 = TextStyle(
     color: AllColors().Black,
     fontSize: 12.toFont,
