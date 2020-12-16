@@ -36,9 +36,12 @@ class ConcurrentEventDialog extends StatelessWidget {
                 SizedBox(height: 10),
                 CustomButton(
                   onTap: () => null,
-                  child: Text('Yes! Create another',
-                      style: CustomTextStyles().white15),
-                  bgColor: AllColors().Black,
+                  child: Text(
+                    'Yes! Create another',
+                    style: TextStyle(
+                        color: Theme.of(context).scaffoldBackgroundColor),
+                  ),
+                  bgColor: Theme.of(context).primaryColor,
                   width: 164.toWidth,
                   height: 48.toHeight,
                 ),

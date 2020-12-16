@@ -345,12 +345,12 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                     height: 25.toHeight,
                   ),
                   CustomButton(
-                    bgColor: AllColors().WHITE,
+                    bgColor: Theme.of(context).scaffoldBackgroundColor,
                     width: 230.toWidth,
                     height: 50.toHeight * deviceTextFactor,
                     child: Text(
                       TextStrings().upload,
-                      style: CustomTextStyles().black14,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
                     ),
                     onTap: _uploadCramKeyFile,
                   ),
@@ -358,12 +358,12 @@ class _ScanQrScreenState extends State<ScanQrScreen> {
                     height: 25.toHeight,
                   ),
                   CustomButton(
-                    bgColor: AllColors().WHITE,
+                    bgColor: Theme.of(context).scaffoldBackgroundColor,
                     width: 230.toWidth,
                     height: 50.toHeight * deviceTextFactor,
                     child: Text(
                       TextStrings().uploadKey,
-                      style: CustomTextStyles().black14,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
                     ),
                     onTap: _uploadKeyFile,
                   ),

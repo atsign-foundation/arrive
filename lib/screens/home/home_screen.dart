@@ -51,9 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 top: 0,
                 right: 0,
                 child: FloatingIcon(
-                    bgColor: AllColors().Black,
+                    bgColor: Theme.of(context).primaryColor,
                     icon: Icons.table_rows,
-                    iconColor: AllColors().WHITE),
+                    iconColor: Theme.of(context).scaffoldBackgroundColor),
               ),
               Positioned(bottom: 264.toHeight, child: header()),
               SlidingUpPanel(

@@ -50,7 +50,7 @@ class ShareLocationScreen extends StatelessWidget {
             top: 0,
             right: 0,
             child: FloatingIcon(
-              bgColor: AllColors().Black,
+              bgColor: Theme.of(context).primaryColor,
               icon: Icons.message_outlined,
               iconColor: AllColors().WHITE,
               onPressed: () => bottomSheet(context, ChatArea(), 743.toHeight),
@@ -75,7 +75,7 @@ class ShareLocationScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          color: AllColors().WHITE,
+          color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
               color: AllColors().DARK_GREY,
@@ -99,7 +99,7 @@ class ShareLocationScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Tina\'s Birthday Party',
-                    style: CustomTextStyles().black18,
+                    style: Theme.of(context).primaryTextTheme.headline1,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,

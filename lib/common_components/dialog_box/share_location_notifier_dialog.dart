@@ -65,8 +65,10 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   SizedBox(height: 20.toHeight),
                   CustomButton(
                     onTap: () => null,
-                    child: Text('Yes', style: CustomTextStyles().white15),
-                    bgColor: AllColors().Black,
+                    child: Text('Yes',
+                        style: TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor)),
+                    bgColor: Theme.of(context).primaryColor,
                     width: 164.toWidth,
                     height: 48.toHeight,
                   ),

@@ -79,10 +79,11 @@ class AddContactDialog extends StatelessWidget {
                         height: 50.toHeight * deviceTextFactor,
                         child: Text(
                           TextStrings().addtoContact,
-                          style: CustomTextStyles().black16,
+                          style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor),
                         ),
                         onTap: () => onYesTap(atsignName),
-                        bgColor: AllColors().Black,
+                        bgColor: Theme.of(context).primaryColor,
                       )
                     ],
                   ),
@@ -96,10 +97,11 @@ class AddContactDialog extends StatelessWidget {
                         height: 50.toHeight * deviceTextFactor,
                         child: Text(
                           TextStrings().buttonCancel,
-                          style: CustomTextStyles().black16,
+                          style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor),
                         ),
                         onTap: () => Navigator.pop(context),
-                        bgColor: AllColors().Black,
+                        bgColor: Theme.of(context).primaryColor,
                       )
                     ],
                   ),

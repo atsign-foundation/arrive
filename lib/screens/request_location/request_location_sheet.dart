@@ -43,10 +43,12 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
           Expanded(child: SizedBox()),
           Center(
             child: CustomButton(
-              child: Text('Request', style: CustomTextStyles().white15),
+              child: Text('Request',
+                  style: TextStyle(
+                      color: Theme.of(context).scaffoldBackgroundColor)),
               onTap: () =>
                   SetupRoutes.push(context, Routes.REQUEST_LOCATION_EVENT),
-              bgColor: AllColors().Black,
+              bgColor: Theme.of(context).primaryColor,
               width: 164,
               height: 48,
             ),
