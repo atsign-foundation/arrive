@@ -39,9 +39,9 @@ class RequestLocationScreen extends StatelessWidget {
             top: 0,
             left: 0,
             child: FloatingIcon(
-              bgColor: AllColors().WHITE,
+              bgColor: Theme.of(context).scaffoldBackgroundColor,
               icon: Icons.arrow_back,
-              iconColor: AllColors().Black,
+              iconColor: Theme.of(context).primaryColor,
               isTopLeft: true,
               onPressed: () => Navigator.pop(context),
             ),
@@ -50,9 +50,9 @@ class RequestLocationScreen extends StatelessWidget {
             top: 0,
             right: 0,
             child: FloatingIcon(
-              bgColor: AllColors().Black,
+              bgColor: Theme.of(context).primaryColor,
               icon: Icons.message_outlined,
-              iconColor: AllColors().WHITE,
+              iconColor: Theme.of(context).scaffoldBackgroundColor,
               onPressed: () => bottomSheet(context, ChatArea(), 743.toHeight),
             ),
           ),
@@ -77,7 +77,7 @@ class RequestLocationScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          color: AllColors().WHITE,
+          color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [
             BoxShadow(
               color: AllColors().DARK_GREY,

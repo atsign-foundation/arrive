@@ -84,10 +84,11 @@ class GroupMembers extends StatelessWidget {
                   radius: 100.toHeight,
                   child: Text(
                     'Yes',
-                    style: CustomTextStyles().white15,
+                    style: TextStyle(
+                        color: Theme.of(context).scaffoldBackgroundColor),
                   ),
                   onTap: null,
-                  bgColor: AllColors().Black),
+                  bgColor: Theme.of(context).primaryColor),
               SizedBox(height: 5.toHeight),
               InkWell(
                 onTap: null,

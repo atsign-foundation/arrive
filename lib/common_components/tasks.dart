@@ -26,7 +26,7 @@ class Tasks extends StatelessWidget {
             Flexible(
               child: Text(
                 task,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context).primaryTextTheme.headline3,
               ),
             )
           ],

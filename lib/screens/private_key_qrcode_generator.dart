@@ -92,7 +92,7 @@ class _PrivateKeyQRCodeGenScreenState extends State<PrivateKeyQRCodeGenScreen> {
         child: AbsorbPointer(
           absorbing: _loading,
           child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             key: _scaffoldKey,
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(70),
@@ -139,7 +139,8 @@ class _PrivateKeyQRCodeGenScreenState extends State<PrivateKeyQRCodeGenScreen> {
                       child: RepaintBoundary(
                         key: globalKey,
                         child: QrImage(
-                          backgroundColor: Colors.white,
+                          backgroundColor:
+                              Theme.of(context).scaffoldBackgroundColor,
                           data: atsign + ':' + aesKey,
                           size: 300,
                           // onError:
@@ -154,9 +155,10 @@ class _PrivateKeyQRCodeGenScreenState extends State<PrivateKeyQRCodeGenScreen> {
                     width: 230.toWidth,
                     child: Text(
                       TextStrings().buttonSave,
-                      style: CustomTextStyles().black14,
+                      style: TextStyle(
+                          color: Theme.of(context).scaffoldBackgroundColor),
                     ),
-                    bgColor: AllColors().Black,
+                    bgColor: Theme.of(context).primaryColor,
                     onTap: () {
                       _captureAndSavePng();
                     },
@@ -168,9 +170,9 @@ class _PrivateKeyQRCodeGenScreenState extends State<PrivateKeyQRCodeGenScreen> {
                     width: 230.toWidth,
                     child: Text(
                       TextStrings().buttonContinue,
-                      style: CustomTextStyles().black14,
+                      style: TextStyle(color: Theme.of(context).primaryColor),
                     ),
-                    bgColor: AllColors().WHITE,
+                    bgColor: Theme.of(context).scaffoldBackgroundColor,
                     onTap: () async {
                       await Navigator.pushNamed(context, Routes.HOME);
                     },

@@ -19,7 +19,7 @@ class CustomTextStyles {
 
   TextStyle greyLabel12 = TextStyle(
     color: AllColors().GREY_LABEL,
-    fontSize: 14.toFont,
+    fontSize: 12.toFont,
   );
 
   TextStyle lightGreyLabel12 = TextStyle(

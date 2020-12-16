@@ -1,4 +1,3 @@
-import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class CustomHeading extends StatelessWidget {
@@ -9,13 +8,13 @@ class CustomHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           heading != null
               ? Text(heading, style: Theme.of(context).textTheme.headline1)
               : SizedBox(),
-          Expanded(child: SizedBox()),
           action != null
-              ? Text(action, style: CustomTextStyles().orange16)
+              ? Text(action, style: Theme.of(context).textTheme.headline2)
               : SizedBox()
         ],
       ),

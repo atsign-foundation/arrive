@@ -42,10 +42,11 @@ class EmptyGroup extends StatelessWidget {
               radius: 100.toHeight,
               child: Text(
                 'Create',
-                style: CustomTextStyles().white15,
+                style:
+                    TextStyle(color: Theme.of(context).scaffoldBackgroundColor),
               ),
               onTap: null,
-              bgColor: AllColors().Black)
+              bgColor: Theme.of(context).primaryColor)
         ],
       ),
     );

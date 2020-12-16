@@ -25,7 +25,7 @@ class FaqsScreen extends StatelessWidget {
           itemBuilder: (context, index) => ClipRRect(
             borderRadius: BorderRadius.circular(10.toFont),
             child: Container(
-              color: AllColors().WHITE,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: Theme(
                 data: ThemeData(
                   dividerColor: Colors.transparent,
@@ -34,12 +34,13 @@ class FaqsScreen extends StatelessWidget {
                   title: Text(
                     FAQData.data[index]["question"],
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).primaryColor,
                       fontSize: 12.toFont,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  trailing: Icon(Icons.keyboard_arrow_down),
+                  trailing: Icon(Icons.keyboard_arrow_down,
+                      color: Theme.of(context).primaryColor),
                   children: [
                     Container(
                       padding: EdgeInsets.fromLTRB(

@@ -25,7 +25,7 @@ class FloatingIcon extends StatelessWidget {
           bottomLeft: !isTopLeft ? Radius.circular(10.0) : Radius.circular(0),
           bottomRight: isTopLeft ? Radius.circular(10.0) : Radius.circular(0),
         ),
-        color: bgColor != null ? bgColor : AllColors().Black,
+        color: bgColor != null ? bgColor : Theme.of(context).primaryColor,
         boxShadow: [
           BoxShadow(
             color: iconColor != null ? iconColor : AllColors().GREY,
@@ -40,7 +40,9 @@ class FloatingIcon extends StatelessWidget {
           //iconSize: 20.toHeight,
           icon: Icon(
             icon != null ? icon : Icons.table_rows,
-            color: iconColor != null ? iconColor : AllColors().WHITE,
+            color: iconColor != null
+                ? iconColor
+                : Theme.of(context).scaffoldBackgroundColor,
             size: 27.toFont,
           ),
           onPressed: onPressed ?? () => Scaffold.of(context).openEndDrawer()),

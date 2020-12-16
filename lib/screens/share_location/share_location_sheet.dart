@@ -55,10 +55,12 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
           Expanded(child: SizedBox()),
           Center(
             child: CustomButton(
-              child: Text('Share', style: CustomTextStyles().white15),
+              child: Text('Share',
+                  style: TextStyle(
+                      color: Theme.of(context).scaffoldBackgroundColor)),
               onTap: () =>
                   SetupRoutes.push(context, Routes.SHARE_LOCATION_EVENT),
-              bgColor: AllColors().Black,
+              bgColor: Theme.of(context).primaryColor,
               width: 164,
               height: 48,
             ),

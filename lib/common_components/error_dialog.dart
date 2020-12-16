@@ -1,15 +1,13 @@
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_popup_route.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
-import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/utils/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
 class ErrorDialogWidget extends StatelessWidget {
-  final String text;
-  final String buttonText;
+  final String text, buttonText;
   final Function onButtonPress;
   final bool includeCancel;
 
@@ -27,7 +25,7 @@ class ErrorDialogWidget extends StatelessWidget {
         child: Container(
           height: 240.toHeight,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(
               20.toFont,
             ),
@@ -54,8 +52,12 @@ class ErrorDialogWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CustomButton(
-                      child: Text('OK'),
-                      bgColor: AllColors().Black,
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor),
+                      ),
+                      bgColor: Theme.of(context).primaryColor,
                       onTap: () {
                         Navigator.of(context).pop();
                         if (onButtonPress != null) onButtonPress();

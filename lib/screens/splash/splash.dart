@@ -147,13 +147,14 @@ class _SplashState extends State<Splash> {
                     radius: 100.toHeight,
                     child: Text(
                       'Explore',
-                      style: CustomTextStyles().white15,
+                      style: TextStyle(
+                          color: Theme.of(context).scaffoldBackgroundColor),
                     ),
                     // onTap: () => cramAuthWithoutQR(),
 
                     onTap: () =>
                         SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
-                    bgColor: AllColors().Black)),
+                    bgColor: Theme.of(context).primaryColor)),
           ],
         ),
       ),
