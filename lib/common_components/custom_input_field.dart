@@ -4,16 +4,16 @@ import 'package:atsign_location_app/services/size_config.dart';
 
 class CustomInputField extends StatelessWidget {
   final String hintText;
-  final bool isIcon;
   final double width, height;
   final IconData icon;
   final Function onTap;
+  final Color iconColor;
 
   CustomInputField(
       {this.hintText = '',
-      this.isIcon = false,
       this.height = 50,
       this.width = 300,
+      this.iconColor,
       this.icon,
       this.onTap});
 
@@ -40,12 +40,12 @@ class CustomInputField extends StatelessWidget {
               onTap: onTap ?? null,
             ),
           ),
-          isIcon
+          icon != null
               ? Icon(
                   icon,
-                  color: AllColors().DARK_GREY,
+                  color: iconColor ?? AllColors().DARK_GREY,
                 )
-              : Container()
+              : SizedBox()
         ],
       ),
     );

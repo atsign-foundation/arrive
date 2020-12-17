@@ -1,5 +1,5 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
-import 'package:atsign_location_app/common_components/person_tile/person_horizontal_tile.dart';
+import 'package:atsign_location_app/common_components/tiles/person_horizontal_tile.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -13,6 +13,7 @@ class GroupList extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: CustomAppBar(
+          padding: true,
           showBackIcon: true,
           centerTitle: true,
           title: 'Groups',
@@ -28,7 +29,7 @@ class GroupList extends StatelessWidget {
         body: GridView.count(
           childAspectRatio: 150 / 60, // width/height
           primary: false,
-          padding: const EdgeInsets.all(20.0),
+          padding: EdgeInsets.all(20.0),
           crossAxisSpacing: 10.0,
           mainAxisSpacing: 20.toHeight,
           crossAxisCount: 2,

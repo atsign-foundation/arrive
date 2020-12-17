@@ -4,8 +4,10 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/services/size_config.dart';
+import 'package:provider/provider.dart';
 
 class SideBar extends StatefulWidget {
   @override
@@ -13,11 +15,16 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> {
-  bool state = true;
+  bool state = false;
   @override
   Widget build(BuildContext context) {
+    state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
+        ? true
+        : false;
+
     return Drawer(
-      child: Padding(
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
         padding:
             EdgeInsets.symmetric(horizontal: 30.toWidth, vertical: 0.toHeight),
         child: Column(
@@ -58,29 +65,37 @@ class _SideBarState extends State<SideBar> {
                 ],
               ),
             ),
-            iconText('Events', Icons.arrow_upward, () {}),
+            iconText('Events', Icons.arrow_upward,
+                () => SetupRoutes.push(context, Routes.EVENT_LOG)),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Contacts', Icons.contacts_rounded, () {}),
+            iconText(
+              'Contacts',
+              Icons.contacts_rounded,
+              () => SetupRoutes.push(context, Routes.CONTACT_SCREEN),
+            ),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Groups', Icons.group, () {
-              SetupRoutes.push(context, Routes.GROUP_LIST);
-            }),
+            iconText(
+              'Groups',
+              Icons.group,
+              () => SetupRoutes.push(context, Routes.GROUP_LIST),
+            ),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('FAQ', Icons.question_answer, () {
-              SetupRoutes.push(context, Routes.FAQS);
-            }),
+            iconText('FAQ', Icons.question_answer,
+                () => SetupRoutes.push(context, Routes.FAQS)),
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('Terms and Conditions', Icons.text_format_outlined, () {
-              SetupRoutes.push(context, Routes.TERMS_CONDITIONS_SCREEN);
-            }),
+            iconText(
+                'Terms and Conditions',
+                Icons.text_format_outlined,
+                () =>
+                    SetupRoutes.push(context, Routes.TERMS_CONDITIONS_SCREEN)),
             SizedBox(
               height: 25.toHeight,
             ),
@@ -91,16 +106,23 @@ class _SideBarState extends State<SideBar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Share Location',
+                  'Dark Theme',
                   style: CustomTextStyles().darkGrey16,
                 ),
                 Switch(
-                    value: state,
-                    onChanged: (value) {
-                      setState(() {
-                        state = value;
-                      });
-                    })
+                  value: state,
+                  onChanged: (value) {
+                    value
+                        ? Provider.of<ThemeProvider>(context, listen: false)
+                            .setTheme(ThemeColor.Dark)
+                        : Provider.of<ThemeProvider>(context, listen: false)
+                            .setTheme(ThemeColor.Light);
+
+                    setState(() {
+                      state = value;
+                    });
+                  },
+                )
               ],
             ),
             SizedBox(

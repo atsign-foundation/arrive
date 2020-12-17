@@ -19,7 +19,7 @@ class CustomTextStyles {
 
   TextStyle greyLabel12 = TextStyle(
     color: AllColors().GREY_LABEL,
-    fontSize: 14.toFont,
+    fontSize: 12.toFont,
   );
 
   TextStyle lightGreyLabel12 = TextStyle(
@@ -29,6 +29,16 @@ class CustomTextStyles {
   TextStyle black16 = TextStyle(
     color: AllColors().Black,
     fontSize: 16.toFont,
+  );
+
+  TextStyle black16bold = TextStyle(
+    color: AllColors().Black,
+    fontSize: 16.toFont,
+    fontWeight: FontWeight.w700,
+  );
+  TextStyle black12 = TextStyle(
+    color: AllColors().Black,
+    fontSize: 12.toFont,
   );
 
   TextStyle white15 = TextStyle(
@@ -55,6 +65,11 @@ class CustomTextStyles {
   TextStyle orange12 = TextStyle(
     color: AllColors().ORANGE,
     fontSize: 12.toFont,
+  );
+
+  TextStyle orange14 = TextStyle(
+    color: AllColors().ORANGE,
+    fontSize: 14.toFont,
   );
 
   TextStyle darkGrey15 = TextStyle(
@@ -113,4 +128,7 @@ class CustomTextStyles {
     color: AllColors().GREY,
     fontSize: 14.toFont,
   );
+
+  // copied from atmosphere app
+
 }

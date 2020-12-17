@@ -1,7 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
-import 'package:atsign_location_app/common_components/person_tile/person_vertical_tile.dart';
+import 'package:atsign_location_app/common_components/tiles/person_vertical_tile.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -14,6 +14,7 @@ class GroupMembers extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: CustomAppBar(
+          padding: true,
           title: 'Trusted Senders',
           centerTitle: true,
           showBackIcon: true,
@@ -83,10 +84,11 @@ class GroupMembers extends StatelessWidget {
                   radius: 100.toHeight,
                   child: Text(
                     'Yes',
-                    style: CustomTextStyles().white15,
+                    style: TextStyle(
+                        color: Theme.of(context).scaffoldBackgroundColor),
                   ),
                   onTap: null,
-                  bgColor: AllColors().Black),
+                  bgColor: Theme.of(context).primaryColor),
               SizedBox(height: 5.toHeight),
               InkWell(
                 onTap: null,

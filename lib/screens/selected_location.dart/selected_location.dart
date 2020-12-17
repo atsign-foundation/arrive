@@ -111,12 +111,14 @@ class _SelectedLocationState extends State<SelectedLocation> {
                         child: CustomButton(
                             child: Text(
                               'Save',
-                              style: CustomTextStyles().white15,
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .scaffoldBackgroundColor),
                             ),
                             onTap: null,
                             width: 165.toWidth,
                             height: 48.toHeight,
-                            bgColor: AllColors().Black),
+                            bgColor: Theme.of(context).primaryColor),
                       ),
                     ),
                   ],

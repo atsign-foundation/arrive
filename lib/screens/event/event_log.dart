@@ -20,6 +20,7 @@ class _EventLogState extends State<EventLog> {
         child: Scaffold(
           appBar: CustomAppBar(
             centerTitle: true,
+            padding: true,
             title: 'Events',
             action: PopButton(label: 'Close'),
           ),
@@ -32,9 +33,9 @@ class _EventLogState extends State<EventLog> {
                     children: [
                       Container(
                         child: TabBar(
-                          indicatorColor: AllColors().Black,
+                          indicatorColor: Theme.of(context).primaryColor,
                           indicatorWeight: 3.toHeight,
-                          labelColor: AllColors().Black,
+                          labelColor: Theme.of(context).primaryColor,
                           unselectedLabelColor: AllColors().DARK_GREY,
                           tabs: [
                             Tab(

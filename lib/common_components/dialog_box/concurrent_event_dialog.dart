@@ -11,23 +11,18 @@ class ConcurrentEventDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 100,
       width: SizeConfig().screenWidth * 0.8,
       child: AlertDialog(
         contentPadding: EdgeInsets.fromLTRB(10, 20, 10, 0),
         content: SingleChildScrollView(
           child: Container(
-            // padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
             child: Column(
               children: <Widget>[
-                Text('You already have an event scheduled',
-                    style: CustomTextStyles().grey16),
-                SizedBox(height: 5),
-                Text('during this hours. Are you sure you',
-                    style: CustomTextStyles().grey16),
-                SizedBox(height: 5),
-                Text('want to create another?',
-                    style: CustomTextStyles().grey16),
+                Text(
+                  'User Name wants to share an event with you. Are you sure you want to join and share your location with the group?',
+                  style: CustomTextStyles().grey16,
+                  textAlign: TextAlign.center,
+                ),
                 SizedBox(height: 10),
                 Divider(),
                 SizedBox(height: 10),
@@ -41,20 +36,22 @@ class ConcurrentEventDialog extends StatelessWidget {
                 SizedBox(height: 10),
                 CustomButton(
                   onTap: () => null,
-                  child: Text('Yes! Create another',
-                      style: TextStyle(color: AllColors().WHITE)),
-                  bgColor: AllColors().Black,
+                  child: Text(
+                    'Yes! Create another',
+                    style: TextStyle(
+                        color: Theme.of(context).scaffoldBackgroundColor),
+                  ),
+                  bgColor: Theme.of(context).primaryColor,
                   width: 164.toWidth,
                   height: 48.toHeight,
                 ),
                 SizedBox(height: 5),
-                CustomButton(
-                  onTap: () => null,
-                  child: Text('No! Cancel this',
-                      style: TextStyle(color: AllColors().Black)),
-                  bgColor: AllColors().WHITE,
-                  width: 164.toWidth,
-                  height: 48.toHeight,
+                InkWell(
+                  onTap: null,
+                  child: Text(
+                    'No! Cancel this',
+                    style: CustomTextStyles().black14,
+                  ),
                 ),
                 Divider(),
               ],

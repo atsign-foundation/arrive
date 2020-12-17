@@ -1,3 +1,4 @@
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
@@ -12,7 +13,9 @@ class GroupEdit extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: CustomAppBar(
+          padding: true,
           leadingWidget: PopButton(
             label: 'Cancel',
             textStyle: CustomTextStyles().black16,
@@ -32,7 +35,11 @@ class GroupEdit extends StatelessWidget {
               padding: EdgeInsets.symmetric(
                   horizontal: 27.toWidth, vertical: 15.toHeight),
               child: InkWell(
-                onTap: () => bottomSheet(context),
+                onTap: () => bottomSheet(
+                  context,
+                  bottomSheetContent(),
+                  119.toHeight,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -65,7 +72,6 @@ class GroupEdit extends StatelessWidget {
                   horizontal: 27.toWidth, vertical: 2.toHeight),
               child: CustomInputField(
                 icon: Icons.emoji_emotions_outlined,
-                isIcon: true,
                 width: double.infinity,
               ),
             )
@@ -75,45 +81,34 @@ class GroupEdit extends StatelessWidget {
     );
   }
 
-  void bottomSheet(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(12),
-            topRight: Radius.circular(12),
-          ),
+  Widget bottomSheetContent() {
+    return Container(
+      height: 119.toHeight,
+      decoration: new BoxDecoration(
+        color: AllColors().WHITE,
+        borderRadius: new BorderRadius.only(
+          topLeft: const Radius.circular(12.0),
+          topRight: const Radius.circular(12.0),
         ),
-        builder: (BuildContext context) {
-          return Container(
-            height: 119.toHeight,
-            decoration: new BoxDecoration(
-              color: AllColors().WHITE,
-              borderRadius: new BorderRadius.only(
-                topLeft: const Radius.circular(12.0),
-                topRight: const Radius.circular(12.0),
-              ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Change Group Photo',
+              style: CustomTextStyles().darkGrey16,
             ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Change Group Photo',
-                    style: CustomTextStyles().darkGrey16,
-                  ),
-                  Divider(),
-                  Text(
-                    'Remove Group Photo',
-                    style: CustomTextStyles().darkGrey16,
-                  )
-                ],
-              ),
-            ),
-          );
-        });
+            Divider(),
+            Text(
+              'Remove Group Photo',
+              style: CustomTextStyles().darkGrey16,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
