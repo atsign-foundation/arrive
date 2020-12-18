@@ -41,11 +41,20 @@ dependencies:
   at_client_mobile:
     path: ../../../../Downloads/Archive/atsign_foundation/at_client_mobile
     # git:
+    #   url: git@github.com:atsign-company/atsign_foundation.git
+    #   path: at_client_mobile
+    #   ref: dev_env
+    # git:
     #   url: git@github.com:atsign-foundation/at_client_sdk.git
     #   path: at_client_mobile
     #   ref: dev_env
   at_contact: 
-    path: ../../../../Downloads/Archive/atsign_foundation/at_contact
+    path: ../at_libraries/at_contact
+    # path: ../../../../Downloads/Archive/atsign_foundation/at_contact
+    # git:
+    #   url: git@github.com:atsign-company/atsign_foundation.git
+    #   path: at_contact
+    #   ref: dev_env
     # git:
     #   url: git@github.com:atsign-foundation/at_libraries.git
     #   path: at_contact
@@ -56,15 +65,42 @@ dependencies:
     #   url: git@github.com:atsign-company/atsign_foundation.git
     #   path: at_commons
     #   ref: dev_env
+    # git:
+    #   url: git@github.com:atsign-company/atsign_foundation.git
+    #   path: at_commons
+    #   ref: dev_env
   at_lookup:
     path: ../../../../Downloads/Archive/atsign_foundation/at_lookup
+    # git:
+    #   url: git@github.com:atsign-company/atsign_foundation.git
+    #   path: at_lookup
+    #   ref: dev_env
     # git:
     #   url: git@github.com:atsign-foundation/at_libraries.git
     #   path: at_lookup
     #   ref: dev_env
 
-  # atsign_authentication_helper:
-  #     path: ../../AtSign_plugins/atsign-authentication-helper
+    
+  atsign_events:
+    path: ../atsign-events
+
+  atsign_contacts_group:
+    path: ../atsign-contact-groups
+    # git:
+    #   url: git@git.geekyants.com:flutter-client-projects/atsign-contact-groups.git
+    #   ref: staging
+  
+  atsign_contacts:  
+    path: ../atsign-contacts
+    # git:
+    #    url: git@git.geekyants.com:flutter-client-projects/atsign-contacts.git
+    #    ref: development 
+  # atsign_contacts:
+    # path: ../../../../Downloads/Archive/atsign_foundation/at_lookup
+  #   git:
+  #     url: git@git.geekyants.com:flutter-client-projects/atsign-contacts.git
+  #     # path: at_lookup
+  #     ref: development
 
   atsign_authentication_helper :
     path: ../atsign-authentication-helper
@@ -72,22 +108,12 @@ dependencies:
     #   url: https://sachins@git.geekyants.com/flutter-client-projects/atsign-authentication-helper.git
     #   path: at_lookup
     #   ref: master
-
-  # atsign_authentication_helper:
-  #     git:
-  #         url: git@github.com:atsign-foundation/at_widgets.git
-  #           path: atsign_authentication_helper
-  #           ref: master
     
-  atsign_events:
-    path: ../atsign-events
-
-  # atsign_contacts_group:
-  #   git:
-  #     url: git@git.geekyants.com:flutter-client-projects/atsign-contact-groups.git
-  #     ref: staging
-
-
+  flutter_map:
+    git:
+      url: https://github.com/nitesh2599/flutter_map.git
+  latlong: ^0.6.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -73,7 +74,17 @@ class _SideBarState extends State<SideBar> {
             iconText(
               'Contacts',
               Icons.contacts_rounded,
-              () => SetupRoutes.push(context, Routes.CONTACT_SCREEN),
+              () async {
+                ClientSdkService clientSdkService =
+                    ClientSdkService.getInstance();
+                String currentAtSign = await clientSdkService.getAtSign();
+                print('sidebar atsign:${currentAtSign}');
+                return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
+                    arguments: {
+                      'currentAtSign': currentAtSign,
+                      'asSelectionScreen': false
+                    });
+              },
             ),
             SizedBox(
               height: 25.toHeight,
@@ -81,7 +92,9 @@ class _SideBarState extends State<SideBar> {
             iconText(
               'Groups',
               Icons.group,
-              () => SetupRoutes.push(context, Routes.GROUP_LIST),
+              () {
+                return SetupRoutes.push(context, Routes.GROUP_LIST);
+              },
             ),
             SizedBox(
               height: 25.toHeight,

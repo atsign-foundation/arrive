@@ -27,6 +27,7 @@ class _SplashState extends State<Splash> {
   bool onboardSuccess = false;
   bool sharingStatus = false;
   BackendService backendService;
+  String atSign;
   // bool userAcceptance;
   final Permission _cameraPermission = Permission.camera;
   final Permission _storagePermission = Permission.storage;
@@ -42,7 +43,7 @@ class _SplashState extends State<Splash> {
     // _notificationService = NotificationService();
 
     _initBackendService();
-    _checkToOnboard();
+    // _checkToOnboard();
     // acceptFiles();
     // _checkForPermissionStatus();
   }
@@ -69,15 +70,20 @@ class _SplashState extends State<Splash> {
   }
 
   String state;
-  void _initBackendService() {
+  void _initBackendService() async {
     backendService = BackendService.getInstance();
     backendService.atClientServiceInstance = new AtClientService();
     clientSdkService = ClientSdkService.getInstance();
     // clientSdkService.atClientServiceInstance = new AtClientService();
-    clientSdkService.onboard();
+    bool isOnBoard = await clientSdkService.onboard();
+    if (isOnBoard) {
+      print('on board ${isOnBoard}');
+      SetupRoutes.push(context, Routes.HOME);
+    }
 
     // _notificationService.setOnNotificationClick(onNotificationClick);
     SystemChannels.lifecycle.setMessageHandler((msg) {
+      print('set message handler');
       state = msg;
       debugPrint('SystemChannels> $msg');
       backendService.app_lifecycle_state = msg;
