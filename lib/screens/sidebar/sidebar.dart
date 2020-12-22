@@ -78,7 +78,6 @@ class _SideBarState extends State<SideBar> {
                 ClientSdkService clientSdkService =
                     ClientSdkService.getInstance();
                 String currentAtSign = await clientSdkService.getAtSign();
-                print('sidebar atsign:${currentAtSign}');
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
                     arguments: {
                       'currentAtSign': currentAtSign,
@@ -92,8 +91,13 @@ class _SideBarState extends State<SideBar> {
             iconText(
               'Groups',
               Icons.group,
-              () {
-                return SetupRoutes.push(context, Routes.GROUP_LIST);
+              () async {
+                ClientSdkService clientSdkService =
+                    ClientSdkService.getInstance();
+                String currentAtSign = await clientSdkService.getAtSign();
+                return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
+                  'currentAtSign': currentAtSign,
+                });
               },
             ),
             SizedBox(

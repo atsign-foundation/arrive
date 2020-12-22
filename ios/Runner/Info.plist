@@ -4,6 +4,10 @@
 <dict>
     <key>NSCameraUsageDescription</key>
     <string>The camera is used to scan QR code to pair your device with your @sign</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>photos is required to upload for a group image</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>microphone permission is needed because of plugin dependencies.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

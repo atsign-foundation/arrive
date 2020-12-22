@@ -32,7 +32,10 @@ class SetupRoutes {
       Routes.EVENT_LOG: (context) => EventLog(),
       Routes.FAQS: (context) => FaqsScreen(),
       Routes.TERMS_CONDITIONS_SCREEN: (context) => TermsConditions(),
-      Routes.GROUP_LIST: (context) => GroupList(),
+      Routes.GROUP_LIST: (context) {
+        Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+        return GroupList(currentAtsign: args['currentAtSign']);
+      },
       Routes.NEW_GROUP: (context) => NewGroup(),
       Routes.GROUP_VIEW: (context) => GroupView(),
       Routes.GROUP_EDIT: (context) => GroupEdit(),
@@ -43,12 +46,8 @@ class SetupRoutes {
       Routes.PRIVATE_KEY_GEN_SCREEN: (context) => PrivateKeyQRCodeGenScreen(),
       Routes.CONTACT_SCREEN: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-        print('args: $args');
-
         return ContactsScreen(
           asSelectionScreen: args['asSelectionScreen'],
-          currentAtsign: args['currentAtSign'],
-          // backendService: BackendService.getInstance(),
           context: context,
         );
       },
