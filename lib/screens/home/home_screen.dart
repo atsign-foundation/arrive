@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //     );
               //   },
               // ),
-              Plugin(getLatLng()),
+              PluginMap(getLatLng()),
               Positioned(
                 top: 0,
                 right: 0,
