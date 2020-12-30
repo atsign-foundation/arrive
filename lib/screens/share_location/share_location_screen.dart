@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:latlng/latlng.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:map/map.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 
 class ShareLocationScreen extends StatelessWidget {
   final PanelController pc = PanelController();

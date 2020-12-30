@@ -1,6 +1,14 @@
 PODS:
   - atsign_authentication_helper (0.0.1):
     - Flutter
+  - atsign_chat (0.0.1):
+    - Flutter
+  - atsign_contacts (0.0.1):
+    - Flutter
+  - atsign_contacts_group (0.0.1):
+    - Flutter
+  - atsign_events (0.0.1):
+    - Flutter
   - DKImagePickerController/Core (4.3.2):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -45,6 +53,8 @@ PODS:
   - FMDB/standard (2.7.5)
   - image_picker (0.0.1):
     - Flutter
+  - location (0.0.1):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - "permission_handler (5.0.1+1)":
@@ -63,11 +73,16 @@ PODS:
 
 DEPENDENCIES:
   - atsign_authentication_helper (from `.symlinks/plugins/atsign_authentication_helper/ios`)
+  - atsign_chat (from `.symlinks/plugins/atsign_chat/ios`)
+  - atsign_contacts (from `.symlinks/plugins/atsign_contacts/ios`)
+  - atsign_contacts_group (from `.symlinks/plugins/atsign_contacts_group/ios`)
+  - atsign_events (from `.symlinks/plugins/atsign_events/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - flutter_keychain (from `.symlinks/plugins/flutter_keychain/ios`)
   - flutter_qr_reader (from `.symlinks/plugins/flutter_qr_reader/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - location (from `.symlinks/plugins/location/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - share (from `.symlinks/plugins/share/ios`)
@@ -85,6 +100,14 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   atsign_authentication_helper:
     :path: ".symlinks/plugins/atsign_authentication_helper/ios"
+  atsign_chat:
+    :path: ".symlinks/plugins/atsign_chat/ios"
+  atsign_contacts:
+    :path: ".symlinks/plugins/atsign_contacts/ios"
+  atsign_contacts_group:
+    :path: ".symlinks/plugins/atsign_contacts_group/ios"
+  atsign_events:
+    :path: ".symlinks/plugins/atsign_events/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
@@ -95,6 +118,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_qr_reader/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  location:
+    :path: ".symlinks/plugins/location/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   permission_handler:
@@ -108,6 +133,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   atsign_authentication_helper: e9b9daa614ed4efdbf741aaeea6b790a51272320
+  atsign_chat: a5200025bcee81e569587eb9c1dc12505c420278
+  atsign_contacts: a6d5793b74956855ebbfa34a958f7f7f6ce12b32
+  atsign_contacts_group: d48e097f74a30f6c50c2022195a8aad854af7493
+  atsign_events: f1e67f8ba5352bc5971570243d448fed13b91b7d
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
@@ -116,6 +145,7 @@ SPEC CHECKSUMS:
   flutter_qr_reader: 254fd9eea45a65ef461e050d6607daf9cfb753e8
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   permission_handler: eac8e15b4a1a3fba55b761d19f3f4e6b005d15b6
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
