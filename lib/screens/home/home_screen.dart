@@ -12,7 +12,7 @@ import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 import 'package:flutter_map/plugin.dart';
 import 'package:latlong/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';

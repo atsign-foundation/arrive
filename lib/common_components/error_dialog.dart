@@ -4,7 +4,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/utils/text_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 
 class ErrorDialogWidget extends StatelessWidget {
   final String text, buttonText;

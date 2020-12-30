@@ -2,7 +2,7 @@ import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/screens/contact/widgets/add_contact_dialog.dart';
 import 'package:atsign_location_app/screens/contact/widgets/search_field.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 import 'package:atsign_location_app/services/validators.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';

@@ -1,4 +1,4 @@
-import 'package:atsign_chat/atsign_chat.dart';
+import 'package:atsign_chat/widgets/custom_bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:latlng/latlng.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:map/map.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 
 class RequestLocationScreen extends StatefulWidget {
   @override

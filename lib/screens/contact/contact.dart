@@ -10,7 +10,7 @@ import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/text_strings.dart';
 import 'package:atsign_location_app/view_models/contact_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ContactScreen extends StatefulWidget {
