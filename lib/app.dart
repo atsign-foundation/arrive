@@ -29,8 +29,6 @@ class _MyAppState extends State<MyApp> {
           create: (context) => ContactProvider()),
       ChangeNotifierProvider<BlockedContactProvider>(
           create: (context) => BlockedContactProvider()),
-      ChangeNotifierProvider<ScanQrProvider>(
-          create: (context) => ScanQrProvider())
     ], child: MaterialAppClass());
   }
 }

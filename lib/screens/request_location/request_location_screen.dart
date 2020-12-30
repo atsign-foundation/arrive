@@ -1,9 +1,9 @@
+import 'package:atsign_chat/atsign_chat.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
-import 'package:atsign_location_app/screens/chat_area/chat_area.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -15,57 +15,75 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:map/map.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 
-class RequestLocationScreen extends StatelessWidget {
+class RequestLocationScreen extends StatefulWidget {
+  @override
+  _RequestLocationScreenState createState() => _RequestLocationScreenState();
+}
+
+class _RequestLocationScreenState extends State<RequestLocationScreen> {
   final PanelController pc = PanelController();
+
+  GlobalKey<ScaffoldState> scaffoldKey;
+  @override
+  void initState() {
+    super.initState();
+    scaffoldKey = GlobalKey<ScaffoldState>();
+  }
+
   final controller = MapController(
     location: LatLng(35.68, 51.41),
   );
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+          key: scaffoldKey,
           body: Stack(
-        children: [
-          Map(
-            controller: controller,
-            builder: (context, x, y, z) {
-              return CachedNetworkImage(
-                imageUrl: AllText().URL(x, y, z),
-                fit: BoxFit.cover,
-              );
-            },
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            child: FloatingIcon(
-              bgColor: Theme.of(context).scaffoldBackgroundColor,
-              icon: Icons.arrow_back,
-              iconColor: Theme.of(context).primaryColor,
-              isTopLeft: true,
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            right: 0,
-            child: FloatingIcon(
-              bgColor: Theme.of(context).primaryColor,
-              icon: Icons.message_outlined,
-              iconColor: Theme.of(context).scaffoldBackgroundColor,
-              onPressed: () => bottomSheet(context, ChatArea(), 743.toHeight),
-            ),
-          ),
-          SlidingUpPanel(
-            //color: Colors.transparent,
-            controller: pc,
-            minHeight: 119,
-            maxHeight: 291,
-            collapsed: collapsedContent(false, context),
-            panel: collapsedContent(true, context),
-          )
-        ],
-      )),
+            children: [
+              Map(
+                controller: controller,
+                builder: (context, x, y, z) {
+                  return CachedNetworkImage(
+                    imageUrl: AllText().URL(x, y, z),
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: FloatingIcon(
+                  bgColor: Theme.of(context).scaffoldBackgroundColor,
+                  icon: Icons.arrow_back,
+                  iconColor: Theme.of(context).primaryColor,
+                  isTopLeft: true,
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: FloatingIcon(
+                  bgColor: Theme.of(context).primaryColor,
+                  icon: Icons.message_outlined,
+                  iconColor: Theme.of(context).scaffoldBackgroundColor,
+                  onPressed: () {
+                    scaffoldKey.currentState.showBottomSheet((context) =>
+                        ChatScreen(height: SizeConfig().screenHeight * 0.85));
+                  },
+                ),
+              ),
+              SlidingUpPanel(
+                //color: Colors.transparent,
+                controller: pc,
+                minHeight: 119,
+                maxHeight: 291,
+                collapsed: collapsedContent(false, context),
+                panel: collapsedContent(true, context),
+              )
+            ],
+          )),
     );
   }
 

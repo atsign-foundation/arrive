@@ -1,5 +1,6 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_authentication_helper/atsign_authentication_helper.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
@@ -9,6 +10,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,7 +29,7 @@ class _SplashState extends State<Splash> {
   bool onboardSuccess = false;
   bool sharingStatus = false;
   BackendService backendService;
-  String atSign;
+  String atSign, activeAtSign;
   // bool userAcceptance;
   final Permission _cameraPermission = Permission.camera;
   final Permission _storagePermission = Permission.storage;
@@ -75,9 +77,12 @@ class _SplashState extends State<Splash> {
     backendService.atClientServiceInstance = new AtClientService();
     clientSdkService = ClientSdkService.getInstance();
     // clientSdkService.atClientServiceInstance = new AtClientService();
-    bool isOnBoard = await clientSdkService.onboard();
-    if (isOnBoard) {
-      print('on board ${isOnBoard}');
+    var isOnBoard = await clientSdkService.onboard();
+    if (isOnBoard != null && isOnBoard == true) {
+      print('on board $isOnBoard');
+      await BackendService.getInstance().onboard();
+      await BackendService.getInstance().startMonitor();
+      getAtSignAndInitializeContacts();
       SetupRoutes.push(context, Routes.HOME);
     }
 
@@ -168,7 +173,7 @@ class _SplashState extends State<Splash> {
                   ),
                   // onTap: () => cramAuthWithoutQR(),
 
-                  // onTap: () => SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
+                  // onTap: () => SetupRoutes.push(context, Routes.HOME),
                   onTap: () async {
                     await Navigator.pushReplacement(
                       context,
@@ -189,27 +194,13 @@ class _SplashState extends State<Splash> {
     );
   }
 
-  void cramAuthWithoutQR() async {
-    // setStatus(cramWithoutQr, Status.Loading);
-    bool response = false;
-    try {
-      String colinSecret =
-          "540f1b5fa05b40a58ea7ef82d3cfcde9bb72db8baf4bc863f552f82695837b9fee631f773ab3e34dde05b51e900220e6ae6f7240ec9fc1d967252e1aea4064ba";
-      String kevinSecret =
-          'e0d06915c3f81561fb5f8929caae64a7231db34fdeaff939aacac3cb736be8328c2843b518a2fc7a58fcec8c0aa98c735c0ce5f8ce880e97cd61cf1f2751efc5';
-      response = await backendService.authenticateWithCram("@kevin🛠",
-          cramSecret: kevinSecret);
-      // .then((response) async {
-
-      print("auth successful $response");
-      if (response != null) {
-        await backendService.startMonitor();
-        SetupRoutes.push(context, Routes.SCAN_QR_SCREEN);
-      }
-      // setStatus(cramWithoutQr, Status.Done);
-    } catch (e) {
-      // setError(cramWithoutQr, e.toString());
-      print('ERROR IN CRAM=====>$e');
-    }
+  getAtSignAndInitializeContacts() async {
+    String currentAtSign = await clientSdkService.getAtSign();
+    setState(() {
+      activeAtSign = currentAtSign;
+    });
+    initializeContactsService(
+        clientSdkService.atClientServiceInstance.atClient, currentAtSign,
+        rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 }

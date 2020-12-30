@@ -108,12 +108,15 @@ dependencies:
     #   url: https://sachins@git.geekyants.com/flutter-client-projects/atsign-authentication-helper.git
     #   path: at_lookup
     #   ref: master
+  
+  atsign_chat:
+    path: ../atsign-chat
     
   flutter_map:
     git:
       url: https://github.com/nitesh2599/flutter_map.git
   latlong: ^0.6.1
-  
+  base2e15: ^0.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
