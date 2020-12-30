@@ -8,6 +8,7 @@ import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
@@ -202,8 +203,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Create Event',
               icon: Icons.event,
-              onTap: () => bottomSheet(
-                  context, CreateEvent(), SizeConfig().screenHeight * 0.9)),
+              onTap: () {
+                // BackendService.getInstance().sendMessage();
+                bottomSheet(
+                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+              }),
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,

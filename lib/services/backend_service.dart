@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:atsign_location_app/models/location_notification.dart';
+import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_lookup/src/connection/outbound_connection.dart';
+import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:at_commons/at_commons.dart';
 
@@ -91,32 +94,50 @@ class BackendService {
   }
 
   fnCallBack(var response) async {
-    print('notification res => $response');
     response = response.replaceFirst('notification:', '');
-    print('notification res 149=> $response');
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
-    var fromAtsign = responseJson['from'];
-    var decryptedMessage =
-        await atClientInstance.encryptionService.decrypt(value, fromAtsign);
-    // .catchError(
-    //     (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
-
-    print('message => $decryptedMessage');
+    var notificationKey = responseJson['key'];
+    var fromAtSign = responseJson['from'];
+    var atKey = notificationKey.split(':')[1];
+    var decryptedMessage = await atClientInstance.encryptionService
+        .decrypt(value, fromAtSign)
+        .catchError(
+            (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+    if (atKey.toString().contains(AllText().MSG_NOTIFY)) {
+      MessageNotificationModel msg =
+          MessageNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print(msg.content);
+      print(msg.acknowledged);
+      print(msg.timeStamp);
+    } else if (atKey.toString().contains(AllText().LOCATION_NOTIFY)) {
+      LocationNotificationModel msg =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print(msg.getLatLng);
+    }
   }
 
   sendMessage() async {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = -1
-      ..key = "notify"
-      ..sharedWith = '@mixedmartialartsexcess';
+      // ..metadata.ttr = 10
+      ..key = "${AllText().MSG_NOTIFY}/${DateTime.now()}"
+      // ..key = "${AllText().LOCATION_NOTIFY}}"
+      ..sharedWith = '@test_ga3';
     print('atKey: ${atKey.metadata}');
 
-    var message = json.encode({'content': 'hi....'});
-    var result = await atClientInstance.put(atKey, message);
-    // var result =
-    // await atClientInstance.notify(atKey, 'Hi...', OperationEnum.update);
+    var notification = json.encode({
+      'content': 'Hi..',
+      'acknowledged': 'false',
+      'timeStamp': DateTime.now().toString()
+    });
+    // var notification = json.encode({
+    //   'lat': '12',
+    //   'long': '10'
+    //   // 'timeStamp': DateTime.now().toString()
+    // });
+    var result = await atClientInstance.put(atKey, notification);
     print('send msg result:$result');
   }
 }
