@@ -1,39 +1,32 @@
+import 'package:atsign_location/atsign_location.dart';
+import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/participants.dart';
+import 'package:atsign_location_app/dummy_data/latLng.dart';
 import 'package:atsign_location_app/screens/chat_area/chat_area.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/utils/constants/texts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:latlng/latlng.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:map/map.dart';
 import 'package:atsign_common/services/size_config.dart';
 
 class ShareLocationScreen extends StatelessWidget {
+  int length;
+  ShareLocationScreen({this.length});
   final PanelController pc = PanelController();
-  final controller = MapController(
-    location: LatLng(35.68, 51.41),
-  );
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
           body: Stack(
         children: [
-          Map(
-            controller: controller,
-            builder: (context, x, y, z) {
-              return CachedNetworkImage(
-                imageUrl: AllText().URL(x, y, z),
-                fit: BoxFit.cover,
-              );
-            },
+          AtsignLocationPlugin(
+            (length == 2) ? getLatLng(length: 2) : getLatLng(),
+            bottom: 215,
           ),
           Positioned(
             top: 0,

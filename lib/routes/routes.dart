@@ -27,7 +27,10 @@ class SetupRoutes {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
         return GroupList(currentAtsign: args['currentAtSign']);
       },
-      Routes.SHARE_LOCATION_EVENT: (context) => ShareLocationScreen(),
+      Routes.SHARE_LOCATION_EVENT: (context) => ShareLocationScreen(
+            length: (ModalRoute.of(context).settings.arguments as Map ??
+                {})["length"],
+          ),
       Routes.SELECTED_LOCATION: (context) => SelectedLocation(),
       Routes.REQUEST_LOCATION_EVENT: (context) => RequestLocationScreen(),
       Routes.CONTACT_SCREEN: (context) {

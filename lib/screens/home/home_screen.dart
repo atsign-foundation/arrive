@@ -1,21 +1,22 @@
 import 'package:atsign_events/screens/create_event.dart';
+import 'package:atsign_location/atsign_location.dart';
+import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
+import 'package:atsign_location_app/dummy_data/latLng.dart';
+import 'package:atsign_location_app/routes/route_names.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
-import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
-import 'package:flutter_map/plugin.dart';
-import 'package:latlong/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,36 +26,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
-  // final controller = MapController(
-  //   location: LatLng(35.68, 51.41),
-  // );
-
-  List<LatLng> getLatLng() {
-    List<List<double>> raw = [
-      [148.29, -31.33],
-      [148.51, -35.2],
-      [149.69, -35.04],
-      [149.78, -35.02],
-      [149.86, -31.43],
-      [150.04, -32.72],
-      [150.3, -33.96],
-      [150.33, -32.3],
-      [150.35, -31.7],
-      [150.41, -31.12],
-      [150.63, -35.8],
-      [150.76, -32.96],
-      [150.89, -32.77],
-      [150.92, -34.97],
-      [151.31, -31.48],
-      [151.36, -33.53],
-      [151.47, -31.18],
-      [151.64, -32.31],
-      [151.96, -32.14],
-      [152.53, -34.12],
-    ];
-    return raw.map((e) => LatLng(e[1], e[0])).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -65,16 +36,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: [
-              // Map(
-              //   // controller: controller,
-              //   builder: (context, x, y, z) {
-              //     return CachedNetworkImage(
-              //       imageUrl: AllText().URL(x, y, z),
-              //       fit: BoxFit.cover,
-              //     );
-              //   },
-              // ),
-              PluginMap(getLatLng()),
+              GestureDetector(
+                  onTapDown: (tapDownDetails) {
+                    return SetupRoutes.push(
+                        context, Routes.SHARE_LOCATION_EVENT);
+                  },
+                  child: AbsorbPointer(
+                      absorbing: true,
+                      child: AtsignLocationPlugin(getLatLng()))),
               Positioned(
                 top: 0,
                 right: 0,
@@ -125,12 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   height: 5.toHeight,
                 ),
-                DisplayTile(
-                  image: GroupData().group[0].image,
-                  title: 'Event @ Group Name',
-                  semiTitle: 'Action required',
-                  subTitle: 'Sharing my location until 20:00',
-                  number: 10,
+                GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onTap: () =>
+                      SetupRoutes.push(context, Routes.SHARE_LOCATION_EVENT),
+                  child: DisplayTile(
+                    image: GroupData().group[0].image,
+                    title: 'Event @ Group Name',
+                    semiTitle: 'Action required',
+                    subTitle: 'Sharing my location until 20:00',
+                    number: 10,
+                  ),
                 ),
                 Divider(),
                 ListView.separated(
@@ -138,12 +112,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: length,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    return DisplayTile(
-                      image: GroupData().group[index].image,
-                      title: GroupData().group[index].username,
-                      subTitle: GroupData().group[index].canSeeLocation
-                          ? 'Can see my location'
-                          : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
+                    return GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () => SetupRoutes.push(
+                          context, Routes.SHARE_LOCATION_EVENT,
+                          arguments: {'length': 2}),
+                      child: DisplayTile(
+                        image: GroupData().group[index].image,
+                        title: GroupData().group[index].username,
+                        subTitle: GroupData().group[index].canSeeLocation
+                            ? 'Can see my location'
+                            : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
+                      ),
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
