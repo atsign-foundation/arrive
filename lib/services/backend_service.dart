@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:at_contact/at_contact.dart';
+import 'package:atsign_location_app/models/event_notification.dart';
 import 'package:atsign_location_app/models/location_notification.dart';
 import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -107,13 +109,14 @@ class BackendService {
     if (atKey.toString().contains(AllText().MSG_NOTIFY)) {
       MessageNotificationModel msg =
           MessageNotificationModel.fromJson(jsonDecode(decryptedMessage));
-      print(msg.content);
-      print(msg.acknowledged);
-      print(msg.timeStamp);
     } else if (atKey.toString().contains(AllText().LOCATION_NOTIFY)) {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
-      print(msg.getLatLng);
+    } else if (atKey.toString().contains(AllText().EVENT_NOTIFY)) {
+      print(jsonDecode(decryptedMessage));
+      EventNotificationModel msg =
+          EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print('recieved notification ==>$msg');
     }
   }
 
@@ -137,6 +140,47 @@ class BackendService {
     //   'long': '10'
     //   // 'timeStamp': DateTime.now().toString()
     // });
+    var result = await atClientInstance.put(atKey, notification);
+    print('send msg result:$result');
+  }
+
+  sendEventNotification() async {
+    AtKey atKey = AtKey()
+      ..metadata = Metadata()
+      ..metadata.ttr = -1
+      ..key = "${AllText().EVENT_NOTIFY}/${DateTime.now()}"
+      ..sharedWith = '@mixedmartialartsexcess';
+
+    EventNotificationModel eventNotification = EventNotificationModel()
+      ..contactList = ['@mixedmartialartsexcess', '@aa']
+      ..title = 'my event'
+      ..venue = Venue()
+      ..venue.label = 'my current location'
+      ..venue.latitude = 12
+      ..venue.longitude = 10
+      ..isRecurring = false
+      ..oneDayEvent = OneDayEvent()
+      ..oneDayEvent.date = DateTime.now()
+      ..oneDayEvent.startTime = DateTime.now()
+      ..oneDayEvent.stopTime = DateTime.now()
+      ..recurringEvent = null;
+
+    var notification = json.encode({
+      'title': eventNotification.title.toString(),
+      'contactList': eventNotification.contactList.toString(),
+      'venue': json.encode({
+        'latitude': eventNotification.venue.latitude.toString(),
+        'longitude': eventNotification.venue.longitude.toString(),
+        'label': eventNotification.venue.label.toString()
+      }),
+      'isRecurring': eventNotification.isRecurring.toString(),
+      'recurringEvent': null,
+      'oneDayEvent': json.encode({
+        'date': eventNotification.oneDayEvent.date.toString(),
+        'startTime': eventNotification.oneDayEvent.startTime.toString(),
+        'stopTime': eventNotification.oneDayEvent.stopTime.toString()
+      })
+    });
     var result = await atClientInstance.put(atKey, notification);
     print('send msg result:$result');
   }

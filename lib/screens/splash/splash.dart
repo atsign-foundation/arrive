@@ -5,7 +5,6 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
-// import 'package:atsign_location_app/screens/scan_qr/scan_qr.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_common/services/size_config.dart';
@@ -14,10 +13,7 @@ import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
-
-import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -25,24 +21,16 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  // NotificationService _notificationService;
   bool onboardSuccess = false;
   bool sharingStatus = false;
   BackendService backendService;
-  String atSign, activeAtSign;
-  // bool userAcceptance;
-  final Permission _cameraPermission = Permission.camera;
-  final Permission _storagePermission = Permission.storage;
   Completer c = Completer();
   bool authenticating = false;
-  StreamSubscription _intentDataStreamSubscription;
   ClientSdkService clientSdkService = ClientSdkService.getInstance();
-  // FilePickerProvider filePickerProvider;
 
   @override
   void initState() {
     super.initState();
-    // _notificationService = NotificationService();
 
     _initBackendService();
     // _checkToOnboard();
@@ -80,10 +68,10 @@ class _SplashState extends State<Splash> {
     var isOnBoard = await clientSdkService.onboard();
     if (isOnBoard != null && isOnBoard == true) {
       print('on board $isOnBoard');
-      await BackendService.getInstance().onboard();
-      await BackendService.getInstance().startMonitor();
       getAtSignAndInitializeContacts();
       SetupRoutes.push(context, Routes.HOME);
+      await BackendService.getInstance().onboard();
+      await BackendService.getInstance().startMonitor();
     }
 
     // _notificationService.setOnNotificationClick(onNotificationClick);
@@ -196,9 +184,6 @@ class _SplashState extends State<Splash> {
 
   getAtSignAndInitializeContacts() async {
     String currentAtSign = await clientSdkService.getAtSign();
-    setState(() {
-      activeAtSign = currentAtSign;
-    });
     initializeContactsService(
         clientSdkService.atClientServiceInstance.atClient, currentAtSign,
         rootDomain: MixedConstants.ROOT_DOMAIN);
