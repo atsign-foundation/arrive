@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class MessageNotificationModel {
   String content;
   bool acknowledged;
@@ -12,4 +14,14 @@ class MessageNotificationModel {
         'acknowledged': acknowledged,
         'timeStamp': timeStamp,
       };
+
+  static String convertMessageNotificationToJson(
+      MessageNotificationModel messageNotificationModel) {
+    var notification = json.encode({
+      'content': messageNotificationModel.content,
+      'acknowledged': messageNotificationModel.acknowledged.toString(),
+      'timeStamp': messageNotificationModel.timeStamp.toString()
+    });
+    return notification;
+  }
 }
