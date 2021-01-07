@@ -68,9 +68,10 @@ dependencies:
   atsign_chat:
     path: ../../new_atsign/atsign-chat
   atsign_location:
-    path: ../../new_atsign/atsign-location
-    # git:
-    #   url: https://github.com/nitesh2599/flutter_map.git
+    # path: ../../new_atsign/atsign-location
+    git:
+      url: git@git.geekyants.com:flutter-client-projects/atsign-location.git
+      ref: staging
   latlong: ^0.6.1
 dev_dependencies:
   flutter_test:

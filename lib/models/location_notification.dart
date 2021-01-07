@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:latlong/latlong.dart';
 
 class LocationNotificationModel {
@@ -12,4 +14,13 @@ class LocationNotificationModel {
       };
 
   LatLng get getLatLng => LatLng(this.lat, this.long);
+
+  static String convertLocationNotificationToJson(
+      LocationNotificationModel locationNotificationModel) {
+    var notification = json.encode({
+      'lat': locationNotificationModel.lat,
+      'long': locationNotificationModel.long
+    });
+    return notification;
+  }
 }
