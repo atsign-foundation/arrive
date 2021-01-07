@@ -2,13 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_location_app/models/event_notification.dart';
+import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/models/location_notification.dart';
 import 'package:atsign_location_app/models/message_notification.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_lookup/src/connection/outbound_connection.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:at_commons/at_commons.dart';
 
@@ -117,7 +120,18 @@ class BackendService {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('recieved notification ==>$msg');
+      showMyDialog();
     }
+  }
+
+  Future<void> showMyDialog() async {
+    return showDialog<void>(
+      context: NavService.navKey.currentContext,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return ShareLocationNotifierDialog();
+      },
+    );
   }
 
   sendMessage() async {
@@ -127,7 +141,7 @@ class BackendService {
       // ..metadata.ttr = 10
       ..key = "${AllText().MSG_NOTIFY}/${DateTime.now()}"
       // ..key = "${AllText().LOCATION_NOTIFY}}"
-      ..sharedWith = '@test_ga3';
+      ..sharedWith = '@baila82brilliant';
     print('atKey: ${atKey.metadata}');
 
     var notification = json.encode({
@@ -140,47 +154,6 @@ class BackendService {
     //   'long': '10'
     //   // 'timeStamp': DateTime.now().toString()
     // });
-    var result = await atClientInstance.put(atKey, notification);
-    print('send msg result:$result');
-  }
-
-  sendEventNotification() async {
-    AtKey atKey = AtKey()
-      ..metadata = Metadata()
-      ..metadata.ttr = -1
-      ..key = "${AllText().EVENT_NOTIFY}/${DateTime.now()}"
-      ..sharedWith = '@mixedmartialartsexcess';
-
-    EventNotificationModel eventNotification = EventNotificationModel()
-      ..contactList = ['@mixedmartialartsexcess', '@aa']
-      ..title = 'my event'
-      ..venue = Venue()
-      ..venue.label = 'my current location'
-      ..venue.latitude = 12
-      ..venue.longitude = 10
-      ..isRecurring = false
-      ..oneDayEvent = OneDayEvent()
-      ..oneDayEvent.date = DateTime.now()
-      ..oneDayEvent.startTime = DateTime.now()
-      ..oneDayEvent.stopTime = DateTime.now()
-      ..recurringEvent = null;
-
-    var notification = json.encode({
-      'title': eventNotification.title.toString(),
-      'contactList': eventNotification.contactList.toString(),
-      'venue': json.encode({
-        'latitude': eventNotification.venue.latitude.toString(),
-        'longitude': eventNotification.venue.longitude.toString(),
-        'label': eventNotification.venue.label.toString()
-      }),
-      'isRecurring': eventNotification.isRecurring.toString(),
-      'recurringEvent': null,
-      'oneDayEvent': json.encode({
-        'date': eventNotification.oneDayEvent.date.toString(),
-        'startTime': eventNotification.oneDayEvent.startTime.toString(),
-        'stopTime': eventNotification.oneDayEvent.stopTime.toString()
-      })
-    });
     var result = await atClientInstance.put(atKey, notification);
     print('send msg result:$result');
   }

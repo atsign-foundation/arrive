@@ -68,7 +68,6 @@ class _SplashState extends State<Splash> {
     var isOnBoard = await clientSdkService.onboard();
     if (isOnBoard != null && isOnBoard == true) {
       print('on board $isOnBoard');
-      getAtSignAndInitializeContacts();
       SetupRoutes.push(context, Routes.HOME);
       await BackendService.getInstance().onboard();
       await BackendService.getInstance().startMonitor();
@@ -180,12 +179,5 @@ class _SplashState extends State<Splash> {
         ),
       ),
     );
-  }
-
-  getAtSignAndInitializeContacts() async {
-    String currentAtSign = await clientSdkService.getAtSign();
-    initializeContactsService(
-        clientSdkService.atClientServiceInstance.atClient, currentAtSign,
-        rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 }

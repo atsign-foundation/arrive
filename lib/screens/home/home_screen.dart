@@ -13,11 +13,15 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,6 +30,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
+
+  @override
+  void initState() {
+    super.initState();
+    initializeContacts();
+  }
+
+  initializeContacts() async {
+    String currentAtSign = await ClientSdkService.getInstance().getAtSign();
+    initializeContactsService(
+        ClientSdkService.getInstance().atClientServiceInstance.atClient,
+        currentAtSign,
+        rootDomain: MixedConstants.ROOT_DOMAIN);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -186,7 +205,11 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 // BackendService.getInstance().sendMessage();
                 bottomSheet(
-                    context, CreateEvent(), SizeConfig().screenHeight * 0.9);
+                    context,
+                    CreateEvent(ClientSdkService.getInstance()
+                        .atClientServiceInstance
+                        .atClient),
+                    SizeConfig().screenHeight * 0.9);
               }),
           Tasks(
               task: 'Request Location',
