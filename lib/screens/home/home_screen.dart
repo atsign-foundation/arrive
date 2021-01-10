@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Create Event',
               icon: Icons.event,
               onTap: () {
-                // BackendService.getInstance().sendMessage();
+                // BackendService.getInstance().getAllNotificationKeys();
                 bottomSheet(
                     context,
                     CreateEvent(ClientSdkService.getInstance()
@@ -214,8 +214,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
-              onTap: () => bottomSheet(context, RequestLocationSheet(),
-                  SizeConfig().screenHeight * 0.5)),
+              onTap: () {
+                // BackendService.getInstance().updateNotification();
+                bottomSheet(context, RequestLocationSheet(),
+                    SizeConfig().screenHeight * 0.5);
+              }),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,

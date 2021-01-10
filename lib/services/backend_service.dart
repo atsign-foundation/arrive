@@ -112,24 +112,30 @@ class BackendService {
     if (atKey.toString().contains(AllText().MSG_NOTIFY)) {
       MessageNotificationModel msg =
           MessageNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print('recieved notification ==>$msg');
     } else if (atKey.toString().contains(AllText().LOCATION_NOTIFY)) {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
-    } else if (atKey.toString().contains(AllText().EVENT_NOTIFY)) {
+      print('recieved notification ==>$msg');
+    } else if (atKey.toString().contains('${AllText().EVENT_NOTIFY}-')) {
       print(jsonDecode(decryptedMessage));
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('recieved notification ==>$msg');
-      showMyDialog();
+      showMyDialog(msg, fromAtSign);
     }
   }
 
-  Future<void> showMyDialog() async {
+  Future<void> showMyDialog(
+      EventNotificationModel eventData, String fromAtSign) async {
+    String userName, inviteCount;
+    userName = fromAtSign;
+    // inviteCount = eventData.contactList.length.toString();
     return showDialog<void>(
       context: NavService.navKey.currentContext,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return ShareLocationNotifierDialog();
+        return ShareLocationNotifierDialog(userName: userName);
       },
     );
   }
@@ -156,5 +162,38 @@ class BackendService {
     // });
     var result = await atClientInstance.put(atKey, notification);
     print('send msg result:$result');
+  }
+
+  getAllNotificationKeys() async {
+    List<String> response = await atClientInstance.getKeys(
+      regex: 'eventnotify-',
+      // sharedBy: '@baila82brilliant',
+      // sharedWith: '@test_ga3'
+    );
+    print('keys:${response}');
+    print('sharedBy:${response[3]}, ${response.length}');
+
+    AtKey key = AtKey.fromString(response[3]);
+    print('key :${key.key} , ${key}');
+
+    AtValue result = await atClientInstance.get(key).catchError(
+        (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+    print('result - ${result.value}');
+  }
+
+  updateNotification() async {
+    List<String> response = await atClientInstance.getKeys(
+      regex: 'eventnotify-',
+    );
+    print('keys:${response}');
+    print('sharedBy:${response[3]}, ${response.length}');
+
+    AtKey key = AtKey.fromString(response[3]);
+    print('key :${key.key} , ${key}');
+
+    var result = await atClientInstance.put(
+        key, json.encode({'value': 'value changed... again'}));
+
+    print('update result:${result}');
   }
 }

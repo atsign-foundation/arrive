@@ -7,9 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
 
 class ShareLocationNotifierDialog extends StatelessWidget {
-  final String event, invitedPeopleCount, timeAndDate;
+  final String event, invitedPeopleCount, timeAndDate, userName;
+  final bool showMembersCount;
   ShareLocationNotifierDialog(
-      {this.event, this.invitedPeopleCount, this.timeAndDate});
+      {this.event,
+      this.invitedPeopleCount,
+      this.timeAndDate,
+      this.userName,
+      this.showMembersCount = false});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,7 +27,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                      'User Name wants to share an event with you. Are you sure you want to join and share your location with the group?',
+                      '$userName wants to share an event with you. Are you sure you want to join and share your location with the group?',
                       style: CustomTextStyles().grey16,
                       textAlign: TextAlign.center),
                   SizedBox(height: 30),
@@ -30,23 +35,25 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                     children: [
                       CustomCircleAvatar(
                           image: AllImages().PERSON2, size: 74.toHeight),
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: AllColors().BLUE,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Center(
-                              child: Text(
-                            '+10',
-                            style: CustomTextStyles().black10,
-                          )),
-                        ),
-                      )
+                      showMembersCount
+                          ? Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: AllColors().BLUE,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Center(
+                                    child: Text(
+                                  '+10',
+                                  style: CustomTextStyles().black10,
+                                )),
+                              ),
+                            )
+                          : SizedBox()
                     ],
                   ),
                   SizedBox(height: 10.toHeight),
