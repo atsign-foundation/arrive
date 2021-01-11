@@ -24,10 +24,10 @@ class ShareLocationScreen extends StatelessWidget {
       child: Scaffold(
           body: Stack(
         children: [
-          AtsignLocationPlugin(
-            (length == 2) ? getLatLng(length: 2) : getLatLng(),
-            bottom: 215,
-          ),
+          // AtsignLocationPlugin(
+          //   (length == 2) ? getLatLng(length: 2) : getLatLng(),
+          //   bottom: 215,
+          // ),
           Positioned(
             top: 0,
             left: 0,

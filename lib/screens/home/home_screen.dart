@@ -1,3 +1,4 @@
+import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location/atsign_location.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
@@ -5,6 +6,7 @@ import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
+import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/dummy_data/latLng.dart';
@@ -17,9 +19,13 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:atsign_contacts/utils/init_contacts_service.dart';
 
@@ -30,11 +36,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
+  EventProvider eventProvider;
 
   @override
   void initState() {
     super.initState();
     initializeContacts();
+    eventProvider = context.read<EventProvider>();
+    getAllEvents();
+  }
+
+  getAllEvents() async {
+    eventProvider
+        .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
   }
 
   initializeContacts() async {
@@ -55,14 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: [
-              GestureDetector(
-                  onTapDown: (tapDownDetails) {
-                    return SetupRoutes.push(
-                        context, Routes.SHARE_LOCATION_EVENT);
-                  },
-                  child: AbsorbPointer(
-                      absorbing: true,
-                      child: AtsignLocationPlugin(getLatLng()))),
+              // GestureDetector(
+              //     onTapDown: (tapDownDetails) {
+              //       return SetupRoutes.push(
+              //           context, Routes.SHARE_LOCATION_EVENT);
+              //     },
+              //     child: AbsorbPointer(
+              //         absorbing: true,
+              //         child: AtsignLocationPlugin(getLatLng()))),
               Positioned(
                 top: 0,
                 right: 0,
@@ -76,17 +90,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: pc,
                 minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
-                collapsed: collapsedContent(2),
-                panel: collapsedContent(GroupData().group.length),
+                collapsed: collapsedContent(false),
+                panel: collapsedContent(true),
               )
             ],
           )),
     );
   }
 
-  Widget collapsedContent(int length) {
+  Widget collapsedContent(bool isExpanded) {
     return Container(
-        height: length == 2 ? 260.toHeight : 530.toHeight,
+        height: !isExpanded ? 260.toHeight : 530.toHeight,
         padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -101,80 +115,167 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        child: SingleChildScrollView(
-          physics: length == 2
-              ? NeverScrollableScrollPhysics()
-              : AlwaysScrollableScrollPhysics(),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DraggableSymbol(),
-                SizedBox(
-                  height: 5.toHeight,
+        child: ProviderHandler<EventProvider>(
+            functionName: EventProvider().GET_ALL_EVENTS,
+            showError: true,
+            load: (provider) => provider.getAllEvents(),
+            errorBuilder: (provider) => Center(
+                  child: Text('Some error occured'),
                 ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () =>
-                      SetupRoutes.push(context, Routes.SHARE_LOCATION_EVENT),
-                  child: DisplayTile(
-                    image: GroupData().group[0].image,
-                    title: 'Event @ Group Name',
-                    semiTitle: 'Action required',
-                    subTitle: 'Sharing my location until 20:00',
-                    number: 10,
-                  ),
-                ),
-                Divider(),
-                ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: length,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () => SetupRoutes.push(
-                          context, Routes.SHARE_LOCATION_EVENT,
-                          arguments: {'length': 2}),
-                      child: DisplayTile(
-                        image: GroupData().group[index].image,
-                        title: GroupData().group[index].username,
-                        subTitle: GroupData().group[index].canSeeLocation
-                            ? 'Can see my location'
-                            : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
-                  },
-                ),
-                length == 2
-                    ? Container(
-                        //height: 16.toHeight,
-                        alignment: Alignment.topCenter,
-                        width: SizeConfig().screenWidth,
-                        padding: EdgeInsets.fromLTRB(
-                            56.toHeight, 0.toHeight, 0.toWidth, 0.toHeight),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
+            successBuilder: (provider) {
+              if (provider.allEvents.length > 0) {
+                return SingleChildScrollView(
+                  physics: !isExpanded
+                      ? NeverScrollableScrollPhysics()
+                      : AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DraggableSymbol(),
+                        SizedBox(
+                          height: 5.toHeight,
                         ),
-                        child: InkWell(
-                          onTap: () => pc.open(),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'See 9 more ',
-                                style: CustomTextStyles().darkGrey14,
-                              ),
-                              Icon(Icons.keyboard_arrow_down)
-                            ],
-                          ),
-                        ))
-                    : SizedBox()
-              ]),
-        ));
+                        Divider(),
+                        !isExpanded
+                            ? ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: 3,
+                                shrinkWrap: true,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AtsignLocationPlugin(
+                                                  ClientSdkService.getInstance()
+                                                      .atClientServiceInstance
+                                                      .atClient,
+                                                  eventListenerKeyword: provider
+                                                      .allEvents[index]),
+                                        ),
+                                      );
+                                    },
+                                    child: DisplayTile(
+                                      image: AllImages().PERSON2,
+                                      title: provider.allEvents[index].title,
+                                      subTitle: provider.allEvents[index].event
+                                                  .date !=
+                                              null
+                                          ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                          : '',
+                                      semiTitle: (provider
+                                                      .allEvents[index]
+                                                      .contactList[0]
+                                                      .isExited ==
+                                                  false &&
+                                              provider
+                                                      .allEvents[index]
+                                                      .contactList[0]
+                                                      .isAccepted ==
+                                                  false)
+                                          ? 'Action required'
+                                          : '',
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return Divider();
+                                },
+                              )
+                            : SizedBox(),
+                        !isExpanded
+                            ? Container(
+                                //height: 16.toHeight,
+                                alignment: Alignment.topCenter,
+                                width: SizeConfig().screenWidth,
+                                padding: EdgeInsets.fromLTRB(56.toHeight,
+                                    0.toHeight, 0.toWidth, 0.toHeight),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                ),
+                                child: InkWell(
+                                  onTap: () => pc.open(),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      provider.allEvents.length > 3
+                                          ? Text(
+                                              'See ${provider.allEvents.length - 3} more ',
+                                              style:
+                                                  CustomTextStyles().darkGrey14,
+                                            )
+                                          : SizedBox(),
+                                      Icon(Icons.keyboard_arrow_down)
+                                    ],
+                                  ),
+                                ))
+                            : SizedBox(),
+                        !isExpanded
+                            ? SizedBox()
+                            : ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: provider.allEvents.length,
+                                shrinkWrap: true,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AtsignLocationPlugin(
+                                                  ClientSdkService.getInstance()
+                                                      .atClientServiceInstance
+                                                      .atClient,
+                                                  eventListenerKeyword: provider
+                                                      .allEvents[index]),
+                                        ),
+                                      );
+                                    },
+                                    child: DisplayTile(
+                                      image: AllImages().PERSON2,
+                                      title: provider.allEvents[index].title,
+                                      subTitle: provider.allEvents[index].event
+                                                  .date !=
+                                              null
+                                          ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                          : '',
+                                      semiTitle: (provider
+                                                      .allEvents[index]
+                                                      .contactList[0]
+                                                      .isExited ==
+                                                  false &&
+                                              provider
+                                                      .allEvents[index]
+                                                      .contactList[0]
+                                                      .isAccepted ==
+                                                  false)
+                                          ? 'Action required'
+                                          : '',
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return Divider();
+                                },
+                              )
+                      ]),
+                );
+              } else {
+                return Center(
+                  child: Text('No events found'),
+                );
+              }
+            }));
   }
 
   Widget header() {
@@ -215,7 +316,6 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Request Location',
               icon: Icons.refresh,
               onTap: () {
-                // BackendService.getInstance().updateNotification();
                 bottomSheet(context, RequestLocationSheet(),
                     SizeConfig().screenHeight * 0.5);
               }),

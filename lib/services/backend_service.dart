@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_location/location_modal/location_notification.dart';
+// import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/models/location_notification.dart';
 import 'package:atsign_location_app/models/message_notification.dart';
@@ -173,7 +175,7 @@ class BackendService {
     print('keys:${response}');
     print('sharedBy:${response[3]}, ${response.length}');
 
-    AtKey key = AtKey.fromString(response[3]);
+    AtKey key = AtKey.fromString(response[0]);
     print('key :${key.key} , ${key}');
 
     AtValue result = await atClientInstance.get(key).catchError(
@@ -185,15 +187,10 @@ class BackendService {
     List<String> response = await atClientInstance.getKeys(
       regex: 'eventnotify-',
     );
-    print('keys:${response}');
-    print('sharedBy:${response[3]}, ${response.length}');
-
     AtKey key = AtKey.fromString(response[3]);
     print('key :${key.key} , ${key}');
 
-    var result = await atClientInstance.put(
-        key, json.encode({'value': 'value changed... again'}));
-
+    var result = await atClientInstance.put(key, json.encode(null));
     print('update result:${result}');
   }
 }
