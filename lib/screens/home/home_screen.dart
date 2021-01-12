@@ -3,6 +3,7 @@ import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location/atsign_location.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -36,17 +37,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
-  EventProvider eventProvider;
+  EventProvider eventProvider = new EventProvider();
 
   @override
   void initState() {
     super.initState();
     initializeContacts();
     eventProvider = context.read<EventProvider>();
-    getAllEvents();
-  }
-
-  getAllEvents() async {
     eventProvider
         .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
   }
@@ -90,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: pc,
                 minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
-                collapsed: collapsedContent(false),
+                // collapsed: Text('sss'),
                 panel: collapsedContent(true),
               )
             ],
@@ -162,10 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: DisplayTile(
                                       image: AllImages().PERSON2,
                                       title: provider.allEvents[index].title,
-                                      subTitle: provider.allEvents[index].event
-                                                  .date !=
+                                      subTitle: provider
+                                                  .allEvents[index].event !=
                                               null
-                                          ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                          ? provider.allEvents[index].event
+                                                      .date !=
+                                                  null
+                                              ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                              : ''
                                           : '',
                                       semiTitle: (provider
                                                       .allEvents[index]
@@ -227,6 +228,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
+                                      if (index == 3) {
+                                        pc.open();
+                                        return null;
+                                      }
+
+                                      // if ((provider.allEvents[index]
+                                      //             .contactList[0].isExited ==
+                                      //         false &&
+                                      //     provider.allEvents[index]
+                                      //             .contactList[0].isAccepted ==
+                                      //         false)) {
+                                      return showDialog<void>(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (BuildContext context) {
+                                          print(
+                                              'selected event${provider.allEvents[index].key}');
+                                          return ShareLocationNotifierDialog(
+                                              provider.allEvents[index],
+                                              userName: provider
+                                                  .allEvents[index]
+                                                  .atsignCreator);
+                                        },
+                                      );
+                                      // }
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -240,27 +267,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       );
                                     },
-                                    child: DisplayTile(
-                                      image: AllImages().PERSON2,
-                                      title: provider.allEvents[index].title,
-                                      subTitle: provider.allEvents[index].event
-                                                  .date !=
-                                              null
-                                          ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
-                                          : '',
-                                      semiTitle: (provider
-                                                      .allEvents[index]
-                                                      .contactList[0]
-                                                      .isExited ==
-                                                  false &&
-                                              provider
-                                                      .allEvents[index]
-                                                      .contactList[0]
-                                                      .isAccepted ==
-                                                  false)
-                                          ? 'Action required'
-                                          : '',
-                                    ),
+                                    child: index == 3 && pc.isPanelClosed
+                                        ? Text(
+                                            'See ${provider.allEvents.length - 3} more ',
+                                            style:
+                                                CustomTextStyles().darkGrey14,
+                                          )
+                                        : DisplayTile(
+                                            image: AllImages().PERSON2,
+                                            title:
+                                                provider.allEvents[index].title,
+                                            subTitle: provider.allEvents[index]
+                                                        .event !=
+                                                    null
+                                                ? provider.allEvents[index]
+                                                            .event.date !=
+                                                        null
+                                                    ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                                    : ''
+                                                : '',
+                                            semiTitle: (provider
+                                                            .allEvents[index]
+                                                            .contactList[0]
+                                                            .isExited ==
+                                                        false &&
+                                                    provider
+                                                            .allEvents[index]
+                                                            .contactList[0]
+                                                            .isAccepted ==
+                                                        false)
+                                                ? 'Action required'
+                                                : '',
+                                          ),
                                   );
                                 },
                                 separatorBuilder:
@@ -304,20 +342,21 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Create Event',
               icon: Icons.event,
               onTap: () {
-                // BackendService.getInstance().getAllNotificationKeys();
-                bottomSheet(
-                    context,
-                    CreateEvent(ClientSdkService.getInstance()
-                        .atClientServiceInstance
-                        .atClient),
-                    SizeConfig().screenHeight * 0.9);
+                BackendService.getInstance().updateNotification();
+                // bottomSheet(
+                //     context,
+                //     CreateEvent(ClientSdkService.getInstance()
+                //         .atClientServiceInstance
+                //         .atClient),
+                //     SizeConfig().screenHeight * 0.9);
               }),
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
               onTap: () {
-                bottomSheet(context, RequestLocationSheet(),
-                    SizeConfig().screenHeight * 0.5);
+                BackendService.getInstance().getAllNotificationKeys();
+                // bottomSheet(context, RequestLocationSheet(),
+                //     SizeConfig().screenHeight * 0.5);
               }),
           Tasks(
               task: 'Share Location',

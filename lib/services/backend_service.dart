@@ -119,7 +119,7 @@ class BackendService {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('recieved notification ==>$msg');
-    } else if (atKey.toString().contains('${AllText().EVENT_NOTIFY}-')) {
+    } else if (atKey.toString().contains(AllText().EVENT_NOTIFY)) {
       print(jsonDecode(decryptedMessage));
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -137,7 +137,7 @@ class BackendService {
       context: NavService.navKey.currentContext,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return ShareLocationNotifierDialog(userName: userName);
+        return ShareLocationNotifierDialog(eventData, userName: userName);
       },
     );
   }
@@ -168,12 +168,12 @@ class BackendService {
 
   getAllNotificationKeys() async {
     List<String> response = await atClientInstance.getKeys(
-      regex: 'eventnotify-',
+      regex: 'eventnotify-1610444997803211',
       // sharedBy: '@baila82brilliant',
       // sharedWith: '@test_ga3'
     );
     print('keys:${response}');
-    print('sharedBy:${response[3]}, ${response.length}');
+    print('sharedBy:${response[0]}, ${response.length}');
 
     AtKey key = AtKey.fromString(response[0]);
     print('key :${key.key} , ${key}');
@@ -185,12 +185,14 @@ class BackendService {
 
   updateNotification() async {
     List<String> response = await atClientInstance.getKeys(
-      regex: 'eventnotify-',
+      regex: 'eventnotify-1610444997803211',
     );
-    AtKey key = AtKey.fromString(response[3]);
+    print('response:${response}, ${response[0]}');
+    AtKey key = AtKey.fromString(response[0]);
     print('key :${key.key} , ${key}');
 
-    var result = await atClientInstance.put(key, json.encode(null));
+    var result =
+        await atClientInstance.put(key, json.encode({'changed': 'value2'}));
     print('update result:${result}');
   }
 }

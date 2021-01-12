@@ -1,15 +1,22 @@
+import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/common_components/provider_handler.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
 
 class ShareLocationNotifierDialog extends StatelessWidget {
   final String event, invitedPeopleCount, timeAndDate, userName;
+  final EventNotificationModel eventData;
   final bool showMembersCount;
-  ShareLocationNotifierDialog(
+  ShareLocationNotifierDialog(this.eventData,
       {this.event,
       this.invitedPeopleCount,
       this.timeAndDate,
@@ -71,7 +78,28 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                       : SizedBox(),
                   SizedBox(height: 20.toHeight),
                   CustomButton(
-                    onTap: () => null,
+                    onTap: () => () async {
+                      print('${eventData.key}');
+                      eventData.contactList.forEach((element) {
+                        if (element.atsign ==
+                            ClientSdkService.getInstance()
+                                .atClientServiceInstance
+                                .atClient
+                                .currentAtSign) {
+                          element.isAccepted = true;
+                          element.isExited = false;
+                          print('element is accepted: ${element.isAccepted}');
+                        }
+                      });
+
+                      providerCallback<EventProvider>(context,
+                          task: (t) => t.updateEvent(eventData),
+                          taskName: (t) => t.UPDATE_EVENTS,
+                          onSuccess: (t) {
+                            Navigator.of(context).pop();
+                            t.getAllEvents();
+                          });
+                    }(),
                     child: Text('Yes',
                         style: TextStyle(
                             color: Theme.of(context).scaffoldBackgroundColor)),
@@ -81,7 +109,28 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   ),
                   SizedBox(height: 5),
                   InkWell(
-                    onTap: null,
+                    onTap: () async {
+                      print('${eventData.key}');
+                      eventData.contactList.forEach((element) {
+                        if (element.atsign ==
+                            ClientSdkService.getInstance()
+                                .atClientServiceInstance
+                                .atClient
+                                .currentAtSign) {
+                          element.isAccepted = false;
+                          element.isExited = false;
+                          print('element is accepted: ${element.isAccepted}');
+                        }
+                      });
+
+                      providerCallback<EventProvider>(context,
+                          task: (t) => t.updateEvent(eventData),
+                          taskName: (t) => t.UPDATE_EVENTS,
+                          onSuccess: (t) {
+                            Navigator.of(context).pop();
+                            t.getAllEvents();
+                          });
+                    },
                     child: Text(
                       'No',
                       style: CustomTextStyles().black14,
