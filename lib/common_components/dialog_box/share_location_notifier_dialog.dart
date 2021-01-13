@@ -1,3 +1,4 @@
+import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
@@ -79,21 +80,10 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   SizedBox(height: 20.toHeight),
                   CustomButton(
                     onTap: () => () async {
-                      print('${eventData.key}');
-                      eventData.contactList.forEach((element) {
-                        if (element.atsign ==
-                            ClientSdkService.getInstance()
-                                .atClientServiceInstance
-                                .atClient
-                                .currentAtSign) {
-                          element.isAccepted = true;
-                          element.isExited = false;
-                          print('element is accepted: ${element.isAccepted}');
-                        }
-                      });
-
                       providerCallback<EventProvider>(context,
-                          task: (t) => t.updateEvent(eventData),
+                          task: (t) => t.actionOnEvent(
+                              eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                              isAccepted: true),
                           taskName: (t) => t.UPDATE_EVENTS,
                           onSuccess: (t) {
                             Navigator.of(context).pop();
@@ -124,7 +114,9 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                       });
 
                       providerCallback<EventProvider>(context,
-                          task: (t) => t.updateEvent(eventData),
+                          task: (t) => t.actionOnEvent(
+                              eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                              isAccepted: false),
                           taskName: (t) => t.UPDATE_EVENTS,
                           onSuccess: (t) {
                             Navigator.of(context).pop();

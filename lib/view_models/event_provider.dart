@@ -1,3 +1,5 @@
+import 'package:atsign_location_app/services/client_sdk_service.dart';
+
 import 'base_model.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
@@ -31,10 +33,14 @@ class EventProvider extends BaseModel {
     allAtValues = [];
     allEvents = [];
     List<String> response = await atClientInstance.getKeys(
-      regex: 'eventnotify-',
-      // sharedWith: 'baila82brilliant',
+      regex: 'createevent-',
+      // sharedWith: '@test_ga3',
       // sharedBy: '@test_ga3',
     );
+
+    print('all response =========>>>>>>>:${response}');
+
+    await updateEventAccordingToAcknowledgedData();
 
     print('responses:${response} , ${response.length}');
 
@@ -50,7 +56,7 @@ class EventProvider extends BaseModel {
       }
     });
 
-    print('allKeys:${allKeys[allKeys.length - 1]}');
+    print('allKeys:${allKeys}');
 
     allKeys.forEach((element) {
       AtKey key = AtKey.fromString(element);
@@ -105,20 +111,43 @@ class EventProvider extends BaseModel {
     // 'all events is accepted:${allEvents[allEvents.length - 1].contactList[0].isAccepted} , ${allEvents[allEvents.length - 1].key} : ${allEvents[allEvents.length - 1].title}');
   }
 
-  updateEvent(EventNotificationModel eventData) async {
+  actionOnEvent(EventNotificationModel eventData, ATKEY_TYPE_ENUM keyType,
+      {bool isAccepted, bool isSharing, bool isExited}) async {
     setStatus(UPDATE_EVENTS, Status.Loading);
-    // eventData.key =
-    // 'cached:@test_ga3:eventnotify-1610435771773562@baila82brilliant';
-    eventData.title = 'name chnaged';
-    print(
-        'key is accepted:${eventData.contactList[eventData.contactList.length - 1].isAccepted}');
 
     try {
-      AtKey key = AtKey.fromString(eventData.key);
-      print('key:${eventData.key}');
+      String atkeyMicrosecondId =
+          eventData.key.split('createevent-')[1].split('@')[0];
+
+      String currentAtsign = ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .currentAtSign;
+
+      eventData.group.members.forEach((member) {
+        if (member.atSign == currentAtsign) {
+          member.tags['isAccepted'] =
+              isAccepted != null ? isAccepted : member.tags['isAccepted'];
+          member.tags['isSharing'] =
+              isSharing != null ? isSharing : member.tags['isSharing'];
+          member.tags['isExited'] =
+              isExited != null ? isExited : member.tags['isExited'];
+
+          print('is accepted updated:${member.tags['isAccepted']} ');
+        }
+      });
+
+      AtKey key =
+          formAtKey(keyType, atkeyMicrosecondId, eventData.atsignCreator);
+
+      // print('acknowledged data:${notification}');
+
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-      var result = await atClientInstance.put(key, jsonEncode(notification));
+
+      print('acknowledged data:${notification}');
+
+      var result = await atClientInstance.put(key, notification);
       print('event updated:${result}, ${notification}');
 
       setStatus(UPDATE_EVENTS, Status.Done);
@@ -127,4 +156,81 @@ class EventProvider extends BaseModel {
       setStatus(UPDATE_EVENTS, Status.Error);
     }
   }
+
+  AtKey formAtKey(
+      ATKEY_TYPE_ENUM keyType, String atkeyMicrosecondId, String sharedWith) {
+    AtKey key = AtKey()
+      ..metadata = Metadata()
+      ..metadata.ttr = -1
+      ..sharedWith = sharedWith;
+
+    switch (keyType) {
+      case ATKEY_TYPE_ENUM.CREATEEVENT:
+        key.key = 'createevent-$atkeyMicrosecondId';
+        return key;
+        break;
+
+      case ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT:
+        key.key = 'eventacknowledged-$atkeyMicrosecondId';
+        return key;
+        break;
+    }
+  }
+
+  updateEventAccordingToAcknowledgedData() async {
+    List<String> allEventKey = await atClientInstance.getKeys(
+      regex: 'createevent-',
+      // sharedWith: '@test_ga3',
+      // sharedBy: '@test_ga3',
+    );
+    print('all event key:$allEventKey');
+    List<String> allRegexResponses = [];
+    for (int i = 0; i < allEventKey.length; i++) {
+      allRegexResponses = [];
+      String atkeyMicrosecondId =
+          allEventKey[i].split('createevent-')[1].split('@')[0];
+      String acknowledgedKeyId = 'eventacknowledged-$atkeyMicrosecondId';
+
+      allRegexResponses =
+          await atClientInstance.getKeys(regex: acknowledgedKeyId);
+      print('all regex responses: $allRegexResponses');
+
+      if (allRegexResponses.length > 0) {
+        for (int j = 0; j < allRegexResponses.length; j++) {
+          if (allRegexResponses[j] != null) {
+            print('acknowledged key :${allRegexResponses[j]}');
+
+            AtKey acknowledgedAtKey = AtKey.fromString(allRegexResponses[j]);
+            AtKey createEventAtKey = AtKey.fromString(allEventKey[i]);
+            print('atkey of acknowledged:$createEventAtKey');
+
+            AtValue result = await atClientInstance
+                .get(acknowledgedAtKey)
+                .catchError((e) =>
+                    print("error in get ${e.errorCode} ${e.errorMessage}"));
+            print('acknowledged value - ${result.value}');
+
+            EventNotificationModel acknowledgedEvent =
+                EventNotificationModel.fromJson(jsonDecode(result.value));
+
+            print(
+                'updating main data:${acknowledgedEvent.group.members} , key used:${createEventAtKey}');
+
+            // await actionOnEvent(acknowledgedEvent, ATKEY_TYPE_ENUM.CREATEEVENT);
+            await updateEvent(acknowledgedEvent, createEventAtKey);
+          }
+        }
+      }
+    }
+  }
+
+  updateEvent(EventNotificationModel eventData, AtKey key) async {
+    var notification =
+        EventNotificationModel.convertEventNotificationToJson(eventData);
+
+    var result = await atClientInstance.put(key, notification);
+    print('event updated:${result}, ${notification}');
+  }
 }
+
+enum ATKEY_TYPE_ENUM { CREATEEVENT, ACKNOWLEDGEEVENT }

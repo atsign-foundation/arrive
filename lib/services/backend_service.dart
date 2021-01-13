@@ -9,6 +9,7 @@ import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/models/location_notification.dart';
 import 'package:atsign_location_app/models/message_notification.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -125,6 +126,18 @@ class BackendService {
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('recieved notification ==>$msg');
       showMyDialog(msg, fromAtSign);
+    } else if (atKey.toString().contains('createevent')) {
+      print(jsonDecode(decryptedMessage));
+      EventNotificationModel msg =
+          EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print('recieved notification ==>$msg');
+      showMyDialog(msg, fromAtSign);
+    } else if (atKey.toString().contains('createeventack')) {
+      print(jsonDecode(decryptedMessage));
+      EventNotificationModel msg =
+          EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print('recieved notification ==>$msg');
+      createEventAcknowledge(msg);
     }
   }
 
@@ -140,6 +153,10 @@ class BackendService {
         return ShareLocationNotifierDialog(eventData, userName: userName);
       },
     );
+  }
+
+  createEventAcknowledge(EventNotificationModel acknowledgedEvent) {
+    print('acknowledged notification received:${acknowledgedEvent}');
   }
 
   sendMessage() async {
@@ -167,10 +184,12 @@ class BackendService {
   }
 
   getAllNotificationKeys() async {
+    atClientInstance =
+        ClientSdkService.getInstance().atClientServiceInstance.atClient;
     List<String> response = await atClientInstance.getKeys(
-      regex: 'eventnotify-1610444997803211',
-      // sharedBy: '@baila82brilliant',
-      // sharedWith: '@test_ga3'
+      regex: '1610564251660178',
+      // sharedBy: '@',
+      // sharedWith: '@test_ga3',
     );
     print('keys:${response}');
     print('sharedBy:${response[0]}, ${response.length}');
@@ -181,14 +200,21 @@ class BackendService {
     AtValue result = await atClientInstance.get(key).catchError(
         (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
     print('result - ${result.value}');
+
+    EventNotificationModel msg =
+        EventNotificationModel.fromJson(jsonDecode(result.value));
+
+    print(
+        'EventNotificationModel msg:${msg.group.name}, members:${msg.group.members.elementAt(0).tags['isAccepted']}, ${msg.group.members}');
   }
 
   updateNotification() async {
     List<String> response = await atClientInstance.getKeys(
-      regex: 'eventnotify-1610444997803211',
+      regex: 'eventnotify-1610449743993530',
     );
-    print('response:${response}, ${response[0]}');
+    print('response:${response}, ${response.length}');
     AtKey key = AtKey.fromString(response[0]);
+    key.metadata.isCached = true;
     print('key :${key.key} , ${key}');
 
     var result =

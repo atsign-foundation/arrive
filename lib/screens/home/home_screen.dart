@@ -1,3 +1,4 @@
+import 'package:at_contact/at_contact.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location/atsign_location.dart';
@@ -38,6 +39,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
   EventProvider eventProvider = new EventProvider();
+  String currentAtSign;
 
   @override
   void initState() {
@@ -49,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   initializeContacts() async {
-    String currentAtSign = await ClientSdkService.getInstance().getAtSign();
+    currentAtSign = await ClientSdkService.getInstance().getAtSign();
     initializeContactsService(
         ClientSdkService.getInstance().atClientServiceInstance.atClient,
         currentAtSign,
@@ -143,18 +145,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AtsignLocationPlugin(
-                                                  ClientSdkService.getInstance()
-                                                      .atClientServiceInstance
-                                                      .atClient,
-                                                  eventListenerKeyword: provider
-                                                      .allEvents[index]),
-                                        ),
-                                      );
+                                      if (!(isActionRequired(
+                                          provider.allEvents[index]))) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                AtsignLocationPlugin(
+                                                    ClientSdkService
+                                                            .getInstance()
+                                                        .atClientServiceInstance
+                                                        .atClient,
+                                                    eventListenerKeyword:
+                                                        provider
+                                                            .allEvents[index]),
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: DisplayTile(
                                       image: AllImages().PERSON2,
@@ -168,17 +175,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
                                               : ''
                                           : '',
-                                      semiTitle: (provider
-                                                      .allEvents[index]
-                                                      .contactList[0]
-                                                      .isExited ==
-                                                  false &&
-                                              provider
-                                                      .allEvents[index]
-                                                      .contactList[0]
-                                                      .isAccepted ==
-                                                  false)
-                                          ? 'Action required'
+                                      semiTitle: provider
+                                                  .allEvents[index].group !=
+                                              null
+                                          ? (isActionRequired(
+                                                  provider.allEvents[index]))
+                                              ? 'Action required'
+                                              : ''
                                           : '',
                                     ),
                                   );
@@ -233,26 +236,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                         return null;
                                       }
 
-                                      // if ((provider.allEvents[index]
-                                      //             .contactList[0].isExited ==
-                                      //         false &&
-                                      //     provider.allEvents[index]
-                                      //             .contactList[0].isAccepted ==
-                                      //         false)) {
-                                      return showDialog<void>(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (BuildContext context) {
-                                          print(
-                                              'selected event${provider.allEvents[index].key}');
-                                          return ShareLocationNotifierDialog(
-                                              provider.allEvents[index],
-                                              userName: provider
-                                                  .allEvents[index]
-                                                  .atsignCreator);
-                                        },
-                                      );
-                                      // }
+                                      if (isActionRequired(
+                                          provider.allEvents[index])) {
+                                        return showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          builder: (BuildContext context) {
+                                            print(
+                                                'selected event${provider.allEvents[index].key}');
+                                            return ShareLocationNotifierDialog(
+                                                provider.allEvents[index],
+                                                userName: provider
+                                                    .allEvents[index]
+                                                    .atsignCreator);
+                                          },
+                                        );
+                                      }
 
                                       Navigator.push(
                                         context,
@@ -286,18 +285,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
                                                     : ''
                                                 : '',
-                                            semiTitle: (provider
-                                                            .allEvents[index]
-                                                            .contactList[0]
-                                                            .isExited ==
-                                                        false &&
-                                                    provider
-                                                            .allEvents[index]
-                                                            .contactList[0]
-                                                            .isAccepted ==
-                                                        false)
-                                                ? 'Action required'
-                                                : '',
+                                            semiTitle: provider.allEvents[index]
+                                                        .group !=
+                                                    null
+                                                ? (isActionRequired(provider
+                                                        .allEvents[index]))
+                                                    ? 'Action required'
+                                                    : ''
+                                                : 'Action required',
                                           ),
                                   );
                                 },
@@ -342,13 +337,13 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Create Event',
               icon: Icons.event,
               onTap: () {
-                BackendService.getInstance().updateNotification();
-                // bottomSheet(
-                //     context,
-                //     CreateEvent(ClientSdkService.getInstance()
-                //         .atClientServiceInstance
-                //         .atClient),
-                //     SizeConfig().screenHeight * 0.9);
+                // BackendService.getInstance().updateNotification();
+                bottomSheet(
+                    context,
+                    CreateEvent(ClientSdkService.getInstance()
+                        .atClientServiceInstance
+                        .atClient),
+                    SizeConfig().screenHeight * 0.9);
               }),
           Tasks(
               task: 'Request Location',
@@ -361,10 +356,35 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
-              onTap: () => bottomSheet(context, ShareLocationSheet(),
-                  SizeConfig().screenHeight * 0.6))
+              onTap: () {
+                eventProvider.updateEventAccordingToAcknowledgedData();
+                // bottomSheet(context, ShareLocationSheet(),
+                //   SizeConfig().screenHeight * 0.6);
+              })
         ],
       ),
     );
   }
+}
+
+bool isActionRequired(EventNotificationModel event) {
+  bool isRequired = true;
+  String currentAtsign = ClientSdkService.getInstance()
+      .atClientServiceInstance
+      .atClient
+      .currentAtSign;
+
+  if (event.group.members.length < 1) return true;
+
+  event.group.members.forEach((member) {
+    if (member.tags['isAccepted'] != null &&
+        member.tags['isAccepted'] == true &&
+        member.atSign == currentAtsign) {
+      isRequired = false;
+    }
+  });
+
+  if (event.atsignCreator == currentAtsign) isRequired = false;
+
+  return isRequired;
 }
