@@ -40,8 +40,6 @@ class EventProvider extends BaseModel {
 
     print('all response =========>>>>>>>:${response}');
 
-    await updateEventAccordingToAcknowledgedData();
-
     print('responses:${response} , ${response.length}');
 
     if (response.length == 0) {
@@ -55,6 +53,8 @@ class EventProvider extends BaseModel {
         allKeys.add(element);
       }
     });
+
+    await updateEventAccordingToAcknowledgedData(allKeys);
 
     print('allKeys:${allKeys}');
 
@@ -137,8 +137,8 @@ class EventProvider extends BaseModel {
         }
       });
 
-      AtKey key =
-          formAtKey(keyType, atkeyMicrosecondId, eventData.atsignCreator);
+      AtKey key = formAtKey(
+          keyType, atkeyMicrosecondId, eventData.atsignCreator, currentAtsign);
 
       // print('acknowledged data:${notification}');
 
@@ -157,12 +157,13 @@ class EventProvider extends BaseModel {
     }
   }
 
-  AtKey formAtKey(
-      ATKEY_TYPE_ENUM keyType, String atkeyMicrosecondId, String sharedWith) {
+  AtKey formAtKey(ATKEY_TYPE_ENUM keyType, String atkeyMicrosecondId,
+      String sharedWith, String sharedBy) {
     AtKey key = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = -1
-      ..sharedWith = sharedWith;
+      ..sharedWith = sharedWith
+      ..sharedBy = sharedBy;
 
     switch (keyType) {
       case ATKEY_TYPE_ENUM.CREATEEVENT:
@@ -177,12 +178,12 @@ class EventProvider extends BaseModel {
     }
   }
 
-  updateEventAccordingToAcknowledgedData() async {
-    List<String> allEventKey = await atClientInstance.getKeys(
-      regex: 'createevent-',
-      // sharedWith: '@test_ga3',
-      // sharedBy: '@test_ga3',
-    );
+  updateEventAccordingToAcknowledgedData(List<String> allEventKey) async {
+    // List<String> allEventKey = await atClientInstance.getKeys(
+    //   regex: 'createevent-',
+    //   // sharedWith: '@test_ga3',
+    //   // sharedBy: '@test_ga3',
+    // );
     print('all event key:$allEventKey');
     List<String> allRegexResponses = [];
     for (int i = 0; i < allEventKey.length; i++) {
@@ -197,26 +198,19 @@ class EventProvider extends BaseModel {
 
       if (allRegexResponses.length > 0) {
         for (int j = 0; j < allRegexResponses.length; j++) {
-          if (allRegexResponses[j] != null) {
-            print('acknowledged key :${allRegexResponses[j]}');
-
+          if (allRegexResponses[j] != null &&
+              !allEventKey[i].contains('cached')) {
             AtKey acknowledgedAtKey = AtKey.fromString(allRegexResponses[j]);
             AtKey createEventAtKey = AtKey.fromString(allEventKey[i]);
-            print('atkey of acknowledged:$createEventAtKey');
 
             AtValue result = await atClientInstance
                 .get(acknowledgedAtKey)
                 .catchError((e) =>
                     print("error in get ${e.errorCode} ${e.errorMessage}"));
-            print('acknowledged value - ${result.value}');
 
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));
 
-            print(
-                'updating main data:${acknowledgedEvent.group.members} , key used:${createEventAtKey}');
-
-            // await actionOnEvent(acknowledgedEvent, ATKEY_TYPE_ENUM.CREATEEVENT);
             await updateEvent(acknowledgedEvent, createEventAtKey);
           }
         }

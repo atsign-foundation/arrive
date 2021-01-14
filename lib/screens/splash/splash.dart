@@ -68,9 +68,9 @@ class _SplashState extends State<Splash> {
     var isOnBoard = await clientSdkService.onboard();
     if (isOnBoard != null && isOnBoard == true) {
       print('on board $isOnBoard');
-      SetupRoutes.push(context, Routes.HOME);
       await BackendService.getInstance().onboard();
       await BackendService.getInstance().startMonitor();
+      SetupRoutes.push(context, Routes.HOME);
     }
 
     // _notificationService.setOnNotificationClick(onNotificationClick);

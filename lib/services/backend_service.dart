@@ -106,6 +106,7 @@ class BackendService {
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
     var notificationKey = responseJson['key'];
+    print('fn call back:${response} , notification key: ${notificationKey}');
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
     var decryptedMessage = await atClientInstance.encryptionService
@@ -132,12 +133,12 @@ class BackendService {
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('recieved notification ==>$msg');
       showMyDialog(msg, fromAtSign);
-    } else if (atKey.toString().contains('createeventack')) {
+    } else if (atKey.toString().contains('eventacknowledged')) {
       print(jsonDecode(decryptedMessage));
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
-      print('recieved notification ==>$msg');
-      createEventAcknowledge(msg);
+      print('acknowledged event received ==>$msg');
+      createEventAcknowledge(msg, atKey);
     }
   }
 
@@ -155,8 +156,37 @@ class BackendService {
     );
   }
 
-  createEventAcknowledge(EventNotificationModel acknowledgedEvent) {
-    print('acknowledged notification received:${acknowledgedEvent}');
+  createEventAcknowledge(
+      EventNotificationModel acknowledgedEvent, String atKey) async {
+    String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
+    print(
+        'acknowledged notification received:${acknowledgedEvent} , key:${atKey} , ${eventId}');
+
+    List<String> response = await atClientInstance.getKeys(
+      regex: 'createevent-$eventId',
+      // sharedBy: '@test_ga3',
+      // sharedWith: '@test_ga3',
+    );
+
+    AtKey key = AtKey.fromString(response[0]);
+    print('key:${key} , responses:${response}');
+
+    AtValue value = await atClientInstance.get(key).catchError(
+        (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+
+    EventNotificationModel msg =
+        EventNotificationModel.fromJson(jsonDecode(value.value));
+
+    print('members: ${msg.group.members}');
+    print('members: ${acknowledgedEvent.group.members}');
+
+    var notification = EventNotificationModel.convertEventNotificationToJson(
+        acknowledgedEvent);
+
+    print('notification:${notification}');
+
+    var result = await atClientInstance.put(key, notification);
+    print('result:${result}');
   }
 
   sendMessage() async {
@@ -187,12 +217,12 @@ class BackendService {
     atClientInstance =
         ClientSdkService.getInstance().atClientServiceInstance.atClient;
     List<String> response = await atClientInstance.getKeys(
-      regex: '1610564251660178',
-      // sharedBy: '@',
+      regex: 'createevent-1610605842138751',
+      sharedBy: '@test_ga3',
       // sharedWith: '@test_ga3',
     );
     print('keys:${response}');
-    print('sharedBy:${response[0]}, ${response.length}');
+    print('sharedBy:${response[0]}, ${response[0].contains('cached')}');
 
     AtKey key = AtKey.fromString(response[0]);
     print('key :${key.key} , ${key}');
@@ -205,20 +235,20 @@ class BackendService {
         EventNotificationModel.fromJson(jsonDecode(result.value));
 
     print(
-        'EventNotificationModel msg:${msg.group.name}, members:${msg.group.members.elementAt(0).tags['isAccepted']}, ${msg.group.members}');
+        'EventNotificationModel msg:${msg.group.name},members: ${msg.group.members}');
   }
 
   updateNotification() async {
     List<String> response = await atClientInstance.getKeys(
-      regex: 'eventnotify-1610449743993530',
+      regex: '1610602925484075',
     );
     print('response:${response}, ${response.length}');
-    AtKey key = AtKey.fromString(response[0]);
-    key.metadata.isCached = true;
-    print('key :${key.key} , ${key}');
+    AtKey key0 = AtKey.fromString(response[0]);
+    AtKey key1 = AtKey.fromString(response[1]);
+    print('key0 :${key0} ,key1: ${key1}');
 
-    var result =
-        await atClientInstance.put(key, json.encode({'changed': 'value2'}));
-    print('update result:${result}');
+    // var result =
+    //     await atClientInstance.put(key, json.encode({'changed': 'value2'}));
+    // print('update result:${result}');
   }
 }

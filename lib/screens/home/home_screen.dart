@@ -147,6 +147,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onTap: () {
                                       if (!(isActionRequired(
                                           provider.allEvents[index]))) {
+                                        print(
+                                            'clicked event:${provider.allEvents[index].group.members}');
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -252,6 +254,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           },
                                         );
                                       }
+                                      print(
+                                          'clicked event:${provider.allEvents[index].group.members}');
 
                                       Navigator.push(
                                         context,
@@ -357,9 +361,8 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
-                eventProvider.updateEventAccordingToAcknowledgedData();
-                // bottomSheet(context, ShareLocationSheet(),
-                //   SizeConfig().screenHeight * 0.6);
+                bottomSheet(context, ShareLocationSheet(),
+                    SizeConfig().screenHeight * 0.6);
               })
         ],
       ),
