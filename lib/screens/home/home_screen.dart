@@ -8,6 +8,7 @@ import 'package:atsign_location_app/common_components/dialog_box/share_location_
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
@@ -255,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         );
                                       }
                                       print(
-                                          'clicked event:${provider.allEvents[index].group.members}');
+                                          'clicked event date:${provider.allEvents[index].key} , member:${provider.allEvents[index].group.members}');
 
                                       Navigator.push(
                                         context,
@@ -347,7 +348,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     CreateEvent(ClientSdkService.getInstance()
                         .atClientServiceInstance
                         .atClient),
-                    SizeConfig().screenHeight * 0.9);
+                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
+                  eventProvider.getAllEvents();
+                });
               }),
           Tasks(
               task: 'Request Location',
@@ -361,8 +364,9 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
-                bottomSheet(context, ShareLocationSheet(),
-                    SizeConfig().screenHeight * 0.6);
+                eventProvider.updateEventAccordingToAcknowledgedData();
+                // bottomSheet(context, ShareLocationSheet(),
+                //     SizeConfig().screenHeight * 0.6);
               })
         ],
       ),

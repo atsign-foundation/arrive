@@ -7,6 +7,7 @@ import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 // import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/models/location_notification.dart';
 import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
@@ -15,6 +16,7 @@ import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_lookup/src/connection/outbound_connection.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
+import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
@@ -129,10 +131,14 @@ class BackendService {
       showMyDialog(msg, fromAtSign);
     } else if (atKey.toString().contains('createevent')) {
       print(jsonDecode(decryptedMessage));
-      EventNotificationModel msg =
+      EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
-      print('recieved notification ==>$msg');
-      showMyDialog(msg, fromAtSign);
+      print('recieved notification ==>${eventData.isUpdate}');
+      if (eventData.isUpdate != null && eventData.isUpdate == false) {
+        showMyDialog(eventData, fromAtSign);
+      } else {
+        mapUpdatedDataToWidget(eventData);
+      }
     } else if (atKey.toString().contains('eventacknowledged')) {
       print(jsonDecode(decryptedMessage));
       EventNotificationModel msg =
@@ -180,13 +186,23 @@ class BackendService {
     print('members: ${msg.group.members}');
     print('members: ${acknowledgedEvent.group.members}');
 
+    acknowledgedEvent.isUpdate = true;
     var notification = EventNotificationModel.convertEventNotificationToJson(
         acknowledgedEvent);
 
-    print('notification:${notification}');
+    print('notification:$notification');
 
     var result = await atClientInstance.put(key, notification);
-    print('result:${result}');
+    mapUpdatedDataToWidget(acknowledgedEvent);
+    print('acknowledgement received:$result');
+  }
+
+  mapUpdatedDataToWidget(EventNotificationModel eventData) {
+    providerCallback<EventProvider>(NavService.navKey.currentContext,
+        task: (t) => t.mapUpdatedEventDataToWidget(eventData),
+        showLoader: false,
+        taskName: (t) => t.MAP_UPDATED_EVENTS,
+        onSuccess: (t) {});
   }
 
   sendMessage() async {
@@ -217,14 +233,14 @@ class BackendService {
     atClientInstance =
         ClientSdkService.getInstance().atClientServiceInstance.atClient;
     List<String> response = await atClientInstance.getKeys(
-      regex: 'createevent-1610605842138751',
-      sharedBy: '@test_ga3',
+      regex: '1610648226523619',
+      // sharedBy: '@test_ga3',
       // sharedWith: '@test_ga3',
     );
     print('keys:${response}');
     print('sharedBy:${response[0]}, ${response[0].contains('cached')}');
 
-    AtKey key = AtKey.fromString(response[0]);
+    AtKey key = AtKey.fromString(response[1]);
     print('key :${key.key} , ${key}');
 
     AtValue result = await atClientInstance.get(key).catchError(

@@ -1,4 +1,6 @@
+import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 
 import 'base_model.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -13,6 +15,10 @@ class EventProvider extends BaseModel {
   String GET_ALL_EVENTS = 'get_all_events';
   // ignore: non_constant_identifier_names
   String UPDATE_EVENTS = 'update_event';
+  // ignore: non_constant_identifier_names
+  String CHECK_ACKNOWLEDGED_EVENT = 'check_acknowledged_event';
+  // ignore: non_constant_identifier_names
+  String MAP_UPDATED_EVENTS = 'map_updated_event';
 
   AtClientImpl atClientInstance;
   String currentAtSign;
@@ -35,12 +41,9 @@ class EventProvider extends BaseModel {
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-',
       // sharedWith: '@test_ga3',
-      // sharedBy: '@test_ga3',
     );
 
-    print('all response =========>>>>>>>:${response}');
-
-    print('responses:${response} , ${response.length}');
+    // print('response:${response}');
 
     if (response.length == 0) {
       setStatus(GET_ALL_EVENTS, Status.Done);
@@ -54,9 +57,9 @@ class EventProvider extends BaseModel {
       }
     });
 
-    await updateEventAccordingToAcknowledgedData(allKeys);
+    // await updateEventAccordingToAcknowledgedData(allKeys);
 
-    print('allKeys:${allKeys}');
+    // print('allKeys:${allKeys}');
 
     allKeys.forEach((element) {
       AtKey key = AtKey.fromString(element);
@@ -76,6 +79,8 @@ class EventProvider extends BaseModel {
 
     convertJsonToEventModel();
     setStatus(GET_ALL_EVENTS, Status.Done);
+
+    checkForAcknowledgeEvents();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -99,16 +104,13 @@ class EventProvider extends BaseModel {
               event.isCancelled == false &&
               event.contactList.length > 0) {
             event.key = allKeys[i];
-            // print(
-            // 'for loop in event:${event.key}, ${event.title} , ${event.contactList[0].isAccepted}');
+            print('adding key in event: ${event.key}');
             allEvents.add(event);
           }
         }
       }
     }
-
-    // print(
-    // 'all events is accepted:${allEvents[allEvents.length - 1].contactList[0].isAccepted} , ${allEvents[allEvents.length - 1].key} : ${allEvents[allEvents.length - 1].title}');
+    allEvents.sort((a, b) => b.event.date.compareTo(a.event.date));
   }
 
   actionOnEvent(EventNotificationModel eventData, ATKEY_TYPE_ENUM keyType,
@@ -132,8 +134,6 @@ class EventProvider extends BaseModel {
               isSharing != null ? isSharing : member.tags['isSharing'];
           member.tags['isExited'] =
               isExited != null ? isExited : member.tags['isExited'];
-
-          print('is accepted updated:${member.tags['isAccepted']} ');
         }
       });
 
@@ -145,10 +145,10 @@ class EventProvider extends BaseModel {
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
 
-      print('acknowledged data:${notification}');
+      // print('acknowledged data:${notification}');
 
       var result = await atClientInstance.put(key, notification);
-      print('event updated:${result}, ${notification}');
+      // updateEventAccordingToAcknowledgedData();
 
       setStatus(UPDATE_EVENTS, Status.Done);
     } catch (e) {
@@ -178,13 +178,37 @@ class EventProvider extends BaseModel {
     }
   }
 
-  updateEventAccordingToAcknowledgedData(List<String> allEventKey) async {
+  checkForAcknowledgeEvents() {
+    providerCallback<EventProvider>(NavService.navKey.currentContext,
+        task: (provider) => provider.updateEventAccordingToAcknowledgedData(),
+        taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
+        showLoader: false,
+        onSuccess: (provider) {});
+  }
+
+  updateEventAccordingToAcknowledgedData() async {
     // List<String> allEventKey = await atClientInstance.getKeys(
     //   regex: 'createevent-',
     //   // sharedWith: '@test_ga3',
     //   // sharedBy: '@test_ga3',
     // );
-    print('all event key:$allEventKey');
+    List<String> allEventKey = [];
+    List<String> response = await atClientInstance.getKeys(
+      regex: 'createevent-',
+    );
+
+    if (response.length == 0) {
+      // setStatus(CHECK_ACKNOWLEDGED_EVENT, Status.Done);
+      return;
+    }
+
+    //need to confirm about filteration based on regex key.
+    response.forEach((element) {
+      if ('@${element.split(':')[1]}'.contains(currentAtSign)) {
+        allEventKey.add(element);
+      }
+    });
+
     List<String> allRegexResponses = [];
     for (int i = 0; i < allEventKey.length; i++) {
       allRegexResponses = [];
@@ -194,7 +218,6 @@ class EventProvider extends BaseModel {
 
       allRegexResponses =
           await atClientInstance.getKeys(regex: acknowledgedKeyId);
-      print('all regex responses: $allRegexResponses');
 
       if (allRegexResponses.length > 0) {
         for (int j = 0; j < allRegexResponses.length; j++) {
@@ -210,20 +233,88 @@ class EventProvider extends BaseModel {
 
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));
+            EventNotificationModel storedEvent = new EventNotificationModel();
 
-            await updateEvent(acknowledgedEvent, createEventAtKey);
+            String acknowledgedEventKeyId =
+                acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
+            String evenetKeyId = 'createevent-$atkeyMicrosecondId';
+
+            for (int k = 0; k < allEvents.length; k++) {
+              if (allEvents[k].key.contains(acknowledgedEventKeyId)) {
+                storedEvent = allEvents[k];
+
+                if (!compareEvents(storedEvent, acknowledgedEvent)) {
+                  // print(
+                  // 'not matched : value changed :${acknowledgedEvent.title} , ${acknowledgedEvent.group.members}');
+                  acknowledgedEvent.isUpdate = true;
+
+                  var updateResult =
+                      await updateEvent(acknowledgedEvent, createEventAtKey);
+                  if (updateResult is bool && updateResult == true) {
+                    mapUpdatedEventDataToWidget(acknowledgedEvent);
+
+                    // print(
+                    //     'update result:${acknowledgedEvent.key}, ${acknowledgedEvent.title} ');
+                    allEvents.forEach((element) {
+                      if (element.key.contains(createEventAtKey.key)) {
+                        print('key matched: ${element.title}');
+                      }
+                    });
+                  }
+                } else {
+                  print('matched : no changes');
+                }
+              }
+            }
           }
         }
       }
     }
   }
 
-  updateEvent(EventNotificationModel eventData, AtKey key) async {
-    var notification =
-        EventNotificationModel.convertEventNotificationToJson(eventData);
+  mapUpdatedEventDataToWidget(EventNotificationModel eventData) {
+    setStatus(MAP_UPDATED_EVENTS, Status.Loading);
+    String newEventDataKeyId =
+        eventData.key.split('createevent-')[1].split('@')[0];
 
-    var result = await atClientInstance.put(key, notification);
-    print('event updated:${result}, ${notification}');
+    for (int i = 0; i < allEvents.length; i++) {
+      if (allEvents[i].key.contains(newEventDataKeyId)) {
+        allEvents[i] = eventData;
+      }
+    }
+    setStatus(MAP_UPDATED_EVENTS, Status.Done);
+  }
+
+  bool compareEvents(
+      EventNotificationModel eventOne, EventNotificationModel eventTwo) {
+    if (eventOne.group.members.elementAt(0).tags['isAccepted'] ==
+            eventTwo.group.members.elementAt(0).tags['isAccepted'] &&
+        eventOne.group.members.elementAt(0).tags['isSharing'] ==
+            eventTwo.group.members.elementAt(0).tags['isSharing'] &&
+        eventOne.group.members.elementAt(0).tags['isExited'] ==
+            eventTwo.group.members.elementAt(0).tags['isExited']) {
+      return true;
+    } else
+      return false;
+  }
+
+  Future<dynamic> updateEvent(
+      EventNotificationModel eventData, AtKey key) async {
+    try {
+      var notification =
+          EventNotificationModel.convertEventNotificationToJson(eventData);
+
+      var result = await atClientInstance.put(key, notification);
+      if (result is bool) {
+        return result;
+      } else if (result != null) {
+        return result.toString();
+      } else
+        return result;
+    } catch (e) {
+      print('error in updating notification:$e');
+      return e.toString();
+    }
   }
 }
 
