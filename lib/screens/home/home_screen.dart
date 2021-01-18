@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Text('Some error occured'),
                 ),
             successBuilder: (provider) {
-              if (provider.allEvents.length > 0) {
+              if (provider.allNotifications.length > 0) {
                 return SingleChildScrollView(
                   physics: !isExpanded
                       ? NeverScrollableScrollPhysics()
@@ -146,10 +146,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
-                                      if (!(isActionRequired(
-                                          provider.allEvents[index]))) {
+                                      if (!(isActionRequired(provider
+                                          .allNotifications[index]
+                                          .eventNotificationModel))) {
                                         print(
-                                            'clicked event:${provider.allEvents[index].group.members}');
+                                            'clicked event:${provider.allNotifications[index].eventNotificationModel.group.members}');
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -159,30 +160,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             .getInstance()
                                                         .atClientServiceInstance
                                                         .atClient,
-                                                    eventListenerKeyword:
-                                                        provider
-                                                            .allEvents[index]),
+                                                    eventListenerKeyword: provider
+                                                        .allNotifications[index]
+                                                        .eventNotificationModel),
                                           ),
                                         );
                                       }
                                     },
                                     child: DisplayTile(
                                       image: AllImages().PERSON2,
-                                      title: provider.allEvents[index].title,
+                                      title: provider.allNotifications[index]
+                                          .eventNotificationModel.title,
                                       subTitle: provider
-                                                  .allEvents[index].event !=
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel
+                                                  .event !=
                                               null
-                                          ? provider.allEvents[index].event
+                                          ? provider
+                                                      .allNotifications[index]
+                                                      .eventNotificationModel
+                                                      .event
                                                       .date !=
                                                   null
-                                              ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                              ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
                                               : ''
                                           : '',
                                       semiTitle: provider
-                                                  .allEvents[index].group !=
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel
+                                                  .group !=
                                               null
-                                          ? (isActionRequired(
-                                                  provider.allEvents[index]))
+                                          ? (isActionRequired(provider
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel))
                                               ? 'Action required'
                                               : ''
                                           : '',
@@ -212,9 +222,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      provider.allEvents.length > 3
+                                      provider.allNotifications.length > 3
                                           ? Text(
-                                              'See ${provider.allEvents.length - 3} more ',
+                                              'See ${provider.allNotifications.length - 3} more ',
                                               style:
                                                   CustomTextStyles().darkGrey14,
                                             )
@@ -228,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ? SizedBox()
                             : ListView.separated(
                                 physics: NeverScrollableScrollPhysics(),
-                                itemCount: provider.allEvents.length,
+                                itemCount: provider.allNotifications.length,
                                 shrinkWrap: true,
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
@@ -239,24 +249,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                         return null;
                                       }
 
-                                      if (isActionRequired(
-                                          provider.allEvents[index])) {
+                                      if (isActionRequired(provider
+                                          .allNotifications[index]
+                                          .eventNotificationModel)) {
                                         return showDialog<void>(
                                           context: context,
                                           barrierDismissible: true,
                                           builder: (BuildContext context) {
                                             print(
-                                                'selected event${provider.allEvents[index].key}');
+                                                'selected event${provider.allNotifications[index].key}');
                                             return ShareLocationNotifierDialog(
-                                                provider.allEvents[index],
+                                                provider.allNotifications[index]
+                                                    .eventNotificationModel,
                                                 userName: provider
-                                                    .allEvents[index]
+                                                    .allNotifications[index]
+                                                    .eventNotificationModel
                                                     .atsignCreator);
                                           },
                                         );
                                       }
                                       print(
-                                          'clicked event date:${provider.allEvents[index].key} , member:${provider.allEvents[index].group.members}');
+                                          'clicked event date:${provider.allNotifications[index].key} , member:${provider.allNotifications[index].eventNotificationModel.group.members}');
 
                                       Navigator.push(
                                         context,
@@ -267,34 +280,46 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .atClientServiceInstance
                                                       .atClient,
                                                   eventListenerKeyword: provider
-                                                      .allEvents[index]),
+                                                      .allNotifications[index]
+                                                      .eventNotificationModel),
                                         ),
                                       );
                                     },
                                     child: index == 3 && pc.isPanelClosed
                                         ? Text(
-                                            'See ${provider.allEvents.length - 3} more ',
+                                            'See ${provider.allNotifications.length - 3} more ',
                                             style:
                                                 CustomTextStyles().darkGrey14,
                                           )
                                         : DisplayTile(
                                             image: AllImages().PERSON2,
-                                            title:
-                                                provider.allEvents[index].title,
-                                            subTitle: provider.allEvents[index]
+                                            title: provider
+                                                .allNotifications[index]
+                                                .eventNotificationModel
+                                                .title,
+                                            subTitle: provider
+                                                        .allNotifications[index]
+                                                        .eventNotificationModel
                                                         .event !=
                                                     null
-                                                ? provider.allEvents[index]
-                                                            .event.date !=
+                                                ? provider
+                                                            .allNotifications[
+                                                                index]
+                                                            .eventNotificationModel
+                                                            .event
+                                                            .date !=
                                                         null
-                                                    ? 'event on ${dateToString(provider.allEvents[index].event.date)}'
+                                                    ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
                                                     : ''
                                                 : '',
-                                            semiTitle: provider.allEvents[index]
+                                            semiTitle: provider
+                                                        .allNotifications[index]
+                                                        .eventNotificationModel
                                                         .group !=
                                                     null
                                                 ? (isActionRequired(provider
-                                                        .allEvents[index]))
+                                                        .allNotifications[index]
+                                                        .eventNotificationModel))
                                                     ? 'Action required'
                                                     : ''
                                                 : 'Action required',

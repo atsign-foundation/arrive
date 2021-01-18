@@ -1,4 +1,5 @@
 import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 
@@ -20,24 +21,29 @@ class EventProvider extends BaseModel {
   // ignore: non_constant_identifier_names
   String MAP_UPDATED_EVENTS = 'map_updated_event';
 
+  // ignore: non_constant_identifier_names
+  String GET_SINGLE_USER = 'get_single_user';
+
   AtClientImpl atClientInstance;
   String currentAtSign;
-  List<String> allKeys = [];
-  List<AtKey> allAtkeys = [];
-  List<AtValue> allAtValues = [];
-  List<EventNotificationModel> allEvents = [];
+  List<HybridNotificationModel> allNotifications;
+  // List<String> allKeys = [];
+  // List<AtKey> allAtkeys = [];
+  // List<AtValue> allAtValues = [];
+  // List<EventNotificationModel> allEvents = [];
 
   init(AtClientImpl clientInstance) {
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
   }
 
+  getSingleUserEvents() {}
   getAllEvents() async {
     setStatus(GET_ALL_EVENTS, Status.Loading);
-    allKeys = [];
-    allAtkeys = [];
-    allAtValues = [];
-    allEvents = [];
+    // allKeys = [];
+    // allAtkeys = [];
+    // allAtValues = [];
+    // allEvents = [];
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-',
       // sharedWith: '@test_ga3',
@@ -51,27 +57,36 @@ class EventProvider extends BaseModel {
     }
 
     //need to confirm about filteration based on regex key.
-    response.forEach((element) {
-      if ('@${element.split(':')[1]}'.contains(currentAtSign)) {
-        allKeys.add(element);
+    response.forEach((key) {
+      if ('@${key.split(':')[1]}'.contains(currentAtSign)) {
+        HybridNotificationModel tempHyridNotificationModel =
+            HybridNotificationModel(NotificationType.Event, key: key);
+        allNotifications.add(tempHyridNotificationModel);
+        // allKeys.add(element);
       }
     });
 
-    // await updateEventAccordingToAcknowledgedData(allKeys);
+    // allKeys.forEach((element) {
+    //   AtKey key = AtKey.fromString(element);
+    //   allAtkeys.add(key);
+    // });
 
-    // print('allKeys:${allKeys}');
-
-    allKeys.forEach((element) {
-      AtKey key = AtKey.fromString(element);
-      allAtkeys.add(key);
+    allNotifications.forEach((notification) {
+      AtKey atKey = AtKey.fromString(notification.key);
+      notification.atKey = atKey;
     });
 
-    // print('allAtkeys:${allAtkeys}');
+    // for (int i = 0; i < allAtkeys.length; i++) {
+    //   AtValue value = await getAtValue(allAtkeys[i]);
+    //   if (value != null) {
+    //     allAtValues.add(value);
+    //   }
+    // }
 
-    for (int i = 0; i < allAtkeys.length; i++) {
-      AtValue value = await getAtValue(allAtkeys[i]);
+    for (int i = 0; i < allNotifications.length; i++) {
+      AtValue value = await getAtValue(allNotifications[i].atKey);
       if (value != null) {
-        allAtValues.add(value);
+        allNotifications[i].atValue = value;
       }
     }
 
@@ -94,23 +109,27 @@ class EventProvider extends BaseModel {
   }
 
   convertJsonToEventModel() {
-    for (int i = 0; i < allAtValues.length; i++) {
-      if (allAtValues[i].value != 'null' && allAtValues[i].value != null) {
-        if (jsonDecode(allAtValues[i].value).runtimeType != String) {
-          EventNotificationModel event =
-              EventNotificationModel.fromJson(jsonDecode(allAtValues[i].value));
+    for (int i = 0; i < allNotifications.length; i++) {
+      if (allNotifications[i].atValue != 'null' &&
+          allNotifications[i].atValue != null) {
+        if (jsonDecode(allNotifications[i].atValue.value).runtimeType !=
+            String) {
+          EventNotificationModel event = EventNotificationModel.fromJson(
+              jsonDecode(allNotifications[i].atValue.value));
 
           if (event != null &&
               event.isCancelled == false &&
               event.contactList.length > 0) {
-            event.key = allKeys[i];
+            event.key = allNotifications[i].key;
             print('adding key in event: ${event.key}');
-            allEvents.add(event);
+            allNotifications[i].eventNotificationModel = event;
+            // allEvents.add(event);
           }
         }
       }
     }
-    allEvents.sort((a, b) => b.event.date.compareTo(a.event.date));
+    allNotifications.sort((a, b) => b.eventNotificationModel.event.date
+        .compareTo(a.eventNotificationModel.event.date));
   }
 
   actionOnEvent(EventNotificationModel eventData, ATKEY_TYPE_ENUM keyType,
@@ -209,11 +228,12 @@ class EventProvider extends BaseModel {
       }
     });
 
+//
     List<String> allRegexResponses = [];
-    for (int i = 0; i < allEventKey.length; i++) {
+    for (int i = 0; i < allNotifications.length; i++) {
       allRegexResponses = [];
       String atkeyMicrosecondId =
-          allEventKey[i].split('createevent-')[1].split('@')[0];
+          allNotifications[i].key.split('createevent-')[1].split('@')[0];
       String acknowledgedKeyId = 'eventacknowledged-$atkeyMicrosecondId';
 
       allRegexResponses =
@@ -222,9 +242,9 @@ class EventProvider extends BaseModel {
       if (allRegexResponses.length > 0) {
         for (int j = 0; j < allRegexResponses.length; j++) {
           if (allRegexResponses[j] != null &&
-              !allEventKey[i].contains('cached')) {
+              !allNotifications[i].key.contains('cached')) {
             AtKey acknowledgedAtKey = AtKey.fromString(allRegexResponses[j]);
-            AtKey createEventAtKey = AtKey.fromString(allEventKey[i]);
+            AtKey createEventAtKey = AtKey.fromString(allNotifications[i].key);
 
             AtValue result = await atClientInstance
                 .get(acknowledgedAtKey)
@@ -239,9 +259,12 @@ class EventProvider extends BaseModel {
                 acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
             String evenetKeyId = 'createevent-$atkeyMicrosecondId';
 
-            for (int k = 0; k < allEvents.length; k++) {
-              if (allEvents[k].key.contains(acknowledgedEventKeyId)) {
-                storedEvent = allEvents[k];
+            for (int k = 0; k < allNotifications.length; k++) {
+              if (allNotifications[k]
+                  .eventNotificationModel
+                  .key
+                  .contains(acknowledgedEventKeyId)) {
+                storedEvent = allNotifications[k].eventNotificationModel;
 
                 if (!compareEvents(storedEvent, acknowledgedEvent)) {
                   // print(
@@ -250,17 +273,8 @@ class EventProvider extends BaseModel {
 
                   var updateResult =
                       await updateEvent(acknowledgedEvent, createEventAtKey);
-                  if (updateResult is bool && updateResult == true) {
+                  if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(acknowledgedEvent);
-
-                    // print(
-                    //     'update result:${acknowledgedEvent.key}, ${acknowledgedEvent.title} ');
-                    allEvents.forEach((element) {
-                      if (element.key.contains(createEventAtKey.key)) {
-                        print('key matched: ${element.title}');
-                      }
-                    });
-                  }
                 } else {
                   print('matched : no changes');
                 }
@@ -277,9 +291,12 @@ class EventProvider extends BaseModel {
     String newEventDataKeyId =
         eventData.key.split('createevent-')[1].split('@')[0];
 
-    for (int i = 0; i < allEvents.length; i++) {
-      if (allEvents[i].key.contains(newEventDataKeyId)) {
-        allEvents[i] = eventData;
+    for (int i = 0; i < allNotifications.length; i++) {
+      if (allNotifications[i]
+          .eventNotificationModel
+          .key
+          .contains(newEventDataKeyId)) {
+        allNotifications[i].eventNotificationModel = eventData;
       }
     }
     setStatus(MAP_UPDATED_EVENTS, Status.Done);
