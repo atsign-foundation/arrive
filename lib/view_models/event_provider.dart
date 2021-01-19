@@ -102,7 +102,7 @@ class EventProvider extends BaseModel {
 
           if (event != null &&
               event.isCancelled == false &&
-              event.contactList.length > 0) {
+              event.group.members.length > 0) {
             event.key = allKeys[i];
             print('adding key in event: ${event.key}');
             allEvents.add(event);
@@ -110,7 +110,7 @@ class EventProvider extends BaseModel {
         }
       }
     }
-    allEvents.sort((a, b) => b.event.date.compareTo(a.event.date));
+    // allEvents.sort((a, b) => b.event.date.compareTo(a.event.date));
   }
 
   actionOnEvent(EventNotificationModel eventData, ATKEY_TYPE_ENUM keyType,

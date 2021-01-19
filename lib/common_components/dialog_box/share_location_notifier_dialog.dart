@@ -101,15 +101,14 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   InkWell(
                     onTap: () async {
                       print('${eventData.key}');
-                      eventData.contactList.forEach((element) {
-                        if (element.atsign ==
+                      eventData.group.members.forEach((element) {
+                        if (element.atSign ==
                             ClientSdkService.getInstance()
                                 .atClientServiceInstance
                                 .atClient
                                 .currentAtSign) {
-                          element.isAccepted = false;
-                          element.isExited = false;
-                          print('element is accepted: ${element.isAccepted}');
+                          element.tags['isAccepted'] = false;
+                          element.tags['isExited'] = false;
                         }
                       });
 
