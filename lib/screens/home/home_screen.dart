@@ -1,6 +1,7 @@
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
+import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location/atsign_location.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
@@ -266,6 +267,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ClientSdkService.getInstance()
                                                       .atClientServiceInstance
                                                       .atClient,
+                                                  onEventUpdate:
+                                                      (EventNotificationModel
+                                                          eventData) {
+                                            provider
+                                                .mapUpdatedEventDataToWidget(
+                                                    eventData);
+                                          },
                                                   eventListenerKeyword: provider
                                                       .allEvents[index]),
                                         ),
