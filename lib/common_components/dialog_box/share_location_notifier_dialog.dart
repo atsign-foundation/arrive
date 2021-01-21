@@ -1,10 +1,7 @@
-import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -83,7 +80,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                       providerCallback<EventProvider>(context,
                           task: (t) => t.actionOnEvent(
                               eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                              isAccepted: true),
+                              isAccepted: true, isExited: false),
                           taskName: (t) => t.UPDATE_EVENTS,
                           onSuccess: (t) {
                             Navigator.of(context).pop();
@@ -115,7 +112,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                       providerCallback<EventProvider>(context,
                           task: (t) => t.actionOnEvent(
                               eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                              isAccepted: false),
+                              isAccepted: false, isExited: true),
                           taskName: (t) => t.UPDATE_EVENTS,
                           onSuccess: (t) {
                             Navigator.of(context).pop();

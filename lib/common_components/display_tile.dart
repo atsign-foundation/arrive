@@ -66,7 +66,8 @@ class DisplayTile extends StatelessWidget {
                 semiTitle != null
                     ? Text(
                         semiTitle,
-                        style: semiTitle == 'Action required'
+                        style: (semiTitle == 'Action required' ||
+                                semiTitle == 'Request declined')
                             ? CustomTextStyles().orange12
                             : CustomTextStyles().darkGrey12,
                         maxLines: 1,

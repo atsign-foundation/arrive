@@ -219,7 +219,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ? (isActionRequired(provider
                                                   .allNotifications[index]
                                                   .eventNotificationModel))
-                                              ? 'Action required'
+                                              ? getActionString(provider
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel)
                                               : null
                                           : null,
                                     ),
@@ -276,19 +278,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       // }
 
                                       print(
-                                          'selected event${provider.allNotifications[index].key}');
+                                          'selected event${provider.allNotifications[index].key} , ${provider.allNotifications[index].eventNotificationModel.title} , creator:  ${provider.allNotifications[index].eventNotificationModel.atsignCreator} , groups:${provider.allNotifications[index].eventNotificationModel.group}');
 
                                       if (isActionRequired(provider
                                           .allNotifications[index]
                                           .eventNotificationModel)) {
-                                        print(
-                                            'selected event${provider.allNotifications[index].key}');
                                         return showDialog<void>(
                                           context: context,
                                           barrierDismissible: true,
                                           builder: (BuildContext context) {
-                                            print(
-                                                'selected event${provider.allNotifications[index].key}');
                                             return ShareLocationNotifierDialog(
                                                 provider.allNotifications[index]
                                                     .eventNotificationModel,
@@ -374,7 +372,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ? (isActionRequired(provider
                                                         .allNotifications[index]
                                                         .eventNotificationModel))
-                                                    ? 'Action required'
+                                                    ? getActionString(provider
+                                                        .allNotifications[index]
+                                                        .eventNotificationModel)
                                                     : null
                                                 : 'Action required',
                                           ),
@@ -473,4 +473,24 @@ bool isActionRequired(EventNotificationModel event) {
   if (event.atsignCreator == currentAtsign) isRequired = false;
 
   return isRequired;
+}
+
+String getActionString(EventNotificationModel event) {
+  String label = 'Action required';
+  String currentAtsign = ClientSdkService.getInstance()
+      .atClientServiceInstance
+      .atClient
+      .currentAtSign;
+
+  if (event.group.members.length < 1) return '';
+
+  event.group.members.forEach((member) {
+    if (member.tags['isExited'] != null &&
+        member.tags['isExited'] == true &&
+        member.atSign == currentAtsign) {
+      label = 'Request declined';
+    }
+  });
+
+  return label;
 }

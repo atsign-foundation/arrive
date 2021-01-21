@@ -108,13 +108,12 @@ class BackendService {
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
     var notificationKey = responseJson['key'];
-    print('fn call back:${response} , notification key: ${notificationKey}');
+    print('fn call back:${response} ');
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
-        .catchError(
-            (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+        .catchError((e) => print("error in get ${e} ${e}"));
     if (atKey.toString().contains(AllText().MSG_NOTIFY)) {
       MessageNotificationModel msg =
           MessageNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -130,6 +129,7 @@ class BackendService {
       print('recieved notification ==>$msg');
       showMyDialog(msg, fromAtSign);
     } else if (atKey.toString().contains('createevent')) {
+      print('decrypted message:${decryptedMessage}');
       print(jsonDecode(decryptedMessage));
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
