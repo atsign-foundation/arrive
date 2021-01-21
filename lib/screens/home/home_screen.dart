@@ -13,7 +13,6 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
-import 'package:atsign_location_app/dummy_data/latLng.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
@@ -29,6 +28,7 @@ import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
+import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:atsign_contacts/utils/init_contacts_service.dart';
@@ -70,14 +70,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: [
-              // GestureDetector(
-              //     onTapDown: (tapDownDetails) {
-              //       return SetupRoutes.push(
-              //           context, Routes.SHARE_LOCATION_EVENT);
-              //     },
-              //     child: AbsorbPointer(
-              //         absorbing: true,
-              //         child: AtsignLocationPlugin(getLatLng()))),
+              GestureDetector(
+                child: AbsorbPointer(
+                  absorbing: false,
+                  child: ShowLocation(LatLng(20, 30)),
+                ),
+              ),
               Positioned(
                 top: 0,
                 right: 0,
@@ -147,104 +145,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () {
-                                      if (!(isActionRequired(provider
-                                          .allNotifications[index]
-                                          .eventNotificationModel))) {
-                                        print(
-                                            'clicked event:${provider.allNotifications[index].eventNotificationModel.group.members}');
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                AtsignLocationPlugin(
-                                                    ClientSdkService
-                                                            .getInstance()
-                                                        .atClientServiceInstance
-                                                        .atClient,
-                                                    eventListenerKeyword: provider
-                                                        .allNotifications[index]
-                                                        .eventNotificationModel),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    child: DisplayTile(
-                                      image: AllImages().PERSON2,
-                                      title: provider.allNotifications[index]
-                                          .eventNotificationModel.title,
-                                      subTitle: provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel
-                                                  .event !=
-                                              null
-                                          ? provider
-                                                      .allNotifications[index]
-                                                      .eventNotificationModel
-                                                      .event
-                                                      .date !=
-                                                  null
-                                              ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
-                                              : ''
-                                          : '',
-                                      semiTitle: provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel
-                                                  .group !=
-                                              null
-                                          ? (isActionRequired(provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel))
-                                              ? 'Action required'
-                                              : ''
-                                          : '',
-                                    ),
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return Divider();
-                                },
-                              )
-                            : SizedBox(),
-                        !isExpanded
-                            ? Container(
-                                //height: 16.toHeight,
-                                alignment: Alignment.topCenter,
-                                width: SizeConfig().screenWidth,
-                                padding: EdgeInsets.fromLTRB(56.toHeight,
-                                    0.toHeight, 0.toWidth, 0.toHeight),
-                                decoration: BoxDecoration(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                ),
-                                child: InkWell(
-                                  onTap: () => pc.open(),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      provider.allNotifications.length > 3
-                                          ? Text(
-                                              'See ${provider.allNotifications.length - 3} more ',
-                                              style:
-                                                  CustomTextStyles().darkGrey14,
-                                            )
-                                          : SizedBox(),
-                                      Icon(Icons.keyboard_arrow_down)
-                                    ],
-                                  ),
-                                ))
-                            : SizedBox(),
-                        !isExpanded
-                            ? SizedBox()
-                            : ListView.separated(
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: provider.allNotifications.length,
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
                                       if (index == 3) {
                                         pc.open();
                                         return null;
@@ -293,12 +193,144 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       );
                                     },
+                                    child: DisplayTile(
+                                      image: AllImages().PERSON2,
+                                      title: provider.allNotifications[index]
+                                          .eventNotificationModel.title,
+                                      subTitle: provider
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel
+                                                  .event !=
+                                              null
+                                          ? provider
+                                                      .allNotifications[index]
+                                                      .eventNotificationModel
+                                                      .event
+                                                      .date !=
+                                                  null
+                                              ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
+                                              : ''
+                                          : '',
+                                      semiTitle: provider
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel
+                                                  .group !=
+                                              null
+                                          ? (isActionRequired(provider
+                                                  .allNotifications[index]
+                                                  .eventNotificationModel))
+                                              ? 'Action required'
+                                              : null
+                                          : null,
+                                    ),
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return Divider();
+                                },
+                              )
+                            : SizedBox(),
+                        // !isExpanded
+                        //     ? Container(
+                        //         //height: 16.toHeight,
+                        //         alignment: Alignment.topCenter,
+                        //         width: SizeConfig().screenWidth,
+                        //         padding: EdgeInsets.fromLTRB(56.toHeight,
+                        //             0.toHeight, 0.toWidth, 0.toHeight),
+                        //         decoration: BoxDecoration(
+                        //           color:
+                        //               Theme.of(context).scaffoldBackgroundColor,
+                        //         ),
+                        //         child: InkWell(
+                        //           onTap: () => pc.open(),
+                        //           child: Row(
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               provider.allNotifications.length > 3
+                        //                   ? Text(
+                        //                       'See ${provider.allNotifications.length - 3} more ',
+                        //                       style:
+                        //                           CustomTextStyles().darkGrey14,
+                        //                     )
+                        //                   : SizedBox(),
+                        //               Icon(Icons.keyboard_arrow_down)
+                        //             ],
+                        //           ),
+                        //         ))
+                        //     : SizedBox(),
+                        !isExpanded
+                            ? SizedBox()
+                            : ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                itemCount: provider.allNotifications.length,
+                                shrinkWrap: true,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      // if (index == 3) {
+                                      //   pc.open();
+                                      //   return null;
+                                      // }
+
+                                      print(
+                                          'selected event${provider.allNotifications[index].key}');
+
+                                      if (isActionRequired(provider
+                                          .allNotifications[index]
+                                          .eventNotificationModel)) {
+                                        print(
+                                            'selected event${provider.allNotifications[index].key}');
+                                        return showDialog<void>(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          builder: (BuildContext context) {
+                                            print(
+                                                'selected event${provider.allNotifications[index].key}');
+                                            return ShareLocationNotifierDialog(
+                                                provider.allNotifications[index]
+                                                    .eventNotificationModel,
+                                                userName: provider
+                                                    .allNotifications[index]
+                                                    .eventNotificationModel
+                                                    .atsignCreator);
+                                          },
+                                        );
+                                      }
+                                      print(
+                                          'clicked event date:${provider.allNotifications[index].key} , member:${provider.allNotifications[index].eventNotificationModel.group.members}');
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AtsignLocationPlugin(
+                                                  ClientSdkService.getInstance()
+                                                      .atClientServiceInstance
+                                                      .atClient,
+                                                  onEventUpdate:
+                                                      (EventNotificationModel
+                                                          eventData) {
+                                            provider
+                                                .mapUpdatedEventDataToWidget(
+                                                    eventData);
+                                          },
+                                                  eventListenerKeyword: provider
+                                                      .allNotifications[index]
+                                                      .eventNotificationModel),
+                                        ),
+                                      );
+                                    },
                                     child: index == 3 && pc.isPanelClosed
-                                        ? Text(
-                                            'See ${provider.allNotifications.length - 3} more ',
-                                            style:
-                                                CustomTextStyles().darkGrey14,
-                                          )
+                                        ?
+                                        // Text(
+                                        //     'See ${provider.allNotifications.length - 3} more ',
+                                        //     style:
+                                        //         CustomTextStyles().darkGrey14,
+                                        //   )
+                                        SizedBox()
                                         : DisplayTile(
                                             image: AllImages().PERSON2,
                                             title: provider
@@ -311,14 +343,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .event !=
                                                     null
                                                 ? provider
-                                                            .allNotifications[
-                                                                index]
-                                                            .eventNotificationModel
-                                                            .event
-                                                            .date !=
-                                                        null
-                                                    ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
-                                                    : ''
+                                                        .allNotifications[index]
+                                                        .eventNotificationModel
+                                                        .event
+                                                        .isRecurring
+                                                    ? provider
+                                                                .allNotifications[
+                                                                    index]
+                                                                .eventNotificationModel
+                                                                .event
+                                                                .date !=
+                                                            null
+                                                        ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
+                                                        : 'Repeats every ${provider.allNotifications[index].eventNotificationModel.event.repeatDuration} month on  ${getWeekString(provider.allNotifications[index].eventNotificationModel.event.occursOn)}'
+                                                    : provider
+                                                                .allNotifications[
+                                                                    index]
+                                                                .eventNotificationModel
+                                                                .event
+                                                                .date !=
+                                                            null
+                                                        ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
+                                                        : ''
                                                 : '',
                                             semiTitle: provider
                                                         .allNotifications[index]
@@ -329,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .allNotifications[index]
                                                         .eventNotificationModel))
                                                     ? 'Action required'
-                                                    : ''
+                                                    : null
                                                 : 'Action required',
                                           ),
                                   );

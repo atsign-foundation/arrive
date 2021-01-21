@@ -26,7 +26,7 @@ class EventProvider extends BaseModel {
 
   AtClientImpl atClientInstance;
   String currentAtSign;
-  List<HybridNotificationModel> allNotifications;
+  List<HybridNotificationModel> allNotifications = [];
   // List<String> allKeys = [];
   // List<AtKey> allAtkeys = [];
   // List<AtValue> allAtValues = [];
@@ -44,6 +44,8 @@ class EventProvider extends BaseModel {
     // allAtkeys = [];
     // allAtValues = [];
     // allEvents = [];
+    allNotifications = [];
+
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-',
       // sharedWith: '@test_ga3',
@@ -130,11 +132,17 @@ class EventProvider extends BaseModel {
     }
     // allNotifications.sort((a, b) => b.eventNotificationModel.event.date
     //     .compareTo(a.eventNotificationModel.event.date));
+    print(
+        'length of all events:${allNotifications} , ${allNotifications.length}');
   }
 
-  actionOnEvent(EventNotificationModel eventData, ATKEY_TYPE_ENUM keyType,
+  actionOnEvent(EventNotificationModel event, ATKEY_TYPE_ENUM keyType,
       {bool isAccepted, bool isSharing, bool isExited}) async {
     setStatus(UPDATE_EVENTS, Status.Loading);
+
+    EventNotificationModel eventData = EventNotificationModel.fromJson(
+        jsonDecode(
+            EventNotificationModel.convertEventNotificationToJson(event)));
 
     try {
       String atkeyMicrosecondId =

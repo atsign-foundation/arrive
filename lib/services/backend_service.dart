@@ -193,7 +193,8 @@ class BackendService {
     print('notification:$notification');
 
     var result = await atClientInstance.put(key, notification);
-    mapUpdatedDataToWidget(acknowledgedEvent);
+    if (result is bool && result == true)
+      mapUpdatedDataToWidget(acknowledgedEvent);
     print('acknowledgement received:$result');
   }
 
@@ -233,15 +234,15 @@ class BackendService {
     atClientInstance =
         ClientSdkService.getInstance().atClientServiceInstance.atClient;
     List<String> response = await atClientInstance.getKeys(
-      regex: '1610648226523619',
+      regex: '1611145615767065',
       // sharedBy: '@test_ga3',
       // sharedWith: '@test_ga3',
     );
     print('keys:${response}');
     print('sharedBy:${response[0]}, ${response[0].contains('cached')}');
 
-    AtKey key = AtKey.fromString(response[1]);
-    print('key :${key.key} , ${key}');
+    AtKey key = AtKey.fromString(response[0]);
+    print('key :${key} ');
 
     AtValue result = await atClientInstance.get(key).catchError(
         (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
