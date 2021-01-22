@@ -5,7 +5,9 @@ import 'package:atsign_location_app/view_models/add_contact_provider.dart';
 import 'package:atsign_location_app/view_models/blocked_contact_provider.dart';
 import 'package:atsign_location_app/view_models/contact_provider.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/scan_qr_provider.dart';
+import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +33,11 @@ class _MyAppState extends State<MyApp> {
       ChangeNotifierProvider<BlockedContactProvider>(
           create: (context) => BlockedContactProvider()),
       ChangeNotifierProvider<EventProvider>(
-          create: (context) => EventProvider())
+          create: (context) => EventProvider()),
+      ChangeNotifierProvider<ShareLocationProvider>(
+          create: (context) => ShareLocationProvider()),
+      ChangeNotifierProvider<HybridProvider>(
+          create: (context) => HybridProvider())
     ], child: MaterialAppClass());
   }
 }

@@ -37,7 +37,6 @@ class EventProvider extends BaseModel {
     currentAtSign = atClientInstance.currentAtSign;
   }
 
-  getSingleUserEvents() {}
   getAllEvents() async {
     setStatus(GET_ALL_EVENTS, Status.Loading);
 

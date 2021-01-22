@@ -25,6 +25,7 @@ import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
@@ -62,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<HybridProvider>(context).getAllHybridEvents();
     return SafeArea(
       child: Scaffold(
           endDrawer: Container(
@@ -90,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
                 // collapsed: Text('sss'),
-                panel: collapsedContent(true),
+                panel: Text('ss'),
               )
             ],
           )),

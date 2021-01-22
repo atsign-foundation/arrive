@@ -1,4 +1,4 @@
-import 'package:atsign_chat/widgets/custom_bottom_sheet.dart';
+// import 'package:atsign_chat/widgets/custom_bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
@@ -69,8 +69,8 @@ class _RequestLocationScreenState extends State<RequestLocationScreen> {
                   icon: Icons.message_outlined,
                   iconColor: Theme.of(context).scaffoldBackgroundColor,
                   onPressed: () {
-                    scaffoldKey.currentState.showBottomSheet((context) =>
-                        ChatScreen(height: SizeConfig().screenHeight * 0.85));
+                    // scaffoldKey.currentState.showBottomSheet((context) =>
+                    //     ChatScreen(height: SizeConfig().screenHeight * 0.85));
                   },
                 ),
               ),
