@@ -40,18 +40,12 @@ class EventProvider extends BaseModel {
   getSingleUserEvents() {}
   getAllEvents() async {
     setStatus(GET_ALL_EVENTS, Status.Loading);
-    // allKeys = [];
-    // allAtkeys = [];
-    // allAtValues = [];
-    // allEvents = [];
+
     allNotifications = [];
 
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-',
-      // sharedWith: '@test_ga3',
     );
-
-    // print('response:${response}');
 
     if (response.length == 0) {
       setStatus(GET_ALL_EVENTS, Status.Done);
@@ -67,11 +61,6 @@ class EventProvider extends BaseModel {
         // allKeys.add(element);
       }
     });
-
-    // allKeys.forEach((element) {
-    //   AtKey key = AtKey.fromString(element);
-    //   allAtkeys.add(key);
-    // });
 
     allNotifications.forEach((notification) {
       AtKey atKey = AtKey.fromString(notification.key);
@@ -97,7 +86,7 @@ class EventProvider extends BaseModel {
     convertJsonToEventModel();
     setStatus(GET_ALL_EVENTS, Status.Done);
 
-    checkForAcknowledgeEvents();
+    // checkForAcknowledgeEvents();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -114,26 +103,23 @@ class EventProvider extends BaseModel {
     for (int i = 0; i < allNotifications.length; i++) {
       if (allNotifications[i].atValue != 'null' &&
           allNotifications[i].atValue != null) {
-        if (jsonDecode(allNotifications[i].atValue.value).runtimeType !=
-            String) {
-          EventNotificationModel event = EventNotificationModel.fromJson(
-              jsonDecode(allNotifications[i].atValue.value));
+        EventNotificationModel event = EventNotificationModel.fromJson(
+            jsonDecode(allNotifications[i].atValue.value));
 
-          if (event != null &&
-              event.isCancelled == false &&
-              event.group.members.length > 0) {
-            event.key = allNotifications[i].key;
-            print('adding key in event: ${event.key}');
-            allNotifications[i].eventNotificationModel = event;
-            // allEvents.add(event);
-          }
+        if (event != null &&
+            // event.isCancelled == false &&
+            event.group.members.length > 0) {
+          event.key = allNotifications[i].key;
+
+          allNotifications[i].eventNotificationModel = event;
+          // allEvents.add(event);
         }
       }
     }
     // allNotifications.sort((a, b) => b.eventNotificationModel.event.date
     //     .compareTo(a.eventNotificationModel.event.date));
-    print(
-        'length of all events:${allNotifications} , ${allNotifications.length}');
+    // print(
+    //     'length of all events:${allNotifications} , ${allNotifications.length}');
   }
 
   actionOnEvent(EventNotificationModel event, ATKEY_TYPE_ENUM keyType,
@@ -323,6 +309,24 @@ class EventProvider extends BaseModel {
       return false;
   }
 
+  cancelEvent(EventNotificationModel event) async {
+    EventNotificationModel eventData = EventNotificationModel.fromJson(
+        jsonDecode(
+            EventNotificationModel.convertEventNotificationToJson(event)));
+    if (eventData.atsignCreator == currentAtSign && !eventData.isCancelled) {
+      try {
+        eventData.isCancelled = true;
+        List<String> response = await atClientInstance.getKeys(
+          regex: '${eventData.key}',
+        );
+        AtKey key = AtKey.fromString(response[0]);
+        updateEvent(eventData, key);
+      } catch (e) {
+        print('error in cancelling event:$e');
+      }
+    }
+  }
+
   Future<dynamic> updateEvent(
       EventNotificationModel eventData, AtKey key) async {
     try {
@@ -331,6 +335,7 @@ class EventProvider extends BaseModel {
 
       var result = await atClientInstance.put(key, notification);
       if (result is bool) {
+        print('updated:$result');
         return result;
       } else if (result != null) {
         return result.toString();

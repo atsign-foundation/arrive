@@ -179,8 +179,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                               AtsignLocationPlugin(
                                                   ClientSdkService.getInstance()
                                                       .atClientServiceInstance
-                                                      .atClient,
-                                                  onEventUpdate:
+                                                      .atClient, () {
+                                            provider.cancelEvent(provider
+                                                .allNotifications[index]
+                                                .eventNotificationModel);
+                                          }, () {
+                                            provider.actionOnEvent(
+                                                provider.allNotifications[index]
+                                                    .eventNotificationModel,
+                                                ATKEY_TYPE_ENUM
+                                                    .ACKNOWLEDGEEVENT,
+                                                isExited: true);
+                                          }, onEventUpdate:
                                                       (EventNotificationModel
                                                           eventData) {
                                             provider
@@ -277,12 +287,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       //   return null;
                                       // }
 
-                                      print(
-                                          'selected event${provider.allNotifications[index].key} , ${provider.allNotifications[index].eventNotificationModel.title} , creator:  ${provider.allNotifications[index].eventNotificationModel.atsignCreator} , groups:${provider.allNotifications[index].eventNotificationModel.group}');
-
                                       if (isActionRequired(provider
-                                          .allNotifications[index]
-                                          .eventNotificationModel)) {
+                                              .allNotifications[index]
+                                              .eventNotificationModel) &&
+                                          !provider
+                                              .allNotifications[index]
+                                              .eventNotificationModel
+                                              .isCancelled) {
                                         return showDialog<void>(
                                           context: context,
                                           barrierDismissible: true,
@@ -307,8 +318,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                               AtsignLocationPlugin(
                                                   ClientSdkService.getInstance()
                                                       .atClientServiceInstance
-                                                      .atClient,
-                                                  onEventUpdate:
+                                                      .atClient, () {
+                                            provider.cancelEvent(provider
+                                                .allNotifications[index]
+                                                .eventNotificationModel);
+                                          }, () {
+                                            provider.actionOnEvent(
+                                                provider.allNotifications[index]
+                                                    .eventNotificationModel,
+                                                ATKEY_TYPE_ENUM
+                                                    .ACKNOWLEDGEEVENT,
+                                                isExited: true);
+                                          }, onEventUpdate:
                                                       (EventNotificationModel
                                                           eventData) {
                                             provider
@@ -454,6 +475,8 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 bool isActionRequired(EventNotificationModel event) {
+  if (event.isCancelled) return true;
+
   bool isRequired = true;
   String currentAtsign = ClientSdkService.getInstance()
       .atClientServiceInstance
@@ -476,6 +499,7 @@ bool isActionRequired(EventNotificationModel event) {
 }
 
 String getActionString(EventNotificationModel event) {
+  if (event.isCancelled) return 'Cancelled';
   String label = 'Action required';
   String currentAtsign = ClientSdkService.getInstance()
       .atClientServiceInstance
