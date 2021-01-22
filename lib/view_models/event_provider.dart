@@ -27,10 +27,6 @@ class EventProvider extends BaseModel {
   AtClientImpl atClientInstance;
   String currentAtSign;
   List<HybridNotificationModel> allNotifications = [];
-  // List<String> allKeys = [];
-  // List<AtKey> allAtkeys = [];
-  // List<AtValue> allAtValues = [];
-  // List<EventNotificationModel> allEvents = [];
 
   init(AtClientImpl clientInstance) {
     atClientInstance = clientInstance;
@@ -80,12 +76,10 @@ class EventProvider extends BaseModel {
       }
     }
 
-    // print('allAtValues:${allAtValues}');
-
     convertJsonToEventModel();
     setStatus(GET_ALL_EVENTS, Status.Done);
 
-    // checkForAcknowledgeEvents();
+    checkForAcknowledgeEvents();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -111,14 +105,11 @@ class EventProvider extends BaseModel {
           event.key = allNotifications[i].key;
 
           allNotifications[i].eventNotificationModel = event;
-          // allEvents.add(event);
         }
       }
     }
     // allNotifications.sort((a, b) => b.eventNotificationModel.event.date
     //     .compareTo(a.eventNotificationModel.event.date));
-    // print(
-    //     'length of all events:${allNotifications} , ${allNotifications.length}');
   }
 
   actionOnEvent(EventNotificationModel event, ATKEY_TYPE_ENUM keyType,

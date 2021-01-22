@@ -1,4 +1,5 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
@@ -27,12 +28,33 @@ class HybridProvider extends ShareLocationProvider {
   getAllHybridEvents() async {
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Loading);
 
-    await super.getAllEvents();
-    print('super.allNotifications - ${super.allNotifications}');
+    await getAllEvents();
     await super.getSingleUserLocationSharing();
-    print(
-        'super.allShareLocationNotifications - ${super.allShareLocationNotifications}');
+
+    allHybridNotifications = [
+      ...super.allNotifications,
+      ...super.allShareLocationNotifications
+    ];
 
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
+  }
+
+  mapUpdatedEventDataToWidget(EventNotificationModel eventData) {
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
+    String newEventDataKeyId =
+        eventData.key.split('createevent-')[1].split('@')[0];
+
+    for (int i = 0; i < allHybridNotifications.length; i++) {
+      if (allHybridNotifications[i].notificationType ==
+          NotificationType.Event) {
+        if (allHybridNotifications[i]
+            .eventNotificationModel
+            .key
+            .contains(newEventDataKeyId)) {
+          allHybridNotifications[i].eventNotificationModel = eventData;
+        }
+      }
+    }
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
   }
 }

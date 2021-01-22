@@ -13,6 +13,7 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/dummy_data/group_data.dart';
+import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
@@ -20,6 +21,7 @@ import 'package:atsign_location_app/screens/share_location/share_location_sheet.
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -51,6 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
     eventProvider = context.read<EventProvider>();
     eventProvider
         .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<HybridProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+    });
   }
 
   initializeContacts() async {
@@ -63,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<HybridProvider>(context).getAllHybridEvents();
     return SafeArea(
       child: Scaffold(
           endDrawer: Container(
@@ -92,7 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
                 // collapsed: Text('sss'),
-                panel: Text('ss'),
+                panel: collapsedContent(false),
+                // panel: Text(''),
               )
             ],
           )),
@@ -116,304 +123,116 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        child: ProviderHandler<EventProvider>(
-            functionName: EventProvider().GET_ALL_EVENTS,
+        child: ProviderHandler<HybridProvider>(
+            functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
             showError: true,
-            load: (provider) => provider.getAllEvents(),
+            load: (provider) => provider.getAllHybridEvents(),
             errorBuilder: (provider) => Center(
                   child: Text('Some error occured'),
                 ),
             successBuilder: (provider) {
-              if (provider.allNotifications.length > 0) {
-                return SingleChildScrollView(
-                  physics: !isExpanded
-                      ? NeverScrollableScrollPhysics()
-                      : AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DraggableSymbol(),
-                        SizedBox(
-                          height: 5.toHeight,
-                        ),
-                        Divider(),
-                        !isExpanded
-                            ? ListView.separated(
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: 3,
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      if (index == 3) {
-                                        pc.open();
-                                        return null;
-                                      }
-
-                                      if (isActionRequired(provider
-                                          .allNotifications[index]
-                                          .eventNotificationModel)) {
-                                        return showDialog<void>(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (BuildContext context) {
-                                            print(
-                                                'selected event${provider.allNotifications[index].key}');
-                                            return ShareLocationNotifierDialog(
-                                                provider.allNotifications[index]
-                                                    .eventNotificationModel,
-                                                userName: provider
-                                                    .allNotifications[index]
-                                                    .eventNotificationModel
-                                                    .atsignCreator);
-                                          },
-                                        );
-                                      }
-                                      print(
-                                          'clicked event date:${provider.allNotifications[index].key} , member:${provider.allNotifications[index].eventNotificationModel.group.members}');
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AtsignLocationPlugin(
-                                                  ClientSdkService.getInstance()
-                                                      .atClientServiceInstance
-                                                      .atClient, () {
-                                            provider.cancelEvent(provider
-                                                .allNotifications[index]
-                                                .eventNotificationModel);
-                                          }, () {
-                                            provider.actionOnEvent(
-                                                provider.allNotifications[index]
-                                                    .eventNotificationModel,
-                                                ATKEY_TYPE_ENUM
-                                                    .ACKNOWLEDGEEVENT,
-                                                isExited: true);
-                                          }, onEventUpdate:
-                                                      (EventNotificationModel
-                                                          eventData) {
-                                            provider
-                                                .mapUpdatedEventDataToWidget(
-                                                    eventData);
-                                          },
-                                                  eventListenerKeyword: provider
-                                                      .allNotifications[index]
-                                                      .eventNotificationModel),
-                                        ),
-                                      );
-                                    },
-                                    child: DisplayTile(
-                                      image: AllImages().PERSON2,
-                                      title: provider.allNotifications[index]
-                                          .eventNotificationModel.title,
-                                      subTitle: provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel
-                                                  .event !=
-                                              null
-                                          ? provider
-                                                      .allNotifications[index]
-                                                      .eventNotificationModel
-                                                      .event
-                                                      .date !=
-                                                  null
-                                              ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
-                                              : ''
-                                          : '',
-                                      semiTitle: provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel
-                                                  .group !=
-                                              null
-                                          ? (isActionRequired(provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel))
-                                              ? getActionString(provider
-                                                  .allNotifications[index]
-                                                  .eventNotificationModel)
-                                              : null
-                                          : null,
-                                    ),
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return Divider();
-                                },
-                              )
-                            : SizedBox(),
-                        // !isExpanded
-                        //     ? Container(
-                        //         //height: 16.toHeight,
-                        //         alignment: Alignment.topCenter,
-                        //         width: SizeConfig().screenWidth,
-                        //         padding: EdgeInsets.fromLTRB(56.toHeight,
-                        //             0.toHeight, 0.toWidth, 0.toHeight),
-                        //         decoration: BoxDecoration(
-                        //           color:
-                        //               Theme.of(context).scaffoldBackgroundColor,
-                        //         ),
-                        //         child: InkWell(
-                        //           onTap: () => pc.open(),
-                        //           child: Row(
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               provider.allNotifications.length > 3
-                        //                   ? Text(
-                        //                       'See ${provider.allNotifications.length - 3} more ',
-                        //                       style:
-                        //                           CustomTextStyles().darkGrey14,
-                        //                     )
-                        //                   : SizedBox(),
-                        //               Icon(Icons.keyboard_arrow_down)
-                        //             ],
-                        //           ),
-                        //         ))
-                        //     : SizedBox(),
-                        !isExpanded
-                            ? SizedBox()
-                            : ListView.separated(
-                                physics: NeverScrollableScrollPhysics(),
-                                itemCount: provider.allNotifications.length,
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      // if (index == 3) {
-                                      //   pc.open();
-                                      //   return null;
-                                      // }
-
-                                      if (isActionRequired(provider
-                                              .allNotifications[index]
-                                              .eventNotificationModel) &&
-                                          !provider
-                                              .allNotifications[index]
-                                              .eventNotificationModel
-                                              .isCancelled) {
-                                        return showDialog<void>(
-                                          context: context,
-                                          barrierDismissible: true,
-                                          builder: (BuildContext context) {
-                                            return ShareLocationNotifierDialog(
-                                                provider.allNotifications[index]
-                                                    .eventNotificationModel,
-                                                userName: provider
-                                                    .allNotifications[index]
-                                                    .eventNotificationModel
-                                                    .atsignCreator);
-                                          },
-                                        );
-                                      }
-                                      print(
-                                          'clicked event date:${provider.allNotifications[index].key} , member:${provider.allNotifications[index].eventNotificationModel.group.members}');
-
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AtsignLocationPlugin(
-                                                  ClientSdkService.getInstance()
-                                                      .atClientServiceInstance
-                                                      .atClient, () {
-                                            provider.cancelEvent(provider
-                                                .allNotifications[index]
-                                                .eventNotificationModel);
-                                          }, () {
-                                            provider.actionOnEvent(
-                                                provider.allNotifications[index]
-                                                    .eventNotificationModel,
-                                                ATKEY_TYPE_ENUM
-                                                    .ACKNOWLEDGEEVENT,
-                                                isExited: true);
-                                          }, onEventUpdate:
-                                                      (EventNotificationModel
-                                                          eventData) {
-                                            provider
-                                                .mapUpdatedEventDataToWidget(
-                                                    eventData);
-                                          },
-                                                  eventListenerKeyword: provider
-                                                      .allNotifications[index]
-                                                      .eventNotificationModel),
-                                        ),
-                                      );
-                                    },
-                                    child: index == 3 && pc.isPanelClosed
-                                        ?
-                                        // Text(
-                                        //     'See ${provider.allNotifications.length - 3} more ',
-                                        //     style:
-                                        //         CustomTextStyles().darkGrey14,
-                                        //   )
-                                        SizedBox()
-                                        : DisplayTile(
-                                            image: AllImages().PERSON2,
-                                            title: provider
-                                                .allNotifications[index]
-                                                .eventNotificationModel
-                                                .title,
-                                            subTitle: provider
-                                                        .allNotifications[index]
-                                                        .eventNotificationModel
-                                                        .event !=
-                                                    null
-                                                ? provider
-                                                        .allNotifications[index]
-                                                        .eventNotificationModel
-                                                        .event
-                                                        .isRecurring
-                                                    ? provider
-                                                                .allNotifications[
-                                                                    index]
-                                                                .eventNotificationModel
-                                                                .event
-                                                                .date !=
-                                                            null
-                                                        ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
-                                                        : 'Repeats every ${provider.allNotifications[index].eventNotificationModel.event.repeatDuration} month on  ${getWeekString(provider.allNotifications[index].eventNotificationModel.event.occursOn)}'
-                                                    : provider
-                                                                .allNotifications[
-                                                                    index]
-                                                                .eventNotificationModel
-                                                                .event
-                                                                .date !=
-                                                            null
-                                                        ? 'event on ${dateToString(provider.allNotifications[index].eventNotificationModel.event.date)}'
-                                                        : ''
-                                                : '',
-                                            semiTitle: provider
-                                                        .allNotifications[index]
-                                                        .eventNotificationModel
-                                                        .group !=
-                                                    null
-                                                ? (isActionRequired(provider
-                                                        .allNotifications[index]
-                                                        .eventNotificationModel))
-                                                    ? getActionString(provider
-                                                        .allNotifications[index]
-                                                        .eventNotificationModel)
-                                                    : null
-                                                : 'Action required',
-                                          ),
-                                  );
-                                },
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return Divider();
-                                },
-                              )
-                      ]),
+              if (provider.allHybridNotifications.length == 0) {
+                Center(
+                  child: Text('No data found'),
                 );
               } else {
-                return Center(
-                  child: Text('No events found'),
-                );
+                return ListView.separated(
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: provider.allHybridNotifications.length,
+                    shrinkWrap: true,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider();
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      if (provider.allHybridNotifications[index]
+                                  .notificationType ==
+                              NotificationType.Event &&
+                          provider.allHybridNotifications[index]
+                                  .eventNotificationModel !=
+                              null) {
+                        return InkWell(
+                          onTap: () {
+                            HomeEventService().onEventModelTap(
+                                provider.allHybridNotifications[index]
+                                    .eventNotificationModel,
+                                provider);
+                          },
+                          child: DisplayTile(
+                            image: AllImages().PERSON2,
+                            title: provider.allHybridNotifications[index]
+                                .eventNotificationModel.title,
+                            subTitle: provider.allHybridNotifications[index]
+                                        .eventNotificationModel.event !=
+                                    null
+                                ? provider
+                                            .allHybridNotifications[index]
+                                            .eventNotificationModel
+                                            .event
+                                            .date !=
+                                        null
+                                    ? 'event on ${dateToString(provider.allHybridNotifications[index].eventNotificationModel.event.date)}'
+                                    : ''
+                                : '',
+                            semiTitle: provider.allHybridNotifications[index]
+                                        .eventNotificationModel.group !=
+                                    null
+                                ? (isActionRequired(provider
+                                        .allHybridNotifications[index]
+                                        .eventNotificationModel))
+                                    ? getActionString(provider
+                                        .allHybridNotifications[index]
+                                        .eventNotificationModel)
+                                    : null
+                                : null,
+                          ),
+                        );
+                      } else if (provider.allHybridNotifications[index]
+                                  .notificationType ==
+                              NotificationType.Location &&
+                          provider.allHybridNotifications[index]
+                                  .locationNotificationModel !=
+                              null) {
+                        return InkWell(
+                          onTap: () {
+                            HomeEventService().onLocationModelTap(provider
+                                .allHybridNotifications[index]
+                                .locationNotificationModel);
+                          },
+                          child: DisplayTile(
+                            image: AllImages().PERSON2,
+                            title: provider
+                                        .allHybridNotifications[index]
+                                        .locationNotificationModel
+                                        .atsignCreator ==
+                                    currentAtSign
+                                ? provider.allHybridNotifications[index]
+                                    .locationNotificationModel.receiver
+                                : provider.allHybridNotifications[index]
+                                    .locationNotificationModel.atsignCreator,
+                            subTitle: provider
+                                        .allHybridNotifications[index]
+                                        .locationNotificationModel
+                                        .atsignCreator ==
+                                    currentAtSign
+                                ? 'Can see my location'
+                                : 'Sharing his location',
+                            semiTitle: provider
+                                        .allHybridNotifications[index]
+                                        .locationNotificationModel
+                                        .atsignCreator !=
+                                    currentAtSign
+                                ? (provider.allHybridNotifications[index]
+                                        .locationNotificationModel.isAccepted
+                                    ? ''
+                                    : 'Action required')
+                                : (provider.allHybridNotifications[index]
+                                        .locationNotificationModel.isAccepted
+                                    ? ''
+                                    : 'Awaiting response'),
+                          ),
+                        );
+                      }
+                    });
               }
             }));
   }
@@ -466,57 +285,12 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
-                eventProvider.updateEventAccordingToAcknowledgedData();
-                // bottomSheet(context, ShareLocationSheet(),
-                //     SizeConfig().screenHeight * 0.6);
+                // eventProvider.updateEventAccordingToAcknowledgedData();
+                bottomSheet(context, ShareLocationSheet(),
+                    SizeConfig().screenHeight * 0.6);
               })
         ],
       ),
     );
   }
-}
-
-bool isActionRequired(EventNotificationModel event) {
-  if (event.isCancelled) return true;
-
-  bool isRequired = true;
-  String currentAtsign = ClientSdkService.getInstance()
-      .atClientServiceInstance
-      .atClient
-      .currentAtSign;
-
-  if (event.group.members.length < 1) return true;
-
-  event.group.members.forEach((member) {
-    if (member.tags['isAccepted'] != null &&
-        member.tags['isAccepted'] == true &&
-        member.atSign == currentAtsign) {
-      isRequired = false;
-    }
-  });
-
-  if (event.atsignCreator == currentAtsign) isRequired = false;
-
-  return isRequired;
-}
-
-String getActionString(EventNotificationModel event) {
-  if (event.isCancelled) return 'Cancelled';
-  String label = 'Action required';
-  String currentAtsign = ClientSdkService.getInstance()
-      .atClientServiceInstance
-      .atClient
-      .currentAtSign;
-
-  if (event.group.members.length < 1) return '';
-
-  event.group.members.forEach((member) {
-    if (member.tags['isExited'] != null &&
-        member.tags['isExited'] == true &&
-        member.atSign == currentAtsign) {
-      label = 'Request declined';
-    }
-  });
-
-  return label;
 }

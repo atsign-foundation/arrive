@@ -16,7 +16,7 @@ class ShareLocationProvider extends EventProvider {
   ShareLocationProvider();
   AtClientImpl atClientInstance;
   String currentAtSign;
-  List<HybridNotificationModel> allShareLocationNotifications;
+  List<HybridNotificationModel> allShareLocationNotifications = [];
   // ignore: non_constant_identifier_names
   String GET_ALL_EVENTS = 'get_all_events';
   // ignore: non_constant_identifier_names
@@ -40,8 +40,6 @@ class ShareLocationProvider extends EventProvider {
   }
 
   getSingleUserLocationSharing() async {
-    print('getSingleUserLocationSharing');
-
     setStatus(GET_ALL_EVENTS, Status.Loading);
 
     List<String> shareLocationResponse = await atClientInstance.getKeys(
@@ -103,17 +101,19 @@ class ShareLocationProvider extends EventProvider {
   }
 
   filterData() {
-    List<HybridNotificationModel> tempNotification =
-        allShareLocationNotifications;
-    tempNotification.forEach((notification) {
+    List<HybridNotificationModel> tempNotification = [];
+    allShareLocationNotifications.forEach((notification) {
       if ((notification.locationNotificationModel != null) &&
           (notification.locationNotificationModel.atsignCreator !=
               currentAtSign) &&
           (!notification.locationNotificationModel.isAccepted) &&
           (notification.locationNotificationModel.isExited)) {
-        allShareLocationNotifications.remove(notification);
+        tempNotification.add(notification);
       }
     });
+
+    allShareLocationNotifications
+        .removeWhere((element) => tempNotification.contains(element));
   }
 
   checkForAcknowledge() {

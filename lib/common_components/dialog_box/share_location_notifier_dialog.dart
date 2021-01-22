@@ -1,8 +1,14 @@
+import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_events/services/event_services.dart';
+import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/notification_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -13,9 +19,12 @@ import 'package:atsign_common/services/size_config.dart';
 class ShareLocationNotifierDialog extends StatelessWidget {
   final String event, invitedPeopleCount, timeAndDate, userName;
   final EventNotificationModel eventData;
+  final LocationNotificationModel locationData;
   final bool showMembersCount;
-  ShareLocationNotifierDialog(this.eventData,
-      {this.event,
+  ShareLocationNotifierDialog(
+      {this.eventData,
+      this.event,
+      this.locationData,
       this.invitedPeopleCount,
       this.timeAndDate,
       this.userName,
@@ -32,7 +41,11 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                      '$userName wants to share an event with you. Are you sure you want to join and share your location with the group?',
+                      (eventData != null)
+                          ? '$userName wants to share an event with you. Are you sure you want to join and share your location with the group?'
+                          : ((locationData != null)
+                              ? '$userName wants to share their location with you. Are you sure you want to accept their location?'
+                              : '$userName wants you to share your location? Are you sure you want to share?'),
                       style: CustomTextStyles().grey16,
                       textAlign: TextAlign.center),
                   SizedBox(height: 30),
@@ -77,15 +90,29 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   SizedBox(height: 20.toHeight),
                   CustomButton(
                     onTap: () => () async {
-                      providerCallback<EventProvider>(context,
-                          task: (t) => t.actionOnEvent(
-                              eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                              isAccepted: true, isExited: false),
-                          taskName: (t) => t.UPDATE_EVENTS,
-                          onSuccess: (t) {
-                            Navigator.of(context).pop();
-                            t.getAllEvents();
-                          });
+                      (eventData != null)
+                          ? providerCallback<EventProvider>(context,
+                              task: (t) => t.actionOnEvent(
+                                  eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                                  isAccepted: true),
+                              taskName: (t) => t.UPDATE_EVENTS,
+                              onSuccess: (t) {
+                                Navigator.of(context).pop();
+                                t.getAllEvents();
+                              })
+                          : ((locationData != null)
+                              ? {
+                                  print('accept share location'),
+                                  LocationSharingService()
+                                      .shareLocationAcknowledgment(
+                                          true, locationData, true),
+                                  Navigator.of(context).pop(),
+                                }
+                              : {
+                                  // await NotificationService()
+                                  //     .sendLocationNotification(userName, true),
+                                  Navigator.of(context).pop(),
+                                });
                     }(),
                     child: Text('Yes',
                         style: TextStyle(
@@ -97,27 +124,42 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   SizedBox(height: 5),
                   InkWell(
                     onTap: () async {
-                      print('${eventData.key}');
-                      eventData.group.members.forEach((element) {
-                        if (element.atSign ==
-                            ClientSdkService.getInstance()
-                                .atClientServiceInstance
-                                .atClient
-                                .currentAtSign) {
-                          element.tags['isAccepted'] = false;
-                          element.tags['isExited'] = false;
-                        }
-                      });
-
-                      providerCallback<EventProvider>(context,
-                          task: (t) => t.actionOnEvent(
-                              eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                              isAccepted: false, isExited: true),
-                          taskName: (t) => t.UPDATE_EVENTS,
-                          onSuccess: (t) {
-                            Navigator.of(context).pop();
-                            t.getAllEvents();
-                          });
+                      (eventData != null)
+                          ? {
+                              print('${eventData.key}'),
+                              eventData.group.members.forEach((element) {
+                                if (element.atSign ==
+                                    ClientSdkService.getInstance()
+                                        .atClientServiceInstance
+                                        .atClient
+                                        .currentAtSign) {
+                                  element.tags['isAccepted'] = false;
+                                  element.tags['isExited'] = false;
+                                }
+                              }),
+                              providerCallback<EventProvider>(context,
+                                  task: (t) => t.actionOnEvent(eventData,
+                                      ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                                      isAccepted: false),
+                                  taskName: (t) => t.UPDATE_EVENTS,
+                                  onSuccess: (t) {
+                                    Navigator.of(context).pop();
+                                    t.getAllEvents();
+                                  }),
+                            }
+                          : ((locationData != null)
+                              ? {
+                                  {
+                                    print('accept share location'),
+                                    LocationSharingService()
+                                        .shareLocationAcknowledgment(
+                                            true, locationData, false),
+                                    Navigator.of(context).pop(),
+                                  }
+                                }
+                              : {
+                                  // for request location
+                                });
                     },
                     child: Text(
                       'No',
