@@ -1,21 +1,11 @@
-import 'package:at_contact/at_contact.dart';
-import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
-import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location/atsign_location.dart';
-import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
-import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
-import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
-import 'package:atsign_location_app/dummy_data/group_data.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
-import 'package:atsign_location_app/routes/route_names.dart';
-import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
@@ -25,10 +15,9 @@ import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
-import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_location_app/view_models/theme_view_model.dart';
+import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
 import 'package:latlong/latlong.dart';
@@ -44,6 +33,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
   EventProvider eventProvider = new EventProvider();
+  HybridProvider hybridProvider = new HybridProvider();
+
   String currentAtSign;
 
   @override
@@ -51,10 +42,18 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     initializeContacts();
     eventProvider = context.read<EventProvider>();
-    eventProvider
-        .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+    // eventProvider
+    //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+
+    hybridProvider = context.read<HybridProvider>();
+    // hybridProvider
+    //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<EventProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<ShareLocationProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
       Provider.of<HybridProvider>(context, listen: false).init(
           ClientSdkService.getInstance().atClientServiceInstance.atClient);
     });
@@ -132,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             successBuilder: (provider) {
               if (provider.allHybridNotifications.length == 0) {
-                Center(
+                return Center(
                   child: Text('No data found'),
                 );
               } else {
@@ -159,31 +158,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: DisplayTile(
                             image: AllImages().PERSON2,
-                            title: provider.allHybridNotifications[index]
-                                .eventNotificationModel.title,
-                            subTitle: provider.allHybridNotifications[index]
-                                        .eventNotificationModel.event !=
-                                    null
-                                ? provider
-                                            .allHybridNotifications[index]
-                                            .eventNotificationModel
-                                            .event
-                                            .date !=
-                                        null
-                                    ? 'event on ${dateToString(provider.allHybridNotifications[index].eventNotificationModel.event.date)}'
-                                    : ''
-                                : '',
-                            semiTitle: provider.allHybridNotifications[index]
-                                        .eventNotificationModel.group !=
-                                    null
-                                ? (isActionRequired(provider
-                                        .allHybridNotifications[index]
-                                        .eventNotificationModel))
-                                    ? getActionString(provider
-                                        .allHybridNotifications[index]
-                                        .eventNotificationModel)
-                                    : null
-                                : null,
+                            title: getTitle(
+                                provider.allHybridNotifications[index]),
+                            subTitle: getSubTitle(
+                                provider.allHybridNotifications[index]),
+                            semiTitle: getSemiTitle(
+                                provider.allHybridNotifications[index]),
                           ),
                         );
                       } else if (provider.allHybridNotifications[index]
@@ -200,35 +180,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: DisplayTile(
                             image: AllImages().PERSON2,
-                            title: provider
-                                        .allHybridNotifications[index]
-                                        .locationNotificationModel
-                                        .atsignCreator ==
-                                    currentAtSign
-                                ? provider.allHybridNotifications[index]
-                                    .locationNotificationModel.receiver
-                                : provider.allHybridNotifications[index]
-                                    .locationNotificationModel.atsignCreator,
-                            subTitle: provider
-                                        .allHybridNotifications[index]
-                                        .locationNotificationModel
-                                        .atsignCreator ==
-                                    currentAtSign
-                                ? 'Can see my location'
-                                : 'Sharing his location',
-                            semiTitle: provider
-                                        .allHybridNotifications[index]
-                                        .locationNotificationModel
-                                        .atsignCreator !=
-                                    currentAtSign
-                                ? (provider.allHybridNotifications[index]
-                                        .locationNotificationModel.isAccepted
-                                    ? ''
-                                    : 'Action required')
-                                : (provider.allHybridNotifications[index]
-                                        .locationNotificationModel.isAccepted
-                                    ? ''
-                                    : 'Awaiting response'),
+                            title: getTitle(
+                                provider.allHybridNotifications[index]),
+                            subTitle: getSubTitle(
+                                provider.allHybridNotifications[index]),
+                            semiTitle: getSemiTitle(
+                                provider.allHybridNotifications[index]),
                           ),
                         );
                       }
@@ -277,9 +234,9 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Request Location',
               icon: Icons.refresh,
               onTap: () {
-                BackendService.getInstance().getAllNotificationKeys();
-                // bottomSheet(context, RequestLocationSheet(),
-                //     SizeConfig().screenHeight * 0.5);
+                // BackendService.getInstance().getAllNotificationKeys();
+                bottomSheet(context, RequestLocationSheet(),
+                    SizeConfig().screenHeight * 0.5);
               }),
           Tasks(
               task: 'Share Location',

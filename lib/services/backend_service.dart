@@ -108,6 +108,7 @@ class BackendService {
   }
 
   fnCallBack(var response) async {
+    print('fnCallBack called');
     response = response.replaceFirst('notification:', '');
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];

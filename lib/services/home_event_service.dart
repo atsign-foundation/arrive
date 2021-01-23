@@ -1,12 +1,11 @@
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
+import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 
 class HomeEventService {
@@ -22,11 +21,29 @@ class HomeEventService {
 
     locationNotificationModel.atsignCreator != currentAtsign
         ? (locationNotificationModel.isAccepted
-            ? null
+            ? Navigator.push(
+                NavService.navKey.currentContext,
+                MaterialPageRoute(
+                  builder: (context) => AtsignLocationPlugin(
+                    ClientSdkService.getInstance()
+                        .atClientServiceInstance
+                        .atClient,
+                    userListenerKeyword: locationNotificationModel,
+                  ),
+                ),
+              )
             : BackendService.getInstance().showMyDialog(
                 locationNotificationModel.atsignCreator,
                 locationData: locationNotificationModel))
-        : null;
+        : Navigator.push(
+            NavService.navKey.currentContext,
+            MaterialPageRoute(
+              builder: (context) => AtsignLocationPlugin(
+                ClientSdkService.getInstance().atClientServiceInstance.atClient,
+                userListenerKeyword: locationNotificationModel,
+              ),
+            ),
+          );
   }
 
   onEventModelTap(
@@ -43,9 +60,9 @@ class HomeEventService {
       MaterialPageRoute(
         builder: (context) => AtsignLocationPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
-            () {
+            onEventCancel: () {
           provider.cancelEvent(eventNotificationModel);
-        }, () {
+        }, onEventExit: () {
           provider.actionOnEvent(
               eventNotificationModel, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
               isExited: true);
@@ -100,4 +117,61 @@ String getActionString(EventNotificationModel event) {
   });
 
   return label;
+}
+
+getSubTitle(HybridNotificationModel hybridNotificationModel) {
+  if (hybridNotificationModel.notificationType == NotificationType.Event) {
+    return hybridNotificationModel.eventNotificationModel.event != null
+        ? hybridNotificationModel.eventNotificationModel.event.date != null
+            ? 'event on ${dateToString(hybridNotificationModel.eventNotificationModel.event.date)}'
+            : ''
+        : '';
+  } else if (hybridNotificationModel.notificationType ==
+      NotificationType.Location) {
+    return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+            ClientSdkService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign
+        ? 'Can see my location'
+        : 'Sharing his location';
+  }
+}
+
+getSemiTitle(HybridNotificationModel hybridNotificationModel) {
+  if (hybridNotificationModel.notificationType == NotificationType.Event) {
+    return hybridNotificationModel.eventNotificationModel.group != null
+        ? (isActionRequired(hybridNotificationModel.eventNotificationModel))
+            ? getActionString(hybridNotificationModel.eventNotificationModel)
+            : null
+        : null;
+  } else if (hybridNotificationModel.notificationType ==
+      NotificationType.Location) {
+    return hybridNotificationModel.locationNotificationModel.atsignCreator !=
+            ClientSdkService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign
+        ? (hybridNotificationModel.locationNotificationModel.isAccepted
+            ? ''
+            : 'Action required')
+        : (hybridNotificationModel.locationNotificationModel.isAccepted
+            ? ''
+            : 'Awaiting response');
+  }
+}
+
+getTitle(HybridNotificationModel hybridNotificationModel) {
+  if (hybridNotificationModel.notificationType == NotificationType.Event) {
+    return hybridNotificationModel.eventNotificationModel.title;
+  } else if (hybridNotificationModel.notificationType ==
+      NotificationType.Location) {
+    return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+            ClientSdkService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign
+        ? hybridNotificationModel.locationNotificationModel.receiver
+        : hybridNotificationModel.locationNotificationModel.atsignCreator;
+  }
 }

@@ -29,6 +29,8 @@ class EventProvider extends BaseModel {
   List<HybridNotificationModel> allNotifications = [];
 
   init(AtClientImpl clientInstance) {
+    print('event clientInstance $clientInstance');
+
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
   }

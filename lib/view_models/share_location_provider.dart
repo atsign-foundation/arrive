@@ -32,11 +32,11 @@ class ShareLocationProvider extends EventProvider {
   // List<EventNotificationModel> allEvents = [];
 
   init(AtClientImpl clientInstance) {
-    super.init(clientInstance);
-
+    print('share clientInstance ${clientInstance == null}');
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
     allShareLocationNotifications = [];
+    super.init(clientInstance);
   }
 
   getSingleUserLocationSharing() async {
@@ -88,14 +88,18 @@ class ShareLocationProvider extends EventProvider {
     print(
         'allShareLocationNotifications.length -> ${allShareLocationNotifications.length}');
     for (int i = 0; i < allShareLocationNotifications.length; i++) {
-      if (allShareLocationNotifications[i].atValue.value != null) {
-        LocationNotificationModel locationNotificationModel =
-            LocationNotificationModel.fromJson(
-                jsonDecode(allShareLocationNotifications[i].atValue.value));
-        allShareLocationNotifications[i].locationNotificationModel =
-            locationNotificationModel;
-        print(
-            'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
+      try {
+        if (allShareLocationNotifications[i].atValue.value != null) {
+          LocationNotificationModel locationNotificationModel =
+              LocationNotificationModel.fromJson(
+                  jsonDecode(allShareLocationNotifications[i].atValue.value));
+          allShareLocationNotifications[i].locationNotificationModel =
+              locationNotificationModel;
+          print(
+              'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
+        }
+      } catch (e) {
+        allShareLocationNotifications.remove(allShareLocationNotifications[i]);
       }
     }
   }
@@ -186,7 +190,7 @@ class ShareLocationProvider extends EventProvider {
     if (locationNotificationModel.atsignCreator == currentAtSign) {
       key = await atClientInstance.getKeys(
         regex: tempKey,
-        sharedWith: locationNotificationModel.receiver,
+        // sharedWith: locationNotificationModel.receiver,
       );
     } else {
       key = await atClientInstance.getKeys(
@@ -210,12 +214,16 @@ class ShareLocationProvider extends EventProvider {
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
-    AtValue atvalue = await atClientInstance.get(key).catchError(
-        (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+    try {
+      AtValue atvalue = await atClientInstance.get(key).catchError(
+          (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
 
-    if (atvalue != null)
-      return atvalue;
-    else
+      if (atvalue != null)
+        return atvalue;
+      else
+        return null;
+    } catch (e) {
       return null;
+    }
   }
 }

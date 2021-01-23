@@ -21,8 +21,9 @@ class HybridProvider extends ShareLocationProvider {
   String HYBRID_MAP_UPDATED_EVENT_DATA = 'hybrid_map_event_event';
 
   init(AtClientImpl clientInstance) {
-    super.init(clientInstance);
+    print('hyrbid clientInstance $clientInstance');
     allHybridNotifications = [];
+    super.init(clientInstance);
   }
 
   getAllHybridEvents() async {

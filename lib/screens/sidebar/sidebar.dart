@@ -55,7 +55,11 @@ class _SideBarState extends State<SideBar> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '@sign',
+                          ClientSdkService.getInstance()
+                                  .atClientServiceInstance
+                                  .atClient
+                                  .currentAtSign ??
+                              '@sign',
                           style: CustomTextStyles().darkGrey14,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,

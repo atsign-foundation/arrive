@@ -46,10 +46,13 @@ class LocationSharingService {
               .currentAtSign
           ..receiver = atsign;
 
-    var result = await BackendService.getInstance().atClientInstance.put(
-        atKey,
-        LocationNotificationModel.convertLocationNotificationToJson(
-            locationNotificationModel));
+    var result = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .put(
+            atKey,
+            LocationNotificationModel.convertLocationNotificationToJson(
+                locationNotificationModel));
     print('requestLocationNotificationAcknowledgment:$result');
   }
 
@@ -70,10 +73,13 @@ class LocationSharingService {
           ..receiver = atsign
           ..isAcknowledgment = isAcknowledgment;
 
-    var result = await BackendService.getInstance().atClientInstance.put(
-        atKey,
-        LocationNotificationModel.convertLocationNotificationToJson(
-            locationNotificationModel));
+    var result = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .put(
+            atKey,
+            LocationNotificationModel.convertLocationNotificationToJson(
+                locationNotificationModel));
     print('atKey $atKey');
     print(LocationNotificationModel.convertLocationNotificationToJson(
         locationNotificationModel));
@@ -111,8 +117,9 @@ class LocationSharingService {
         LocationNotificationModel.convertLocationNotificationToJson(
             locationNotificationModel);
 
-    var result = await BackendService.getInstance()
-        .atClientInstance
+    var result = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
         .put(atKey, notification);
     print('sendLocationNotificationAcknowledgment:$result');
     print(
