@@ -8,6 +8,7 @@ import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 
 import 'base_model.dart';
 
@@ -99,6 +100,7 @@ class ShareLocationProvider extends EventProvider {
               'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
         }
       } catch (e) {
+        print('convertJsonToLocationModel:$e');
         allShareLocationNotifications.remove(allShareLocationNotifications[i]);
       }
     }
@@ -121,11 +123,12 @@ class ShareLocationProvider extends EventProvider {
   }
 
   checkForAcknowledge() {
-    providerCallback<ShareLocationProvider>(NavService.navKey.currentContext,
-        task: (provider) => provider.updateEventAccordingToAcknowledgedData(),
-        taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
-        showLoader: false,
-        onSuccess: (provider) {});
+    // providerCallback<ShareLocationProvider>(NavService.navKey.currentContext,
+    //     task: (provider) => provider.updateEventAccordingToAcknowledgedData(),
+    //     taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
+    //     showLoader: false,
+    //     onSuccess: (provider) {});
+    updateEventAccordingToAcknowledgedData();
   }
 
 //"@mixedmartialartsexcess:sharelocation-1611303124945962@test_ga4"
@@ -180,7 +183,8 @@ class ShareLocationProvider extends EventProvider {
     setStatus(MAP_UPDATED_LOCATION_DATA, Status.Done);
   }
 
-  addDataToList(LocationNotificationModel locationNotificationModel) async {
+  Future<HybridNotificationModel> addDataToList(
+      LocationNotificationModel locationNotificationModel) async {
     setStatus(ADD_EVENT, Status.Loading);
 
     String newLocationDataKeyId =
@@ -208,9 +212,11 @@ class ShareLocationProvider extends EventProvider {
     tempHyridNotificationModel.locationNotificationModel =
         locationNotificationModel;
     allShareLocationNotifications.add(tempHyridNotificationModel);
-    //notifyListeners();
+    print('addDataToList:${allShareLocationNotifications}');
+    //notifyListeners();r
     //notify listenres
     setStatus(ADD_EVENT, Status.Done);
+    return tempHyridNotificationModel;
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -223,6 +229,7 @@ class ShareLocationProvider extends EventProvider {
       else
         return null;
     } catch (e) {
+      print('getAtValue:$e');
       return null;
     }
   }

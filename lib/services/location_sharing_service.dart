@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
@@ -130,14 +131,16 @@ class LocationSharingService {
   updateWithShareLocationAcknowledge(
     LocationNotificationModel locationNotificationModel,
   ) async {
-    int microsecondsSinceEpoch =
-        int.parse(locationNotificationModel.key.split('-')[1]);
+    String atkeyMicrosecondId =
+        locationNotificationModel.key.split('sharelocation-')[1].split('@')[0];
+    // int microsecondsSinceEpoch =
+    //     int.parse(locationNotificationModel.key.split('-')[1]);
     //.split('@')[0]);
     List<String> response = await ClientSdkService.getInstance()
         .atClientServiceInstance
         .atClient
         .getKeys(
-          regex: 'sharelocation-$microsecondsSinceEpoch',
+          regex: 'sharelocation-$atkeyMicrosecondId',
         );
 
     AtKey key = AtKey.fromString(response[0]);
@@ -159,12 +162,10 @@ class LocationSharingService {
         .atClient
         .put(key, notification);
     if (result)
-      providerCallback<ShareLocationProvider>(NavService.navKey.currentContext,
-          task: (provider) => provider
-              .mapUpdatedLocationDataToWidget(locationNotificationModel),
-          taskName: (provider) => provider.MAP_UPDATED_LOCATION_DATA,
-          showLoader: false,
-          onSuccess: (provider) {});
+      BackendService.getInstance().mapUpdatedDataToWidget(
+          BackendService.getInstance().convertEventToHybrid(
+              NotificationType.Location,
+              locationNotificationModel: locationNotificationModel));
 
     print('update result - $result');
   }

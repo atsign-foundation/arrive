@@ -8,6 +8,7 @@ import 'package:atsign_location/location_modal/location_notification.dart';
 // import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/models/location_notification.dart';
 import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
@@ -123,10 +124,18 @@ class BackendService {
     if (atKey.toString().contains('createevent')) {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
-      if (eventData.isUpdate != null && eventData.isUpdate == false)
+      if (eventData.isUpdate != null && eventData.isUpdate == false) {
         showMyDialog(fromAtSign, eventData: eventData);
-      else
-        mapUpdatedDataToWidget(eventData);
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.addNewEvent(HybridNotificationModel(
+                NotificationType.Event,
+                eventNotificationModel: eventData)),
+            taskName: (provider) => provider.HYBRID_ADD_EVENT,
+            showLoader: false,
+            onSuccess: (provider) {});
+      } else
+        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
+            eventNotificationModel: eventData));
     } else if (atKey.toString().contains('eventacknowledged')) {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -156,20 +165,17 @@ class BackendService {
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('backend service -> ${locationData.isAccepted}');
       if (locationData.isAcknowledgment == true) {
-        providerCallback<ShareLocationProvider>(
-            NavService.navKey.currentContext,
-            task: (provider) =>
-                provider.mapUpdatedLocationDataToWidget(locationData),
-            taskName: (provider) => provider.MAP_UPDATED_LOCATION_DATA,
-            showLoader: false,
-            onSuccess: (provider) {});
+        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Location,
+            locationNotificationModel: locationData));
 
         print('add this to our list');
       } else {
-        providerCallback<ShareLocationProvider>(
-            NavService.navKey.currentContext,
-            task: (provider) => provider.addDataToList(locationData),
-            taskName: (provider) => provider.ADD_EVENT,
+        print('add this to our list else');
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.addNewEvent(HybridNotificationModel(
+                NotificationType.Location,
+                locationNotificationModel: locationData)),
+            taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
             onSuccess: (provider) {});
 
@@ -217,16 +223,29 @@ class BackendService {
     print('notification:$notification');
 
     var result = await atClientInstance.put(key, notification);
-    if (result) mapUpdatedDataToWidget(acknowledgedEvent);
+    if (result)
+      mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
+          eventNotificationModel: acknowledgedEvent));
     print('acknowledgement received:$result');
   }
 
-  mapUpdatedDataToWidget(EventNotificationModel eventData) {
+  mapUpdatedDataToWidget(HybridNotificationModel notification) {
     providerCallback<HybridProvider>(NavService.navKey.currentContext,
-        task: (t) => t.mapUpdatedEventDataToWidget(eventData),
+        task: (t) => t.mapUpdatedData(notification),
         showLoader: false,
-        taskName: (t) => t.MAP_UPDATED_EVENTS,
+        taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
         onSuccess: (t) {});
+  }
+
+  HybridNotificationModel convertEventToHybrid(
+      NotificationType notificationType,
+      {EventNotificationModel eventNotificationModel,
+      LocationNotificationModel locationNotificationModel}) {
+    return notificationType == NotificationType.Event
+        ? HybridNotificationModel(notificationType,
+            eventNotificationModel: eventNotificationModel)
+        : HybridNotificationModel(notificationType,
+            locationNotificationModel: locationNotificationModel);
   }
 
   sendMessage() async {

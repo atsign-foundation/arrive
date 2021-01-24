@@ -1,8 +1,10 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
+import 'package:flutter/material.dart';
 
 import 'base_model.dart';
 
@@ -29,7 +31,7 @@ class HybridProvider extends ShareLocationProvider {
   getAllHybridEvents() async {
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Loading);
 
-    await getAllEvents();
+    await super.getAllEvents();
     await super.getSingleUserLocationSharing();
 
     allHybridNotifications = [
@@ -40,22 +42,44 @@ class HybridProvider extends ShareLocationProvider {
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
   }
 
-  mapUpdatedEventDataToWidget(EventNotificationModel eventData) {
+  mapUpdatedData(HybridNotificationModel notification) {
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
     String newEventDataKeyId =
-        eventData.key.split('createevent-')[1].split('@')[0];
+        notification.notificationType == NotificationType.Event
+            ? notification.eventNotificationModel.key
+                .split('createevent-')[1]
+                .split('@')[0]
+            : notification.locationNotificationModel.key
+                .split('sharelocation-')[1]
+                .split('@')[0];
 
     for (int i = 0; i < allHybridNotifications.length; i++) {
-      if (allHybridNotifications[i].notificationType ==
-          NotificationType.Event) {
-        if (allHybridNotifications[i]
-            .eventNotificationModel
-            .key
-            .contains(newEventDataKeyId)) {
-          allHybridNotifications[i].eventNotificationModel = eventData;
+      if ((allHybridNotifications[i].key.contains(newEventDataKeyId))) {
+        if (NotificationType.Event == notification.notificationType) {
+          allHybridNotifications[i].eventNotificationModel =
+              notification.eventNotificationModel;
+        } else {
+          allHybridNotifications[i].locationNotificationModel =
+              notification.locationNotificationModel;
         }
+        break;
       }
     }
+
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
+  }
+
+  addNewEvent(HybridNotificationModel notification) async {
+    setStatus(HYBRID_ADD_EVENT, Status.Loading);
+    HybridNotificationModel tempNotification;
+    if (notification.notificationType == NotificationType.Location) {
+      tempNotification =
+          await super.addDataToList(notification.locationNotificationModel);
+    } else {
+      // for event
+      tempNotification = notification;
+    }
+    allHybridNotifications.add(tempNotification);
+    setStatus(HYBRID_ADD_EVENT, Status.Done);
   }
 }

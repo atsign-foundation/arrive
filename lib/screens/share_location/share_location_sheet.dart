@@ -7,6 +7,7 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
@@ -14,6 +15,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/notification_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
@@ -126,9 +128,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
         isLoading = false;
       });
       Navigator.of(context).pop();
-      providerCallback<ShareLocationProvider>(NavService.navKey.currentContext,
-          task: (provider) => provider.addDataToList(result[1]),
-          taskName: (provider) => provider.ADD_EVENT,
+      providerCallback<HybridProvider>(NavService.navKey.currentContext,
+          task: (provider) => provider.addNewEvent(HybridNotificationModel(
+              NotificationType.Location,
+              locationNotificationModel: result[1])),
+          taskName: (provider) => provider.HYBRID_ADD_EVENT,
           showLoader: false,
           onSuccess: (provider) {});
     } else {

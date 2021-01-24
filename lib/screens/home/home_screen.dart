@@ -1,8 +1,10 @@
+import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location/atsign_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
@@ -12,6 +14,7 @@ import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -136,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               } else {
                 return ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
+                    // physics: NeverScrollableScrollPhysics(),
                     itemCount: provider.allHybridNotifications.length,
                     shrinkWrap: true,
                     separatorBuilder: (BuildContext context, int index) {
@@ -223,9 +226,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 // BackendService.getInstance().updateNotification();
                 bottomSheet(
                     context,
-                    CreateEvent(ClientSdkService.getInstance()
-                        .atClientServiceInstance
-                        .atClient),
+                    CreateEvent(
+                      ClientSdkService.getInstance()
+                          .atClientServiceInstance
+                          .atClient,
+                      onEventSaved: (EventNotificationModel event) {
+                        providerCallback<HybridProvider>(
+                            NavService.navKey.currentContext,
+                            task: (provider) => provider.addNewEvent(
+                                BackendService.getInstance()
+                                    .convertEventToHybrid(
+                                        NotificationType.Event,
+                                        eventNotificationModel: event)),
+                            taskName: (provider) => provider.HYBRID_ADD_EVENT,
+                            showLoader: false,
+                            onSuccess: (provider) {});
+                      },
+                    ),
                     SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
                   eventProvider.getAllEvents();
                 });
