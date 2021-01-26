@@ -6,6 +6,7 @@ import 'package:atsign_location_app/view_models/blocked_contact_provider.dart';
 import 'package:atsign_location_app/view_models/contact_provider.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/scan_qr_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +37,10 @@ class _MyAppState extends State<MyApp> {
           create: (context) => EventProvider()),
       ChangeNotifierProvider<ShareLocationProvider>(
           create: (context) => ShareLocationProvider()),
+      ChangeNotifierProvider<RequestLocationProvider>(
+          create: (context) => RequestLocationProvider()),
       ChangeNotifierProvider<HybridProvider>(
-          create: (context) => HybridProvider())
+          create: (context) => HybridProvider()),
     ], child: MaterialAppClass());
   }
 }

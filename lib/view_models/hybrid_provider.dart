@@ -3,12 +3,13 @@ import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'base_model.dart';
 
-class HybridProvider extends ShareLocationProvider {
+class HybridProvider extends RequestLocationProvider {
   HybridProvider();
   AtClientImpl atClientInstance;
   String currentAtSign;
@@ -33,24 +34,30 @@ class HybridProvider extends ShareLocationProvider {
 
     await super.getAllEvents();
     await super.getSingleUserLocationSharing();
+    await super.getSingleUserLocationRequest();
 
     allHybridNotifications = [
       ...super.allNotifications,
-      ...super.allShareLocationNotifications
+      ...super.allShareLocationNotifications,
+      ...super.allRequestNotifications
     ];
 
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
   }
 
-  mapUpdatedData(HybridNotificationModel notification) {
+  mapUpdatedData(HybridNotificationModel notification, {bool remove = false}) {
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
-    String newEventDataKeyId =
-        notification.notificationType == NotificationType.Event
-            ? notification.eventNotificationModel.key
-                .split('createevent-')[1]
+    String newEventDataKeyId = notification.notificationType ==
+            NotificationType.Event
+        ? notification.eventNotificationModel.key
+            .split('createevent-')[1]
+            .split('@')[0]
+        : notification.locationNotificationModel.key.contains('sharelocation')
+            ? notification.locationNotificationModel.key
+                .split('sharelocation-')[1]
                 .split('@')[0]
             : notification.locationNotificationModel.key
-                .split('sharelocation-')[1]
+                .split('requestlocation-')[1]
                 .split('@')[0];
 
     for (int i = 0; i < allHybridNotifications.length; i++) {
@@ -59,8 +66,17 @@ class HybridProvider extends ShareLocationProvider {
           allHybridNotifications[i].eventNotificationModel =
               notification.eventNotificationModel;
         } else {
-          allHybridNotifications[i].locationNotificationModel =
-              notification.locationNotificationModel;
+          if (notification.locationNotificationModel.key
+              .contains('sharelocation')) {
+            allHybridNotifications[i].locationNotificationModel =
+                notification.locationNotificationModel;
+          } else {
+            if (!remove)
+              allRequestNotifications[i].locationNotificationModel =
+                  notification.locationNotificationModel;
+            else
+              allRequestNotifications.remove(allRequestNotifications[i]);
+          }
         }
         break;
       }
@@ -73,8 +89,14 @@ class HybridProvider extends ShareLocationProvider {
     setStatus(HYBRID_ADD_EVENT, Status.Loading);
     HybridNotificationModel tempNotification;
     if (notification.notificationType == NotificationType.Location) {
-      tempNotification =
-          await super.addDataToList(notification.locationNotificationModel);
+      if (notification.locationNotificationModel.key
+          .contains('sharelocation')) {
+        tempNotification =
+            await super.addDataToList(notification.locationNotificationModel);
+      } else {
+        tempNotification = await super
+            .addDataToListRequest(notification.locationNotificationModel);
+      }
     } else {
       // for event
       tempNotification = notification;
