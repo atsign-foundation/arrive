@@ -4,7 +4,7 @@ import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_location_app/view_models/send_location_model.dart';
+// import 'package:atsign_location_app/view_models/send_location_model.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -137,6 +137,16 @@ class HybridProvider extends ShareLocationProvider {
             }
           }
         }
+      } else if (notification.notificationType == NotificationType.Location) {
+        if (notification.locationNotificationModel.isSharing &&
+            notification.locationNotificationModel.isAccepted &&
+            !notification.locationNotificationModel.isExited) {}
+        location = LocationNotificationModel()
+          ..atsignCreator = notification.locationNotificationModel.atsignCreator
+          ..isAcknowledgment = true
+          ..isAccepted = true
+          ..receiver = notification.locationNotificationModel.receiver;
+        location = getLocationNotificationData(notification, location);
       }
     });
   }
@@ -167,6 +177,7 @@ class HybridProvider extends ShareLocationProvider {
       }
     } else if (notification.notificationType == NotificationType.Location) {
       shareLocationData.add(notification.locationNotificationModel);
+      return location;
     }
   }
 }
