@@ -19,31 +19,22 @@ class HomeEventService {
         .atClient
         .currentAtSign;
 
-    locationNotificationModel.atsignCreator != currentAtsign
-        ? (locationNotificationModel.isAccepted
-            ? Navigator.push(
-                NavService.navKey.currentContext,
-                MaterialPageRoute(
-                  builder: (context) => AtsignLocationPlugin(
-                    ClientSdkService.getInstance()
-                        .atClientServiceInstance
-                        .atClient,
-                    userListenerKeyword: locationNotificationModel,
-                  ),
-                ),
-              )
-            : BackendService.getInstance().showMyDialog(
-                locationNotificationModel.atsignCreator,
-                locationData: locationNotificationModel))
-        : Navigator.push(
-            NavService.navKey.currentContext,
-            MaterialPageRoute(
-              builder: (context) => AtsignLocationPlugin(
-                ClientSdkService.getInstance().atClientServiceInstance.atClient,
-                userListenerKeyword: locationNotificationModel,
-              ),
-            ),
-          );
+    if (locationNotificationModel.key.contains('sharelocation'))
+      locationNotificationModel.atsignCreator != currentAtsign
+          ? (locationNotificationModel.isAccepted
+              ? navigatorPushToMap(locationNotificationModel)
+              : BackendService.getInstance().showMyDialog(
+                  locationNotificationModel.atsignCreator,
+                  locationData: locationNotificationModel))
+          : navigatorPushToMap(locationNotificationModel);
+    else if (locationNotificationModel.key.contains('requestlocation'))
+      locationNotificationModel.atsignCreator == currentAtsign
+          ? (locationNotificationModel.isAccepted
+              ? navigatorPushToMap(locationNotificationModel)
+              : BackendService.getInstance().showMyDialog(
+                  locationNotificationModel.atsignCreator,
+                  locationData: locationNotificationModel))
+          : navigatorPushToMap(locationNotificationModel);
   }
 
   onEventModelTap(
@@ -69,6 +60,18 @@ class HomeEventService {
         }, onEventUpdate: (EventNotificationModel eventData) {
           provider.mapUpdatedEventDataToWidget(eventData);
         }, eventListenerKeyword: eventNotificationModel),
+      ),
+    );
+  }
+
+  navigatorPushToMap(LocationNotificationModel locationNotificationModel) {
+    Navigator.push(
+      NavService.navKey.currentContext,
+      MaterialPageRoute(
+        builder: (context) => AtsignLocationPlugin(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient,
+          userListenerKeyword: locationNotificationModel,
+        ),
       ),
     );
   }
@@ -128,13 +131,31 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
         : '';
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
-    return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-            ClientSdkService.getInstance()
-                .atClientServiceInstance
-                .atClient
-                .currentAtSign
-        ? 'Can see my location'
-        : 'Sharing his location';
+    if (hybridNotificationModel.locationNotificationModel.key
+        .contains('sharelocation'))
+      return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+              ClientSdkService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign
+          ? 'Can see my location'
+          : 'Sharing his location';
+    else
+      return hybridNotificationModel.locationNotificationModel.isAccepted
+          ? hybridNotificationModel.locationNotificationModel.atsignCreator ==
+                  ClientSdkService.getInstance()
+                      .atClientServiceInstance
+                      .atClient
+                      .currentAtSign
+              ? 'Shring my location'
+              : 'Sharing his location'
+          : hybridNotificationModel.locationNotificationModel.atsignCreator ==
+                  ClientSdkService.getInstance()
+                      .atClientServiceInstance
+                      .atClient
+                      .currentAtSign
+              ? 'Requested Location received'
+              : 'Requested Location sent';
   }
 }
 
@@ -147,17 +168,39 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
         : null;
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
-    return hybridNotificationModel.locationNotificationModel.atsignCreator !=
-            ClientSdkService.getInstance()
-                .atClientServiceInstance
-                .atClient
-                .currentAtSign
-        ? (hybridNotificationModel.locationNotificationModel.isAccepted
-            ? ''
-            : 'Action required')
-        : (hybridNotificationModel.locationNotificationModel.isAccepted
-            ? ''
-            : 'Awaiting response');
+    if (hybridNotificationModel.locationNotificationModel.key
+        .contains('sharelocation'))
+      return hybridNotificationModel.locationNotificationModel.atsignCreator !=
+              ClientSdkService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign
+          ? (hybridNotificationModel.locationNotificationModel.isAccepted
+              ? ''
+              : hybridNotificationModel.locationNotificationModel.isExited
+                  ? 'Received Share location request rejected'
+                  : 'Awaiting response')
+          : (hybridNotificationModel.locationNotificationModel.isAccepted
+              ? ''
+              : hybridNotificationModel.locationNotificationModel.isExited
+                  ? 'Sent Share location request rejected'
+                  : 'Awaiting response');
+    else
+      return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+              ClientSdkService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign
+          ? (!hybridNotificationModel.locationNotificationModel.isExited
+              ? (hybridNotificationModel.locationNotificationModel.isAccepted
+                  ? ''
+                  : 'Action required')
+              : 'Request rejected')
+          : (!hybridNotificationModel.locationNotificationModel.isExited
+              ? (hybridNotificationModel.locationNotificationModel.isAccepted
+                  ? ''
+                  : 'Awaiting response')
+              : 'Request rejected');
   }
 }
 
@@ -166,12 +209,22 @@ getTitle(HybridNotificationModel hybridNotificationModel) {
     return hybridNotificationModel.eventNotificationModel.title;
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
-    return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-            ClientSdkService.getInstance()
-                .atClientServiceInstance
-                .atClient
-                .currentAtSign
-        ? hybridNotificationModel.locationNotificationModel.receiver
-        : hybridNotificationModel.locationNotificationModel.atsignCreator;
+    if (hybridNotificationModel.locationNotificationModel.key
+        .contains('sharelocation'))
+      return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+              ClientSdkService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign
+          ? hybridNotificationModel.locationNotificationModel.receiver
+          : hybridNotificationModel.locationNotificationModel.atsignCreator;
+    else
+      return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+              ClientSdkService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign
+          ? hybridNotificationModel.locationNotificationModel.receiver
+          : hybridNotificationModel.locationNotificationModel.atsignCreator;
   }
 }

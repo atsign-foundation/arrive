@@ -348,6 +348,39 @@ class EventProvider extends BaseModel {
       return e.toString();
     }
   }
+
+  addDataToListEvent(EventNotificationModel eventNotificationModel) async {
+    // setStatus(Add, Status.Loading);
+    String newLocationDataKeyId, tempKey;
+    newLocationDataKeyId =
+        eventNotificationModel.key.split('createevent-')[1].split('@')[0];
+    tempKey = 'createevent-$newLocationDataKeyId';
+    List<String> key = [];
+
+    if (eventNotificationModel.atsignCreator == currentAtSign) {
+      key = await atClientInstance.getKeys(
+        regex: tempKey,
+        sharedBy: eventNotificationModel.atsignCreator,
+      );
+    } else {
+      key = await atClientInstance.getKeys(
+        regex: tempKey,
+        sharedBy: eventNotificationModel.atsignCreator,
+      );
+    }
+
+    HybridNotificationModel tempHyridNotificationModel =
+        HybridNotificationModel(NotificationType.Event, key: key[0]);
+    //allRequestNotifications.add(tempHyridNotificationModel);
+    tempHyridNotificationModel.atKey = AtKey.fromString(key[0]);
+    tempHyridNotificationModel.atValue =
+        await getAtValue(tempHyridNotificationModel.atKey);
+    tempHyridNotificationModel.eventNotificationModel = eventNotificationModel;
+    allNotifications.add(tempHyridNotificationModel);
+    // setStatus(ADD_REQUEST_EVENT, Status.Done);
+
+    return tempHyridNotificationModel;
+  }
 }
 
 enum ATKEY_TYPE_ENUM { CREATEEVENT, ACKNOWLEDGEEVENT }

@@ -39,7 +39,6 @@ dependencies:
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
   at_client_mobile:
-    # path: ../../../../Downloads/Archive/atsign_foundation/at_client_mobile
     path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_client_sdk/at_client_mobile
     # git:
     #   url: git@github.com:atsign-company/atsign_foundation.git
@@ -105,7 +104,6 @@ dependencies:
 
   atsign_authentication_helper :
     path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
-    # path: ../atsign-authentication-helper
     # git:
     #   url: https://sachins@git.geekyants.com/flutter-client-projects/atsign-authentication-helper.git
     #   path: at_lookup

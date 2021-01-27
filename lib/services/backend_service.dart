@@ -14,12 +14,14 @@ import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_lookup/src/connection/outbound_connection.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
@@ -102,7 +104,6 @@ class BackendService {
   Future<bool> startMonitor() async {
     _atsign = await getAtSign();
     String privateKey = await getPrivateKey(_atsign);
-    // monitorConnection =
     await atClientInstance.startMonitor(privateKey, fnCallBack);
     print("Monitor started");
     return true;
@@ -141,15 +142,44 @@ class BackendService {
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       createEventAcknowledge(msg, atKey);
     } else if (atKey.toString().contains('requestlocationacknowledged')) {
+      LocationNotificationModel locationData =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      print('sharelocationacknowledged ${locationData.isAccepted}');
+      RequestLocationService()
+          .updateWithRequestLocationAcknowledge(locationData);
       // if .isAccepted = true -> delete the key
       // .isAccepted = false -> update the key with isAccepted = false
     } else if (atKey.toString().contains('requestlocation')) {
-      String atkeyMicrosecondId = atKey.split('createevent-')[1].split('@')[0];
-      showMyDialog(fromAtSign);
+      LocationNotificationModel locationData =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      if (locationData.isAcknowledgment == true) {
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.mapUpdatedData(
+                convertEventToHybrid(NotificationType.Location,
+                    locationNotificationModel: locationData),
+                remove: (!locationData
+                    .isAccepted)), // if isAccepted = true => dont remove, else remove
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+
+        print('add this to our list');
+      } else {
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.addNewEvent(convertEventToHybrid(
+                NotificationType.Location,
+                locationNotificationModel: locationData)),
+            taskName: (provider) => provider.HYBRID_ADD_EVENT,
+            showLoader: false,
+            onSuccess: (provider) {});
+
+        showMyDialog(fromAtSign, locationData: locationData);
+      }
       // yes -> new notification with key 'sharelocation' & .isAcknowledgment = true && add toyour list
       //      along with a new notification with key 'requestlocationacknowledged' & isAccepted = yes
       // no -> a new notification with key 'requestlocationacknowledged' & isAccepted = no
     } else if (atKey.toString().contains('sharelocationacknowledged')) {
+      // TODO: compare with location-sharing branch
       // if someone reacts to my share location notification
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));

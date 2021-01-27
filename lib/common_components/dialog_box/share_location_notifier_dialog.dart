@@ -9,6 +9,7 @@ import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/notification_service.dart';
+import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -100,7 +101,8 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                 Navigator.of(context).pop();
                                 t.getAllEvents();
                               })
-                          : ((locationData != null)
+                          : ((!locationData.isRequest)
+                              //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
                               ? {
                                   print('accept share location'),
                                   LocationSharingService()
@@ -109,8 +111,9 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                   Navigator.of(context).pop(),
                                 }
                               : {
-                                  // await NotificationService()
-                                  //     .sendLocationNotification(userName, true),
+                                  RequestLocationService()
+                                      .requestLocationAcknowledgment(
+                                          locationData, true),
                                   Navigator.of(context).pop(),
                                 });
                     }(),
@@ -147,18 +150,20 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                     t.getAllEvents();
                                   }),
                             }
-                          : ((locationData != null)
+                          : ((!locationData.isRequest)
+                              //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
                               ? {
-                                  {
-                                    print('accept share location'),
-                                    LocationSharingService()
-                                        .shareLocationAcknowledgment(
-                                            true, locationData, false),
-                                    Navigator.of(context).pop(),
-                                  }
+                                  print('accept share location'),
+                                  LocationSharingService()
+                                      .shareLocationAcknowledgment(
+                                          true, locationData, false),
+                                  Navigator.of(context).pop(),
                                 }
                               : {
-                                  // for request location
+                                  RequestLocationService()
+                                      .requestLocationAcknowledgment(
+                                          locationData, false),
+                                  Navigator.of(context).pop(),
                                 });
                     },
                     child: Text(

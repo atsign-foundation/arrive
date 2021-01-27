@@ -20,6 +20,7 @@ import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
@@ -56,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<EventProvider>(context, listen: false).init(
           ClientSdkService.getInstance().atClientServiceInstance.atClient);
       Provider.of<ShareLocationProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<RequestLocationProvider>(context, listen: false).init(
           ClientSdkService.getInstance().atClientServiceInstance.atClient);
       Provider.of<HybridProvider>(context, listen: false).init(
           ClientSdkService.getInstance().atClientServiceInstance.atClient);
