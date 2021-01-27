@@ -107,19 +107,19 @@ class ShareLocationProvider extends EventProvider {
   }
 
   filterData() {
-    List<HybridNotificationModel> tempNotification = [];
-    allShareLocationNotifications.forEach((notification) {
-      if ((notification.locationNotificationModel != null) &&
-          (notification.locationNotificationModel.atsignCreator !=
-              currentAtSign) &&
-          (!notification.locationNotificationModel.isAccepted) &&
-          (notification.locationNotificationModel.isExited)) {
-        tempNotification.add(notification);
-      }
-    });
+    // List<HybridNotificationModel> tempNotification = [];
+    // allShareLocationNotifications.forEach((notification) {
+    //   if ((notification.locationNotificationModel != null) &&
+    //       (notification.locationNotificationModel.atsignCreator !=
+    //           currentAtSign) &&
+    //       (!notification.locationNotificationModel.isAccepted) &&
+    //       (notification.locationNotificationModel.isExited)) {
+    //     tempNotification.add(notification);
+    //   }
+    // });
 
-    allShareLocationNotifications
-        .removeWhere((element) => tempNotification.contains(element));
+    // allShareLocationNotifications
+    //     .removeWhere((element) => tempNotification.contains(element));
   }
 
   checkForAcknowledge() {

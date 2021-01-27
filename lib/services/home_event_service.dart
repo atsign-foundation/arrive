@@ -154,10 +154,14 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
                 .currentAtSign
         ? (hybridNotificationModel.locationNotificationModel.isAccepted
             ? ''
-            : 'Action required')
+            : hybridNotificationModel.locationNotificationModel.isExited
+                ? 'Received Share location request rejected'
+                : 'Awaiting response')
         : (hybridNotificationModel.locationNotificationModel.isAccepted
             ? ''
-            : 'Awaiting response');
+            : hybridNotificationModel.locationNotificationModel.isExited
+                ? 'Sent Share location request rejected'
+                : 'Awaiting response');
   }
 }
 

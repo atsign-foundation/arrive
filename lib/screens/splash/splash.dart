@@ -168,6 +168,8 @@ class _SplashState extends State<Splash> {
                         builder: (context) => ScanQrScreen(
                           atClientServiceInstance:
                               clientSdkService.atClientServiceInstance,
+                          atClientPreference:
+                              ClientSdkService.getInstance().atClientPreference,
                           nextScreen: HomeScreen(),
                         ),
                       ),

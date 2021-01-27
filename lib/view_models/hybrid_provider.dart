@@ -98,8 +98,8 @@ class HybridProvider extends RequestLocationProvider {
             .addDataToListRequest(notification.locationNotificationModel);
       }
     } else {
-      // for event
-      tempNotification = notification;
+      tempNotification =
+          await super.addDataToListEvent(notification.eventNotificationModel);
     }
     allHybridNotifications.add(tempNotification);
     setStatus(HYBRID_ADD_EVENT, Status.Done);
