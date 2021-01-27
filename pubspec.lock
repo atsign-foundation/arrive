@@ -99,6 +99,13 @@ packages:
       relative: false
     source: path
     version: "0.0.2"
+  atsign_chat:
+    dependency: transitive
+    description:
+      path: "../../new_atsign/atsign-chat"
+      relative: true
+    source: path
+    version: "0.0.1"
   atsign_common:
     dependency: transitive
     description:

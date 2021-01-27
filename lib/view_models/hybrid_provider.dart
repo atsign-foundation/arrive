@@ -164,15 +164,14 @@ class HybridProvider extends RequestLocationProvider {
           }
         }
       } else if (notification.notificationType == NotificationType.Location) {
-        if (notification.locationNotificationModel.isSharing &&
-            notification.locationNotificationModel.isAccepted &&
-            !notification.locationNotificationModel.isExited) {}
-        location = LocationNotificationModel()
-          ..atsignCreator = notification.locationNotificationModel.atsignCreator
-          ..isAcknowledgment = true
-          ..isAccepted = true
-          ..receiver = notification.locationNotificationModel.receiver;
-        location = getLocationNotificationData(notification, location);
+        if ((notification.locationNotificationModel.atsignCreator ==
+                currentAtsign) &&
+            (notification.locationNotificationModel.isSharing) &&
+            (notification.locationNotificationModel.isAccepted) &&
+            (!notification.locationNotificationModel.isExited)) {
+          location = getLocationNotificationData(
+              notification, notification.locationNotificationModel);
+        }
       }
     });
   }
@@ -192,7 +191,7 @@ class HybridProvider extends RequestLocationProvider {
                 0) {
               print(
                   'month matched:${notification.eventNotificationModel.title}');
-              months.add(monthsList['$i']);
+              // months.add(monthsList['$i']);
             }
           }
           print('recurring months: ${months}');
@@ -206,8 +205,14 @@ class HybridProvider extends RequestLocationProvider {
 
         if (dateToString(notification.eventNotificationModel.event.date) ==
             dateToString(DateTime.now())) {
-          location.from = notification.eventNotificationModel.event.startTime;
-          location.to = notification.eventNotificationModel.event.endTime;
+          DateTime date = notification.eventNotificationModel.event.date;
+          TimeOfDay from = notification.eventNotificationModel.event.startTime;
+          TimeOfDay to = notification.eventNotificationModel.event.endTime;
+
+          location.from =
+              DateTime(date.year, date.month, date.day, from.hour, from.minute);
+          location.to =
+              DateTime(date.year, date.month, date.day, to.hour, to.minute);
           print(
               'adding data to share location: ${notification.eventNotificationModel.title}');
           shareLocationData.add(location);

@@ -7,6 +7,7 @@ import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'backend_service.dart';
@@ -35,32 +36,15 @@ class LocationSharingService {
   factory LocationSharingService() {
     return _singleton;
   }
-  sendRequestLocationEvent(String atsign) async {
-    AtKey atKey = newAtKey(
-        10, "requestlocation-${DateTime.now().microsecondsSinceEpoch}", atsign);
-
-    LocationNotificationModel locationNotificationModel =
-        LocationNotificationModel()
-          ..atsignCreator = ClientSdkService.getInstance()
-              .atClientServiceInstance
-              .atClient
-              .currentAtSign
-          ..receiver = atsign;
-
-    var result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(
-            atKey,
-            LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
-    print('requestLocationNotificationAcknowledgment:$result');
-  }
 
   // for shared locations
-  sendShareLocationEvent(String atsign, bool isAcknowledgment) async {
+  sendShareLocationEvent(String atsign, bool isAcknowledgment,
+      {int minutes}) async {
     AtKey atKey = newAtKey(
-        -1, "sharelocation-${DateTime.now().microsecondsSinceEpoch}", atsign);
+        -1, "sharelocation-${DateTime.now().microsecondsSinceEpoch}", atsign,
+        ttl: DateTime.now()
+            .add(Duration(minutes: minutes))
+            .microsecondsSinceEpoch);
 
     LocationNotificationModel locationNotificationModel =
         LocationNotificationModel()
@@ -72,6 +56,8 @@ class LocationSharingService {
           ..lat = 12
           ..long = 12
           ..receiver = atsign
+          ..from = DateTime.now()
+          ..to = DateTime.now().add(Duration(minutes: minutes))
           ..isAcknowledgment = isAcknowledgment;
 
     var result = await ClientSdkService.getInstance()
@@ -171,7 +157,7 @@ class LocationSharingService {
   }
 
   //
-  AtKey newAtKey(int ttr, String key, String sharedWith) {
+  AtKey newAtKey(int ttr, String key, String sharedWith, {int ttl}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = -1
@@ -181,34 +167,7 @@ class LocationSharingService {
           .atClientServiceInstance
           .atClient
           .currentAtSign;
+    if (ttl != null) atKey.metadata.ttl = ttl;
     return atKey;
   }
 }
-
-// reuqest location -> for event provider
-// List<String> requestLocationResponse = await atClientInstance.getKeys(
-//       regex: 'requestlocation-',
-//       // sharedWith: '@test_ga3',
-//     );
-
-//     requestLocationResponse.forEach((key) {
-//       if ('@${key.split(':')[0]}'.contains(currentAtSign)) {
-//         HybridNotificationModel tempHyridNotificationModel =
-//             HybridNotificationModel(NotificationType.Location, key: key);
-//         allNotifications.add(tempHyridNotificationModel);
-//         // allKeys.add(element);
-//       }
-//     });
-
-//     allNotifications.forEach((notification) {
-//       AtKey atKey = AtKey.fromString(notification.key);
-//       notification.atKey = atKey;
-//     });
-
-//     for (int i = 0; i < allNotifications.length; i++) {
-//       AtValue value = await getAtValue(allNotifications[i].atKey);
-//       if (value != null) {
-//         allNotifications[i].atValue = value;
-//       }
-//     }
-//     convertJsonToLocationModel();

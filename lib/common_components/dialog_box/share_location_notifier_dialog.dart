@@ -2,10 +2,12 @@ import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
+import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/notification_service.dart';
@@ -22,6 +24,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
   final EventNotificationModel eventData;
   final LocationNotificationModel locationData;
   final bool showMembersCount;
+  int minutes;
   ShareLocationNotifierDialog(
       {this.eventData,
       this.event,
@@ -111,9 +114,11 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                   Navigator.of(context).pop(),
                                 }
                               : {
+                                  minutes = await timeSelect(context),
                                   RequestLocationService()
                                       .requestLocationAcknowledgment(
-                                          locationData, true),
+                                          locationData, true,
+                                          minutes: minutes),
                                   Navigator.of(context).pop(),
                                 });
                     }(),
@@ -178,5 +183,26 @@ class ShareLocationNotifierDialog extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<int> timeSelect(BuildContext context) async {
+    int result;
+    bottomSheet(
+        context,
+        TextTileRepeater(
+          title: 'How long do you want to share your location for ?',
+          options: ['30 mins', '2 hours', '24 hours', 'Until turned off'],
+          onChanged: (value) {
+            print('$result');
+            result = (value == '30 mins'
+                ? 30
+                : (value == '2 hours'
+                    ? (2 * 60)
+                    : (value == '24 hours' ? (24 * 60) : -1)));
+            print('hours = $result');
+          },
+        ),
+        350);
+    return result;
   }
 }
