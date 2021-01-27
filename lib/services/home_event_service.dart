@@ -1,12 +1,13 @@
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
 class HomeEventService {
   HomeEventService._();

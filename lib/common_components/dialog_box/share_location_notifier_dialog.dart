@@ -2,10 +2,13 @@ import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
+import 'package:atsign_location_app/models/enums_model.dart';
+import 'package:atsign_location_app/screens/event/event_time_selection.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/notification_service.dart';
@@ -91,16 +94,38 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   SizedBox(height: 20.toHeight),
                   CustomButton(
                     onTap: () => () async {
+                      if (eventData != null) {
+                        bottomSheet(
+                            context,
+                            EventTimeSelection(
+                                eventNotificationModel: eventData,
+                                title:
+                                    'When do want to start sharing your location?',
+                                onSelectionChanged:
+                                    (LOC_START_TIME_ENUM startTime) {
+                                  eventData.group.members
+                                      .elementAt(0)
+                                      .tags['shareFrom'] = startTime.toString();
+
+                                  providerCallback<EventProvider>(context,
+                                      task: (t) => t.actionOnEvent(eventData,
+                                          ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                                          isAccepted: true),
+                                      taskName: (t) => t.UPDATE_EVENTS,
+                                      onSuccess: (t) {
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        t.getAllEvents();
+                                      });
+                                }),
+                            400);
+                        print('outside');
+                      }
+
+                      print('outside  22');
+
                       (eventData != null)
-                          ? providerCallback<EventProvider>(context,
-                              task: (t) => t.actionOnEvent(
-                                  eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                                  isAccepted: true),
-                              taskName: (t) => t.UPDATE_EVENTS,
-                              onSuccess: (t) {
-                                Navigator.of(context).pop();
-                                t.getAllEvents();
-                              })
+                          ? null
                           : ((!locationData.isRequest)
                               //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
                               ? {

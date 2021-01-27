@@ -27,7 +27,7 @@ class TextTileRepeater extends StatelessWidget {
               itemCount: options.length,
               itemBuilder: (context, index) {
                 return SizedBox(
-                  height: 60,
+                  height: 50,
                   child: TextTile(title: options[index]),
                 );
               },

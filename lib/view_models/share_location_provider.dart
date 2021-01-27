@@ -4,12 +4,12 @@ import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
 
 // all the UI related functions will happen here

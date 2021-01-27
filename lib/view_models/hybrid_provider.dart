@@ -1,8 +1,9 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location/service/send_location_notification.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 // import 'package:atsign_location_app/view_models/send_location_model.dart';
@@ -180,6 +181,10 @@ class HybridProvider extends RequestLocationProvider {
   LocationNotificationModel getLocationNotificationData(
       HybridNotificationModel notification,
       LocationNotificationModel location) {
+    // DateTime d1 = DateTime(2021);
+    // d1.month;
+    // // d1.add(Duration(days: ));
+
     if (notification.notificationType == NotificationType.Event) {
       if (notification.eventNotificationModel.event.isRecurring) {
         // for recurring

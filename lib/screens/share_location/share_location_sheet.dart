@@ -7,7 +7,7 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
@@ -20,6 +20,7 @@ import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
 class ShareLocationSheet extends StatefulWidget {
   @override

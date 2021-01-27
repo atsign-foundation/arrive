@@ -7,7 +7,7 @@ import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
@@ -28,6 +28,7 @@ import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:atsign_contacts/utils/init_contacts_service.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -227,25 +228,30 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icons.event,
               onTap: () {
                 // BackendService.getInstance().updateNotification();
+                List<HybridNotificationModel> allEvents = [];
+
+                hybridProvider.allHybridNotifications.forEach((event) {
+                  if (event.notificationType == NotificationType.Event) {
+                    allEvents.add(event);
+                  }
+                });
                 bottomSheet(
                     context,
                     CreateEvent(
-                      ClientSdkService.getInstance()
-                          .atClientServiceInstance
-                          .atClient,
-                      onEventSaved: (EventNotificationModel event) {
-                        providerCallback<HybridProvider>(
-                            NavService.navKey.currentContext,
-                            task: (provider) => provider.addNewEvent(
-                                BackendService.getInstance()
-                                    .convertEventToHybrid(
-                                        NotificationType.Event,
-                                        eventNotificationModel: event)),
-                            taskName: (provider) => provider.HYBRID_ADD_EVENT,
-                            showLoader: false,
-                            onSuccess: (provider) {});
-                      },
-                    ),
+                        ClientSdkService.getInstance()
+                            .atClientServiceInstance
+                            .atClient,
+                        onEventSaved: (EventNotificationModel event) {
+                      providerCallback<HybridProvider>(
+                          NavService.navKey.currentContext,
+                          task: (provider) => provider.addNewEvent(
+                              BackendService.getInstance().convertEventToHybrid(
+                                  NotificationType.Event,
+                                  eventNotificationModel: event)),
+                          taskName: (provider) => provider.HYBRID_ADD_EVENT,
+                          showLoader: false,
+                          onSuccess: (provider) {});
+                    }, createdEvents: allEvents),
                     SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
                   eventProvider.getAllEvents();
                 });

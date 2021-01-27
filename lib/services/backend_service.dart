@@ -8,8 +8,7 @@ import 'package:atsign_location/location_modal/location_notification.dart';
 // import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
-import 'package:atsign_location_app/models/location_notification.dart';
+
 import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
@@ -26,6 +25,7 @@ import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
 class BackendService {
   static final BackendService _singleton = BackendService._internal();

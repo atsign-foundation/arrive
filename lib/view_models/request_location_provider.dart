@@ -5,12 +5,12 @@ import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location/location_modal/hybrid_model.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
-
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
 
 class RequestLocationProvider extends ShareLocationProvider {

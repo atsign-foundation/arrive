@@ -1,11 +1,11 @@
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
+
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
-
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'client_sdk_service.dart';
 import 'nav_service.dart';
 
