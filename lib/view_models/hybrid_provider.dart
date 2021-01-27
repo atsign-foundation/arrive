@@ -72,10 +72,10 @@ class HybridProvider extends RequestLocationProvider {
                 notification.locationNotificationModel;
           } else {
             if (!remove)
-              allRequestNotifications[i].locationNotificationModel =
+              allHybridNotifications[i].locationNotificationModel =
                   notification.locationNotificationModel;
             else
-              allRequestNotifications.remove(allRequestNotifications[i]);
+              allHybridNotifications.remove(allRequestNotifications[i]);
           }
         }
         break;

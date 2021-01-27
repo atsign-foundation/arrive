@@ -178,100 +178,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           provider.allHybridNotifications[index]
                                   .locationNotificationModel !=
                               null) {
-                        if (provider.allHybridNotifications[index]
-                            .locationNotificationModel.key
-                            .contains('sharelocation')) {
-                          return InkWell(
-                            onTap: () {
-                              HomeEventService().onLocationModelTap(provider
-                                  .allHybridNotifications[index]
-                                  .locationNotificationModel);
-                            },
-                            child: DisplayTile(
-                              image: AllImages().PERSON2,
-                              title: getTitle(
-                                  provider.allHybridNotifications[index]),
-                              subTitle: getSubTitle(
-                                  provider.allHybridNotifications[index]),
-                              semiTitle: getSemiTitle(
-                                  provider.allHybridNotifications[index]),
-                            ),
-                          );
-                        } else {
-                          return InkWell(
-                            onTap: () {
-                              provider
-                                          .allHybridNotifications[index]
-                                          .locationNotificationModel
-                                          .atsignCreator ==
-                                      currentAtSign
-                                  ? (provider.allHybridNotifications[index]
-                                          .locationNotificationModel.isAccepted
-                                      ? null
-                                      : BackendService.getInstance()
-                                          .showMyDialog(
-                                              provider
-                                                  .allHybridNotifications[index]
-                                                  .locationNotificationModel
-                                                  .atsignCreator,
-                                              locationData: provider
-                                                  .allHybridNotifications[index]
-                                                  .locationNotificationModel))
-                                  : null;
-                            },
-                            child: DisplayTile(
-                              image: AllImages().PERSON2,
-                              title: provider
-                                          .allHybridNotifications[index]
-                                          .locationNotificationModel
-                                          .atsignCreator ==
-                                      currentAtSign
-                                  ? provider.allHybridNotifications[index]
-                                      .locationNotificationModel.receiver
-                                  : provider.allHybridNotifications[index]
-                                      .locationNotificationModel.atsignCreator,
-                              subTitle: provider.allHybridNotifications[index]
-                                      .locationNotificationModel.isAccepted
-                                  ? provider
-                                              .allHybridNotifications[index]
-                                              .locationNotificationModel
-                                              .atsignCreator ==
-                                          currentAtSign
-                                      ? 'Shring my location'
-                                      : 'Sharing his location'
-                                  : provider
-                                              .allHybridNotifications[index]
-                                              .locationNotificationModel
-                                              .atsignCreator ==
-                                          currentAtSign
-                                      ? 'Requested Location received'
-                                      : 'Requested Location sent',
-                              semiTitle: provider
-                                          .allHybridNotifications[index]
-                                          .locationNotificationModel
-                                          .atsignCreator ==
-                                      currentAtSign
-                                  ? (!provider.allHybridNotifications[index]
-                                          .locationNotificationModel.isExited
-                                      ? (provider
-                                              .allHybridNotifications[index]
-                                              .locationNotificationModel
-                                              .isAccepted
-                                          ? ''
-                                          : 'Action required')
-                                      : 'Request rejected')
-                                  : (!provider.allHybridNotifications[index]
-                                          .locationNotificationModel.isExited
-                                      ? (provider
-                                              .allHybridNotifications[index]
-                                              .locationNotificationModel
-                                              .isAccepted
-                                          ? ''
-                                          : 'Awaiting response')
-                                      : 'Request rejected'),
-                            ),
-                          );
-                        }
+                        return InkWell(
+                          onTap: () {
+                            HomeEventService().onLocationModelTap(provider
+                                .allHybridNotifications[index]
+                                .locationNotificationModel);
+                          },
+                          child: DisplayTile(
+                            image: AllImages().PERSON2,
+                            title: getTitle(
+                                provider.allHybridNotifications[index]),
+                            subTitle: getSubTitle(
+                                provider.allHybridNotifications[index]),
+                            semiTitle: getSemiTitle(
+                                provider.allHybridNotifications[index]),
+                          ),
+                        );
                       }
                     });
               }
