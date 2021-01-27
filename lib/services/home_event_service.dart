@@ -39,6 +39,7 @@ class HomeEventService {
 
   onEventModelTap(
       EventNotificationModel eventNotificationModel, EventProvider provider) {
+    print('event tapped:${eventNotificationModel.group}');
     if (isActionRequired(eventNotificationModel) &&
         !eventNotificationModel.isCancelled) {
       return BackendService.getInstance().showMyDialog(
@@ -89,8 +90,9 @@ bool isActionRequired(EventNotificationModel event) {
   if (event.group.members.length < 1) return true;
 
   event.group.members.forEach((member) {
-    if (member.tags['isAccepted'] != null &&
-        member.tags['isAccepted'] == true &&
+    if ((member.tags['isAccepted'] != null &&
+            member.tags['isAccepted'] == true) &&
+        member.tags['isExited'] == false &&
         member.atSign == currentAtsign) {
       isRequired = false;
     }
@@ -165,7 +167,7 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
         ? (isActionRequired(hybridNotificationModel.eventNotificationModel))
             ? getActionString(hybridNotificationModel.eventNotificationModel)
             : null
-        : null;
+        : 'Action required';
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
     if (hybridNotificationModel.locationNotificationModel.key

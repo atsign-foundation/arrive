@@ -1,6 +1,7 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location/service/send_location_notification.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
@@ -50,8 +51,11 @@ class HybridProvider extends RequestLocationProvider {
 
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
     findAtSignsToShareLocationWith();
-    print(
-        'share location array:${shareLocationData[0].from} , ${shareLocationData[0].receiver}');
+    // shareLocationData.forEach((element) {
+    //   print('to sahre location with:${shareLocationData.ats}');
+    // });
+    print('share location array:${shareLocationData} ');
+    initialiseLacationSharing();
   }
 
   mapUpdatedData(HybridNotificationModel notification, {bool remove = false}) {
@@ -181,7 +185,19 @@ class HybridProvider extends RequestLocationProvider {
         // for recurring
         if (notification.eventNotificationModel.event.repeatCycle ==
             RepeatCycle.MONTH) {
-        } else {
+          // repeat cycle is month
+          List<Map<String, dynamic>> months = [];
+          for (int i = 1; i <= 12; i++) {
+            if (i % notification.eventNotificationModel.event.repeatDuration ==
+                0) {
+              print(
+                  'month matched:${notification.eventNotificationModel.title}');
+              months.add(monthsList['$i']);
+            }
+          }
+          print('recurring months: ${months}');
+        } else if (notification.eventNotificationModel.event.repeatCycle ==
+            RepeatCycle.WEEK) {
           // repeat every week cycle
         }
       } else {
@@ -192,14 +208,22 @@ class HybridProvider extends RequestLocationProvider {
             dateToString(DateTime.now())) {
           location.from = notification.eventNotificationModel.event.startTime;
           location.to = notification.eventNotificationModel.event.endTime;
-
+          print(
+              'adding data to share location: ${notification.eventNotificationModel.title}');
           shareLocationData.add(location);
           return location;
         }
       }
     } else if (notification.notificationType == NotificationType.Location) {
+      print(
+          'adding data to share location: ${notification.locationNotificationModel.atsignCreator}');
       shareLocationData.add(notification.locationNotificationModel);
       return location;
     }
+  }
+
+  initialiseLacationSharing() {
+    SendLocationNotification().init(shareLocationData, atClientInstance);
+    print('location sending started');
   }
 }
