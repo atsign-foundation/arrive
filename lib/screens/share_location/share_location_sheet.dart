@@ -30,6 +30,7 @@ class ShareLocationSheet extends StatefulWidget {
 class _ShareLocationSheetState extends State<ShareLocationSheet> {
   AtContact selectedContact;
   bool isLoading;
+  String selectedOption;
 
   @override
   void initState() {
@@ -91,11 +92,32 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
             style: CustomTextStyles().greyLabel14,
           ),
           SizedBox(height: 10),
-          CustomInputField(
-              width: 330,
-              height: 50,
-              hintText: 'Select Duration',
-              icon: Icons.keyboard_arrow_down),
+          Container(
+            color: AllColors().INPUT_GREY_BACKGROUND,
+            width: 330.toWidth,
+            padding: EdgeInsets.only(left: 10, right: 10),
+            child: DropdownButton(
+              isExpanded: true,
+              icon: Icon(Icons.keyboard_arrow_down),
+              underline: SizedBox(),
+              elevation: 0,
+              dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
+              value: selectedOption,
+              hint: Text("Occurs on"),
+              items: ['30 mins', '2 hours', '24 hours', 'Until turned off']
+                  .map((String option) {
+                return new DropdownMenuItem<String>(
+                  value: option,
+                  child: Text(option),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedOption = value;
+                });
+              },
+            ),
+          ),
           Expanded(child: SizedBox()),
           Center(
             child: isLoading

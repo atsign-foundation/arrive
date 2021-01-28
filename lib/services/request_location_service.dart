@@ -44,19 +44,24 @@ class RequestLocationService {
   }
 
   requestLocationAcknowledgment(
-      LocationNotificationModel locationNotificationModel,
-      bool isAccepted) async {
+      LocationNotificationModel locationNotificationModel, bool isAccepted,
+      {int minutes}) async {
     String atkeyMicrosecondId = locationNotificationModel.key
         .split('requestlocation-')[1]
         .split('@')[0];
-    AtKey atKey = newAtKey(
+    AtKey atKey;
+    if (minutes != null)
+      atKey = newAtKey(-1, "requestlocationacknowledged-$atkeyMicrosecondId",
+          locationNotificationModel.receiver,
+          ttl: DateTime.now()
+              .add(Duration(minutes: minutes))
+              .microsecondsSinceEpoch);
+    else
+      atKey = newAtKey(
         -1,
         "requestlocationacknowledged-$atkeyMicrosecondId",
-        locationNotificationModel.receiver);
-
-    // locationNotificationModel.isAccepted = isAccepted;
-
-    // if (!isAccepted) locationNotificationModel.isExited = true;
+        locationNotificationModel.receiver,
+      );
 
     locationNotificationModel
       ..isAccepted = isAccepted
@@ -64,6 +69,12 @@ class RequestLocationService {
       ..lat = isAccepted ? 12 : 0
       ..long = isAccepted ? 12 : 0;
     //..updateMap = true;
+
+    if (isAccepted) {
+      locationNotificationModel.from = DateTime.now();
+      locationNotificationModel.to =
+          DateTime.now().add(Duration(minutes: minutes));
+    }
 
     var result = await ClientSdkService.getInstance()
         .atClientServiceInstance
@@ -75,24 +86,6 @@ class RequestLocationService {
     print('requestLocationAcknowledgment $result');
     return result;
   }
-
-  // sendShareLocationForRequest(
-  //     LocationNotificationModel locationNotificationModel, AtKey key) async {
-  //   var result = await ClientSdkService.getInstance()
-  //       .atClientServiceInstance
-  //       .atClient
-  //       .put(
-  //           key,
-  //           LocationNotificationModel.convertLocationNotificationToJson(
-  //               locationNotificationModel));
-  //   if (result)
-  //     providerCallback<ShareLocationProvider>(NavService.navKey.currentContext,
-  //         task: (provider) => provider.addDataToList(locationNotificationModel),
-  //         taskName: (provider) => provider.ADD_EVENT,
-  //         showLoader: false,
-  //         onSuccess: (provider) {});
-  //   return [result, locationNotificationModel];
-  // }
 
   updateWithRequestLocationAcknowledge(
     LocationNotificationModel locationNotificationModel,
@@ -115,6 +108,9 @@ class RequestLocationService {
 
     AtKey key = AtKey.fromString(response[0]);
 
+    if (locationNotificationModel.isAccepted)
+      key.metadata.ttl = locationNotificationModel.to.microsecondsSinceEpoch;
+
     locationNotificationModel.isAcknowledgment = true;
 
     var notification =
@@ -125,23 +121,6 @@ class RequestLocationService {
         .atClientServiceInstance
         .atClient
         .put(key, notification);
-    // if ((locationNotificationModel.isAccepted == false) &&
-    //     (locationNotificationModel.isExited == true)) {
-    //   result = await ClientSdkService.getInstance()
-    //       .atClientServiceInstance
-    //       .atClient
-    //       .put(key, notification);
-    // } else if ((locationNotificationModel.isAccepted == true) &&
-    //     (locationNotificationModel.isExited == false)) {
-    //   result = await ClientSdkService.getInstance()
-    //       .atClientServiceInstance
-    //       .atClient
-    //       .put(key, notification);
-    //   // result = await ClientSdkService.getInstance()
-    //   //     .atClientServiceInstance
-    //   //     .atClient
-    //   //     .delete(key);
-    // }
 
     if (result)
       providerCallback<HybridProvider>(NavService.navKey.currentContext,
@@ -158,7 +137,7 @@ class RequestLocationService {
     print('update result - $result');
   }
 
-  AtKey newAtKey(int ttr, String key, String sharedWith) {
+  AtKey newAtKey(int ttr, String key, String sharedWith, {int ttl}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = -1
@@ -168,6 +147,8 @@ class RequestLocationService {
           .atClientServiceInstance
           .atClient
           .currentAtSign;
+    if (ttl != null) atKey.metadata.ttl = ttl;
+
     return atKey;
   }
 }
