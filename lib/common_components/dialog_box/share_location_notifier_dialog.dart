@@ -1,5 +1,6 @@
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'package:atsign_events/services/event_services.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
@@ -11,6 +12,7 @@ import 'package:atsign_location_app/models/enums_model.dart';
 import 'package:atsign_location_app/screens/event/event_time_selection.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/notification_service.dart';
@@ -21,15 +23,16 @@ import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
 
-class ShareLocationNotifierDialog extends StatelessWidget {
+class ShareLocationNotifierDialog extends StatefulWidget {
   final String event, invitedPeopleCount, timeAndDate, userName;
   final EventNotificationModel eventData;
   final LocationNotificationModel locationData;
   final bool showMembersCount;
-  int minutes;
+
   ShareLocationNotifierDialog(
       {this.eventData,
       this.event,
@@ -38,6 +41,45 @@ class ShareLocationNotifierDialog extends StatelessWidget {
       this.timeAndDate,
       this.userName,
       this.showMembersCount = false});
+
+  @override
+  _ShareLocationNotifierDialogState createState() =>
+      _ShareLocationNotifierDialogState();
+}
+
+class _ShareLocationNotifierDialogState
+    extends State<ShareLocationNotifierDialog> {
+  HybridProvider hybridProvider = HybridProvider();
+  int minutes;
+  EventNotificationModel concurrentEvent;
+  bool isOverlap = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.eventData != null) checkForEventOverlap();
+  }
+
+  checkForEventOverlap() {
+    List<HybridNotificationModel> allEventsExcludingCurrentEvent = [];
+    List<HybridNotificationModel> allSavedEvents =
+        HomeEventService().getAllEvents;
+    dynamic overlapData = [];
+
+    allSavedEvents.forEach((event) {
+      if (event.notificationType == NotificationType.Event &&
+          widget.eventData.key != event.key) {
+        allEventsExcludingCurrentEvent.add(event);
+      }
+    });
+    overlapData = EventService().isEventTimeSlotOverlap(
+        allEventsExcludingCurrentEvent, widget.eventData);
+    isOverlap = overlapData[0];
+    if (isOverlap != null) {
+      if (isOverlap == true) concurrentEvent = overlapData[1];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,11 +92,11 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                      (eventData != null)
-                          ? '$userName wants to share an event with you. Are you sure you want to join and share your location with the group?'
-                          : ((locationData != null)
-                              ? '$userName wants to share their location with you. Are you sure you want to accept their location?'
-                              : '$userName wants you to share your location? Are you sure you want to share?'),
+                      (widget.eventData != null)
+                          ? '${widget.userName} wants to share an event with you. Are you sure you want to join and share your location with the group?'
+                          : ((widget.locationData != null)
+                              ? '${widget.userName} wants to share their location with you. Are you sure you want to accept their location?'
+                              : '${widget.userName} wants you to share your location? Are you sure you want to share?'),
                       style: CustomTextStyles().grey16,
                       textAlign: TextAlign.center),
                   SizedBox(height: 30),
@@ -62,7 +104,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                     children: [
                       CustomCircleAvatar(
                           image: AllImages().PERSON2, size: 74.toHeight),
-                      showMembersCount
+                      widget.showMembersCount
                           ? Positioned(
                               right: 0,
                               bottom: 0,
@@ -84,74 +126,103 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10.toHeight),
-                  event != null
-                      ? Text(event, style: CustomTextStyles().black18)
+                  widget.eventData != null
+                      ? Text(widget.eventData.title,
+                          style: CustomTextStyles().black18)
                       : SizedBox(),
                   SizedBox(height: 5.toHeight),
-                  invitedPeopleCount != null
-                      ? Text(invitedPeopleCount,
+                  widget.eventData != null
+                      ? Text(
+                          '${widget.eventData.group.members.length} peoples invited',
                           style: CustomTextStyles().grey14)
                       : SizedBox(),
                   SizedBox(height: 10.toHeight),
-                  timeAndDate != null
-                      ? Text(timeAndDate, style: CustomTextStyles().black14)
+                  widget.eventData != null
+                      ? Text(
+                          '${timeOfDayToString(widget.eventData.event.startTime)} on ${dateToString(widget.eventData.event.date)}',
+                          style: CustomTextStyles().black14)
                       : SizedBox(),
-                  SizedBox(height: 20.toHeight),
+                  isOverlap ? SizedBox(height: 10.toHeight) : SizedBox(),
+                  isOverlap ? Divider(height: 2) : SizedBox(),
+                  SizedBox(height: 10.toHeight),
+                  isOverlap
+                      ? Text(
+                          'You already have an event scheduled during this hour. Are you sure you want to accept another?',
+                          textAlign: TextAlign.center,
+                          style: CustomTextStyles().grey16,
+                        )
+                      : SizedBox(),
+                  SizedBox(height: 10.toHeight),
+                  isOverlap
+                      ? Text(concurrentEvent.title,
+                          style: CustomTextStyles().black18)
+                      : SizedBox(),
+                  SizedBox(height: 5.toHeight),
+                  // isOverlap
+                  //     ? Text(
+                  //         '${concurrentEvent.group.members.length} peoples invited',
+                  //         style: CustomTextStyles().grey14)
+                  //     : SizedBox(),
+                  SizedBox(height: 10.toHeight),
+                  isOverlap
+                      ? Text(
+                          '${timeOfDayToString(concurrentEvent.event.startTime)} on ${dateToString(concurrentEvent.event.date)}',
+                          style: CustomTextStyles().black14)
+                      : SizedBox(),
+                  SizedBox(height: 10.toHeight),
                   CustomButton(
                     onTap: () => () async {
-                      if (eventData != null) {
+                      if (widget.eventData != null) {
                         bottomSheet(
                             context,
                             EventTimeSelection(
-                                eventNotificationModel: eventData,
+                                eventNotificationModel: widget.eventData,
                                 title: AllText().LOC_START_TIME_TITLE,
                                 isStartTime: true,
                                 options: MixedConstants.startTimeOptions,
                                 onSelectionChanged: (dynamic startTime) {
-                                  eventData.group.members
+                                  widget.eventData.group.members
                                       .elementAt(0)
                                       .tags['shareFrom'] = startTime.toString();
 
                                   bottomSheet(
                                       context,
                                       EventTimeSelection(
-                                        eventNotificationModel: eventData,
+                                        eventNotificationModel:
+                                            widget.eventData,
                                         title: AllText().LOC_END_TIME_TITLE,
                                         options: MixedConstants.endTimeOptions,
                                         onSelectionChanged: (dynamic endTime) {
-                                          eventData.group.members
+                                          widget.eventData.group.members
                                                   .elementAt(0)
                                                   .tags['shareTo'] =
                                               endTime.toString();
                                           Navigator.of(context).pop();
 
-                                          updateEvent(eventData);
+                                          updateEvent(widget.eventData);
                                         },
                                       ),
                                       400);
                                 }),
                             400);
-                        print('outside');
                       }
 
-                      print('outside  22');
-
-                      (eventData != null)
+                      (widget.eventData != null)
                           ? null
-                          : ((!locationData.isRequest)
+                          : ((!widget.locationData.isRequest)
                               //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
                               ? {
                                   print('accept share location'),
                                   LocationSharingService()
                                       .shareLocationAcknowledgment(
-                                          true, locationData, true),
+                                          true, widget.locationData, true),
                                   Navigator.of(context).pop(),
                                 }
                               : {
                                   minutes = await timeSelect(context),
                                   RequestLocationService()
                                       .requestLocationAcknowledgment(
-                                          locationData, true,
+                                          widget.locationData, true,
                                           minutes: minutes),
                                   Navigator.of(context).pop(),
                                 });
@@ -166,10 +237,10 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                   SizedBox(height: 5),
                   InkWell(
                     onTap: () async {
-                      (eventData != null)
+                      (widget.eventData != null)
                           ? {
-                              print('${eventData.key}'),
-                              eventData.group.members.forEach((element) {
+                              print('${widget.eventData.key}'),
+                              widget.eventData.group.members.forEach((element) {
                                 if (element.atSign ==
                                     ClientSdkService.getInstance()
                                         .atClientServiceInstance
@@ -180,7 +251,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                 }
                               }),
                               providerCallback<EventProvider>(context,
-                                  task: (t) => t.actionOnEvent(eventData,
+                                  task: (t) => t.actionOnEvent(widget.eventData,
                                       ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
                                       isAccepted: false),
                                   taskName: (t) => t.UPDATE_EVENTS,
@@ -189,19 +260,19 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                     t.getAllEvents();
                                   }),
                             }
-                          : ((!locationData.isRequest)
+                          : ((!widget.locationData.isRequest)
                               //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
                               ? {
                                   print('accept share location'),
                                   LocationSharingService()
                                       .shareLocationAcknowledgment(
-                                          true, locationData, false),
+                                          true, widget.locationData, false),
                                   Navigator.of(context).pop(),
                                 }
                               : {
                                   RequestLocationService()
                                       .requestLocationAcknowledgment(
-                                          locationData, false),
+                                          widget.locationData, false),
                                   Navigator.of(context).pop(),
                                 });
                     },

@@ -7,6 +7,7 @@ import 'package:atsign_location/service/send_location_notification.dart';
 import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 // import 'package:atsign_location_app/view_models/send_location_model.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
@@ -52,12 +53,10 @@ class HybridProvider extends RequestLocationProvider {
       ...super.allRequestNotifications
     ];
 
+    HomeEventService().setAllEventsList(allHybridNotifications);
+
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
     findAtSignsToShareLocationWith();
-    // shareLocationData.forEach((element) {
-    //   print('to sahre location with:${shareLocationData.ats}');
-    // });
-    print('share location array:${shareLocationData} ');
     initialiseLacationSharing();
   }
 
@@ -244,6 +243,5 @@ class HybridProvider extends RequestLocationProvider {
 
   initialiseLacationSharing() {
     SendLocationNotification().init(shareLocationData, atClientInstance);
-    print('location sending started');
   }
 }

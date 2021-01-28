@@ -227,7 +227,6 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Create Event',
               icon: Icons.event,
               onTap: () {
-                // BackendService.getInstance().updateNotification();
                 List<HybridNotificationModel> allEvents = [];
 
                 hybridProvider.allHybridNotifications.forEach((event) {

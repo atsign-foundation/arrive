@@ -14,6 +14,13 @@ class HomeEventService {
   static HomeEventService _instance = HomeEventService._();
   factory HomeEventService() => _instance;
 
+  List<HybridNotificationModel> allEvents = [];
+  setAllEventsList(List<HybridNotificationModel> events) {
+    allEvents = events;
+  }
+
+  get getAllEvents => allEvents;
+
   onLocationModelTap(LocationNotificationModel locationNotificationModel) {
     String currentAtsign = ClientSdkService.getInstance()
         .atClientServiceInstance
