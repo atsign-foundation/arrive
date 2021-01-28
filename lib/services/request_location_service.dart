@@ -42,6 +42,12 @@ class RequestLocationService {
     return [result, locationNotificationModel];
   }
 
+// before
+// notification.value -> AtValue{value: {"atsignCreator":"@bob🛠","receiver":"@colin🛠","lat":"null","long":"null","key":"requestlocation-1611818639695437","from":"null","to":"null","isAcknowledgment":"false","isRequest":"true","isAccepted":"false","isExited":"false","updateMap":"false","isSharing":"true"}, metadata: Metadata{ttl: null, ttb: null, ttr: -1,ccd: false, isPublic: false, isHidden: false, availableAt : null, expiresAt : null, refreshAt : null, createdAt : 2021-01-28 07:29:27.380Z,updatedAt : 2021-01-28 07:29:27.380Z,isBinary : null, isEncrypted : null, isCached : false, dataSignature: null}}
+// @colin🛠:requestlocationacknowledged-1611818639695437@bob🛠 => 30 min from 1:03pm
+
+//
+// @bob🛠:requestlocation-1611818478179344@colin🛠 => ttl 1:17:36
   requestLocationAcknowledgment(
       LocationNotificationModel locationNotificationModel, bool isAccepted,
       {int minutes}) async {
@@ -107,8 +113,10 @@ class RequestLocationService {
 
     AtKey key = AtKey.fromString(response[0]);
 
-    if (locationNotificationModel.isAccepted)
+    if (locationNotificationModel.isAccepted) {
       key.metadata.ttl = locationNotificationModel.to.microsecondsSinceEpoch;
+      key.metadata.expiresAt = locationNotificationModel.to;
+    }
 
     locationNotificationModel.isAcknowledgment = true;
 
@@ -136,7 +144,8 @@ class RequestLocationService {
     print('update result - $result');
   }
 
-  AtKey newAtKey(int ttr, String key, String sharedWith, {int ttl}) {
+  AtKey newAtKey(int ttr, String key, String sharedWith,
+      {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = -1
@@ -147,6 +156,7 @@ class RequestLocationService {
           .atClient
           .currentAtSign;
     if (ttl != null) atKey.metadata.ttl = ttl;
+    if (expiresAt != null) atKey.metadata.expiresAt = expiresAt;
 
     return atKey;
   }

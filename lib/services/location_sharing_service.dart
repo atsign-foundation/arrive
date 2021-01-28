@@ -44,7 +44,8 @@ class LocationSharingService {
         -1, "sharelocation-${DateTime.now().microsecondsSinceEpoch}", atsign,
         ttl: DateTime.now()
             .add(Duration(minutes: minutes))
-            .microsecondsSinceEpoch);
+            .microsecondsSinceEpoch,
+        expiresAt: DateTime.now().add(Duration(minutes: minutes)));
 
     LocationNotificationModel locationNotificationModel =
         LocationNotificationModel()
@@ -157,7 +158,8 @@ class LocationSharingService {
   }
 
   //
-  AtKey newAtKey(int ttr, String key, String sharedWith, {int ttl}) {
+  AtKey newAtKey(int ttr, String key, String sharedWith,
+      {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = -1
@@ -168,6 +170,7 @@ class LocationSharingService {
           .atClient
           .currentAtSign;
     if (ttl != null) atKey.metadata.ttl = ttl;
+    if (expiresAt != null) atKey.metadata.expiresAt = expiresAt;
     return atKey;
   }
 }

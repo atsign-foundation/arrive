@@ -114,12 +114,8 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                                   Navigator.of(context).pop(),
                                 }
                               : {
-                                  minutes = await timeSelect(context),
-                                  RequestLocationService()
-                                      .requestLocationAcknowledgment(
-                                          locationData, true,
-                                          minutes: minutes),
                                   Navigator.of(context).pop(),
+                                  timeSelect(context),
                                 });
                     }(),
                     child: Text('Yes',
@@ -185,7 +181,7 @@ class ShareLocationNotifierDialog extends StatelessWidget {
     );
   }
 
-  Future<int> timeSelect(BuildContext context) async {
+  timeSelect(BuildContext context) {
     int result;
     bottomSheet(
         context,
@@ -202,7 +198,9 @@ class ShareLocationNotifierDialog extends StatelessWidget {
             print('hours = $result');
           },
         ),
-        350);
-    return result;
+        350, onSheetCLosed: () {
+      RequestLocationService()
+          .requestLocationAcknowledgment(locationData, true, minutes: result);
+    });
   }
 }
