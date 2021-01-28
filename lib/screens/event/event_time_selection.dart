@@ -8,23 +8,22 @@ import 'package:flutter/material.dart';
 
 class EventTimeSelection extends StatefulWidget {
   final String title;
+  final List<String> options;
   final EventNotificationModel eventNotificationModel;
-  final ValueChanged<LOC_START_TIME_ENUM> onSelectionChanged;
+  final ValueChanged<dynamic> onSelectionChanged;
+  final bool isStartTime;
 
   EventTimeSelection(
       {this.title,
       @required this.eventNotificationModel,
-      this.onSelectionChanged});
+      this.onSelectionChanged,
+      @required this.options,
+      this.isStartTime = false});
   @override
   _EventTimeSelectionState createState() => _EventTimeSelectionState();
 }
 
 class _EventTimeSelectionState extends State<EventTimeSelection> {
-  List<String> options = [
-    '2 hours before the event',
-    '60 hours before the event',
-    '30 hours before the event'
-  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -51,7 +50,7 @@ class _EventTimeSelectionState extends State<EventTimeSelection> {
                     separatorBuilder: (context, index) {
                       return Divider();
                     },
-                    itemCount: options.length,
+                    itemCount: widget.options.length,
                     itemBuilder: (context, index) {
                       return SizedBox(
                         height: 50,
@@ -59,20 +58,24 @@ class _EventTimeSelectionState extends State<EventTimeSelection> {
                           onTap: () {
                             switch (index) {
                               case 0:
-                                widget.onSelectionChanged(
-                                    LOC_START_TIME_ENUM.TWO_HOURS);
+                                widget.onSelectionChanged(widget.isStartTime
+                                    ? LOC_START_TIME_ENUM.TWO_HOURS
+                                    : LOC_END_TIME_ENUM.TEN_MIN);
                                 break;
                               case 1:
-                                widget.onSelectionChanged(
-                                    LOC_START_TIME_ENUM.SIXTY_HOURS);
+                                widget.onSelectionChanged(widget.isStartTime
+                                    ? LOC_START_TIME_ENUM.SIXTY_HOURS
+                                    : LOC_END_TIME_ENUM
+                                        .AFTER_EVERY_ONE_REACHED);
                                 break;
                               case 2:
-                                widget.onSelectionChanged(
-                                    LOC_START_TIME_ENUM.THIRTY_HOURS);
+                                widget.onSelectionChanged(widget.isStartTime
+                                    ? LOC_START_TIME_ENUM.THIRTY_HOURS
+                                    : LOC_END_TIME_ENUM.AT_EOD);
                                 break;
                             }
                           },
-                          child: TextTile(title: options[index]),
+                          child: TextTile(title: widget.options[index]),
                         ),
                       );
                     },

@@ -11,11 +11,14 @@ import 'package:atsign_location_app/models/enums_model.dart';
 import 'package:atsign_location_app/screens/event/event_time_selection.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/notification_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_common/services/size_config.dart';
@@ -99,24 +102,31 @@ class ShareLocationNotifierDialog extends StatelessWidget {
                             context,
                             EventTimeSelection(
                                 eventNotificationModel: eventData,
-                                title:
-                                    'When do want to start sharing your location?',
-                                onSelectionChanged:
-                                    (LOC_START_TIME_ENUM startTime) {
+                                title: AllText().LOC_START_TIME_TITLE,
+                                isStartTime: true,
+                                options: MixedConstants.startTimeOptions,
+                                onSelectionChanged: (dynamic startTime) {
                                   eventData.group.members
                                       .elementAt(0)
                                       .tags['shareFrom'] = startTime.toString();
 
-                                  providerCallback<EventProvider>(context,
-                                      task: (t) => t.actionOnEvent(eventData,
-                                          ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                                          isAccepted: true),
-                                      taskName: (t) => t.UPDATE_EVENTS,
-                                      onSuccess: (t) {
-                                        Navigator.of(context).pop();
-                                        Navigator.of(context).pop();
-                                        t.getAllEvents();
-                                      });
+                                  bottomSheet(
+                                      context,
+                                      EventTimeSelection(
+                                        eventNotificationModel: eventData,
+                                        title: AllText().LOC_END_TIME_TITLE,
+                                        options: MixedConstants.endTimeOptions,
+                                        onSelectionChanged: (dynamic endTime) {
+                                          eventData.group.members
+                                                  .elementAt(0)
+                                                  .tags['shareTo'] =
+                                              endTime.toString();
+                                          Navigator.of(context).pop();
+
+                                          updateEvent(eventData);
+                                        },
+                                      ),
+                                      400);
                                 }),
                             400);
                         print('outside');
@@ -204,4 +214,16 @@ class ShareLocationNotifierDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+updateEvent(EventNotificationModel eventData) {
+  providerCallback<EventProvider>(NavService.navKey.currentContext,
+      task: (t) => t.actionOnEvent(eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+          isAccepted: true),
+      taskName: (t) => t.UPDATE_EVENTS,
+      onSuccess: (t) {
+        Navigator.of(NavService.navKey.currentContext).pop();
+        Navigator.of(NavService.navKey.currentContext).pop();
+        t.getAllEvents();
+      });
 }
