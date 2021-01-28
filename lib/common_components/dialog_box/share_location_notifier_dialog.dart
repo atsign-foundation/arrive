@@ -33,6 +33,7 @@ class ShareLocationNotifierDialog extends StatefulWidget {
   final LocationNotificationModel locationData;
   final bool showMembersCount;
 
+  int minutes;
   ShareLocationNotifierDialog(
       {this.eventData,
       this.event,
@@ -219,12 +220,8 @@ class _ShareLocationNotifierDialogState
                                   Navigator.of(context).pop(),
                                 }
                               : {
-                                  minutes = await timeSelect(context),
-                                  RequestLocationService()
-                                      .requestLocationAcknowledgment(
-                                          widget.locationData, true,
-                                          minutes: minutes),
                                   Navigator.of(context).pop(),
+                                  timeSelect(context),
                                 });
                     }(),
                     child: Text('Yes',
@@ -290,7 +287,7 @@ class _ShareLocationNotifierDialogState
     );
   }
 
-  Future<int> timeSelect(BuildContext context) async {
+  timeSelect(BuildContext context) {
     int result;
     bottomSheet(
         context,
@@ -307,8 +304,12 @@ class _ShareLocationNotifierDialogState
             print('hours = $result');
           },
         ),
-        350);
-    return result;
+        350, onSheetCLosed: () {
+      RequestLocationService().requestLocationAcknowledgment(
+          widget.locationData, true,
+          minutes: result);
+      return result;
+    });
   }
 }
 

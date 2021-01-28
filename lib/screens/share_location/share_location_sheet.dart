@@ -138,12 +138,18 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
   }
 
   onShareTap() async {
+    int minutes = (selectedOption == '30 mins'
+        ? 30
+        : (selectedOption == '2 hours'
+            ? (2 * 60)
+            : (selectedOption == '24 hours' ? (24 * 60) : -1)));
     setState(() {
       isLoading = true;
     });
 
-    var result = await LocationSharingService()
-        .sendShareLocationEvent(selectedContact.atSign, false);
+    var result = await LocationSharingService().sendShareLocationEvent(
+        selectedContact.atSign, false,
+        minutes: minutes);
 
     if (result[0] == true) {
       CustomToast().show('Share Location Request sent', context);
