@@ -1,8 +1,10 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:at_contact/at_contact.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
@@ -213,13 +215,21 @@ class HybridProvider extends RequestLocationProvider {
           DateTime date = notification.eventNotificationModel.event.date;
           TimeOfDay from = notification.eventNotificationModel.event.startTime;
           TimeOfDay to = notification.eventNotificationModel.event.endTime;
+          AtContact groupMember =
+              notification.eventNotificationModel.group.members.elementAt(0);
 
           location.from =
               DateTime(date.year, date.month, date.day, from.hour, from.minute);
+
+          location.from = startTimeEnumToTimeOfDay(
+              groupMember.tags['shareFrom'].toString(), location.from);
           location.to =
               DateTime(date.year, date.month, date.day, to.hour, to.minute);
-          print(
-              'adding data to share location: ${notification.eventNotificationModel.title}');
+
+          location.to = endTimeEnumToTimeOfDay(
+              groupMember.tags['shareTo'].toString(), location.to);
+          // print(
+          // '${groupMember.tags} , title:${notification.eventNotificationModel.title} :adding data to share location: ${notification.eventNotificationModel.event.startTime} , to :${notification.eventNotificationModel.event.endTime} : after edit form :${location.from} , after edit to : ${location.to}');
           shareLocationData.add(location);
           return location;
         }
