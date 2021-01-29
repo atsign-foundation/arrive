@@ -52,7 +52,7 @@ class RequestLocationService {
 // @bob🛠:requestlocation-1611818478179344@colin🛠 => ttl 1:17:36
   requestLocationAcknowledgment(
       LocationNotificationModel locationNotificationModel, bool isAccepted,
-      {int minutes}) async {
+      {int minutes, bool isSharing}) async {
     String atkeyMicrosecondId = locationNotificationModel.key
         .split('requestlocation-')[1]
         .split('@')[0];
@@ -77,7 +77,10 @@ class RequestLocationService {
       ..long = isAccepted ? 12 : 0;
     //..updateMap = true;
 
-    if (isAccepted) {
+    if (isSharing != null) locationNotificationModel.isSharing = isSharing;
+
+    if (isAccepted && (minutes != null)) {
+      // if error => remove this (minutes != null)
       locationNotificationModel.from = DateTime.now();
       locationNotificationModel.to =
           DateTime.now().add(Duration(minutes: minutes));
@@ -144,6 +147,23 @@ class RequestLocationService {
           onSuccess: (provider) {});
 
     print('update result - $result');
+    return result;
+  }
+
+  removePerson(LocationNotificationModel locationNotificationModel) async {
+    var result;
+    if (locationNotificationModel.atsignCreator !=
+        ClientSdkService.getInstance().currentAtsign) {
+      locationNotificationModel.isAccepted = false;
+      locationNotificationModel.isExited = true;
+      result =
+          await updateWithRequestLocationAcknowledge(locationNotificationModel);
+    } else {
+      result =
+          await requestLocationAcknowledgment(locationNotificationModel, false);
+    }
+    return result;
+    // print('remove person called Request');
   }
 
   AtKey newAtKey(int ttr, String key, String sharedWith,

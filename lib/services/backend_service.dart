@@ -27,6 +27,8 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
+import 'location_notification_listener.dart';
+
 class BackendService {
   static final BackendService _singleton = BackendService._internal();
   BackendService._internal();
@@ -122,7 +124,11 @@ class BackendService {
         .decrypt(value, fromAtSign)
         .catchError(
             (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
-    if (atKey.toString().contains('createevent')) {
+    if (atKey.toString().contains('locationNotify')) {
+      LocationNotificationModel msg =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      LocationNotificationListener().updateHybridList(msg);
+    } else if (atKey.toString().contains('createevent')) {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (eventData.isUpdate != null && eventData.isUpdate == false) {

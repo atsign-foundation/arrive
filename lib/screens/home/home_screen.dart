@@ -1,6 +1,8 @@
+import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location/atsign_location.dart';
+import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -14,6 +16,8 @@ import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
+import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -46,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     initializeContacts();
+    LocationNotificationListener()
+        .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
     eventProvider = context.read<EventProvider>();
     // eventProvider
     //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
@@ -264,10 +270,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
-              onTap: () {
-                // BackendService.getInstance().getAllNotificationKeys();
+              onTap: () async {
+                BackendService.getInstance().getAllNotificationKeys();
                 bottomSheet(context, RequestLocationSheet(),
                     SizeConfig().screenHeight * 0.5);
+
+                // SendLocationNotification().manualLocationSend(39, -121);
               }),
           Tasks(
               task: 'Share Location',

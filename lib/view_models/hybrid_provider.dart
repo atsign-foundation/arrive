@@ -243,6 +243,7 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   initialiseLacationSharing() {
-    SendLocationNotification().init(shareLocationData, atClientInstance);
+    // SendLocationNotification().init(shareLocationData, atClientInstance);
+    print('location sending started');
   }
 }

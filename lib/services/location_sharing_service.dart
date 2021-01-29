@@ -117,8 +117,8 @@ class LocationSharingService {
   }
 
   updateWithShareLocationAcknowledge(
-    LocationNotificationModel locationNotificationModel,
-  ) async {
+      LocationNotificationModel locationNotificationModel,
+      {bool isSharing}) async {
     String atkeyMicrosecondId =
         locationNotificationModel.key.split('sharelocation-')[1].split('@')[0];
     // int microsecondsSinceEpoch =
@@ -134,16 +134,12 @@ class LocationSharingService {
     AtKey key = AtKey.fromString(response[0]);
 
     locationNotificationModel.isAcknowledgment = true;
-    print(
-        'before convertLocationNotificationToJson -> ${locationNotificationModel.isAccepted}');
+
+    if (isSharing != null) locationNotificationModel.isSharing = isSharing;
 
     var notification =
         LocationNotificationModel.convertLocationNotificationToJson(
             locationNotificationModel);
-    print(
-        'after convertLocationNotificationToJson -> ${locationNotificationModel.isAccepted}');
-
-    print('notification:$notification');
 
     var result = await ClientSdkService.getInstance()
         .atClientServiceInstance
@@ -156,6 +152,23 @@ class LocationSharingService {
               locationNotificationModel: locationNotificationModel));
 
     print('update result - $result');
+    return result;
+  }
+
+  removePerson(LocationNotificationModel locationNotificationModel) async {
+    var result;
+    if (locationNotificationModel.atsignCreator ==
+        ClientSdkService.getInstance().currentAtsign) {
+      locationNotificationModel.isAccepted = false;
+      locationNotificationModel.isExited = true;
+      result =
+          await updateWithShareLocationAcknowledge(locationNotificationModel);
+    } else {
+      result = await shareLocationAcknowledgment(
+          true, locationNotificationModel, false);
+    }
+    return result;
+    // print('remove person called share');
   }
 
   //

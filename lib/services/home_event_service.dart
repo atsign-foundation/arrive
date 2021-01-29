@@ -4,7 +4,10 @@ import 'package:atsign_location/location_modal/location_notification.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
+import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
@@ -60,6 +63,7 @@ class HomeEventService {
       MaterialPageRoute(
         builder: (context) => AtsignLocationPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
+            allUsersList: LocationNotificationListener().allUsersList,
             onEventCancel: () {
           provider.cancelEvent(eventNotificationModel);
         }, onEventExit: (
@@ -86,7 +90,16 @@ class HomeEventService {
       MaterialPageRoute(
         builder: (context) => AtsignLocationPlugin(
           ClientSdkService.getInstance().atClientServiceInstance.atClient,
+          allUsersList: LocationNotificationListener().allUsersList,
           userListenerKeyword: locationNotificationModel,
+          onShareToggle: locationNotificationModel.key.contains("sharelocation")
+              ? LocationSharingService().updateWithShareLocationAcknowledge
+              : RequestLocationService().requestLocationAcknowledgment,
+          onRemove: locationNotificationModel.key.contains("sharelocation")
+              ? (locationNotificationModel) => LocationSharingService()
+                  .removePerson(locationNotificationModel)
+              : (locationNotificationModel) => RequestLocationService()
+                  .removePerson(locationNotificationModel),
         ),
       ),
     );
@@ -196,7 +209,7 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
               ? ''
               : hybridNotificationModel.locationNotificationModel.isExited
                   ? 'Received Share location request rejected'
-                  : 'Awaiting response')
+                  : 'Action required')
           : (hybridNotificationModel.locationNotificationModel.isAccepted
               ? ''
               : hybridNotificationModel.locationNotificationModel.isExited
