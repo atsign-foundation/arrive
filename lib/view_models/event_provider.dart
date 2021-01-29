@@ -85,7 +85,7 @@ class EventProvider extends BaseModel {
     setStatus(GET_ALL_EVENTS, Status.Done);
 
     // checkForAcknowledgeEvents();
-    updateEventAccordingToAcknowledgedData();
+    updateEventDataAccordingToAcknowledgedData();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -193,10 +193,10 @@ class EventProvider extends BaseModel {
     //     taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
     //     showLoader: false,
     //     onSuccess: (provider) {});
-    updateEventAccordingToAcknowledgedData();
+    updateEventDataAccordingToAcknowledgedData();
   }
 
-  updateEventAccordingToAcknowledgedData() async {
+  updateEventDataAccordingToAcknowledgedData() async {
     // List<String> allEventKey = await atClientInstance.getKeys(
     //   regex: 'createevent-',
     //   // sharedWith: '@test_ga3',

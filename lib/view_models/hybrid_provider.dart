@@ -227,6 +227,7 @@ class HybridProvider extends RequestLocationProvider {
 
           location.to = endTimeEnumToTimeOfDay(
               groupMember.tags['shareTo'].toString(), location.to);
+          location.key = notification.key;
           // print(
           // '${groupMember.tags} , title:${notification.eventNotificationModel.title} :adding data to share location: ${notification.eventNotificationModel.event.startTime} , to :${notification.eventNotificationModel.event.endTime} : after edit form :${location.from} , after edit to : ${location.to}');
           shareLocationData.add(location);
