@@ -347,7 +347,7 @@ class _ShareLocationNotifierDialogState
 updateEvent(EventNotificationModel eventData) {
   providerCallback<EventProvider>(NavService.navKey.currentContext,
       task: (t) => t.actionOnEvent(eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-          isAccepted: true),
+          isAccepted: true, isSharing: true),
       taskName: (t) => t.UPDATE_EVENTS,
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();

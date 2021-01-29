@@ -2,6 +2,7 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 
 import 'base_model.dart';
@@ -135,6 +136,11 @@ class EventProvider extends BaseModel {
           .atClient
           .currentAtSign;
 
+      if (eventData.atsignCreator == currentAtsign) {
+        eventData.isSharing =
+            isSharing != null ? isSharing : eventData.isSharing;
+      }
+
       eventData.group.members.forEach((member) {
         if (member.atSign == currentAtsign) {
           member.tags['isAccepted'] =
@@ -146,10 +152,10 @@ class EventProvider extends BaseModel {
         }
       });
 
-      AtKey key = formAtKey(
-          keyType, atkeyMicrosecondId, eventData.atsignCreator, currentAtsign);
+      AtKey key = formAtKey(keyType, atkeyMicrosecondId,
+          eventData.atsignCreator, currentAtsign, event);
 
-      // print('acknowledged data:${notification}');
+      // print('event key:${key} , keyType:${keyType}');
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
@@ -167,20 +173,28 @@ class EventProvider extends BaseModel {
   }
 
   AtKey formAtKey(ATKEY_TYPE_ENUM keyType, String atkeyMicrosecondId,
-      String sharedWith, String sharedBy) {
-    AtKey key = AtKey()
-      ..metadata = Metadata()
-      ..metadata.ttr = -1
-      ..sharedWith = sharedWith
-      ..sharedBy = sharedBy;
-
+      String sharedWith, String sharedBy, EventNotificationModel eventData) {
     switch (keyType) {
       case ATKEY_TYPE_ENUM.CREATEEVENT:
-        key.key = 'createevent-$atkeyMicrosecondId';
-        return key;
+        AtKey atKey;
+        List<HybridNotificationModel> allEventsNotfication =
+            HomeEventService().getAllEvents;
+        allEventsNotfication.forEach((event) {
+          if (event.notificationType == NotificationType.Event &&
+              event.key == eventData.key) {
+            atKey = event.atKey;
+          }
+        });
+        return atKey;
         break;
 
       case ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT:
+        AtKey key = AtKey()
+          ..metadata = Metadata()
+          ..metadata.ttr = -1
+          ..sharedWith = sharedWith
+          ..sharedBy = sharedBy;
+
         key.key = 'eventacknowledged-$atkeyMicrosecondId';
         return key;
         break;
@@ -383,5 +397,3 @@ class EventProvider extends BaseModel {
     return tempHyridNotificationModel;
   }
 }
-
-enum ATKEY_TYPE_ENUM { CREATEEVENT, ACKNOWLEDGEEVENT }

@@ -47,7 +47,7 @@ class HomeEventService {
 
   onEventModelTap(
       EventNotificationModel eventNotificationModel, EventProvider provider) {
-    print('event tapped:${eventNotificationModel.group}');
+    // print('event tapped:${eventNotificationModel.isSharing}');
     if (isActionRequired(eventNotificationModel) &&
         !eventNotificationModel.isCancelled) {
       return BackendService.getInstance().showMyDialog(
@@ -62,10 +62,17 @@ class HomeEventService {
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             onEventCancel: () {
           provider.cancelEvent(eventNotificationModel);
-        }, onEventExit: () {
+        }, onEventExit: (
+                {bool isExited,
+                bool isSharing,
+                ATKEY_TYPE_ENUM keyType,
+                EventNotificationModel eventData}) {
           provider.actionOnEvent(
-              eventNotificationModel, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-              isExited: true);
+            eventNotificationModel,
+            keyType,
+            isExited: isExited,
+            isSharing: isSharing,
+          );
         }, onEventUpdate: (EventNotificationModel eventData) {
           provider.mapUpdatedEventDataToWidget(eventData);
         }, eventListenerKeyword: eventNotificationModel),
