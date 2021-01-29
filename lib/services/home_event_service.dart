@@ -5,7 +5,9 @@ import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
+import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 
@@ -54,8 +56,7 @@ class HomeEventService {
         builder: (context) => AtsignLocationPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
-            atHybridAllUsersStream: LocationNotificationListener()
-                .atHybridUsersStream, onEventCancel: () {
+            onEventCancel: () {
           provider.cancelEvent(eventNotificationModel);
         }, onEventExit: () {
           provider.actionOnEvent(
@@ -75,9 +76,18 @@ class HomeEventService {
         builder: (context) => AtsignLocationPlugin(
           ClientSdkService.getInstance().atClientServiceInstance.atClient,
           allUsersList: LocationNotificationListener().allUsersList,
-          atHybridAllUsersStream:
-              LocationNotificationListener().atHybridUsersStream,
           userListenerKeyword: locationNotificationModel,
+          onShareToggle: locationNotificationModel.key.contains("sharelocation")
+              ? LocationSharingService().updateWithShareLocationAcknowledge
+              : RequestLocationService().requestLocationAcknowledgment,
+          onRemove: locationNotificationModel.key.contains("sharelocation")
+              ? (locationNotificationModel) => LocationSharingService()
+                  .removePerson(locationNotificationModel)
+              : (locationNotificationModel) => RequestLocationService()
+                  .removePerson(locationNotificationModel),
+          //     onRemove: () {
+          //   print('onRemove');
+          // }
         ),
       ),
     );
