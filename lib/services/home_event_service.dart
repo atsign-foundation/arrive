@@ -4,6 +4,7 @@ import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
@@ -52,7 +53,9 @@ class HomeEventService {
       MaterialPageRoute(
         builder: (context) => AtsignLocationPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
-            onEventCancel: () {
+            allUsersList: LocationNotificationListener().allUsersList,
+            atHybridAllUsersStream: LocationNotificationListener()
+                .atHybridUsersStream, onEventCancel: () {
           provider.cancelEvent(eventNotificationModel);
         }, onEventExit: () {
           provider.actionOnEvent(
@@ -71,6 +74,9 @@ class HomeEventService {
       MaterialPageRoute(
         builder: (context) => AtsignLocationPlugin(
           ClientSdkService.getInstance().atClientServiceInstance.atClient,
+          allUsersList: LocationNotificationListener().allUsersList,
+          atHybridAllUsersStream:
+              LocationNotificationListener().atHybridUsersStream,
           userListenerKeyword: locationNotificationModel,
         ),
       ),
@@ -181,7 +187,7 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
               ? ''
               : hybridNotificationModel.locationNotificationModel.isExited
                   ? 'Received Share location request rejected'
-                  : 'Awaiting response')
+                  : 'Action required')
           : (hybridNotificationModel.locationNotificationModel.isAccepted
               ? ''
               : hybridNotificationModel.locationNotificationModel.isExited
