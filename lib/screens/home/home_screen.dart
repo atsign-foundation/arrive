@@ -164,7 +164,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 provider);
                           },
                           child: DisplayTile(
-                            image: AllImages().PERSON2,
+                            atsignCreator: provider
+                                .allHybridNotifications[index]
+                                .eventNotificationModel
+                                .atsignCreator,
                             title: getTitle(
                                 provider.allHybridNotifications[index]),
                             subTitle: getSubTitle(
@@ -186,7 +189,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .locationNotificationModel);
                           },
                           child: DisplayTile(
-                            image: AllImages().PERSON2,
+                            atsignCreator: provider
+                                .allHybridNotifications[index]
+                                .locationNotificationModel
+                                .atsignCreator,
                             title: getTitle(
                                 provider.allHybridNotifications[index]),
                             subTitle: getSubTitle(

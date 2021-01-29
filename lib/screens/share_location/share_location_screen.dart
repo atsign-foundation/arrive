@@ -124,7 +124,6 @@ class ShareLocationScreen extends StatelessWidget {
               Divider(),
               DisplayTile(
                   title: 'Levina Thomas and 9 more',
-                  image: AllImages().PERSON2,
                   semiTitle: '10 people',
                   subTitle: 'Share my location from 21:00 today',
                   action: Transform.rotate(

@@ -122,10 +122,7 @@ class _RequestLocationScreenState extends State<RequestLocationScreen> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        DisplayTile(
-                            title: 'Levina Thomas',
-                            image: AllImages().PERSON2,
-                            subTitle: '@sign'),
+                        DisplayTile(title: 'Levina Thomas', subTitle: '@sign'),
                         Text(
                           'This user does not share his location',
                           style: CustomTextStyles().grey12,

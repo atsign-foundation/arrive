@@ -118,8 +118,7 @@ Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
     itemBuilder: (context, index) {
       return DisplayTile(
         title: events[index].eventNotificationModel.title,
-        number: 10,
-        image: AllImages().PERSON2,
+        atsignCreator: events[index].eventNotificationModel.atsignCreator,
         subTitle:
             'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
         invitedBy:
@@ -152,8 +151,7 @@ Widget getPastEvents(List<HybridNotificationModel> allEvents) {
     itemBuilder: (context, index) {
       return DisplayTile(
         title: events[index].eventNotificationModel.title,
-        number: 10,
-        image: AllImages().PERSON2,
+        atsignCreator: events[index].eventNotificationModel.atsignCreator,
         subTitle:
             'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
         invitedBy:

@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:at_commons/at_commons.dart';
+import 'package:at_contact/at_contact.dart';
+import 'package:atsign_events/common_components/contacts_initials.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 import 'package:atsign_events/services/event_services.dart';
@@ -54,11 +58,29 @@ class _ShareLocationNotifierDialogState
   int minutes;
   EventNotificationModel concurrentEvent;
   bool isOverlap = false;
+  AtContact contact;
+  Uint8List image;
 
   @override
   void initState() {
     // TODO: implement initState
     if (widget.eventData != null) checkForEventOverlap();
+    getEventCreator();
+  }
+
+  getEventCreator() async {
+    AtContactsImpl atContact = await AtContactsImpl.getInstance(
+        ClientSdkService.getInstance()
+            .atClientServiceInstance
+            .atClient
+            .currentAtSign);
+    contact = await atContact.get('@alice🛠');
+    if (contact != null) {
+      if (contact.tags != null && contact.tags['image'] != null) {
+        List<int> intList = contact.tags['image'].cast<int>();
+        image = Uint8List.fromList(intList);
+      }
+    }
   }
 
   checkForEventOverlap() {
@@ -103,8 +125,17 @@ class _ShareLocationNotifierDialogState
                   SizedBox(height: 30),
                   Stack(
                     children: [
-                      CustomCircleAvatar(
-                          image: AllImages().PERSON2, size: 74.toHeight),
+                      image != null
+                          ? CustomCircleAvatar(
+                              image: AllImages().PERSON2, size: 74.toHeight)
+                          : ContactInitial(
+                              initials: widget.eventData != null
+                                  ? widget.eventData.atsignCreator
+                                      .substring(1, 3)
+                                  : widget.locationData.atsignCreator
+                                      .substring(1, 3),
+                              size: 60,
+                            ),
                       widget.showMembersCount
                           ? Positioned(
                               right: 0,

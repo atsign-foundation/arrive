@@ -55,7 +55,6 @@ class Participants extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return DisplayTile(
                   title: 'user name',
-                  image: AllImages().PERSON1,
                   subTitle: '@sign',
                   action: Text(
                     'At the location',
