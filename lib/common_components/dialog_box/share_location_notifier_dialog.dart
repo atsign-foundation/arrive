@@ -331,7 +331,7 @@ class _ShareLocationNotifierDialogState
                 ? 30
                 : (value == '2 hours'
                     ? (2 * 60)
-                    : (value == '24 hours' ? (24 * 60) : -1)));
+                    : (value == '24 hours' ? (24 * 60) : null)));
             print('hours = $result');
           },
         ),

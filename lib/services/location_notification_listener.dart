@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
+import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location/location_modal/hybrid_model.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location/service/location_service.dart';
 import 'package:latlong/latlong.dart';
+
+import 'client_sdk_service.dart';
 
 class LocationNotificationListener {
   LocationNotificationListener._();
@@ -46,7 +50,7 @@ class LocationNotificationListener {
       print('!contains');
       String atsign = newUser.atsignCreator;
       LatLng _latlng = newUser.getLatLng;
-      var _image = await getImageOfAtsign(atsign);
+      var _image = await getImageOfAtsignNew(atsign);
 
       HybridModel user = HybridModel(
           displayName: newUser.atsignCreator,
@@ -90,5 +94,23 @@ class LocationNotificationListener {
     } catch (e) {
       return null;
     }
+  }
+
+  getImageOfAtsignNew(String atsign) async {
+    AtContact contact;
+    Uint8List image;
+    AtContactsImpl atContact = await AtContactsImpl.getInstance(
+        ClientSdkService.getInstance()
+            .atClientServiceInstance
+            .atClient
+            .currentAtSign);
+    contact = await atContact.get(atsign);
+    if (contact != null) {
+      if (contact.tags != null && contact.tags['image'] != null) {
+        List<int> intList = contact.tags['image'].cast<int>();
+        image = Uint8List.fromList(intList);
+      }
+    }
+    return image;
   }
 }

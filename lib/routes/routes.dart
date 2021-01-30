@@ -25,7 +25,10 @@ class SetupRoutes {
       Routes.TERMS_CONDITIONS_SCREEN: (context) => TermsConditions(),
       Routes.GROUP_LIST: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-        return GroupList(currentAtsign: args['currentAtSign'], useTheme: true);
+        return GroupList(
+          currentAtsign: args['currentAtSign'],
+          //  useTheme: true
+        );
       },
       Routes.SHARE_LOCATION_EVENT: (context) => ShareLocationScreen(
             length: (ModalRoute.of(context).settings.arguments as Map ??

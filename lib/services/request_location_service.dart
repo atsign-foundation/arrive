@@ -44,12 +44,6 @@ class RequestLocationService {
     return [result, locationNotificationModel];
   }
 
-// before
-// notification.value -> AtValue{value: {"atsignCreator":"@bob🛠","receiver":"@colin🛠","lat":"null","long":"null","key":"requestlocation-1611818639695437","from":"null","to":"null","isAcknowledgment":"false","isRequest":"true","isAccepted":"false","isExited":"false","updateMap":"false","isSharing":"true"}, metadata: Metadata{ttl: null, ttb: null, ttr: -1,ccd: false, isPublic: false, isHidden: false, availableAt : null, expiresAt : null, refreshAt : null, createdAt : 2021-01-28 07:29:27.380Z,updatedAt : 2021-01-28 07:29:27.380Z,isBinary : null, isEncrypted : null, isCached : false, dataSignature: null}}
-// @colin🛠:requestlocationacknowledged-1611818639695437@bob🛠 => 30 min from 1:03pm
-
-//
-// @bob🛠:requestlocation-1611818478179344@colin🛠 => ttl 1:17:36
   requestLocationAcknowledgment(
       LocationNotificationModel locationNotificationModel, bool isAccepted,
       {int minutes, bool isSharing}) async {

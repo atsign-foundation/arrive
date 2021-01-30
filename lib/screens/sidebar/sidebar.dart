@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:at_contact/at_contact.dart';
+import 'package:atsign_contacts/widgets/contacts_initials.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
@@ -17,12 +21,37 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   bool state = false;
+  Uint8List image;
+  AtContact contact;
+  AtContactsImpl atContact;
+
+  getEventCreator() async {
+    atContact = await AtContactsImpl.getInstance(ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .currentAtSign);
+    contact = await atContact.get(ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .currentAtSign);
+    if (contact != null) {
+      if (contact.tags != null && contact.tags['image'] != null) {
+        List<int> intList = contact.tags['image'].cast<int>();
+        Uint8List newImage = Uint8List.fromList(intList);
+        if (newImage != null)
+          setState(() {
+            image = newImage;
+          });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
         ? true
         : false;
-
+    getEventCreator();
     return Drawer(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -37,10 +66,17 @@ class _SideBarState extends State<SideBar> {
                   horizontal: 0.toWidth, vertical: 50.toHeight),
               child: Row(
                 children: [
-                  CustomCircleAvatar(
-                    size: 60,
-                    image: AllImages().PERSON1,
-                  ),
+                  (image != null)
+                      ? CustomCircleAvatar(
+                          size: 60,
+                          image: AllImages().PERSON1,
+                        )
+                      : ContactInitial(
+                          initials: ClientSdkService.getInstance()
+                              .atClientServiceInstance
+                              .atClient
+                              .currentAtSign
+                              .substring(1, 3)),
                   Flexible(
                       child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -123,26 +159,39 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 40.toHeight,
             ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Dark Theme',
+            //       style: CustomTextStyles().darkGrey16,
+            //     ),
+            //     Switch(
+            //       value: state,
+            //       onChanged: (value) {
+            //         value
+            //             ? Provider.of<ThemeProvider>(context, listen: false)
+            //                 .setTheme(ThemeColor.Dark)
+            //             : Provider.of<ThemeProvider>(context, listen: false)
+            //                 .setTheme(ThemeColor.Light);
+
+            //         setState(() {
+            //           state = value;
+            //         });
+            //       },
+            //     )
+            //   ],
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Dark Theme',
+                  'Location Sharing',
                   style: CustomTextStyles().darkGrey16,
                 ),
                 Switch(
-                  value: state,
-                  onChanged: (value) {
-                    value
-                        ? Provider.of<ThemeProvider>(context, listen: false)
-                            .setTheme(ThemeColor.Dark)
-                        : Provider.of<ThemeProvider>(context, listen: false)
-                            .setTheme(ThemeColor.Light);
-
-                    setState(() {
-                      state = value;
-                    });
-                  },
+                  value: true,
+                  onChanged: (value) {},
                 )
               ],
             ),

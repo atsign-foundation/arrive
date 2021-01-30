@@ -142,7 +142,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
         ? 30
         : (selectedOption == '2 hours'
             ? (2 * 60)
-            : (selectedOption == '24 hours' ? (24 * 60) : -1)));
+            : (selectedOption == '24 hours' ? (24 * 60) : null)));
     setState(() {
       isLoading = true;
     });

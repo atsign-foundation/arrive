@@ -1,6 +1,8 @@
+import 'package:atsign_contacts_group/widgets/custom_toast.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
@@ -8,6 +10,7 @@ import 'package:atsign_location_app/services/location_notification_listener.dart
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
@@ -45,7 +48,9 @@ class HomeEventService {
               : BackendService.getInstance().showMyDialog(
                   locationNotificationModel.atsignCreator,
                   locationData: locationNotificationModel))
-          : navigatorPushToMap(locationNotificationModel);
+          : (locationNotificationModel.isAccepted
+              ? navigatorPushToMap(locationNotificationModel)
+              : null);
   }
 
   onEventModelTap(
@@ -89,18 +94,49 @@ class HomeEventService {
       NavService.navKey.currentContext,
       MaterialPageRoute(
         builder: (context) => AtsignLocationPlugin(
-          ClientSdkService.getInstance().atClientServiceInstance.atClient,
-          allUsersList: LocationNotificationListener().allUsersList,
-          userListenerKeyword: locationNotificationModel,
-          onShareToggle: locationNotificationModel.key.contains("sharelocation")
-              ? LocationSharingService().updateWithShareLocationAcknowledge
-              : RequestLocationService().requestLocationAcknowledgment,
-          onRemove: locationNotificationModel.key.contains("sharelocation")
-              ? (locationNotificationModel) => LocationSharingService()
-                  .removePerson(locationNotificationModel)
-              : (locationNotificationModel) => RequestLocationService()
-                  .removePerson(locationNotificationModel),
-        ),
+            ClientSdkService.getInstance().atClientServiceInstance.atClient,
+            allUsersList: LocationNotificationListener().allUsersList,
+            userListenerKeyword: locationNotificationModel,
+            onShareToggle: locationNotificationModel.key
+                    .contains("sharelocation")
+                ? LocationSharingService().updateWithShareLocationAcknowledge
+                : RequestLocationService().requestLocationAcknowledgment,
+            onRequest: locationNotificationModel.atsignCreator ==
+                    ClientSdkService.getInstance()
+                        .atClientServiceInstance
+                        .atClient
+                        .currentAtSign
+                ? () async {
+                    var result = await RequestLocationService()
+                        .sendRequestLocationEvent(
+                            locationNotificationModel.receiver);
+                    if (result[0] == true) {
+                      CustomToast()
+                          .show('Share Location Request sent', context);
+                      providerCallback<HybridProvider>(
+                          NavService.navKey.currentContext,
+                          task: (provider) => provider.addNewEvent(
+                              BackendService.getInstance().convertEventToHybrid(
+                                  NotificationType.Location,
+                                  locationNotificationModel: result[1])),
+                          taskName: (provider) => provider.HYBRID_ADD_EVENT,
+                          showLoader: false,
+                          onSuccess: (provider) {});
+                    } else {
+                      CustomToast()
+                          .show('some thing went wrong , try again.', context);
+                    }
+                  }
+                : null,
+            onRemove: locationNotificationModel.key.contains("sharelocation")
+                ? (locationNotificationModel) async {
+                    return await LocationSharingService()
+                        .removePerson(locationNotificationModel);
+                  }
+                : (locationNotificationModel) async {
+                    return await RequestLocationService()
+                        .removePerson(locationNotificationModel);
+                  }),
       ),
     );
   }
@@ -153,6 +189,8 @@ String getActionString(EventNotificationModel event) {
 }
 
 getSubTitle(HybridNotificationModel hybridNotificationModel) {
+  DateTime to;
+  String time;
   if (hybridNotificationModel.notificationType == NotificationType.Event) {
     return hybridNotificationModel.eventNotificationModel.event != null
         ? hybridNotificationModel.eventNotificationModel.event.date != null
@@ -161,31 +199,38 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
         : '';
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
+    to = hybridNotificationModel.locationNotificationModel.to;
+    if (to != null)
+      time =
+          'until ${timeOfDayToString(TimeOfDay.fromDateTime(hybridNotificationModel.locationNotificationModel.to))} today';
+    else
+      time = '';
     if (hybridNotificationModel.locationNotificationModel.key
-        .contains('sharelocation'))
+        .contains('sharelocation')) {
       return hybridNotificationModel.locationNotificationModel.atsignCreator ==
               ClientSdkService.getInstance()
                   .atClientServiceInstance
                   .atClient
                   .currentAtSign
-          ? 'Can see my location'
-          : 'Sharing his location';
-    else
+          ? 'Can see my location $time'
+          : 'Can see his location $time';
+    } else {
       return hybridNotificationModel.locationNotificationModel.isAccepted
-          ? hybridNotificationModel.locationNotificationModel.atsignCreator ==
+          ? (hybridNotificationModel.locationNotificationModel.atsignCreator ==
                   ClientSdkService.getInstance()
                       .atClientServiceInstance
                       .atClient
                       .currentAtSign
-              ? 'Shring my location'
-              : 'Sharing his location'
-          : hybridNotificationModel.locationNotificationModel.atsignCreator ==
+              ? 'Sharing my location $time'
+              : 'Sharing his location $time')
+          : (hybridNotificationModel.locationNotificationModel.atsignCreator ==
                   ClientSdkService.getInstance()
                       .atClientServiceInstance
                       .atClient
                       .currentAtSign
               ? 'Requested Location received'
-              : 'Requested Location sent';
+              : 'Requested Location sent');
+    }
   }
 }
 

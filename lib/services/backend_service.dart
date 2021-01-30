@@ -191,11 +191,6 @@ class BackendService {
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       print('sharelocationacknowledged ${locationData.isAccepted}');
       LocationSharingService().updateWithShareLocationAcknowledge(locationData);
-      if (locationData.isAccepted == true) {
-        // add to your list
-      } else {
-        //add to your list with rejected message
-      }
     } else if (atKey.toString().contains('sharelocation')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
