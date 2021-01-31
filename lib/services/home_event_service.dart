@@ -75,13 +75,14 @@ class HomeEventService {
                 {bool isExited,
                 bool isSharing,
                 ATKEY_TYPE_ENUM keyType,
-                EventNotificationModel eventData}) {
-          provider.actionOnEvent(
+                EventNotificationModel eventData}) async {
+          var result = await provider.actionOnEvent(
             eventNotificationModel,
             keyType,
             isExited: isExited,
             isSharing: isSharing,
           );
+          return result;
         }, onEventUpdate: (EventNotificationModel eventData) {
           provider.mapUpdatedEventDataToWidget(eventData);
         }, eventListenerKeyword: eventNotificationModel),

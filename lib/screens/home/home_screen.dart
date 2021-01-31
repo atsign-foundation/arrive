@@ -264,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onSuccess: (provider) {});
                     }, createdEvents: allEvents),
                     SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
-                  eventProvider.getAllEvents();
+                  // eventProvider.getAllEvents();
                 });
               }),
           Tasks(

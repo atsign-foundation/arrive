@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 bottomSheet(BuildContext context, T, double height,
     {Function onSheetCLosed}) async {
-  Future<void> future = await showModalBottomSheet(
+  Future<void> future = showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       shape: StadiumBorder(),

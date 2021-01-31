@@ -163,12 +163,14 @@ class EventProvider extends BaseModel {
       // print('acknowledged data:${notification}');
 
       var result = await atClientInstance.put(key, notification);
-      // updateEventAccordingToAcknowledgedData();
-
       setStatus(UPDATE_EVENTS, Status.Done);
+
+      // updateEventAccordingToAcknowledgedData();
+      return result;
     } catch (e) {
       print('error in updating event $e');
       setStatus(UPDATE_EVENTS, Status.Error);
+      return e.toString();
     }
   }
 

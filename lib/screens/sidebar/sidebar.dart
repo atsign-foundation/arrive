@@ -190,8 +190,18 @@ class _SideBarState extends State<SideBar> {
                   style: CustomTextStyles().darkGrey16,
                 ),
                 Switch(
-                  value: true,
-                  onChanged: (value) {},
+                  value: state,
+                  onChanged: (value) {
+                    // value
+                    //     ? Provider.of<ThemeProvider>(context, listen: false)
+                    //         .setTheme(ThemeColor.Dark)
+                    //     : Provider.of<ThemeProvider>(context, listen: false)
+                    //         .setTheme(ThemeColor.Light);
+
+                    setState(() {
+                      state = value;
+                    });
+                  },
                 )
               ],
             ),

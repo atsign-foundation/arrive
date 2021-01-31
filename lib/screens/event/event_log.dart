@@ -135,10 +135,10 @@ Widget getPastEvents(List<HybridNotificationModel> allEvents) {
   allEvents.forEach((event) {
     DateTime eventDate = event.eventNotificationModel.event.date;
 
-    if ((event.eventNotificationModel.event.date.year != todaysDate.year &&
-            event.eventNotificationModel.event.date.month != todaysDate.month &&
-            event.eventNotificationModel.event.date.day != todaysDate.day) &&
-        todaysDate.compareTo(eventDate) == 1) {
+    if (!(event.eventNotificationModel.event.date.year == todaysDate.year &&
+            event.eventNotificationModel.event.date.month == todaysDate.month &&
+            event.eventNotificationModel.event.date.day == todaysDate.day) &&
+        (todaysDate.compareTo(eventDate) == 1)) {
       events.add(event);
     }
   });
