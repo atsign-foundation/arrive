@@ -1,12 +1,18 @@
+import 'dart:typed_data';
+
+import 'package:at_contact/at_contact.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
+import 'package:atsign_contacts/widgets/contacts_initials.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 import 'package:provider/provider.dart';
 
 class SideBar extends StatefulWidget {
@@ -16,12 +22,31 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   bool state = false;
+  Uint8List image;
+  AtContact contact;
+  AtContactsImpl atContact;
+
+  getEventCreator() async {
+    AtContact contact = await getAtSignDetails(ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .currentAtSign);
+    if (contact != null) {
+      if (contact.tags != null && contact.tags['image'] != null) {
+        List<int> intList = contact.tags['image'].cast<int>();
+        setState(() {
+          image = Uint8List.fromList(intList);
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
         ? true
         : false;
-
+    getEventCreator();
     return Drawer(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -36,10 +61,14 @@ class _SideBarState extends State<SideBar> {
                   horizontal: 0.toWidth, vertical: 50.toHeight),
               child: Row(
                 children: [
-                  CustomCircleAvatar(
-                    size: 60,
-                    image: AllImages().PERSON1,
-                  ),
+                  (image != null)
+                      ? Image.memory(image, width: 50, height: 50)
+                      : ContactInitial(
+                          initials: ClientSdkService.getInstance()
+                              .atClientServiceInstance
+                              .atClient
+                              .currentAtSign
+                              .substring(1, 3)),
                   Flexible(
                       child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -54,7 +83,11 @@ class _SideBarState extends State<SideBar> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '@sign',
+                          ClientSdkService.getInstance()
+                                  .atClientServiceInstance
+                                  .atClient
+                                  .currentAtSign ??
+                              '@sign',
                           style: CustomTextStyles().darkGrey14,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -73,7 +106,16 @@ class _SideBarState extends State<SideBar> {
             iconText(
               'Contacts',
               Icons.contacts_rounded,
-              () => SetupRoutes.push(context, Routes.CONTACT_SCREEN),
+              () async {
+                ClientSdkService clientSdkService =
+                    ClientSdkService.getInstance();
+                String currentAtSign = await clientSdkService.getAtSign();
+                return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
+                    arguments: {
+                      'currentAtSign': currentAtSign,
+                      'asSelectionScreen': false
+                    });
+              },
             ),
             SizedBox(
               height: 25.toHeight,
@@ -81,7 +123,14 @@ class _SideBarState extends State<SideBar> {
             iconText(
               'Groups',
               Icons.group,
-              () => SetupRoutes.push(context, Routes.GROUP_LIST),
+              () async {
+                ClientSdkService clientSdkService =
+                    ClientSdkService.getInstance();
+                String currentAtSign = await clientSdkService.getAtSign();
+                return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
+                  'currentAtSign': currentAtSign,
+                });
+              },
             ),
             SizedBox(
               height: 25.toHeight,
@@ -102,22 +151,39 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 40.toHeight,
             ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     Text(
+            //       'Dark Theme',
+            //       style: CustomTextStyles().darkGrey16,
+            //     ),
+            //     Switch(
+            //       value: state,
+            //       onChanged: (value) {
+            //         value
+            //             ? Provider.of<ThemeProvider>(context, listen: false)
+            //                 .setTheme(ThemeColor.Dark)
+            //             : Provider.of<ThemeProvider>(context, listen: false)
+            //                 .setTheme(ThemeColor.Light);
+
+            //         setState(() {
+            //           state = value;
+            //         });
+            //       },
+            //     )
+            //   ],
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Dark Theme',
+                  'Location Sharing',
                   style: CustomTextStyles().darkGrey16,
                 ),
                 Switch(
                   value: state,
                   onChanged: (value) {
-                    value
-                        ? Provider.of<ThemeProvider>(context, listen: false)
-                            .setTheme(ThemeColor.Dark)
-                        : Provider.of<ThemeProvider>(context, listen: false)
-                            .setTheme(ThemeColor.Light);
-
                     setState(() {
                       state = value;
                     });

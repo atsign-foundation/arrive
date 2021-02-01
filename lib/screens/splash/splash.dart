@@ -1,16 +1,19 @@
+import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:atsign_authentication_helper/atsign_authentication_helper.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
+import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_common/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
-
-import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -18,24 +21,19 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  // NotificationService _notificationService;
   bool onboardSuccess = false;
   bool sharingStatus = false;
   BackendService backendService;
-  // bool userAcceptance;
-  final Permission _cameraPermission = Permission.camera;
-  final Permission _storagePermission = Permission.storage;
   Completer c = Completer();
   bool authenticating = false;
-  StreamSubscription _intentDataStreamSubscription;
-  // FilePickerProvider filePickerProvider;
+  ClientSdkService clientSdkService = ClientSdkService.getInstance();
 
   @override
   void initState() {
     super.initState();
-    // _notificationService = NotificationService();
+
     _initBackendService();
-    _checkToOnboard();
+    // _checkToOnboard();
     // acceptFiles();
     // _checkForPermissionStatus();
   }
@@ -62,11 +60,22 @@ class _SplashState extends State<Splash> {
   }
 
   String state;
-  void _initBackendService() {
+  void _initBackendService() async {
     backendService = BackendService.getInstance();
+    backendService.atClientServiceInstance = new AtClientService();
+    clientSdkService = ClientSdkService.getInstance();
+    // clientSdkService.atClientServiceInstance = new AtClientService();
+    var isOnBoard = await clientSdkService.onboard();
+    if (isOnBoard != null && isOnBoard == true) {
+      print('on board $isOnBoard');
+      await BackendService.getInstance().onboard();
+      await BackendService.getInstance().startMonitor();
+      SetupRoutes.push(context, Routes.HOME);
+    }
 
     // _notificationService.setOnNotificationClick(onNotificationClick);
     SystemChannels.lifecycle.setMessageHandler((msg) {
+      print('set message handler');
       state = msg;
       debugPrint('SystemChannels> $msg');
       backendService.app_lifecycle_state = msg;
@@ -139,49 +148,38 @@ class _SplashState extends State<Splash> {
               ),
             ),
             Positioned(
-                bottom: 130.toHeight,
-                right: 36.toWidth,
-                child: CustomButton(
-                    height: 40,
-                    width: 120,
-                    radius: 100.toHeight,
-                    child: Text(
-                      'Explore',
-                      style: TextStyle(
-                          color: Theme.of(context).scaffoldBackgroundColor),
-                    ),
-                    // onTap: () => cramAuthWithoutQR(),
+              bottom: 130.toHeight,
+              right: 36.toWidth,
+              child: CustomButton(
+                  height: 40,
+                  width: 120,
+                  radius: 100.toHeight,
+                  child: Text(
+                    'Explore',
+                    style: CustomTextStyles().white15,
+                  ),
+                  // onTap: () => cramAuthWithoutQR(),
 
-                    onTap: () =>
-                        SetupRoutes.push(context, Routes.SCAN_QR_SCREEN),
-                    bgColor: Theme.of(context).primaryColor)),
+                  // onTap: () => SetupRoutes.push(context, Routes.HOME),
+                  onTap: () async {
+                    await Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScanQrScreen(
+                          atClientServiceInstance:
+                              clientSdkService.atClientServiceInstance,
+                          atClientPreference:
+                              ClientSdkService.getInstance().atClientPreference,
+                          nextScreen: HomeScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  bgColor: AllColors().Black),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  void cramAuthWithoutQR() async {
-    // setStatus(cramWithoutQr, Status.Loading);
-    bool response = false;
-    try {
-      String colinSecret =
-          "540f1b5fa05b40a58ea7ef82d3cfcde9bb72db8baf4bc863f552f82695837b9fee631f773ab3e34dde05b51e900220e6ae6f7240ec9fc1d967252e1aea4064ba";
-      String kevinSecret =
-          'e0d06915c3f81561fb5f8929caae64a7231db34fdeaff939aacac3cb736be8328c2843b518a2fc7a58fcec8c0aa98c735c0ce5f8ce880e97cd61cf1f2751efc5';
-      response = await backendService.authenticateWithCram("@kevin🛠",
-          cramSecret: kevinSecret);
-      // .then((response) async {
-
-      print("auth successful $response");
-      if (response != null) {
-        await backendService.startMonitor();
-        SetupRoutes.push(context, Routes.SCAN_QR_SCREEN);
-      }
-      // setStatus(cramWithoutQr, Status.Done);
-    } catch (e) {
-      // setError(cramWithoutQr, e.toString());
-      print('ERROR IN CRAM=====>$e');
-    }
   }
 }

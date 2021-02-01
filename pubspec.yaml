@@ -39,39 +39,66 @@ dependencies:
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
   at_client_mobile:
-    path: ../../../../Downloads/Archive/atsign_foundation/at_client_mobile
+    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_client_sdk/at_client_mobile
     # git:
-    #   url: git@github.com:atsign-foundation/at_client_sdk.git
+    #   url: git@github.com:atsign-company/atsign_foundation.git
     #   path: at_client_mobile
     #   ref: dev_env
+   
   at_contact: 
-    path: ../../../../Downloads/Archive/atsign_foundation/at_contact
+    path: ../at_libraries/at_contact
+    
     # git:
-    #   url: git@github.com:atsign-foundation/at_libraries.git
+    #   url: git@github.com:atsign-company/atsign_foundation.git
     #   path: at_contact
     #   ref: dev_env
+ 
   at_commons:
     path: ../../../../Downloads/Archive/atsign_foundation/at_commons
     # git:
     #   url: git@github.com:atsign-company/atsign_foundation.git
     #   path: at_commons
     #   ref: dev_env
+  
   at_lookup:
     path: ../../../../Downloads/Archive/atsign_foundation/at_lookup
     # git:
-    #   url: git@github.com:atsign-foundation/at_libraries.git
+    #   url: git@github.com:atsign-company/atsign_foundation.git
     #   path: at_lookup
     #   ref: dev_env
 
+
+    
   atsign_events:
     path: ../atsign-events
 
-  # atsign_contacts_group:
-  #   git:
-  #     url: git@git.geekyants.com:flutter-client-projects/atsign-contact-groups.git
-  #     ref: staging
+  atsign_contacts_group:
+    path: ../atsign-contact-groups
+    # git:
+    #   url: git@git.geekyants.com:flutter-client-projects/atsign-contact-groups.git
+    #   ref: staging
+  
+  atsign_contacts:  
+    path: ../atsign-contacts
+    # git:
+    #    url: git@git.geekyants.com:flutter-client-projects/atsign-contacts.git
+    #    ref: development 
+ 
 
+  atsign_authentication_helper :
+    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
+ 
+  
+  atsign_chat:
+    path: ../atsign-chat
+    
+  atsign_location:
+    path: ../atsign-location
+    # git:
+    #   url: git@git.geekyants.com:flutter-client-projects/atsign-location.git
+    #   ref: staging
 
+  latlong: ^0.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

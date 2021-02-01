@@ -6,7 +6,7 @@ import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 
 class Participants extends StatelessWidget {
   @override
@@ -55,7 +55,6 @@ class Participants extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return DisplayTile(
                   title: 'user name',
-                  image: AllImages().PERSON1,
                   subTitle: '@sign',
                   action: Text(
                     'At the location',

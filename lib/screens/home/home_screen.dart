@@ -1,22 +1,38 @@
+import 'package:at_commons/at_commons.dart';
+import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
+import 'package:atsign_location/atsign_location.dart';
+import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
-import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
-import 'package:atsign_location_app/dummy_data/group_data.dart';
+
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
+import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
-import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/utils/constants/texts.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/utils/constants/images.dart';
+import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/request_location_provider.dart';
+import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
+import 'package:latlong/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:map/map.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:latlng/latlng.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
+import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -25,9 +41,45 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
-  final controller = MapController(
-    location: LatLng(35.68, 51.41),
-  );
+  EventProvider eventProvider = new EventProvider();
+  HybridProvider hybridProvider = new HybridProvider();
+
+  String currentAtSign;
+
+  @override
+  void initState() {
+    super.initState();
+    initializeContacts();
+    LocationNotificationListener()
+        .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+    eventProvider = context.read<EventProvider>();
+    // eventProvider
+    //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+
+    hybridProvider = context.read<HybridProvider>();
+    // hybridProvider
+    //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<EventProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<ShareLocationProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<RequestLocationProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<HybridProvider>(context, listen: false).init(
+          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+    });
+  }
+
+  initializeContacts() async {
+    currentAtSign = await ClientSdkService.getInstance().getAtSign();
+    initializeContactsService(
+        ClientSdkService.getInstance().atClientServiceInstance.atClient,
+        currentAtSign,
+        rootDomain: MixedConstants.ROOT_DOMAIN);
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -38,14 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: [
-              Map(
-                controller: controller,
-                builder: (context, x, y, z) {
-                  return CachedNetworkImage(
-                    imageUrl: AllText().URL(x, y, z),
-                    fit: BoxFit.cover,
-                  );
-                },
+              GestureDetector(
+                child: AbsorbPointer(
+                  absorbing: false,
+                  child: ShowLocation(LatLng(20, 30)),
+                ),
               ),
               Positioned(
                 top: 0,
@@ -60,17 +109,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: pc,
                 minHeight: 267.toHeight,
                 maxHeight: 530.toHeight,
-                collapsed: collapsedContent(2),
-                panel: collapsedContent(GroupData().group.length),
+                // collapsed: Text('sss'),
+                panel: collapsedContent(false),
+                // panel: Text(''),
               )
             ],
           )),
     );
   }
 
-  Widget collapsedContent(int length) {
+  Widget collapsedContent(bool isExpanded) {
     return Container(
-        height: length == 2 ? 260.toHeight : 530.toHeight,
+        height: !isExpanded ? 260.toHeight : 530.toHeight,
         padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -85,69 +135,82 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        child: SingleChildScrollView(
-          physics: length == 2
-              ? NeverScrollableScrollPhysics()
-              : AlwaysScrollableScrollPhysics(),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DraggableSymbol(),
-                SizedBox(
-                  height: 5.toHeight,
+        child: ProviderHandler<HybridProvider>(
+            functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
+            showError: true,
+            load: (provider) => provider.getAllHybridEvents(),
+            errorBuilder: (provider) => Center(
+                  child: Text('Some error occured'),
                 ),
-                DisplayTile(
-                  image: GroupData().group[0].image,
-                  title: 'Event @ Group Name',
-                  semiTitle: 'Action required',
-                  subTitle: 'Sharing my location until 20:00',
-                  number: 10,
-                ),
-                Divider(),
-                ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: length,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return DisplayTile(
-                      image: GroupData().group[index].image,
-                      title: GroupData().group[index].username,
-                      subTitle: GroupData().group[index].canSeeLocation
-                          ? 'Can see my location'
-                          : 'Sharing my location until ${GroupData().group[index].sharingUntil}',
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
-                  },
-                ),
-                length == 2
-                    ? Container(
-                        //height: 16.toHeight,
-                        alignment: Alignment.topCenter,
-                        width: SizeConfig().screenWidth,
-                        padding: EdgeInsets.fromLTRB(
-                            56.toHeight, 0.toHeight, 0.toWidth, 0.toHeight),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                        ),
-                        child: InkWell(
-                          onTap: () => pc.open(),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'See 9 more ',
-                                style: CustomTextStyles().darkGrey14,
-                              ),
-                              Icon(Icons.keyboard_arrow_down)
-                            ],
+            successBuilder: (provider) {
+              if (provider.allHybridNotifications.length == 0) {
+                return Center(
+                  child: Text('No data found'),
+                );
+              } else {
+                return ListView.separated(
+                    // physics: NeverScrollableScrollPhysics(),
+                    itemCount: provider.allHybridNotifications.length,
+                    shrinkWrap: true,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider();
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      if (provider.allHybridNotifications[index]
+                                  .notificationType ==
+                              NotificationType.Event &&
+                          provider.allHybridNotifications[index]
+                                  .eventNotificationModel !=
+                              null) {
+                        return InkWell(
+                          onTap: () {
+                            HomeEventService().onEventModelTap(
+                                provider.allHybridNotifications[index]
+                                    .eventNotificationModel,
+                                provider);
+                          },
+                          child: DisplayTile(
+                            atsignCreator: provider
+                                .allHybridNotifications[index]
+                                .eventNotificationModel
+                                .atsignCreator,
+                            title: getTitle(
+                                provider.allHybridNotifications[index]),
+                            subTitle: getSubTitle(
+                                provider.allHybridNotifications[index]),
+                            semiTitle: getSemiTitle(
+                                provider.allHybridNotifications[index]),
                           ),
-                        ))
-                    : SizedBox()
-              ]),
-        ));
+                        );
+                      } else if (provider.allHybridNotifications[index]
+                                  .notificationType ==
+                              NotificationType.Location &&
+                          provider.allHybridNotifications[index]
+                                  .locationNotificationModel !=
+                              null) {
+                        return InkWell(
+                          onTap: () {
+                            HomeEventService().onLocationModelTap(provider
+                                .allHybridNotifications[index]
+                                .locationNotificationModel);
+                          },
+                          child: DisplayTile(
+                            atsignCreator: provider
+                                .allHybridNotifications[index]
+                                .locationNotificationModel
+                                .atsignCreator,
+                            title: getTitle(
+                                provider.allHybridNotifications[index]),
+                            subTitle: getSubTitle(
+                                provider.allHybridNotifications[index]),
+                            semiTitle: getSemiTitle(
+                                provider.allHybridNotifications[index]),
+                          ),
+                        );
+                      }
+                    });
+              }
+            }));
   }
 
   Widget header() {
@@ -175,18 +238,53 @@ class _HomeScreenState extends State<HomeScreen> {
           Tasks(
               task: 'Create Event',
               icon: Icons.event,
-              onTap: () => bottomSheet(
-                  context, CreateEvent(), SizeConfig().screenHeight * 0.9)),
+              onTap: () {
+                List<HybridNotificationModel> allEvents = [];
+
+                hybridProvider.allHybridNotifications.forEach((event) {
+                  if (event.notificationType == NotificationType.Event) {
+                    allEvents.add(event);
+                  }
+                });
+                bottomSheet(
+                    context,
+                    CreateEvent(
+                        ClientSdkService.getInstance()
+                            .atClientServiceInstance
+                            .atClient,
+                        onEventSaved: (EventNotificationModel event) {
+                      providerCallback<HybridProvider>(
+                          NavService.navKey.currentContext,
+                          task: (provider) => provider.addNewEvent(
+                              BackendService.getInstance().convertEventToHybrid(
+                                  NotificationType.Event,
+                                  eventNotificationModel: event)),
+                          taskName: (provider) => provider.HYBRID_ADD_EVENT,
+                          showLoader: false,
+                          onSuccess: (provider) {});
+                    }, createdEvents: allEvents),
+                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
+                  // eventProvider.getAllEvents();
+                });
+              }),
           Tasks(
               task: 'Request Location',
               icon: Icons.refresh,
-              onTap: () => bottomSheet(context, RequestLocationSheet(),
-                  SizeConfig().screenHeight * 0.5)),
+              onTap: () async {
+                BackendService.getInstance().getAllNotificationKeys();
+                bottomSheet(context, RequestLocationSheet(),
+                    SizeConfig().screenHeight * 0.5);
+
+                // SendLocationNotification().manualLocationSend(39, -121);
+              }),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
-              onTap: () => bottomSheet(context, ShareLocationSheet(),
-                  SizeConfig().screenHeight * 0.6))
+              onTap: () {
+                // eventProvider.updateEventAccordingToAcknowledgedData();
+                bottomSheet(context, ShareLocationSheet(),
+                    SizeConfig().screenHeight * 0.6);
+              })
         ],
       ),
     );

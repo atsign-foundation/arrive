@@ -1,20 +1,51 @@
-import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
+import 'dart:typed_data';
+
+import 'package:at_contact/at_contact.dart';
+import 'package:atsign_events/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 
-class DisplayTile extends StatelessWidget {
-  final String title, semiTitle, subTitle, image, invitedBy;
+class DisplayTile extends StatefulWidget {
+  final String title, semiTitle, subTitle, atsignCreator, invitedBy;
   final int number;
   final Widget action;
   DisplayTile(
       {@required this.title,
-      @required this.image,
+      this.atsignCreator,
       @required this.subTitle,
       this.semiTitle,
       this.invitedBy,
       this.number,
       this.action});
+
+  @override
+  _DisplayTileState createState() => _DisplayTileState();
+}
+
+class _DisplayTileState extends State<DisplayTile> {
+  Uint8List image;
+  AtContact contact;
+  AtContactsImpl atContact;
+  @override
+  void initState() {
+    super.initState();
+    getEventCreator();
+  }
+
+  getEventCreator() async {
+    AtContact contact = await getAtSignDetails(widget.atsignCreator);
+    if (contact != null) {
+      if (contact.tags != null && contact.tags['image'] != null) {
+        List<int> intList = contact.tags['image'].cast<int>();
+        setState(() {
+          image = Uint8List.fromList(intList);
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,11 +54,13 @@ class DisplayTile extends StatelessWidget {
         children: [
           Stack(
             children: [
-              CustomCircleAvatar(
-                image: image,
-                size: 46,
-              ),
-              number != null
+              (image != null)
+                  ? Image.memory(image, width: 50, height: 50)
+                  : widget.atsignCreator != null
+                      ? ContactInitial(
+                          initials: widget.atsignCreator.substring(1, 3))
+                      : SizedBox(),
+              widget.number != null
                   ? Positioned(
                       right: 0,
                       bottom: 0,
@@ -39,7 +72,7 @@ class DisplayTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(15.0),
                             color: AllColors().BLUE),
                         child: Text(
-                          '+$number',
+                          '+${widget.number}',
                           style: CustomTextStyles().black10,
                         ),
                       ),
@@ -55,7 +88,7 @@ class DisplayTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  widget.title,
                   style: Theme.of(context).primaryTextTheme.headline3,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -63,10 +96,12 @@ class DisplayTile extends StatelessWidget {
                 SizedBox(
                   height: 3,
                 ),
-                semiTitle != null
+                widget.semiTitle != null
                     ? Text(
-                        semiTitle,
-                        style: semiTitle == 'Action required'
+                        widget.semiTitle,
+                        style: (widget.semiTitle == 'Action required' ||
+                                    widget.semiTitle == 'Request declined') ||
+                                (widget.semiTitle == 'Cancelled')
                             ? CustomTextStyles().orange12
                             : CustomTextStyles().darkGrey12,
                         maxLines: 1,
@@ -77,22 +112,22 @@ class DisplayTile extends StatelessWidget {
                   height: 3,
                 ),
                 Text(
-                  subTitle,
+                  widget.subTitle,
                   style: CustomTextStyles().darkGrey12,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                invitedBy != null
+                widget.invitedBy != null
                     ? Padding(
                         padding: const EdgeInsets.only(top: 10.0),
-                        child:
-                            Text(invitedBy, style: CustomTextStyles().grey14),
+                        child: Text(widget.invitedBy,
+                            style: CustomTextStyles().grey14),
                       )
                     : SizedBox()
               ],
             ),
           )),
-          action ?? SizedBox()
+          widget.action ?? SizedBox()
         ],
       ),
     );

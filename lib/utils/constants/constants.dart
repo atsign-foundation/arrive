@@ -3,9 +3,9 @@ class MixedConstants {
   static const String WEBSITE_URL = 'https://atsign.com/';
 
   // for local server
-  // static const String ROOT_DOMAIN = 'test.do-sf2.atsign.zone';
+  static const String ROOT_DOMAIN = 'test.do-sf2.atsign.zone';
   // for staging server
-  static const String ROOT_DOMAIN = 'root.atsign.wtf';
+  // static const String ROOT_DOMAIN = 'root.atsign.wtf';
   // for production server
   // static const String ROOT_DOMAIN = 'root.atsign.org';
 
@@ -16,4 +16,16 @@ class MixedConstants {
 
   // the time to await for file transfer acknowledgement in milliseconds
   static const int TIME_OUT = 60000;
+
+  static List<String> startTimeOptions = [
+    '2 hours before the event',
+    '60 hours before the event',
+    '30 hours before the event'
+  ];
+
+  static List<String> endTimeOptions = [
+    '10 mins after I reach the venue',
+    'After everyone’s at the venue',
+    'At the end of the day'
+  ];
 }

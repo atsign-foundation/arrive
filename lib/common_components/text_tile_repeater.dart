@@ -1,13 +1,14 @@
 import 'package:atsign_location_app/common_components/tiles/text_tile.dart';
-import 'package:atsign_location_app/services/size_config.dart';
+import 'package:atsign_common/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class TextTileRepeater extends StatelessWidget {
   final String title;
+  final ValueChanged<String> onChanged;
   final List<String> options;
 
-  TextTileRepeater({this.title, this.options});
+  TextTileRepeater({this.title, this.options, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,13 @@ class TextTileRepeater extends StatelessWidget {
               itemBuilder: (context, index) {
                 return SizedBox(
                   height: 60,
-                  child: TextTile(title: options[index]),
+                  child: GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () {
+                        onChanged(options[index]);
+                        Navigator.pop(context);
+                      },
+                      child: TextTile(title: options[index])),
                 );
               },
             ),
