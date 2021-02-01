@@ -7,7 +7,6 @@ import 'package:atsign_location_app/view_models/contact_provider.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
-import 'package:atsign_location_app/view_models/scan_qr_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

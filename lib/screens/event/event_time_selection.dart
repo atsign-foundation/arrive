@@ -83,14 +83,6 @@ class _EventTimeSelectionState extends State<EventTimeSelection> {
                 )
               ],
             ),
-            // TextTileRepeater(
-            //   title: widget.title,
-            //   options: [
-            //     '2 hours before the event',
-            //     '60 hours before the event',
-            //     '30 hours before the event'
-            //   ],
-            // ),
           )
         ],
       ),

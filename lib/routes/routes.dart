@@ -7,7 +7,6 @@ import 'package:atsign_location_app/screens/event/event_log.dart';
 import 'package:atsign_location_app/screens/faqs/faqs.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_screen.dart';
-import 'package:atsign_location_app/screens/share_location/share_location_screen.dart';
 import 'package:atsign_location_app/screens/selected_location.dart/selected_location.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
 import 'package:atsign_location_app/screens/terms_conditions/terms_conditions_screen.dart';
@@ -27,10 +26,6 @@ class SetupRoutes {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
         return GroupList(currentAtsign: args['currentAtSign'], useTheme: true);
       },
-      Routes.SHARE_LOCATION_EVENT: (context) => ShareLocationScreen(
-            length: (ModalRoute.of(context).settings.arguments as Map ??
-                {})["length"],
-          ),
       Routes.SELECTED_LOCATION: (context) => SelectedLocation(),
       Routes.REQUEST_LOCATION_EVENT: (context) => RequestLocationScreen(),
       Routes.CONTACT_SCREEN: (context) {
