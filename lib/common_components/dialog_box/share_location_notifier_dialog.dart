@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 import 'package:atsign_events/common_components/contacts_initials.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
@@ -63,22 +64,20 @@ class _ShareLocationNotifierDialogState
 
   @override
   void initState() {
-    // TODO: implement initState
     if (widget.eventData != null) checkForEventOverlap();
     getEventCreator();
   }
 
   getEventCreator() async {
-    AtContactsImpl atContact = await AtContactsImpl.getInstance(
-        ClientSdkService.getInstance()
-            .atClientServiceInstance
-            .atClient
-            .currentAtSign);
-    contact = await atContact.get('@alice🛠');
+    AtContact contact = await getAtSignDetails(widget.eventData != null
+        ? widget.eventData.atsignCreator
+        : widget.locationData.atsignCreator);
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
-        image = Uint8List.fromList(intList);
+        setState(() {
+          image = Uint8List.fromList(intList);
+        });
       }
     }
   }
@@ -126,8 +125,7 @@ class _ShareLocationNotifierDialogState
                   Stack(
                     children: [
                       image != null
-                          ? CustomCircleAvatar(
-                              image: AllImages().PERSON2, size: 74.toHeight)
+                          ? Image.memory(image, width: 50, height: 50)
                           : ContactInitial(
                               initials: widget.eventData != null
                                   ? widget.eventData.atsignCreator

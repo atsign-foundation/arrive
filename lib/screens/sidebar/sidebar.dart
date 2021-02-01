@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 import 'package:atsign_contacts/widgets/contacts_initials.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
@@ -26,22 +27,16 @@ class _SideBarState extends State<SideBar> {
   AtContactsImpl atContact;
 
   getEventCreator() async {
-    atContact = await AtContactsImpl.getInstance(ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .currentAtSign);
-    contact = await atContact.get(ClientSdkService.getInstance()
+    AtContact contact = await getAtSignDetails(ClientSdkService.getInstance()
         .atClientServiceInstance
         .atClient
         .currentAtSign);
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
-        Uint8List newImage = Uint8List.fromList(intList);
-        if (newImage != null)
-          setState(() {
-            image = newImage;
-          });
+        setState(() {
+          image = Uint8List.fromList(intList);
+        });
       }
     }
   }
@@ -67,10 +62,7 @@ class _SideBarState extends State<SideBar> {
               child: Row(
                 children: [
                   (image != null)
-                      ? CustomCircleAvatar(
-                          size: 60,
-                          image: AllImages().PERSON1,
-                        )
+                      ? Image.memory(image, width: 50, height: 50)
                       : ContactInitial(
                           initials: ClientSdkService.getInstance()
                               .atClientServiceInstance
@@ -192,12 +184,6 @@ class _SideBarState extends State<SideBar> {
                 Switch(
                   value: state,
                   onChanged: (value) {
-                    // value
-                    //     ? Provider.of<ThemeProvider>(context, listen: false)
-                    //         .setTheme(ThemeColor.Dark)
-                    //     : Provider.of<ThemeProvider>(context, listen: false)
-                    //         .setTheme(ThemeColor.Light);
-
                     setState(() {
                       state = value;
                     });

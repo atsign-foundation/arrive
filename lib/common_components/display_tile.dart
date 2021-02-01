@@ -2,11 +2,10 @@ import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_events/common_components/contacts_initials.dart';
-import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:atsign_contacts/utils/init_contacts_service.dart';
 
 class DisplayTile extends StatefulWidget {
   final String title, semiTitle, subTitle, atsignCreator, invitedBy;
@@ -36,15 +35,13 @@ class _DisplayTileState extends State<DisplayTile> {
   }
 
   getEventCreator() async {
-    atContact = await AtContactsImpl.getInstance(ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .currentAtSign);
-    contact = await atContact.get('@alice🛠');
+    AtContact contact = await getAtSignDetails(widget.atsignCreator);
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
-        image = Uint8List.fromList(intList);
+        setState(() {
+          image = Uint8List.fromList(intList);
+        });
       }
     }
   }
@@ -58,15 +55,11 @@ class _DisplayTileState extends State<DisplayTile> {
           Stack(
             children: [
               (image != null)
-                  ? SizedBox()
+                  ? Image.memory(image, width: 50, height: 50)
                   : widget.atsignCreator != null
                       ? ContactInitial(
                           initials: widget.atsignCreator.substring(1, 3))
                       : SizedBox(),
-              // CustomCircleAvatar(
-              //   image: widget.image,
-              //   size: 46,
-              // ),
               widget.number != null
                   ? Positioned(
                       right: 0,
