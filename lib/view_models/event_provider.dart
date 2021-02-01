@@ -85,8 +85,7 @@ class EventProvider extends BaseModel {
 
     setStatus(GET_ALL_EVENTS, Status.Done);
 
-    // checkForAcknowledgeEvents();
-    updateEventDataAccordingToAcknowledgedData();
+    checkForAcknowledgeEvents();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -204,20 +203,15 @@ class EventProvider extends BaseModel {
   }
 
   checkForAcknowledgeEvents() {
-    // providerCallback<EventProvider>(NavService.navKey.currentContext,
-    //     task: (provider) => provider.updateEventAccordingToAcknowledgedData(),
-    //     taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
-    //     showLoader: false,
-    //     onSuccess: (provider) {});
-    updateEventDataAccordingToAcknowledgedData();
+    providerCallback<EventProvider>(NavService.navKey.currentContext,
+        task: (provider) =>
+            provider.updateEventDataAccordingToAcknowledgedData(),
+        taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
+        showLoader: false,
+        onSuccess: (provider) {});
   }
 
   updateEventDataAccordingToAcknowledgedData() async {
-    // List<String> allEventKey = await atClientInstance.getKeys(
-    //   regex: 'createevent-',
-    //   // sharedWith: '@test_ga3',
-    //   // sharedBy: '@test_ga3',
-    // );
     List<String> allEventKey = [];
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-',
@@ -276,8 +270,6 @@ class EventProvider extends BaseModel {
                 storedEvent = allNotifications[k].eventNotificationModel;
 
                 if (!compareEvents(storedEvent, acknowledgedEvent)) {
-                  // print(
-                  // 'not matched : value changed :${acknowledgedEvent.title} , ${acknowledgedEvent.group.members}');
                   acknowledgedEvent.isUpdate = true;
 
                   var updateResult =
@@ -296,19 +288,6 @@ class EventProvider extends BaseModel {
   }
 
   mapUpdatedEventDataToWidget(EventNotificationModel eventData) {
-    // setStatus(MAP_UPDATED_EVENTS, Status.Loading);
-    // String newEventDataKeyId =
-    //     eventData.key.split('createevent-')[1].split('@')[0];
-
-    // for (int i = 0; i < allNotifications.length; i++) {
-    //   if (allNotifications[i]
-    //       .eventNotificationModel
-    //       .key
-    //       .contains(newEventDataKeyId)) {
-    //     allNotifications[i].eventNotificationModel = eventData;
-    //   }
-    // }
-    // setStatus(MAP_UPDATED_EVENTS, Status.Done);
     BackendService.getInstance().mapUpdatedDataToWidget(
         BackendService.getInstance().convertEventToHybrid(
             NotificationType.Event,

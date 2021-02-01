@@ -8,10 +8,7 @@ import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
-import 'package:atsign_location_app/view_models/event_provider.dart';
-// import 'package:atsign_location_app/view_models/send_location_model.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'base_model.dart';

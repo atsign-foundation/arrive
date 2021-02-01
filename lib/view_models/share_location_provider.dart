@@ -27,11 +27,6 @@ class ShareLocationProvider extends EventProvider {
   // ignore: non_constant_identifier_names
   String MAP_UPDATED_LOCATION_DATA = 'map_updated_event';
 
-  // List<String> allKeys = [];
-  // List<AtKey> allAtkeys = [];
-  // List<AtValue> allAtValues = [];
-  // List<EventNotificationModel> allEvents = [];
-
   init(AtClientImpl clientInstance) {
     print('share clientInstance ${clientInstance == null}');
     atClientInstance = clientInstance;
@@ -66,7 +61,6 @@ class ShareLocationProvider extends EventProvider {
 
     allShareLocationNotifications.forEach((notification) {
       AtKey atKey = AtKey.fromString(notification.key);
-      print('atkey -> $atKey');
       notification.atKey = atKey;
     });
 
