@@ -139,7 +139,10 @@ class BackendService {
                 eventNotificationModel: eventData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {});
+            onSuccess: (provider) {
+              provider.findAtSignsToShareLocationWith();
+              provider.initialiseLacationSharing();
+            });
       } else
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
@@ -177,7 +180,10 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {});
+            onSuccess: (provider) {
+              provider.findAtSignsToShareLocationWith();
+              provider.initialiseLacationSharing();
+            });
 
         showMyDialog(fromAtSign, locationData: locationData);
       }
@@ -208,7 +214,10 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {});
+            onSuccess: (provider) {
+              provider.findAtSignsToShareLocationWith();
+              provider.initialiseLacationSharing();
+            });
 
         showMyDialog(fromAtSign, locationData: locationData);
       }

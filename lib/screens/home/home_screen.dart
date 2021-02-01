@@ -1,8 +1,6 @@
-import 'package:at_commons/at_commons.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_events/screens/create_event.dart';
 import 'package:atsign_location/atsign_location.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -17,11 +15,9 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
-import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
-import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
@@ -261,11 +257,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   eventNotificationModel: event)),
                           taskName: (provider) => provider.HYBRID_ADD_EVENT,
                           showLoader: false,
-                          onSuccess: (provider) {});
+                          onSuccess: (provider) {
+                            provider.findAtSignsToShareLocationWith();
+                            provider.initialiseLacationSharing();
+                          });
                     }, createdEvents: allEvents),
-                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
-                  // eventProvider.getAllEvents();
-                });
+                    SizeConfig().screenHeight * 0.9,
+                    onSheetCLosed: () {});
               }),
           Tasks(
               task: 'Request Location',

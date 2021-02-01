@@ -118,6 +118,7 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   findAtSignsToShareLocationWith() {
+    shareLocationData = [];
     String currentAtsign = ClientSdkService.getInstance()
         .atClientServiceInstance
         .atClient
