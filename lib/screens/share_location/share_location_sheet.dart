@@ -137,6 +137,15 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
   }
 
   onShareTap() async {
+    if (selectedContact == null) {
+      CustomToast().show('Select a contact', context);
+      return;
+    }
+    if (selectedOption == null) {
+      CustomToast().show('Select time', context);
+      return;
+    }
+
     int minutes = (selectedOption == '30 mins'
         ? 30
         : (selectedOption == '2 hours'

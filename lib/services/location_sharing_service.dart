@@ -41,51 +41,54 @@ class LocationSharingService {
   // for shared locations
   sendShareLocationEvent(String atsign, bool isAcknowledgment,
       {int minutes}) async {
-    AtKey atKey;
-    if (minutes != null)
-      atKey = newAtKey(
-          -1, "sharelocation-${DateTime.now().microsecondsSinceEpoch}", atsign,
-          ttl: DateTime.now()
-              .add(Duration(minutes: minutes))
-              .microsecondsSinceEpoch,
-          expiresAt: DateTime.now().add(Duration(minutes: minutes)));
-    else
-      atKey = newAtKey(
-        -1,
-        "sharelocation-${DateTime.now().microsecondsSinceEpoch}",
-        atsign,
-      );
-    LocationNotificationModel locationNotificationModel =
-        LocationNotificationModel()
-          ..atsignCreator = ClientSdkService.getInstance()
-              .atClientServiceInstance
-              .atClient
-              .currentAtSign
-          ..key = atKey.key
-          ..lat = 12
-          ..long = 12
-          ..receiver = atsign
-          ..from = DateTime.now()
-          ..isAcknowledgment = isAcknowledgment;
+    try {
+      AtKey atKey;
+      if (minutes != null)
+        atKey = newAtKey(60000,
+            "sharelocation-${DateTime.now().microsecondsSinceEpoch}", atsign,
+            ttl: (minutes * 60000),
+            expiresAt: DateTime.now().add(Duration(minutes: minutes)));
+      else
+        atKey = newAtKey(
+          -1,
+          "sharelocation-${DateTime.now().microsecondsSinceEpoch}",
+          atsign,
+        );
 
-    if ((minutes != null))
-      locationNotificationModel.to =
-          DateTime.now().add(Duration(minutes: minutes));
-    var result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(
-            atKey,
-            LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
-    print('atKey $atKey');
-    print(LocationNotificationModel.convertLocationNotificationToJson(
-        locationNotificationModel));
-    print('sendLocationNotification:$result');
+      LocationNotificationModel locationNotificationModel =
+          LocationNotificationModel()
+            ..atsignCreator = ClientSdkService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign
+            ..key = atKey.key
+            ..lat = 12
+            ..long = 12
+            ..receiver = atsign
+            ..from = DateTime.now()
+            ..isAcknowledgment = isAcknowledgment;
 
-    print(
-        'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.key}');
-    return [result, locationNotificationModel];
+      if ((minutes != null))
+        locationNotificationModel.to =
+            DateTime.now().add(Duration(minutes: minutes));
+      var result = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .put(
+              atKey,
+              LocationNotificationModel.convertLocationNotificationToJson(
+                  locationNotificationModel));
+      print('atKey $atKey');
+      print(LocationNotificationModel.convertLocationNotificationToJson(
+          locationNotificationModel));
+      print('sendLocationNotification:$result');
+
+      print(
+          'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.key}');
+      return [result, locationNotificationModel];
+    } catch (e) {
+      return [false];
+    }
   }
 
 //@test_ga4:sharelocation-1611151935211511@mixedmartialartsexcess
@@ -94,69 +97,79 @@ class LocationSharingService {
       bool isShareLocationAcknowledgment,
       LocationNotificationModel locationNotificationModel,
       bool isAccepted) async {
-    String atkeyMicrosecondId =
-        locationNotificationModel.key.split('sharelocation-')[1].split('@')[0];
-    AtKey atKey = newAtKey(
-        -1,
-        isShareLocationAcknowledgment
-            ? "sharelocationacknowledged-$atkeyMicrosecondId"
-            : "requestlocationacknowledged-$atkeyMicrosecondId",
-        locationNotificationModel.atsignCreator);
-    locationNotificationModel.isAccepted = isAccepted;
-    if (!isAccepted) locationNotificationModel.isExited = true;
-    print(
-        'locationNotificationModel.isExited ${locationNotificationModel.isExited}');
-    print(
-        'after convertLocationNotificationToJson -> ${locationNotificationModel.isAccepted}');
-    var notification =
-        LocationNotificationModel.convertLocationNotificationToJson(
-            locationNotificationModel);
+    try {
+      String atkeyMicrosecondId = locationNotificationModel.key
+          .split('sharelocation-')[1]
+          .split('@')[0];
+      AtKey atKey = newAtKey(
+          -1,
+          isShareLocationAcknowledgment
+              ? "sharelocationacknowledged-$atkeyMicrosecondId"
+              : "requestlocationacknowledged-$atkeyMicrosecondId",
+          locationNotificationModel.atsignCreator);
+      locationNotificationModel.isAccepted = isAccepted;
+      if (!isAccepted) locationNotificationModel.isExited = true;
+      print(
+          'locationNotificationModel.isExited ${locationNotificationModel.isExited}');
+      print(
+          'after convertLocationNotificationToJson -> ${locationNotificationModel.isAccepted}');
+      var notification =
+          LocationNotificationModel.convertLocationNotificationToJson(
+              locationNotificationModel);
 
-    var result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(atKey, notification);
-    print('sendLocationNotificationAcknowledgment:$result');
-    print(
-        'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.isAccepted}');
-    return result;
+      var result = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .put(atKey, notification);
+      print('sendLocationNotificationAcknowledgment:$result');
+      print(
+          'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.isAccepted}');
+      return result;
+    } catch (e) {
+      return false;
+    }
   }
 
   updateWithShareLocationAcknowledge(
       LocationNotificationModel locationNotificationModel,
       {bool isSharing}) async {
-    String atkeyMicrosecondId =
-        locationNotificationModel.key.split('sharelocation-')[1].split('@')[0];
+    try {
+      String atkeyMicrosecondId = locationNotificationModel.key
+          .split('sharelocation-')[1]
+          .split('@')[0];
 
-    List<String> response = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .getKeys(
-          regex: 'sharelocation-$atkeyMicrosecondId',
-        );
+      List<String> response = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .getKeys(
+            regex: 'sharelocation-$atkeyMicrosecondId',
+          );
 
-    AtKey key = AtKey.fromString(response[0]);
+      AtKey key = AtKey.fromString(response[0]);
 
-    locationNotificationModel.isAcknowledgment = true;
+      locationNotificationModel.isAcknowledgment = true;
 
-    if (isSharing != null) locationNotificationModel.isSharing = isSharing;
+      if (isSharing != null) locationNotificationModel.isSharing = isSharing;
 
-    var notification =
-        LocationNotificationModel.convertLocationNotificationToJson(
-            locationNotificationModel);
+      var notification =
+          LocationNotificationModel.convertLocationNotificationToJson(
+              locationNotificationModel);
 
-    var result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(key, notification);
-    if (result)
-      BackendService.getInstance().mapUpdatedDataToWidget(
-          BackendService.getInstance().convertEventToHybrid(
-              NotificationType.Location,
-              locationNotificationModel: locationNotificationModel));
+      var result = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .put(key, notification);
+      if (result)
+        BackendService.getInstance().mapUpdatedDataToWidget(
+            BackendService.getInstance().convertEventToHybrid(
+                NotificationType.Location,
+                locationNotificationModel: locationNotificationModel));
 
-    print('update result - $result');
-    return result;
+      print('update result - $result');
+      return result;
+    } catch (e) {
+      return false;
+    }
   }
 
   removePerson(LocationNotificationModel locationNotificationModel) async {
@@ -182,7 +195,7 @@ class LocationSharingService {
       {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
-      ..metadata.ttr = -1
+      ..metadata.ttr = ttr
       ..key = key
       ..sharedWith = sharedWith
       ..sharedBy = ClientSdkService.getInstance()

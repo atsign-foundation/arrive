@@ -1,10 +1,8 @@
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
 
 import 'client_sdk_service.dart';
@@ -20,128 +18,142 @@ class RequestLocationService {
   }
 
   sendRequestLocationEvent(String atsign) async {
-    AtKey atKey = newAtKey(
-        10, "requestlocation-${DateTime.now().microsecondsSinceEpoch}", atsign);
+    try {
+      AtKey atKey = newAtKey(60000,
+          "requestlocation-${DateTime.now().microsecondsSinceEpoch}", atsign);
 
-    LocationNotificationModel locationNotificationModel =
-        LocationNotificationModel()
-          ..atsignCreator = atsign
-          ..key = atKey.key
-          ..isRequest = true
-          ..receiver = ClientSdkService.getInstance()
-              .atClientServiceInstance
-              .atClient
-              .currentAtSign;
+      LocationNotificationModel locationNotificationModel =
+          LocationNotificationModel()
+            ..atsignCreator = atsign
+            ..key = atKey.key
+            ..isRequest = true
+            ..receiver = ClientSdkService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign;
 
-    var result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(
-            atKey,
-            LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
-    print('requestLocationNotification:$result');
-    return [result, locationNotificationModel];
+      var result = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .put(
+              atKey,
+              LocationNotificationModel.convertLocationNotificationToJson(
+                  locationNotificationModel));
+      print('requestLocationNotification:$result');
+      return [result, locationNotificationModel];
+    } catch (e) {
+      return [false];
+    }
   }
 
   requestLocationAcknowledgment(
       LocationNotificationModel locationNotificationModel, bool isAccepted,
       {int minutes, bool isSharing}) async {
-    String atkeyMicrosecondId = locationNotificationModel.key
-        .split('requestlocation-')[1]
-        .split('@')[0];
-    AtKey atKey;
-    if (minutes != null)
-      atKey = newAtKey(-1, "requestlocationacknowledged-$atkeyMicrosecondId",
+    try {
+      String atkeyMicrosecondId = locationNotificationModel.key
+          .split('requestlocation-')[1]
+          .split('@')[0];
+      AtKey atKey;
+      if (minutes != null)
+        atKey = newAtKey(
+            60000,
+            "requestlocationacknowledged-$atkeyMicrosecondId",
+            locationNotificationModel.receiver,
+            ttl: (minutes * 60000));
+      else
+        atKey = newAtKey(
+          -1,
+          "requestlocationacknowledged-$atkeyMicrosecondId",
           locationNotificationModel.receiver,
-          ttl: DateTime.now()
-              .add(Duration(minutes: minutes))
-              .microsecondsSinceEpoch);
-    else
-      atKey = newAtKey(
-        -1,
-        "requestlocationacknowledged-$atkeyMicrosecondId",
-        locationNotificationModel.receiver,
-      );
+        );
 
-    locationNotificationModel
-      ..isAccepted = isAccepted
-      ..isExited = !isAccepted
-      ..lat = isAccepted ? 12 : 0
-      ..long = isAccepted ? 12 : 0;
-    //..updateMap = true;
+      locationNotificationModel
+        ..isAccepted = isAccepted
+        ..isExited = !isAccepted
+        ..lat = isAccepted ? 12 : 0
+        ..long = isAccepted ? 12 : 0;
 
-    if (isSharing != null) locationNotificationModel.isSharing = isSharing;
+      if (isSharing != null) locationNotificationModel.isSharing = isSharing;
 
-    if (isAccepted && (minutes != null)) {
-      // if error => remove this (minutes != null)
-      locationNotificationModel.from = DateTime.now();
-      locationNotificationModel.to =
-          DateTime.now().add(Duration(minutes: minutes));
+      if (isAccepted && (minutes != null)) {
+        // if error => remove this (minutes != null)
+        locationNotificationModel.from = DateTime.now();
+        locationNotificationModel.to =
+            DateTime.now().add(Duration(minutes: minutes));
+      }
+
+      var result = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .put(
+              atKey,
+              LocationNotificationModel.convertLocationNotificationToJson(
+                  locationNotificationModel));
+      print('requestLocationAcknowledgment $result');
+      return result;
+    } catch (e) {
+      return false;
     }
-
-    var result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(
-            atKey,
-            LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
-    print('requestLocationAcknowledgment $result');
-    return result;
   }
 
   updateWithRequestLocationAcknowledge(
     LocationNotificationModel locationNotificationModel,
   ) async {
-    // dont use the locationNotificationModel sent with reuqest acknowledgment
-    String atkeyMicrosecondId = locationNotificationModel.key
-        .split('requestlocation-')[1]
-        .split('@')[0];
+    try {
+      // dont use the locationNotificationModel sent with reuqest acknowledgment
+      String atkeyMicrosecondId = locationNotificationModel.key
+          .split('requestlocation-')[1]
+          .split('@')[0];
 
-    List<String> response = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .getKeys(
-          regex: 'requestlocation-$atkeyMicrosecondId',
-          // sharedBy: ClientSdkService.getInstance()
-          //     .atClientServiceInstance
-          //     .atClient
-          //     .currentAtSign
-        );
+      List<String> response = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .getKeys(
+            regex: 'requestlocation-$atkeyMicrosecondId',
+            // sharedBy: ClientSdkService.getInstance()
+            //     .atClientServiceInstance
+            //     .atClient
+            //     .currentAtSign
+          );
 
-    AtKey key = AtKey.fromString(response[0]);
+      AtKey key = AtKey.fromString(response[0]);
 
-    if (locationNotificationModel.isAccepted) {
-      key.metadata.ttl = locationNotificationModel.to.microsecondsSinceEpoch;
-      key.metadata.expiresAt = locationNotificationModel.to;
+      if (locationNotificationModel.isAccepted) {
+        key.metadata.ttl = locationNotificationModel.to
+                .difference(locationNotificationModel.from)
+                .inMinutes *
+            60000;
+        key.metadata.expiresAt = locationNotificationModel.to;
+      }
+
+      locationNotificationModel.isAcknowledgment = true;
+
+      var notification =
+          LocationNotificationModel.convertLocationNotificationToJson(
+              locationNotificationModel);
+      var result;
+      result = await ClientSdkService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .put(key, notification);
+
+      if (result)
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.mapUpdatedData(
+                BackendService.getInstance().convertEventToHybrid(
+                    NotificationType.Location,
+                    locationNotificationModel: locationNotificationModel),
+                remove: false),
+            // as i requested so i wont remove this notification irrespective of yes/no
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+
+      print('update result - $result');
+      return result;
+    } catch (e) {
+      return false;
     }
-
-    locationNotificationModel.isAcknowledgment = true;
-
-    var notification =
-        LocationNotificationModel.convertLocationNotificationToJson(
-            locationNotificationModel);
-    var result;
-    result = await ClientSdkService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .put(key, notification);
-
-    if (result)
-      providerCallback<HybridProvider>(NavService.navKey.currentContext,
-          task: (provider) => provider.mapUpdatedData(
-              BackendService.getInstance().convertEventToHybrid(
-                  NotificationType.Location,
-                  locationNotificationModel: locationNotificationModel),
-              remove: false),
-          // as i requested so i wont remove this notification irrespective of yes/no
-          taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
-          showLoader: false,
-          onSuccess: (provider) {});
-
-    print('update result - $result');
-    return result;
   }
 
   removePerson(LocationNotificationModel locationNotificationModel) async {

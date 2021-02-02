@@ -94,6 +94,10 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
   }
 
   onRequestTap() async {
+    if (selectedContact == null) {
+      CustomToast().show('Select a contact', context);
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -113,10 +117,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                   locationNotificationModel: result[1])),
           taskName: (provider) => provider.HYBRID_ADD_EVENT,
           showLoader: false,
-          onSuccess: (provider) {
-            provider.findAtSignsToShareLocationWith();
-            provider.initialiseLacationSharing();
-          });
+          onSuccess: (provider) {});
     } else {
       CustomToast().show('some thing went wrong , try again.', context);
       setState(() {

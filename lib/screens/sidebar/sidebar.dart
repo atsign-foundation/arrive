@@ -7,6 +7,7 @@ import 'package:atsign_location_app/common_components/custom_circle_avatar.dart'
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -25,6 +26,22 @@ class _SideBarState extends State<SideBar> {
   Uint8List image;
   AtContact contact;
   AtContactsImpl atContact;
+  String name;
+
+  @override
+  void initState() {
+    super.initState();
+    getEventCreator();
+    state = false;
+    getLocationSharing();
+  }
+
+  getLocationSharing() async {
+    bool newState = await LocationNotificationListener().getShareLocation();
+    setState(() {
+      state = newState;
+    });
+  }
 
   getEventCreator() async {
     AtContact contact = await getAtSignDetails(ClientSdkService.getInstance()
@@ -38,15 +55,21 @@ class _SideBarState extends State<SideBar> {
           image = Uint8List.fromList(intList);
         });
       }
+      if (contact.tags != null && contact.tags['name'] != null) {
+        String newName = contact.tags['name'].toString();
+        setState(() {
+          name = newName;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
-        ? true
-        : false;
-    getEventCreator();
+    // state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
+    //     ? true
+    //     : false;
+
     return Drawer(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -77,7 +100,7 @@ class _SideBarState extends State<SideBar> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Full Name',
+                          name ?? 'Full Name',
                           style: CustomTextStyles().darkGrey16,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -184,6 +207,7 @@ class _SideBarState extends State<SideBar> {
                 Switch(
                   value: state,
                   onChanged: (value) {
+                    LocationNotificationListener().updateShareLocation(value);
                     setState(() {
                       state = value;
                     });

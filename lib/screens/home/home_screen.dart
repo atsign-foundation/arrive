@@ -269,7 +269,6 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Request Location',
               icon: Icons.refresh,
               onTap: () async {
-                BackendService.getInstance().getAllNotificationKeys();
                 bottomSheet(context, RequestLocationSheet(),
                     SizeConfig().screenHeight * 0.5);
 

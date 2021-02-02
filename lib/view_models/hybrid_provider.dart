@@ -8,6 +8,7 @@ import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -118,6 +119,7 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   findAtSignsToShareLocationWith() {
+    print('findAtSignsToShareLocationWith');
     shareLocationData = [];
     String currentAtsign = ClientSdkService.getInstance()
         .atClientServiceInstance
@@ -240,7 +242,19 @@ class HybridProvider extends RequestLocationProvider {
     }
   }
 
-  initialiseLacationSharing() {
+  initialiseLacationSharing() async {
+    bool isSharing = await LocationNotificationListener().getShareLocation();
+    if (isSharing)
+      sendLocationSharing();
+    else
+      stopLocationSharing();
+  }
+
+  sendLocationSharing() {
     SendLocationNotification().init(shareLocationData, atClientInstance);
+  }
+
+  stopLocationSharing() {
+    SendLocationNotification().init([], atClientInstance);
   }
 }
