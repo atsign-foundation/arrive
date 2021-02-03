@@ -256,5 +256,8 @@ class HybridProvider extends RequestLocationProvider {
 
   stopLocationSharing() {
     SendLocationNotification().init([], atClientInstance);
+    shareLocationData.forEach((locationData) {
+      SendLocationNotification().sendNull(locationData);
+    });
   }
 }
