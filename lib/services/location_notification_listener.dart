@@ -124,20 +124,24 @@ class LocationNotificationListener {
   }
 
   getImageOfAtsignNew(String atsign) async {
-    AtContact contact;
-    Uint8List image;
-    AtContactsImpl atContact = await AtContactsImpl.getInstance(
-        ClientSdkService.getInstance()
-            .atClientServiceInstance
-            .atClient
-            .currentAtSign);
-    contact = await atContact.get(atsign);
-    if (contact != null) {
-      if (contact.tags != null && contact.tags['image'] != null) {
-        List<int> intList = contact.tags['image'].cast<int>();
-        image = Uint8List.fromList(intList);
+    try {
+      AtContact contact;
+      Uint8List image;
+      AtContactsImpl atContact = await AtContactsImpl.getInstance(
+          ClientSdkService.getInstance()
+              .atClientServiceInstance
+              .atClient
+              .currentAtSign);
+      contact = await atContact.get(atsign);
+      if (contact != null) {
+        if (contact.tags != null && contact.tags['image'] != null) {
+          List<int> intList = contact.tags['image'].cast<int>();
+          image = Uint8List.fromList(intList);
+        }
       }
+      return image;
+    } catch (e) {
+      return null;
     }
-    return image;
   }
 }

@@ -119,7 +119,6 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   findAtSignsToShareLocationWith() {
-    print('findAtSignsToShareLocationWith');
     shareLocationData = [];
     String currentAtsign = ClientSdkService.getInstance()
         .atClientServiceInstance
@@ -129,17 +128,19 @@ class HybridProvider extends RequestLocationProvider {
       LocationNotificationModel location = LocationNotificationModel();
       if (notification.notificationType == NotificationType.Event) {
         if (!notification.eventNotificationModel.isCancelled) {
-          if (notification.eventNotificationModel.atsignCreator ==
-              currentAtsign) {
-            location = LocationNotificationModel()
-              ..atsignCreator =
-                  notification.eventNotificationModel.atsignCreator
-              ..isAcknowledgment = true
-              ..isAccepted = true
-              ..receiver = notification.eventNotificationModel.group.members
-                  .elementAt(0)
-                  .atSign;
-            location = getLocationNotificationData(notification, location);
+          if ((notification.eventNotificationModel.atsignCreator ==
+              currentAtsign)) {
+            if (notification.eventNotificationModel.isSharing) {
+              location = LocationNotificationModel()
+                ..atsignCreator =
+                    notification.eventNotificationModel.atsignCreator
+                ..isAcknowledgment = true
+                ..isAccepted = true
+                ..receiver = notification.eventNotificationModel.group.members
+                    .elementAt(0)
+                    .atSign;
+              location = getLocationNotificationData(notification, location);
+            }
           } else {
             if (notification.eventNotificationModel.group.members
                         .elementAt(0)

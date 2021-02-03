@@ -169,7 +169,7 @@ class EventProvider extends BaseModel {
     } catch (e) {
       print('error in updating event $e');
       setStatus(UPDATE_EVENTS, Status.Error);
-      return e.toString();
+      return false;
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:atsign_contacts_group/widgets/custom_toast.dart';
 import 'package:atsign_events/models/event_notification.dart';
 import 'package:atsign_location/atsign_location_plugin.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location/service/send_location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
@@ -14,6 +15,7 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:provider/provider.dart';
 
 class HomeEventService {
   HomeEventService._();
@@ -76,12 +78,39 @@ class HomeEventService {
                 bool isSharing,
                 ATKEY_TYPE_ENUM keyType,
                 EventNotificationModel eventData}) async {
+          bool isNullSent = false;
           var result = await provider.actionOnEvent(
             eventNotificationModel,
             keyType,
             isExited: isExited,
             isSharing: isSharing,
           );
+
+          bool isAdmin = ClientSdkService.getInstance()
+                      .atClientServiceInstance
+                      .atClient
+                      .currentAtSign ==
+                  eventNotificationModel.atsignCreator
+              ? true
+              : false;
+          LocationNotificationModel locationNotificationModel =
+              LocationNotificationModel()
+                ..key = eventNotificationModel.key
+                ..receiver = isAdmin
+                    ? eventNotificationModel.group.members.elementAt(0).atSign
+                    : eventNotificationModel.atsignCreator
+                ..atsignCreator = !isAdmin
+                    ? eventNotificationModel.group.members.elementAt(0).atSign
+                    : eventNotificationModel.atsignCreator;
+
+          if (!isSharing) {
+            Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                    listen: false)
+                .removeLocationSharing(locationNotificationModel);
+            isNullSent = await SendLocationNotification()
+                .sendNull(locationNotificationModel);
+          }
+
           return result;
         }, onEventUpdate: (EventNotificationModel eventData) {
           provider.mapUpdatedEventDataToWidget(eventData);
