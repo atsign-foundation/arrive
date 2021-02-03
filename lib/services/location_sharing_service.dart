@@ -50,7 +50,7 @@ class LocationSharingService {
             expiresAt: DateTime.now().add(Duration(minutes: minutes)));
       else
         atKey = newAtKey(
-          -1,
+          60000,
           "sharelocation-${DateTime.now().microsecondsSinceEpoch}",
           atsign,
         );

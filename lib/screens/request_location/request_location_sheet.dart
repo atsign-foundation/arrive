@@ -106,7 +106,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
         .sendRequestLocationEvent(selectedContact.atSign);
 
     if (result[0] == true) {
-      CustomToast().show('Share Location Request sent', context);
+      CustomToast().show('Location Request sent', context);
       setState(() {
         isLoading = false;
       });
