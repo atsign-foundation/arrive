@@ -4,6 +4,7 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:provider/provider.dart';
 
 import 'client_sdk_service.dart';
 import 'nav_service.dart';
@@ -54,18 +55,18 @@ class RequestLocationService {
           .split('requestlocation-')[1]
           .split('@')[0];
       AtKey atKey;
-      if (minutes != null)
-        atKey = newAtKey(
-            60000,
-            "requestlocationacknowledged-$atkeyMicrosecondId",
-            locationNotificationModel.receiver,
-            ttl: (minutes * 60000));
-      else
-        atKey = newAtKey(
-          -1,
-          "requestlocationacknowledged-$atkeyMicrosecondId",
-          locationNotificationModel.receiver,
-        );
+      // if (minutes != null)
+      //   atKey = newAtKey(
+      //       60000,
+      //       "requestlocationacknowledged-$atkeyMicrosecondId",
+      //       locationNotificationModel.receiver,
+      //       ttl: (minutes * 60000));
+      // else
+      atKey = newAtKey(
+        60000,
+        "requestlocationacknowledged-$atkeyMicrosecondId",
+        locationNotificationModel.receiver,
+      );
 
       locationNotificationModel
         ..isAccepted = isAccepted
@@ -90,6 +91,11 @@ class RequestLocationService {
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel));
       print('requestLocationAcknowledgment $result');
+      if ((result) && (!isSharing)) {
+        Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                listen: false)
+            .removeLocationSharing(locationNotificationModel);
+      }
       return result;
     } catch (e) {
       return false;
@@ -176,7 +182,7 @@ class RequestLocationService {
       {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
-      ..metadata.ttr = -1
+      ..metadata.ttr = ttr
       ..key = key
       ..sharedWith = sharedWith
       ..sharedBy = ClientSdkService.getInstance()

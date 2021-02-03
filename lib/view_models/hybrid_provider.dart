@@ -250,6 +250,13 @@ class HybridProvider extends RequestLocationProvider {
       stopLocationSharing();
   }
 
+  removeLocationSharing(LocationNotificationModel locationNotificationModel) {
+    shareLocationData
+        .removeWhere((element) => element.key == locationNotificationModel.key);
+    sendLocationSharing();
+    // if the array is recalculated it will be added
+  }
+
   sendLocationSharing() {
     SendLocationNotification().init(shareLocationData, atClientInstance);
   }
