@@ -1,10 +1,8 @@
 name: atsign_location_app
 description: A new Flutter project.
-
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -16,10 +14,8 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.0+1
-
 environment:
   sdk: ">=2.7.0 <3.0.0"
-
 dependencies:
   flutter:
     sdk: flutter
@@ -28,7 +24,6 @@ dependencies:
   sliding_up_panel: ^1.0.2
   map: ^0.2.0+1
   cached_network_image: ^2.3.3
-  latlng: any
   flutter_slidable: ^0.5.7
   flutter_qr_reader: ^1.0.3
   file_picker: ^2.0.10
@@ -38,71 +33,53 @@ dependencies:
   share: ^0.6.5+2
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
-  at_client_mobile:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_client_sdk/at_client_mobile
-    # git:
-    #   url: git@github.com:atsign-company/atsign_foundation.git
-    #   path: at_client_mobile
-    #   ref: dev_env
-   
+  at_client_mobile: 
+    # ^1.0.0+1
+    # path: ../../../Downloads/Archive/atsign_foundation/at_client_mobile
+    path: /Users/nitesh/Desktop/atsign-foundation/at_client_sdk/at_client_mobile
+
   at_contact: 
-    path: ../at_libraries/at_contact
-    
+    path: ../../atsign-foundation/at_libraries/at_contact
     # git:
-    #   url: git@github.com:atsign-company/atsign_foundation.git
+    #   url: git@github.com:atsign-foundation/at_libraries.git
     #   path: at_contact
-    #   ref: dev_env
- 
-  at_commons:
-    path: ../../../../Downloads/Archive/atsign_foundation/at_commons
-    # git:
-    #   url: git@github.com:atsign-company/atsign_foundation.git
-    #   path: at_commons
-    #   ref: dev_env
-  
-  at_lookup:
-    path: ../../../../Downloads/Archive/atsign_foundation/at_lookup
-    # git:
-    #   url: git@github.com:atsign-company/atsign_foundation.git
-    #   path: at_lookup
-    #   ref: dev_env
-
-
-    
-  atsign_events:
-    path: ../atsign-events
-
+    #   ref: master
+  at_commons: 
+        # ^1.0.1+1
+    path: ../../../Downloads/Archive/atsign_foundation/at_commons
+  at_lookup: 
+      # ^1.0.0+1
+    path: ../../../Downloads/Archive/atsign_foundation/at_lookup
+  atsign_events: 
+    path: ../../new_atsign/atsign-events
   atsign_contacts_group:
-    path: ../atsign-contact-groups
+    path: ../../new_atsign/atsign-contact-groups
     # git:
     #   url: git@git.geekyants.com:flutter-client-projects/atsign-contact-groups.git
     #   ref: staging
-  
   atsign_contacts:  
-    path: ../atsign-contacts
+    path: ../../new_atsign/atsign-contacts
     # git:
-    #    url: git@git.geekyants.com:flutter-client-projects/atsign-contacts.git
-    #    ref: development 
- 
-
+    #   url: git@git.geekyants.com:flutter-client-projects/atsign-contacts.git
+    #   ref: development
   atsign_authentication_helper :
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
- 
-  
-  atsign_chat:
-    path: ../atsign-chat
-    
+    # path: ../../new_atsign/atsign-authentication-helper  
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
+
+    # git:
+    #   url: git@git.geekyants.com:flutter-client-projects/atsign-authentication-helper.git
+      # ref: development  
+  # atsign_chat:
+  #   path: ../../new_atsign/atsign-chat
   atsign_location:
-    path: ../atsign-location
+    path: ../../new_atsign/atsign-location
     # git:
     #   url: git@git.geekyants.com:flutter-client-projects/atsign-location.git
     #   ref: staging
-
   latlong: ^0.6.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.
@@ -118,7 +95,6 @@ flutter:
     - assets/images/splash_bg.png
     - assets/images/empty_group.png
     - assets/images/group_photo.png
-    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

@@ -84,7 +84,8 @@ class ShareLocationProvider extends EventProvider {
         'allShareLocationNotifications.length -> ${allShareLocationNotifications.length}');
     for (int i = 0; i < allShareLocationNotifications.length; i++) {
       try {
-        if (allShareLocationNotifications[i].atValue.value != null) {
+        if ((allShareLocationNotifications[i].atValue.value != null) &&
+            (allShareLocationNotifications[i].atValue.value != "null")) {
           LocationNotificationModel locationNotificationModel =
               LocationNotificationModel.fromJson(
                   jsonDecode(allShareLocationNotifications[i].atValue.value));
@@ -92,6 +93,9 @@ class ShareLocationProvider extends EventProvider {
               locationNotificationModel;
           print(
               'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
+        } else {
+          allShareLocationNotifications
+              .remove(allShareLocationNotifications[i]);
         }
       } catch (e) {
         print('convertJsonToLocationModel:$e');
@@ -101,27 +105,18 @@ class ShareLocationProvider extends EventProvider {
   }
 
   filterData() {
-    // List<HybridNotificationModel> tempNotification = [];
-    // allShareLocationNotifications.forEach((notification) {
-    //   if ((notification.locationNotificationModel != null) &&
-    //       (notification.locationNotificationModel.atsignCreator !=
-    //           currentAtSign) &&
-    //       (!notification.locationNotificationModel.isAccepted) &&
-    //       (notification.locationNotificationModel.isExited)) {
-    //     tempNotification.add(notification);
-    //   }
-    // });
-
-    // allShareLocationNotifications
-    //     .removeWhere((element) => tempNotification.contains(element));
+    List<HybridNotificationModel> tempArray = [];
+    for (int i = 0; i < allShareLocationNotifications.length; i++) {
+      if ((allShareLocationNotifications[i].locationNotificationModel ==
+              'null') ||
+          (allShareLocationNotifications[i].locationNotificationModel == null))
+        tempArray.add(allShareLocationNotifications[i]);
+    }
+    allShareLocationNotifications
+        .removeWhere((element) => tempArray.contains(element));
   }
 
   checkForAcknowledge() {
-    // providerCallback<ShareLocationProvider>(NavService.navKey.currentContext,
-    //     task: (provider) => provider.updateEventAccordingToAcknowledgedData(),
-    //     taskName: (provider) => provider.CHECK_ACKNOWLEDGED_EVENT,
-    //     showLoader: false,
-    //     onSuccess: (provider) {});
     updateEventAccordingToAcknowledgedData();
   }
 

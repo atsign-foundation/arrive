@@ -94,6 +94,10 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
   }
 
   onRequestTap() async {
+    if (selectedContact == null) {
+      CustomToast().show('Select a contact', context);
+      return;
+    }
     setState(() {
       isLoading = true;
     });
@@ -102,7 +106,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
         .sendRequestLocationEvent(selectedContact.atSign);
 
     if (result[0] == true) {
-      CustomToast().show('Share Location Request sent', context);
+      CustomToast().show('Location Request sent', context);
       setState(() {
         isLoading = false;
       });

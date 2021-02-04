@@ -8,6 +8,7 @@ import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:flutter/material.dart';
 
@@ -118,6 +119,7 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   findAtSignsToShareLocationWith() {
+    shareLocationData = [];
     String currentAtsign = ClientSdkService.getInstance()
         .atClientServiceInstance
         .atClient
@@ -126,17 +128,19 @@ class HybridProvider extends RequestLocationProvider {
       LocationNotificationModel location = LocationNotificationModel();
       if (notification.notificationType == NotificationType.Event) {
         if (!notification.eventNotificationModel.isCancelled) {
-          if (notification.eventNotificationModel.atsignCreator ==
-              currentAtsign) {
-            location = LocationNotificationModel()
-              ..atsignCreator =
-                  notification.eventNotificationModel.atsignCreator
-              ..isAcknowledgment = true
-              ..isAccepted = true
-              ..receiver = notification.eventNotificationModel.group.members
-                  .elementAt(0)
-                  .atSign;
-            location = getLocationNotificationData(notification, location);
+          if ((notification.eventNotificationModel.atsignCreator ==
+              currentAtsign)) {
+            if (notification.eventNotificationModel.isSharing) {
+              location = LocationNotificationModel()
+                ..atsignCreator =
+                    notification.eventNotificationModel.atsignCreator
+                ..isAcknowledgment = true
+                ..isAccepted = true
+                ..receiver = notification.eventNotificationModel.group.members
+                    .elementAt(0)
+                    .atSign;
+              location = getLocationNotificationData(notification, location);
+            }
           } else {
             if (notification.eventNotificationModel.group.members
                         .elementAt(0)
@@ -239,7 +243,29 @@ class HybridProvider extends RequestLocationProvider {
     }
   }
 
-  initialiseLacationSharing() {
+  initialiseLacationSharing() async {
+    bool isSharing = await LocationNotificationListener().getShareLocation();
+    if (isSharing)
+      sendLocationSharing();
+    else
+      stopLocationSharing();
+  }
+
+  removeLocationSharing(LocationNotificationModel locationNotificationModel) {
+    shareLocationData
+        .removeWhere((element) => element.key == locationNotificationModel.key);
+    sendLocationSharing();
+    // if the array is recalculated it will be added
+  }
+
+  sendLocationSharing() {
     SendLocationNotification().init(shareLocationData, atClientInstance);
+  }
+
+  stopLocationSharing() {
+    SendLocationNotification().init([], atClientInstance);
+    shareLocationData.forEach((locationData) {
+      SendLocationNotification().sendNull(locationData);
+    });
   }
 }

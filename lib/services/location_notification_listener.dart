@@ -7,7 +7,13 @@ import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location/location_modal/hybrid_model.dart';
 import 'package:atsign_location/location_modal/location_notification.dart';
 import 'package:atsign_location/service/location_service.dart';
+import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:atsign_location_app/data_services/hive/hive_db.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:hive/hive.dart';
 import 'package:latlong/latlong.dart';
+import 'package:provider/provider.dart';
 
 import 'client_sdk_service.dart';
 
@@ -16,6 +22,7 @@ class LocationNotificationListener {
   static LocationNotificationListener _instance =
       LocationNotificationListener._();
   factory LocationNotificationListener() => _instance;
+  final HiveDataProvider _hiveDataProvider = HiveDataProvider();
 
   AtClientImpl atClientInstance;
   AtClientService atClientServiceInstance;
@@ -23,6 +30,7 @@ class LocationNotificationListener {
   List<HybridModel> allUsersList;
   // ignore: non_constant_identifier_names
   String LOCATION_NOTIFY = 'locationNotify';
+  bool sendLocation;
 
   StreamController _allUsersController;
   Stream<List<HybridModel>> get atHybridUsersStream =>
@@ -35,6 +43,21 @@ class LocationNotificationListener {
     atClientServiceInstance = AtClientService();
     allUsersList = [];
     _allUsersController = StreamController<List<HybridModel>>.broadcast();
+  }
+
+  updateShareLocation(bool value) async {
+    await _hiveDataProvider.insertData(
+      "Sharing",
+      {"isSharing": value.toString()},
+    );
+
+    Provider.of<HybridProvider>(NavService.navKey.currentContext, listen: false)
+        .initialiseLacationSharing();
+  }
+
+  getShareLocation() async {
+    var data = await _hiveDataProvider.readData("Sharing");
+    return (data['isSharing'] == 'true') ? true : false;
   }
 
   updateHybridList(LocationNotificationModel newUser) async {
@@ -67,7 +90,11 @@ class LocationNotificationListener {
       print('contains');
       print(newUser.getLatLng.toString());
       print(allUsersList[index].latLng.toString());
-      if (allUsersList[index].latLng != newUser.getLatLng) {
+      if (newUser.getLatLng == LatLng(0, 0)) {
+        allUsersList.remove(allUsersList[index]);
+        LocationService().removeUser(newUser.atsignCreator);
+        atHybridUsersSink.add(allUsersList);
+      } else if (allUsersList[index].latLng != newUser.getLatLng) {
         allUsersList[index].latLng = newUser.getLatLng;
         allUsersList[index].eta = '?';
         _allUsersController.add(allUsersList);
@@ -97,20 +124,24 @@ class LocationNotificationListener {
   }
 
   getImageOfAtsignNew(String atsign) async {
-    AtContact contact;
-    Uint8List image;
-    AtContactsImpl atContact = await AtContactsImpl.getInstance(
-        ClientSdkService.getInstance()
-            .atClientServiceInstance
-            .atClient
-            .currentAtSign);
-    contact = await atContact.get(atsign);
-    if (contact != null) {
-      if (contact.tags != null && contact.tags['image'] != null) {
-        List<int> intList = contact.tags['image'].cast<int>();
-        image = Uint8List.fromList(intList);
+    try {
+      AtContact contact;
+      Uint8List image;
+      AtContactsImpl atContact = await AtContactsImpl.getInstance(
+          ClientSdkService.getInstance()
+              .atClientServiceInstance
+              .atClient
+              .currentAtSign);
+      contact = await atContact.get(atsign);
+      if (contact != null) {
+        if (contact.tags != null && contact.tags['image'] != null) {
+          List<int> intList = contact.tags['image'].cast<int>();
+          image = Uint8List.fromList(intList);
+        }
       }
+      return image;
+    } catch (e) {
+      return null;
     }
-    return image;
   }
 }

@@ -105,26 +105,18 @@ class RequestLocationProvider extends ShareLocationProvider {
             (notification.locationNotificationModel.isExited) &&
             (notification.locationNotificationModel.atsignCreator ==
                 currentAtSign)) tempNotification.add(notification);
-        //(notification.locationNotificationModel.atsignCreator == currentAtSign) => because in requestNotification receiver will be the creator
-
-        //  else if (notification.locationNotificationModel.isAccepted)
-        //   // if requestAcknowledgement has been sent then remove this, we'll use requestAcknowledgement to track
-        //   allRequestNotifications.remove(notification);
       }
     });
     allRequestNotifications
         .removeWhere((element) => tempNotification.contains(element));
-    // List<HybridNotificationModel> tempNotification = allRequestNotifications;
-    // tempNotification.forEach((notification) {
-    //   if ((notification.locationNotificationModel != null) &&
-    //       (notification.locationNotificationModel.atsignCreator !=
-    //           currentAtSign) &&
-    //       (!notification.locationNotificationModel.isAccepted) &&
-    //       (notification.locationNotificationModel.isExited)) {
-    //     // if i have accepted then dont show me requestnotification
-    //     allRequestNotifications.remove(notification);
-    //   }
-    // });
+
+    for (int i = 0; i < allRequestNotifications.length; i++) {
+      if ((allRequestNotifications[i].locationNotificationModel == 'null') ||
+          (allRequestNotifications[i].locationNotificationModel == null))
+        tempNotification.add(allRequestNotifications[i]);
+    }
+    allRequestNotifications
+        .removeWhere((element) => tempNotification.contains(element));
   }
 
   checkForAcknowledgeRequest() {
