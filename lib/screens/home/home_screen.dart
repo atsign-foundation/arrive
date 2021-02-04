@@ -1,6 +1,7 @@
 import 'package:at_events_flutter/models/event_notification.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
+import 'package:at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -39,13 +40,14 @@ class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
   EventProvider eventProvider = new EventProvider();
   HybridProvider hybridProvider = new HybridProvider();
-
+  LatLng myLatLng;
   String currentAtSign;
 
   @override
   void initState() {
     super.initState();
     initializeContacts();
+    getMyLocation();
     LocationNotificationListener()
         .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
     eventProvider = context.read<EventProvider>();
@@ -76,6 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
         rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
+  getMyLocation() async {
+    LatLng newMyLatLng = await MyLocation().myLocation();
+    if ((newMyLatLng != null) || (newMyLatLng != LatLng(0, 0)))
+      setState(() {
+        myLatLng = newMyLatLng;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -86,12 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: [
-              GestureDetector(
-                child: AbsorbPointer(
-                  absorbing: false,
-                  child: ShowLocation(LatLng(20, 30)),
-                ),
-              ),
+              (myLatLng != null)
+                  ? ShowLocation(myLatLng)
+                  : Center(child: CircularProgressIndicator()),
               Positioned(
                 top: 0,
                 right: 0,

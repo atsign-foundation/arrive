@@ -70,22 +70,24 @@ class LocationNotificationListener {
       }
     });
     if (!contains) {
-      print('!contains');
-      String atsign = newUser.atsignCreator;
-      LatLng _latlng = newUser.getLatLng;
-      var _image = await getImageOfAtsignNew(atsign);
+      if (newUser.getLatLng != LatLng(0, 0)) {
+        print('!contains');
+        String atsign = newUser.atsignCreator;
+        LatLng _latlng = newUser.getLatLng;
+        var _image = await getImageOfAtsignNew(atsign);
 
-      HybridModel user = HybridModel(
-          displayName: newUser.atsignCreator,
-          latLng: _latlng,
-          image: _image,
-          eta: '?');
+        HybridModel user = HybridModel(
+            displayName: newUser.atsignCreator,
+            latLng: _latlng,
+            image: _image,
+            eta: '?');
 
-      allUsersList.add(user);
-      _allUsersController.add(allUsersList);
-      print('atHybridUsersSink added');
-      atHybridUsersSink.add(allUsersList);
-      LocationService().newList(allUsersList);
+        allUsersList.add(user);
+        _allUsersController.add(allUsersList);
+        print('atHybridUsersSink added');
+        atHybridUsersSink.add(allUsersList);
+        LocationService().newList(allUsersList);
+      }
     } else {
       print('contains');
       print(newUser.getLatLng.toString());

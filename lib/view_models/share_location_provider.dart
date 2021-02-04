@@ -93,13 +93,14 @@ class ShareLocationProvider extends EventProvider {
               locationNotificationModel;
           print(
               'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
-        } else {
-          allShareLocationNotifications
-              .remove(allShareLocationNotifications[i]);
         }
+        // else {
+        //   allShareLocationNotifications
+        //       .remove(allShareLocationNotifications[i]);
+        // }
       } catch (e) {
         print('convertJsonToLocationModel:$e');
-        allShareLocationNotifications.remove(allShareLocationNotifications[i]);
+        // allShareLocationNotifications.remove(allShareLocationNotifications[i]);
       }
     }
   }
@@ -114,6 +115,11 @@ class ShareLocationProvider extends EventProvider {
     }
     allShareLocationNotifications
         .removeWhere((element) => tempArray.contains(element));
+
+    tempArray.forEach((element) {
+      print('removed data ${element.key}');
+      print('${element.locationNotificationModel}');
+    });
   }
 
   checkForAcknowledge() {
