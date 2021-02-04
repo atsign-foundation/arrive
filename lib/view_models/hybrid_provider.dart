@@ -1,4 +1,5 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_events_flutter/models/event_notification.dart';
 import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
@@ -95,6 +96,7 @@ class HybridProvider extends RequestLocationProvider {
       }
     }
 
+    HomeEventService().setAllEventsList(allHybridNotifications);
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
   }
 
@@ -111,8 +113,14 @@ class HybridProvider extends RequestLocationProvider {
             .addDataToListRequest(notification.locationNotificationModel);
       }
     } else {
-      tempNotification =
-          await super.addDataToListEvent(notification.eventNotificationModel);
+      tempNotification = HybridNotificationModel(NotificationType.Event);
+      tempNotification.key = notification.eventNotificationModel.key;
+      tempNotification.atKey =
+          AtKey.fromString(notification.eventNotificationModel.key);
+      tempNotification.atValue = await getAtValue(tempNotification.atKey);
+      tempNotification.eventNotificationModel =
+          notification.eventNotificationModel;
+      allNotifications.add(tempNotification);
     }
     allHybridNotifications.add(tempNotification);
     setStatus(HYBRID_ADD_EVENT, Status.Done);

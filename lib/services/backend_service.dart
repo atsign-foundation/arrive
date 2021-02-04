@@ -143,7 +143,7 @@ class BackendService {
               provider.findAtSignsToShareLocationWith();
               provider.initialiseLacationSharing();
             });
-      } else
+      } else if (eventData.isUpdate)
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
     } else if (atKey.toString().contains('eventacknowledged')) {

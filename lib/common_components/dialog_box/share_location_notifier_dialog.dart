@@ -88,8 +88,10 @@ class _ShareLocationNotifierDialogState
     dynamic overlapData = [];
 
     allSavedEvents.forEach((event) {
+      String keyMicrosecondId =
+          event.key.split('createevent-')[1].split('@')[0];
       if (event.notificationType == NotificationType.Event &&
-          widget.eventData.key != event.key) {
+          !event.key.contains(keyMicrosecondId)) {
         allEventsExcludingCurrentEvent.add(event);
       }
     });
