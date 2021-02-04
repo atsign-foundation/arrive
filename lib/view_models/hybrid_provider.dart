@@ -1,9 +1,9 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';

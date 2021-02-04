@@ -2,12 +2,12 @@ import 'dart:typed_data';
 
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
-import 'package:atsign_events/common_components/contacts_initials.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
-import 'package:atsign_events/services/event_services.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:at_events_flutter/common_components/contacts_initials.dart';
+import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:at_events_flutter/services/event_services.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
@@ -29,7 +29,7 @@ import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class ShareLocationNotifierDialog extends StatefulWidget {
   final String event, invitedPeopleCount, timeAndDate, userName;

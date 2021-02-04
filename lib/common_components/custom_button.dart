@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class CustomButton extends StatelessWidget {
   final double width, height, radius;

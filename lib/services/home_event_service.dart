@@ -1,8 +1,8 @@
-import 'package:atsign_contacts_group/widgets/custom_toast.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_location/atsign_location_plugin.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
+import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:at_location_flutter/at_location_flutter_plugin.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
@@ -14,7 +14,7 @@ import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
 
 class HomeEventService {
@@ -68,7 +68,7 @@ class HomeEventService {
     Navigator.push(
       NavService.navKey.currentContext,
       MaterialPageRoute(
-        builder: (context) => AtsignLocationPlugin(
+        builder: (context) => AtLocationFlutterPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
             onEventCancel: () {
@@ -123,7 +123,7 @@ class HomeEventService {
     Navigator.push(
       NavService.navKey.currentContext,
       MaterialPageRoute(
-        builder: (context) => AtsignLocationPlugin(
+        builder: (context) => AtLocationFlutterPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
             userListenerKeyword: locationNotificationModel,

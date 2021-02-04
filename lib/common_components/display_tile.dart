@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_events/common_components/contacts_initials.dart';
+import 'package:at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 
 class DisplayTile extends StatefulWidget {
   final String title, semiTitle, subTitle, atsignCreator, invitedBy;

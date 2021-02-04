@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
-import 'package:atsign_contacts/widgets/contacts_initials.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:at_contacts_flutter/widgets/contacts_initials.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
@@ -13,7 +13,7 @@ import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
 
 class SideBar extends StatefulWidget {

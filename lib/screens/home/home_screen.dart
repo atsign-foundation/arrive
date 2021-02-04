@@ -1,6 +1,6 @@
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/screens/create_event.dart';
-import 'package:atsign_location/atsign_location.dart';
+import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:at_events_flutter/screens/create_event.dart';
+import 'package:at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -23,12 +23,12 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

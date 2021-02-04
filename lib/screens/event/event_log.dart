@@ -1,5 +1,5 @@
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
@@ -7,7 +7,7 @@ import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class EventLog extends StatefulWidget {
   @override

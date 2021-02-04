@@ -1,5 +1,5 @@
-import 'package:atsign_location/atsign_location.dart';
-import 'package:atsign_location/atsign_location_plugin.dart';
+import 'package:at_location_flutter/at_location_flutter.dart';
+import 'package:at_location_flutter/at_location_flutter_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
@@ -12,7 +12,7 @@ import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class ShareLocationScreen extends StatelessWidget {
   int length;

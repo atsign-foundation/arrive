@@ -1,13 +1,13 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_authentication_helper/atsign_authentication_helper.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';

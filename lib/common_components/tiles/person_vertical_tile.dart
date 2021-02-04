@@ -1,7 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class CustomPersonVerticalTile extends StatelessWidget {
   final String imageLocation, title, subTitle;

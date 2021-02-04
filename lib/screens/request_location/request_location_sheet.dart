@@ -1,7 +1,7 @@
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_contacts/screens/contacts_screen.dart';
-import 'package:atsign_contacts_group/widgets/custom_toast.dart';
-import 'package:atsign_events/common_components/overlapping-contacts.dart';
+import 'package:at_contacts_flutter/screens/contacts_screen.dart';
+import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
+import 'package:at_events_flutter/common_components/overlapping-contacts.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
@@ -13,8 +13,8 @@ import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:at_common_flutter/services/size_config.dart';
+import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class RequestLocationSheet extends StatefulWidget {
   @override

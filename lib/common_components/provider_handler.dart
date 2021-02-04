@@ -9,7 +9,7 @@ import 'package:atsign_location_app/view_models/base_model.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class ProviderHandler<T extends BaseModel> extends StatelessWidget {
   final Widget Function(T) successBuilder;
