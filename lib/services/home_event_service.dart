@@ -65,6 +65,9 @@ class HomeEventService {
           eventData: eventNotificationModel);
     }
 
+    eventNotificationModel.isUpdate =
+        true; //we are updating isUpdate, so we can map event in home screen and not show dialog
+
     Navigator.push(
       NavService.navKey.currentContext,
       MaterialPageRoute(
