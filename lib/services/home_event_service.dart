@@ -74,8 +74,8 @@ class HomeEventService {
         builder: (context) => AtLocationFlutterPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
-            onEventCancel: () {
-          provider.cancelEvent(eventNotificationModel);
+            onEventCancel: () async {
+          await provider.cancelEvent(eventNotificationModel);
         }, onEventExit: (
                 {bool isExited,
                 bool isSharing,
@@ -105,13 +105,14 @@ class HomeEventService {
                 ..atsignCreator = !isAdmin
                     ? eventNotificationModel.group.members.elementAt(0).atSign
                     : eventNotificationModel.atsignCreator;
-
-          if (!isSharing) {
-            Provider.of<HybridProvider>(NavService.navKey.currentContext,
-                    listen: false)
-                .removeLocationSharing(locationNotificationModel);
-            isNullSent = await SendLocationNotification()
-                .sendNull(locationNotificationModel);
+          if (isSharing != null) {
+            if (!isSharing) {
+              Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                      listen: false)
+                  .removeLocationSharing(locationNotificationModel);
+              isNullSent = await SendLocationNotification()
+                  .sendNull(locationNotificationModel);
+            }
           }
 
           return result;
@@ -215,6 +216,11 @@ String getActionString(EventNotificationModel event) {
         member.tags['isExited'] == true &&
         member.atSign == currentAtsign) {
       label = 'Request declined';
+    }
+    if (member.tags['isAccepted'] != null &&
+        member.tags['isAccepted'] == true &&
+        member.atSign == currentAtsign) {
+      label = '';
     }
   });
 

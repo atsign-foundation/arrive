@@ -4,6 +4,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:flutter/material.dart';
 
 import 'base_model.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -318,7 +319,13 @@ class EventProvider extends BaseModel {
           regex: '${eventData.key}',
         );
         AtKey key = AtKey.fromString(response[0]);
-        updateEvent(eventData, key);
+        bool result = await updateEvent(eventData, key);
+        if (result) {
+          BackendService.getInstance().mapUpdatedDataToWidget(
+              BackendService.getInstance().convertEventToHybrid(
+                  NotificationType.Event,
+                  eventNotificationModel: eventData));
+        }
       } catch (e) {
         print('error in cancelling event:$e');
       }
@@ -341,7 +348,7 @@ class EventProvider extends BaseModel {
         return result;
     } catch (e) {
       print('error in updating notification:$e');
-      return e.toString();
+      return false;
     }
   }
 

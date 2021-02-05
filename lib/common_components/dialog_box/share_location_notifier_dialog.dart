@@ -274,13 +274,13 @@ class _ShareLocationNotifierDialogState
                                         .atClient
                                         .currentAtSign) {
                                   element.tags['isAccepted'] = false;
-                                  element.tags['isExited'] = false;
+                                  element.tags['isExited'] = true;
                                 }
                               }),
                               providerCallback<EventProvider>(context,
                                   task: (t) => t.actionOnEvent(widget.eventData,
                                       ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                                      isAccepted: false),
+                                      isAccepted: false, isExited: true),
                                   taskName: (t) => t.UPDATE_EVENTS,
                                   onSuccess: (t) {
                                     Navigator.of(context).pop();
@@ -346,7 +346,7 @@ class _ShareLocationNotifierDialogState
 updateEvent(EventNotificationModel eventData) {
   providerCallback<EventProvider>(NavService.navKey.currentContext,
       task: (t) => t.actionOnEvent(eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-          isAccepted: true, isSharing: true),
+          isAccepted: true, isSharing: true, isExited: false),
       taskName: (t) => t.UPDATE_EVENTS,
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();
