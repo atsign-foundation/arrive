@@ -122,8 +122,8 @@ class BackendService {
     var atKey = notificationKey.split(':')[1];
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
-        .catchError(
-            (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+        .catchError((e) =>
+            print("error in decrypting: ${e.errorCode} ${e.errorMessage}"));
     if (atKey.toString().contains('locationNotify')) {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));

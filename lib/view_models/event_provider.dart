@@ -367,6 +367,7 @@ class EventProvider extends BaseModel {
 
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Event, key: key[0]);
+    eventNotificationModel.key = key[0];
     //allRequestNotifications.add(tempHyridNotificationModel);
     tempHyridNotificationModel.atKey = AtKey.fromString(key[0]);
     tempHyridNotificationModel.atValue =

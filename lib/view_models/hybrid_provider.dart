@@ -79,6 +79,8 @@ class HybridProvider extends RequestLocationProvider {
         if (NotificationType.Event == notification.notificationType) {
           allHybridNotifications[i].eventNotificationModel =
               notification.eventNotificationModel;
+          allHybridNotifications[i].eventNotificationModel.key =
+              allHybridNotifications[i].key;
         } else {
           if (notification.locationNotificationModel.key
               .contains('sharelocation')) {
@@ -113,14 +115,17 @@ class HybridProvider extends RequestLocationProvider {
             .addDataToListRequest(notification.locationNotificationModel);
       }
     } else {
-      tempNotification = HybridNotificationModel(NotificationType.Event);
-      tempNotification.key = notification.eventNotificationModel.key;
-      tempNotification.atKey =
-          AtKey.fromString(notification.eventNotificationModel.key);
-      tempNotification.atValue = await getAtValue(tempNotification.atKey);
-      tempNotification.eventNotificationModel =
-          notification.eventNotificationModel;
-      allNotifications.add(tempNotification);
+      tempNotification =
+          await super.addDataToListEvent(notification.eventNotificationModel);
+
+      // tempNotification = HybridNotificationModel(NotificationType.Event);
+      // tempNotification.key = notification.eventNotificationModel.key;
+      // tempNotification.atKey =
+      //     AtKey.fromString(notification.eventNotificationModel.key);
+      // tempNotification.atValue = await getAtValue(tempNotification.atKey);
+      // tempNotification.eventNotificationModel =
+      //     notification.eventNotificationModel;
+      // allNotifications.add(tempNotification);
     }
     allHybridNotifications.add(tempNotification);
     setStatus(HYBRID_ADD_EVENT, Status.Done);
