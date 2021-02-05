@@ -169,7 +169,10 @@ class RequestLocationService {
   removePerson(LocationNotificationModel locationNotificationModel) async {
     var result;
     if (locationNotificationModel.atsignCreator !=
-        ClientSdkService.getInstance().currentAtsign) {
+        ClientSdkService.getInstance()
+            .atClientServiceInstance
+            .atClient
+            .currentAtSign) {
       locationNotificationModel.isAccepted = false;
       locationNotificationModel.isExited = true;
       result =

@@ -11,6 +11,7 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
@@ -245,6 +246,13 @@ class BackendService {
     print(
         'acknowledged notification received:${acknowledgedEvent} , key:${atKey} , ${eventId}');
 
+    EventNotificationModel presentEventData;
+    HomeEventService().allEvents.forEach((element) {
+      if (element.key.contains('createevent-$eventId')) {
+        presentEventData = element.eventNotificationModel;
+      }
+    });
+
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-$eventId',
       // sharedBy: '@test_ga3',
@@ -254,6 +262,9 @@ class BackendService {
     AtKey key = AtKey.fromString(response[0]);
 
     acknowledgedEvent.isUpdate = true;
+    acknowledgedEvent.isCancelled = presentEventData.isCancelled;
+    acknowledgedEvent.isSharing = presentEventData.isSharing;
+
     var notification = EventNotificationModel.convertEventNotificationToJson(
         acknowledgedEvent);
 
