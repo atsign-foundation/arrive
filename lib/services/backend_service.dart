@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:at_events_flutter/models/event_notification.dart';
-import 'package:at_location_flutter/location_modal/location_notification.dart';
-// import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+// import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
@@ -26,7 +26,7 @@ import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
-import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 import 'location_notification_listener.dart';
 

@@ -1,8 +1,8 @@
 import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
-import 'package:at_events_flutter/models/event_notification.dart';
-import 'package:at_location_flutter/at_location_flutter_plugin.dart';
-import 'package:at_location_flutter/location_modal/location_notification.dart';
-import 'package:at_location_flutter/service/send_location_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter_plugin.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
@@ -14,7 +14,7 @@ import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
 
 class HomeEventService {

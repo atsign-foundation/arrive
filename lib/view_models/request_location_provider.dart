@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
-import 'package:at_location_flutter/location_modal/hybrid_model.dart';
-import 'package:at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
-import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
 
 class RequestLocationProvider extends ShareLocationProvider {

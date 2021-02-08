@@ -9,9 +9,9 @@ import 'package:flutter/material.dart';
 import 'base_model.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
-import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'dart:convert';
-import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class EventProvider extends BaseModel {
   EventProvider();
