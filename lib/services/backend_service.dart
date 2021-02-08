@@ -249,7 +249,9 @@ class BackendService {
     EventNotificationModel presentEventData;
     HomeEventService().allEvents.forEach((element) {
       if (element.key.contains('createevent-$eventId')) {
-        presentEventData = element.eventNotificationModel;
+        presentEventData = EventNotificationModel.fromJson(jsonDecode(
+            EventNotificationModel.convertEventNotificationToJson(
+                element.eventNotificationModel)));
       }
     });
 
@@ -261,12 +263,10 @@ class BackendService {
 
     AtKey key = AtKey.fromString(response[0]);
 
-    acknowledgedEvent.isUpdate = true;
-    acknowledgedEvent.isCancelled = presentEventData.isCancelled;
-    acknowledgedEvent.isSharing = presentEventData.isSharing;
+    presentEventData.group = acknowledgedEvent.group;
 
-    var notification = EventNotificationModel.convertEventNotificationToJson(
-        acknowledgedEvent);
+    var notification =
+        EventNotificationModel.convertEventNotificationToJson(presentEventData);
 
     print('notification:$notification');
 

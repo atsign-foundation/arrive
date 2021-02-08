@@ -78,6 +78,7 @@ class EventProvider extends BaseModel {
     for (int i = 0; i < allNotifications.length; i++) {
       AtValue value = await getAtValue(allNotifications[i].atKey);
       if (value != null) {
+        print('at value event $value');
         allNotifications[i].atValue = value;
       }
     }
@@ -127,6 +128,10 @@ class EventProvider extends BaseModel {
         jsonDecode(
             EventNotificationModel.convertEventNotificationToJson(event)));
 
+    print('in action on event admin:${event.isSharing}');
+    print(
+        'in action on event member:${event.group.members.elementAt(0).tags['isSharing']}');
+
     try {
       String atkeyMicrosecondId =
           eventData.key.split('createevent-')[1].split('@')[0];
@@ -159,9 +164,10 @@ class EventProvider extends BaseModel {
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
+      print(
+          'update event data:${eventData.group.members.elementAt(0).tags['isSharing']}');
 
-      // print('acknowledged data:${notification}');
-
+      print('notification data:${notification}');
       var result = await atClientInstance.put(key, notification);
       setStatus(UPDATE_EVENTS, Status.Done);
 

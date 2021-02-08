@@ -4,6 +4,7 @@ import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/models/enums_model.dart';
 
@@ -81,6 +82,8 @@ class HybridProvider extends RequestLocationProvider {
               notification.eventNotificationModel;
           allHybridNotifications[i].eventNotificationModel.key =
               allHybridNotifications[i].key;
+          LocationService().updateEventWithNewData(
+              allHybridNotifications[i].eventNotificationModel);
         } else {
           if (notification.locationNotificationModel.key
               .contains('sharelocation')) {

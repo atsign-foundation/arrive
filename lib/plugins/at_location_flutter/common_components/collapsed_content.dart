@@ -29,7 +29,7 @@ class CollapsedContent extends StatefulWidget {
 }
 
 class _CollapsedContentState extends State<CollapsedContent> {
-  bool isCreator, isSharing;
+  bool isCreator, isSharing, isSharingEvent = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -63,23 +63,27 @@ class _CollapsedContentState extends State<CollapsedContent> {
         ),
         child: (widget.eventListenerKeyword != null)
             ? forEvent(widget.expanded, context, onLocationOff: (void a) {
-                setState(() {});
+                // print('')
+                // setState(() {});
               })
             : forUser(widget.expanded, context));
   }
 
   Widget forEvent(bool expanded, BuildContext context,
       {ValueChanged onLocationOff}) {
-    bool isLocationSharing = false;
     if (widget.isAdmin) {
-      if (widget.eventListenerKeyword.isSharing) isLocationSharing = true;
+      if (LocationService().eventListenerKeyword.isSharing)
+        isSharingEvent = true;
     } else {
-      if (widget.eventListenerKeyword != null) {
-        if (widget.eventListenerKeyword.group.members
+      if (LocationService().eventListenerKeyword != null) {
+        if (LocationService()
+                .eventListenerKeyword
+                .group
+                .members
                 .elementAt(0)
                 .tags['isSharing'] ==
             true) {
-          isLocationSharing = true;
+          isSharingEvent = true;
         }
       }
     }
@@ -257,29 +261,43 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             style: CustomTextStyles().darkGrey16,
                           ),
                           Switch(
-                              value: isLocationSharing,
+                              value: isSharingEvent,
                               onChanged: (value) async {
                                 print(value);
                                 if (widget.isAdmin) {
-                                  widget.eventListenerKeyword.isSharing = value;
+                                  LocationService()
+                                      .eventListenerKeyword
+                                      .isSharing = value;
                                 } else {
-                                  widget.eventListenerKeyword.group.members
+                                  LocationService()
+                                      .eventListenerKeyword
+                                      .group
+                                      .members
                                       .elementAt(0)
                                       .tags['isSharing'] = value;
                                 }
+
+                                print(
+                                    'in collapsed content:${EventNotificationModel.convertEventNotificationToJson(LocationService().eventListenerKeyword)}');
 
                                 var result = await LocationService()
                                     .onEventExit(
                                         isSharing: value,
                                         keyType: widget.isAdmin
                                             ? ATKEY_TYPE_ENUM.CREATEEVENT
-                                            : ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT);
+                                            : ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                                        eventData: LocationService()
+                                            .eventListenerKeyword);
+                                print('share off:${result}');
                                 if (result == true) {
-                                  onLocationOff(value);
+                                  // onLocationOff(value);
+                                  setState(() {
+                                    isSharingEvent = value;
+                                  });
 
                                   if (widget.isAdmin) {
                                     LocationService().onEventUpdate(
-                                        widget.eventListenerKeyword);
+                                        LocationService().eventListenerKeyword);
                                   }
                                 } else
                                   CustomToast().show(

@@ -102,6 +102,15 @@ class LocationService {
     _atHybridUsersController.close();
   }
 
+  updateEventWithNewData(EventNotificationModel eventData) {
+    if (eventData != null && eventListenerKeyword != null) {
+      if (eventData.key == eventListenerKeyword.key) {
+        eventListenerKeyword = eventData;
+        eventSink.add(eventListenerKeyword);
+      }
+    }
+  }
+
   addMyDetailsToHybridUsersList() async {
     String _atsign = getAtSign();
     LatLng mylatlng = await MyLocation().myLocation();

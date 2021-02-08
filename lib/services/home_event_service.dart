@@ -83,7 +83,7 @@ class HomeEventService {
                 EventNotificationModel eventData}) async {
           bool isNullSent = false;
           var result = await provider.actionOnEvent(
-            eventNotificationModel,
+            eventData,
             keyType,
             isExited: isExited,
             isSharing: isSharing,
@@ -216,11 +216,6 @@ String getActionString(EventNotificationModel event) {
         member.tags['isExited'] == true &&
         member.atSign == currentAtsign) {
       label = 'Request declined';
-    }
-    if (member.tags['isAccepted'] != null &&
-        member.tags['isAccepted'] == true &&
-        member.atSign == currentAtsign) {
-      label = '';
     }
   });
 
