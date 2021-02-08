@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
-import 'package:at_events_flutter/common_components/contacts_initials.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';

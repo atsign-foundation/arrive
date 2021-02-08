@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:at_commons/at_commons.dart';
-import 'package:at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 
 import 'backend_service.dart';
 import 'client_sdk_service.dart';
-import 'package:at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class LocationSharingService {
   static final LocationSharingService _singleton =

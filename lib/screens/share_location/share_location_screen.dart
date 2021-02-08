@@ -1,5 +1,5 @@
-import 'package:at_location_flutter/at_location_flutter.dart';
-import 'package:at_location_flutter/at_location_flutter_plugin.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter_plugin.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
