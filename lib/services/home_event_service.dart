@@ -83,7 +83,7 @@ class HomeEventService {
                 EventNotificationModel eventData}) async {
           bool isNullSent = false;
           var result = await provider.actionOnEvent(
-            eventData,
+            eventData != null ? eventData : eventNotificationModel,
             keyType,
             isExited: isExited,
             isSharing: isSharing,
