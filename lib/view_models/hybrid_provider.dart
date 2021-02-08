@@ -97,7 +97,6 @@ class HybridProvider extends RequestLocationProvider {
         break;
       }
     }
-
     HomeEventService().setAllEventsList(allHybridNotifications);
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
   }
@@ -223,8 +222,8 @@ class HybridProvider extends RequestLocationProvider {
         print(
             'date matching:${dateToString(notification.eventNotificationModel.event.date)} ,${dateToString(DateTime.now())} ');
 
-        if (dateToString(notification.eventNotificationModel.event.date) ==
-            dateToString(DateTime.now())) {
+        if (isOneDayEventOccursToday(
+            notification.eventNotificationModel.event)) {
           DateTime date = notification.eventNotificationModel.event.date;
           TimeOfDay from = notification.eventNotificationModel.event.startTime;
           TimeOfDay to = notification.eventNotificationModel.event.endTime;
@@ -236,8 +235,14 @@ class HybridProvider extends RequestLocationProvider {
 
           location.from = startTimeEnumToTimeOfDay(
               groupMember.tags['shareFrom'].toString(), location.from);
-          location.to =
-              DateTime(date.year, date.month, date.day, to.hour, to.minute);
+
+          if (to.hour + to.minute / 60.0 > from.hour + from.minute / 60.0) {
+            location.to =
+                DateTime(date.year, date.month, date.day, to.hour, to.minute);
+          } else {
+            location.to = DateTime(
+                date.year, date.month, date.day + 1, to.hour, to.minute);
+          }
 
           location.to = endTimeEnumToTimeOfDay(
               groupMember.tags['shareTo'].toString(), location.to);
@@ -254,6 +259,27 @@ class HybridProvider extends RequestLocationProvider {
       shareLocationData.add(notification.locationNotificationModel);
       return location;
     }
+  }
+
+  bool isOneDayEventOccursToday(Event event) {
+    bool isEventToday = false;
+    if (event.endTime.hour + event.endTime.minute / 60.0 >
+        event.startTime.hour + event.startTime.minute / 60.0) {
+      if (dateToString(event.date) == dateToString(DateTime.now()))
+        isEventToday = true;
+    } else {
+      DateTime todaysDate = DateTime.now();
+      if ((dateToString(DateTime(
+                  event.date.year, event.date.month, event.date.day)) ==
+              dateToString(DateTime(
+                  todaysDate.year, todaysDate.month, todaysDate.day))) ||
+          (dateToString(DateTime(
+                  event.date.year, event.date.month, event.date.day + 1)) ==
+              dateToString(
+                  DateTime(todaysDate.year, todaysDate.month, todaysDate.day))))
+        isEventToday = true;
+    }
+    return isEventToday;
   }
 
   initialiseLacationSharing() async {
