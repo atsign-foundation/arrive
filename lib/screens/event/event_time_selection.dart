@@ -1,4 +1,4 @@
-import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/invite_card.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
 import 'package:atsign_location_app/common_components/tiles/text_tile.dart';

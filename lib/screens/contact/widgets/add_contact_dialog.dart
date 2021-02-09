@@ -9,7 +9,7 @@ import 'package:atsign_location_app/utils/text_strings.dart';
 /// onTap function named as [onYesTap] for on press of [Yes] button of the dialog
 
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class AddContactDialog extends StatelessWidget {
   final String name;

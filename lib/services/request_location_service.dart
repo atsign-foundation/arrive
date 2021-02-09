@@ -1,9 +1,9 @@
 import 'package:at_commons/at_commons.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
 
 import 'client_sdk_service.dart';
@@ -129,6 +129,10 @@ class RequestLocationService {
                 .difference(locationNotificationModel.from)
                 .inMinutes *
             60000;
+        key.metadata.ttr = locationNotificationModel.to
+                .difference(locationNotificationModel.from)
+                .inMinutes *
+            60000;
         key.metadata.expiresAt = locationNotificationModel.to;
       }
 
@@ -165,7 +169,10 @@ class RequestLocationService {
   removePerson(LocationNotificationModel locationNotificationModel) async {
     var result;
     if (locationNotificationModel.atsignCreator !=
-        ClientSdkService.getInstance().currentAtsign) {
+        ClientSdkService.getInstance()
+            .atClientServiceInstance
+            .atClient
+            .currentAtSign) {
       locationNotificationModel.isAccepted = false;
       locationNotificationModel.isExited = true;
       result =
@@ -178,11 +185,56 @@ class RequestLocationService {
     // print('remove person called Request');
   }
 
+  sendDeleteAck(LocationNotificationModel locationNotificationModel) async {
+    String atkeyMicrosecondId = locationNotificationModel.key
+        .split('requestlocation-')[1]
+        .split('@')[0];
+    AtKey atKey;
+    atKey = newAtKey(
+      60000,
+      "deleterequestlocation-$atkeyMicrosecondId",
+      locationNotificationModel.receiver,
+    );
+
+    var result = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .put(
+            atKey,
+            LocationNotificationModel.convertLocationNotificationToJson(
+                locationNotificationModel));
+    print('requestLocationAcknowledgment $result');
+  }
+
+  deleteKey(LocationNotificationModel locationNotificationModel) async {
+    String atkeyMicrosecondId = locationNotificationModel.key
+        .split('requestlocation-')[1]
+        .split('@')[0];
+
+    List<String> response = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .getKeys(
+          regex: 'requestlocation-$atkeyMicrosecondId',
+        );
+
+    AtKey key = AtKey.fromString(response[0]);
+
+    locationNotificationModel.isAcknowledgment = true;
+
+    var result = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .delete(key);
+    return result;
+  }
+
   AtKey newAtKey(int ttr, String key, String sharedWith,
       {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = ttr
+      ..metadata.ccd = true
       ..key = key
       ..sharedWith = sharedWith
       ..sharedBy = ClientSdkService.getInstance()

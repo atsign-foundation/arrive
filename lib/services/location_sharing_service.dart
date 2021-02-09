@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:at_commons/at_commons.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -12,24 +12,9 @@ import 'package:provider/provider.dart';
 
 import 'backend_service.dart';
 import 'client_sdk_service.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
-// all the SDK related functions will happen here
 class LocationSharingService {
-  // when app starts
-  // getAllRequestedEvents() {}
-  // getAllSharedEvents() {}
-  // //sendRequestLocationEvent
-  // deleteRequestLocationEventWhenAccepted() {}
-  // updateRequestLocationEventWhenRejected() {}
-
-  // //sendShareLocationEvent
-  // shareLocationAcknowledgmentEventWhenAccepted() {}
-  // shareLocationAcknowledgmentEventWhenRejected() {}
-
-  // functions
-  // for requested locations
-
   static final LocationSharingService _singleton =
       LocationSharingService._internal();
   LocationSharingService._internal();
@@ -38,13 +23,12 @@ class LocationSharingService {
     return _singleton;
   }
 
-  // for shared locations
   sendShareLocationEvent(String atsign, bool isAcknowledgment,
       {int minutes}) async {
     try {
       AtKey atKey;
       if (minutes != null)
-        atKey = newAtKey(60000,
+        atKey = newAtKey((minutes * 60000),
             "sharelocation-${DateTime.now().microsecondsSinceEpoch}", atsign,
             ttl: (minutes * 60000),
             expiresAt: DateTime.now().add(Duration(minutes: minutes)));
@@ -108,7 +92,9 @@ class LocationSharingService {
               : "requestlocationacknowledged-$atkeyMicrosecondId",
           locationNotificationModel.atsignCreator);
       locationNotificationModel.isAccepted = isAccepted;
-      if (!isAccepted) locationNotificationModel.isExited = true;
+      locationNotificationModel.isExited = !isAccepted;
+      // if (!isAccepted) locationNotificationModel.isExited = true;
+      // if (isAccepted) locationNotificationModel.isExited = false;
       print(
           'locationNotificationModel.isExited ${locationNotificationModel.isExited}');
       print(
@@ -190,12 +176,35 @@ class LocationSharingService {
     return result;
   }
 
+  deleteKey(LocationNotificationModel locationNotificationModel) async {
+    String atkeyMicrosecondId =
+        locationNotificationModel.key.split('sharelocation-')[1].split('@')[0];
+
+    List<String> response = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .getKeys(
+          regex: 'sharelocation-$atkeyMicrosecondId',
+        );
+
+    AtKey key = AtKey.fromString(response[0]);
+
+    locationNotificationModel.isAcknowledgment = true;
+
+    var result = await ClientSdkService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .delete(key);
+    return result;
+  }
+
   //
   AtKey newAtKey(int ttr, String key, String sharedWith,
       {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = ttr
+      ..metadata.ccd = true
       ..key = key
       ..sharedWith = sharedWith
       ..sharedBy = ClientSdkService.getInstance()

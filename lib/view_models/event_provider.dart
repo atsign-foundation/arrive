@@ -4,13 +4,14 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:flutter/material.dart';
 
 import 'base_model.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
-import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'dart:convert';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class EventProvider extends BaseModel {
   EventProvider();
@@ -77,6 +78,7 @@ class EventProvider extends BaseModel {
     for (int i = 0; i < allNotifications.length; i++) {
       AtValue value = await getAtValue(allNotifications[i].atKey);
       if (value != null) {
+        print('at value event $value');
         allNotifications[i].atValue = value;
       }
     }
@@ -126,6 +128,10 @@ class EventProvider extends BaseModel {
         jsonDecode(
             EventNotificationModel.convertEventNotificationToJson(event)));
 
+    print('in action on event admin:${event.isSharing}');
+    print(
+        'in action on event member:${event.group.members.elementAt(0).tags['isSharing']}');
+
     try {
       String atkeyMicrosecondId =
           eventData.key.split('createevent-')[1].split('@')[0];
@@ -158,9 +164,10 @@ class EventProvider extends BaseModel {
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
+      print(
+          'update event data:${eventData.group.members.elementAt(0).tags['isSharing']}');
 
-      // print('acknowledged data:${notification}');
-
+      print('notification data:${notification}');
       var result = await atClientInstance.put(key, notification);
       setStatus(UPDATE_EVENTS, Status.Done);
 
@@ -318,7 +325,13 @@ class EventProvider extends BaseModel {
           regex: '${eventData.key}',
         );
         AtKey key = AtKey.fromString(response[0]);
-        updateEvent(eventData, key);
+        bool result = await updateEvent(eventData, key);
+        if (result) {
+          BackendService.getInstance().mapUpdatedDataToWidget(
+              BackendService.getInstance().convertEventToHybrid(
+                  NotificationType.Event,
+                  eventNotificationModel: eventData));
+        }
       } catch (e) {
         print('error in cancelling event:$e');
       }
@@ -341,7 +354,7 @@ class EventProvider extends BaseModel {
         return result;
     } catch (e) {
       print('error in updating notification:$e');
-      return e.toString();
+      return false;
     }
   }
 
@@ -367,6 +380,7 @@ class EventProvider extends BaseModel {
 
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Event, key: key[0]);
+    eventNotificationModel.key = key[0];
     //allRequestNotifications.add(tempHyridNotificationModel);
     tempHyridNotificationModel.atKey = AtKey.fromString(key[0]);
     tempHyridNotificationModel.atValue =

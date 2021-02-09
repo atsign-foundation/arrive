@@ -1,6 +1,8 @@
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/screens/create_event.dart';
-import 'package:atsign_location/atsign_location.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -23,12 +25,12 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -39,13 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
   EventProvider eventProvider = new EventProvider();
   HybridProvider hybridProvider = new HybridProvider();
-
+  LatLng myLatLng;
   String currentAtSign;
 
   @override
   void initState() {
     super.initState();
     initializeContacts();
+    getMyLocation();
     LocationNotificationListener()
         .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
     eventProvider = context.read<EventProvider>();
@@ -76,6 +79,14 @@ class _HomeScreenState extends State<HomeScreen> {
         rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
+  getMyLocation() async {
+    LatLng newMyLatLng = await MyLocation().myLocation();
+    if ((newMyLatLng != null) || (newMyLatLng != LatLng(0, 0)))
+      setState(() {
+        myLatLng = newMyLatLng;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -86,12 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           body: Stack(
             children: [
-              GestureDetector(
-                child: AbsorbPointer(
-                  absorbing: false,
-                  child: ShowLocation(LatLng(20, 30)),
-                ),
-              ),
+              (myLatLng != null)
+                  ? ShowLocation(myLatLng)
+                  : Center(child: CircularProgressIndicator()),
               Positioned(
                 top: 0,
                 right: 0,

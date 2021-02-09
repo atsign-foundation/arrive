@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_events/common_components/contacts_initials.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 
 class DisplayTile extends StatefulWidget {
   final String title, semiTitle, subTitle, atsignCreator, invitedBy;
@@ -55,7 +55,15 @@ class _DisplayTileState extends State<DisplayTile> {
           Stack(
             children: [
               (image != null)
-                  ? Image.memory(image, width: 50, height: 50)
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Image.memory(
+                        image,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.fill,
+                      ),
+                    )
                   : widget.atsignCreator != null
                       ? ContactInitial(
                           initials: widget.atsignCreator.substring(1, 3))

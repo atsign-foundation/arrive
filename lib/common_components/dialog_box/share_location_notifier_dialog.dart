@@ -2,12 +2,12 @@ import 'dart:typed_data';
 
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_contacts/utils/init_contacts_service.dart';
-import 'package:atsign_events/common_components/contacts_initials.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
-import 'package:atsign_events/services/event_services.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
@@ -29,7 +29,7 @@ import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class ShareLocationNotifierDialog extends StatefulWidget {
   final String event, invitedPeopleCount, timeAndDate, userName;
@@ -88,9 +88,12 @@ class _ShareLocationNotifierDialogState
     dynamic overlapData = [];
 
     allSavedEvents.forEach((event) {
-      if (event.notificationType == NotificationType.Event &&
-          widget.eventData.key != event.key) {
-        allEventsExcludingCurrentEvent.add(event);
+      if (event.notificationType == NotificationType.Event) {
+        String keyMicrosecondId =
+            event.key.split('createevent-')[1].split('@')[0];
+        if (!event.key.contains(keyMicrosecondId)) {
+          allEventsExcludingCurrentEvent.add(event);
+        }
       }
     });
     overlapData = EventService().isEventTimeSlotOverlap(
@@ -124,7 +127,16 @@ class _ShareLocationNotifierDialogState
                   Stack(
                     children: [
                       image != null
-                          ? Image.memory(image, width: 50, height: 50)
+                          ? ClipRRect(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                              child: Image.memory(
+                                image,
+                                width: 50,
+                                height: 50,
+                                fit: BoxFit.fill,
+                              ),
+                            )
                           : ContactInitial(
                               initials: widget.eventData != null
                                   ? widget.eventData.atsignCreator
@@ -272,13 +284,13 @@ class _ShareLocationNotifierDialogState
                                         .atClient
                                         .currentAtSign) {
                                   element.tags['isAccepted'] = false;
-                                  element.tags['isExited'] = false;
+                                  element.tags['isExited'] = true;
                                 }
                               }),
                               providerCallback<EventProvider>(context,
                                   task: (t) => t.actionOnEvent(widget.eventData,
                                       ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                                      isAccepted: false),
+                                      isAccepted: false, isExited: true),
                                   taskName: (t) => t.UPDATE_EVENTS,
                                   onSuccess: (t) {
                                     Navigator.of(context).pop();
@@ -344,7 +356,7 @@ class _ShareLocationNotifierDialogState
 updateEvent(EventNotificationModel eventData) {
   providerCallback<EventProvider>(NavService.navKey.currentContext,
       task: (t) => t.actionOnEvent(eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-          isAccepted: true, isSharing: true),
+          isAccepted: true, isSharing: true, isExited: false),
       taskName: (t) => t.UPDATE_EVENTS,
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();

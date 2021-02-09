@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
-// import 'package:atsign_events/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+// import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/models/message_notification.dart';
 import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
@@ -25,7 +26,7 @@ import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:provider/provider.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 import 'location_notification_listener.dart';
 
@@ -122,8 +123,8 @@ class BackendService {
     var atKey = notificationKey.split(':')[1];
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
-        .catchError(
-            (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+        .catchError((e) =>
+            print("error in decrypting: ${e.errorCode} ${e.errorMessage}"));
     if (atKey.toString().contains('locationNotify')) {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -143,7 +144,7 @@ class BackendService {
               provider.findAtSignsToShareLocationWith();
               provider.initialiseLacationSharing();
             });
-      } else
+      } else if (eventData.isUpdate)
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
     } else if (atKey.toString().contains('eventacknowledged')) {
@@ -245,6 +246,15 @@ class BackendService {
     print(
         'acknowledged notification received:${acknowledgedEvent} , key:${atKey} , ${eventId}');
 
+    EventNotificationModel presentEventData;
+    HomeEventService().allEvents.forEach((element) {
+      if (element.key.contains('createevent-$eventId')) {
+        presentEventData = EventNotificationModel.fromJson(jsonDecode(
+            EventNotificationModel.convertEventNotificationToJson(
+                element.eventNotificationModel)));
+      }
+    });
+
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-$eventId',
       // sharedBy: '@test_ga3',
@@ -253,9 +263,10 @@ class BackendService {
 
     AtKey key = AtKey.fromString(response[0]);
 
-    acknowledgedEvent.isUpdate = true;
-    var notification = EventNotificationModel.convertEventNotificationToJson(
-        acknowledgedEvent);
+    presentEventData.group = acknowledgedEvent.group;
+
+    var notification =
+        EventNotificationModel.convertEventNotificationToJson(presentEventData);
 
     print('notification:$notification');
 

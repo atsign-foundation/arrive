@@ -15,6 +15,7 @@ class Themes {
 
   static ThemeData get lightTheme {
     return ThemeData(
+      brightness: Brightness.light,
       primaryColor: AllColors().Black,
       accentColor: AllColors().ORANGE,
       hintColor: AllColors().DARK_GREY,
@@ -66,6 +67,7 @@ class Themes {
 
   static ThemeData get darkTheme {
     return ThemeData(
+      brightness: Brightness.dark,
       primaryColor: AllColors().WHITE,
       accentColor: AllColors().ORANGE,
       hintColor: AllColors().DARK_GREY,

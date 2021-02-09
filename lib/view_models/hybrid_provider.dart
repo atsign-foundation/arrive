@@ -1,9 +1,11 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/models/enums_model.dart';
 
 import 'package:atsign_location_app/services/client_sdk_service.dart';
@@ -78,6 +80,10 @@ class HybridProvider extends RequestLocationProvider {
         if (NotificationType.Event == notification.notificationType) {
           allHybridNotifications[i].eventNotificationModel =
               notification.eventNotificationModel;
+          allHybridNotifications[i].eventNotificationModel.key =
+              allHybridNotifications[i].key;
+          LocationService().updateEventWithNewData(
+              allHybridNotifications[i].eventNotificationModel);
         } else {
           if (notification.locationNotificationModel.key
               .contains('sharelocation')) {
@@ -94,7 +100,7 @@ class HybridProvider extends RequestLocationProvider {
         break;
       }
     }
-
+    HomeEventService().setAllEventsList(allHybridNotifications);
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
   }
 
@@ -113,6 +119,15 @@ class HybridProvider extends RequestLocationProvider {
     } else {
       tempNotification =
           await super.addDataToListEvent(notification.eventNotificationModel);
+
+      // tempNotification = HybridNotificationModel(NotificationType.Event);
+      // tempNotification.key = notification.eventNotificationModel.key;
+      // tempNotification.atKey =
+      //     AtKey.fromString(notification.eventNotificationModel.key);
+      // tempNotification.atValue = await getAtValue(tempNotification.atKey);
+      // tempNotification.eventNotificationModel =
+      //     notification.eventNotificationModel;
+      // allNotifications.add(tempNotification);
     }
     allHybridNotifications.add(tempNotification);
     setStatus(HYBRID_ADD_EVENT, Status.Done);
@@ -210,8 +225,8 @@ class HybridProvider extends RequestLocationProvider {
         print(
             'date matching:${dateToString(notification.eventNotificationModel.event.date)} ,${dateToString(DateTime.now())} ');
 
-        if (dateToString(notification.eventNotificationModel.event.date) ==
-            dateToString(DateTime.now())) {
+        if (isOneDayEventOccursToday(
+            notification.eventNotificationModel.event)) {
           DateTime date = notification.eventNotificationModel.event.date;
           TimeOfDay from = notification.eventNotificationModel.event.startTime;
           TimeOfDay to = notification.eventNotificationModel.event.endTime;
@@ -223,8 +238,14 @@ class HybridProvider extends RequestLocationProvider {
 
           location.from = startTimeEnumToTimeOfDay(
               groupMember.tags['shareFrom'].toString(), location.from);
-          location.to =
-              DateTime(date.year, date.month, date.day, to.hour, to.minute);
+
+          if (to.hour + to.minute / 60.0 > from.hour + from.minute / 60.0) {
+            location.to =
+                DateTime(date.year, date.month, date.day, to.hour, to.minute);
+          } else {
+            location.to = DateTime(
+                date.year, date.month, date.day + 1, to.hour, to.minute);
+          }
 
           location.to = endTimeEnumToTimeOfDay(
               groupMember.tags['shareTo'].toString(), location.to);
@@ -241,6 +262,27 @@ class HybridProvider extends RequestLocationProvider {
       shareLocationData.add(notification.locationNotificationModel);
       return location;
     }
+  }
+
+  bool isOneDayEventOccursToday(Event event) {
+    bool isEventToday = false;
+    if (event.endTime.hour + event.endTime.minute / 60.0 >
+        event.startTime.hour + event.startTime.minute / 60.0) {
+      if (dateToString(event.date) == dateToString(DateTime.now()))
+        isEventToday = true;
+    } else {
+      DateTime todaysDate = DateTime.now();
+      if ((dateToString(DateTime(
+                  event.date.year, event.date.month, event.date.day)) ==
+              dateToString(DateTime(
+                  todaysDate.year, todaysDate.month, todaysDate.day))) ||
+          (dateToString(DateTime(
+                  event.date.year, event.date.month, event.date.day + 1)) ==
+              dateToString(
+                  DateTime(todaysDate.year, todaysDate.month, todaysDate.day))))
+        isEventToday = true;
+    }
+    return isEventToday;
   }
 
   initialiseLacationSharing() async {

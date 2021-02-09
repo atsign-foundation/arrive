@@ -1,6 +1,6 @@
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class CustomTextStyles {
   CustomTextStyles._();

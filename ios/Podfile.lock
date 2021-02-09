@@ -1,15 +1,11 @@
 PODS:
+  - at_chat_flutter (0.0.1):
+    - Flutter
+  - at_contacts_flutter (0.0.1):
+    - Flutter
+  - at_contacts_group_flutter (0.0.1):
+    - Flutter
   - atsign_authentication_helper (0.0.1):
-    - Flutter
-  - atsign_chat (0.0.1):
-    - Flutter
-  - atsign_contacts (0.0.1):
-    - Flutter
-  - atsign_contacts_group (0.0.1):
-    - Flutter
-  - atsign_events (0.0.1):
-    - Flutter
-  - atsign_location (0.0.1):
     - Flutter
   - DKImagePickerController/Core (4.3.2):
     - DKImagePickerController/ImageDataManager
@@ -74,12 +70,10 @@ PODS:
     - Flutter
 
 DEPENDENCIES:
+  - at_chat_flutter (from `.symlinks/plugins/at_chat_flutter/ios`)
+  - at_contacts_flutter (from `.symlinks/plugins/at_contacts_flutter/ios`)
+  - at_contacts_group_flutter (from `.symlinks/plugins/at_contacts_group_flutter/ios`)
   - atsign_authentication_helper (from `.symlinks/plugins/atsign_authentication_helper/ios`)
-  - atsign_chat (from `.symlinks/plugins/atsign_chat/ios`)
-  - atsign_contacts (from `.symlinks/plugins/atsign_contacts/ios`)
-  - atsign_contacts_group (from `.symlinks/plugins/atsign_contacts_group/ios`)
-  - atsign_events (from `.symlinks/plugins/atsign_events/ios`)
-  - atsign_location (from `.symlinks/plugins/atsign_location/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - flutter_keychain (from `.symlinks/plugins/flutter_keychain/ios`)
@@ -101,18 +95,14 @@ SPEC REPOS:
     - SwiftyGif
 
 EXTERNAL SOURCES:
+  at_chat_flutter:
+    :path: ".symlinks/plugins/at_chat_flutter/ios"
+  at_contacts_flutter:
+    :path: ".symlinks/plugins/at_contacts_flutter/ios"
+  at_contacts_group_flutter:
+    :path: ".symlinks/plugins/at_contacts_group_flutter/ios"
   atsign_authentication_helper:
     :path: ".symlinks/plugins/atsign_authentication_helper/ios"
-  atsign_chat:
-    :path: ".symlinks/plugins/atsign_chat/ios"
-  atsign_contacts:
-    :path: ".symlinks/plugins/atsign_contacts/ios"
-  atsign_contacts_group:
-    :path: ".symlinks/plugins/atsign_contacts_group/ios"
-  atsign_events:
-    :path: ".symlinks/plugins/atsign_events/ios"
-  atsign_location:
-    :path: ".symlinks/plugins/atsign_location/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
@@ -137,16 +127,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
+  at_chat_flutter: 8df1b69f14a74f0360b21916b5dd6916c9ae7130
+  at_contacts_flutter: 11ad3deb3c2a8f1e9daf302ac5962dadd48e21fb
+  at_contacts_group_flutter: 31bc718fdb2baca1ae36509009e48cf33a23fa5f
   atsign_authentication_helper: e9b9daa614ed4efdbf741aaeea6b790a51272320
-  atsign_chat: a5200025bcee81e569587eb9c1dc12505c420278
-  atsign_contacts: a6d5793b74956855ebbfa34a958f7f7f6ce12b32
-  atsign_contacts_group: d48e097f74a30f6c50c2022195a8aad854af7493
-  atsign_events: f1e67f8ba5352bc5971570243d448fed13b91b7d
-  atsign_location: c5d3abe61821872a2a9bf5f310641661ff1bbdfa
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_keychain: 01aabf894ffe8b01adfda1d9df21c210c1b4b452
   flutter_qr_reader: 254fd9eea45a65ef461e050d6607daf9cfb753e8
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a

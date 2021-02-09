@@ -1,8 +1,8 @@
-import 'package:atsign_contacts_group/widgets/custom_toast.dart';
-import 'package:atsign_events/models/event_notification.dart';
-import 'package:atsign_location/atsign_location_plugin.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter_plugin.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
@@ -14,7 +14,7 @@ import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_events/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
 
 class HomeEventService {
@@ -65,14 +65,17 @@ class HomeEventService {
           eventData: eventNotificationModel);
     }
 
+    eventNotificationModel.isUpdate =
+        true; //we are updating isUpdate, so we can map event in home screen and not show dialog
+
     Navigator.push(
       NavService.navKey.currentContext,
       MaterialPageRoute(
-        builder: (context) => AtsignLocationPlugin(
+        builder: (context) => AtLocationFlutterPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
-            onEventCancel: () {
-          provider.cancelEvent(eventNotificationModel);
+            onEventCancel: () async {
+          await provider.cancelEvent(eventNotificationModel);
         }, onEventExit: (
                 {bool isExited,
                 bool isSharing,
@@ -80,7 +83,7 @@ class HomeEventService {
                 EventNotificationModel eventData}) async {
           bool isNullSent = false;
           var result = await provider.actionOnEvent(
-            eventNotificationModel,
+            eventData != null ? eventData : eventNotificationModel,
             keyType,
             isExited: isExited,
             isSharing: isSharing,
@@ -102,13 +105,14 @@ class HomeEventService {
                 ..atsignCreator = !isAdmin
                     ? eventNotificationModel.group.members.elementAt(0).atSign
                     : eventNotificationModel.atsignCreator;
-
-          if (!isSharing) {
-            Provider.of<HybridProvider>(NavService.navKey.currentContext,
-                    listen: false)
-                .removeLocationSharing(locationNotificationModel);
-            isNullSent = await SendLocationNotification()
-                .sendNull(locationNotificationModel);
+          if (isSharing != null) {
+            if (!isSharing) {
+              Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                      listen: false)
+                  .removeLocationSharing(locationNotificationModel);
+              isNullSent = await SendLocationNotification()
+                  .sendNull(locationNotificationModel);
+            }
           }
 
           return result;
@@ -123,7 +127,7 @@ class HomeEventService {
     Navigator.push(
       NavService.navKey.currentContext,
       MaterialPageRoute(
-        builder: (context) => AtsignLocationPlugin(
+        builder: (context) => AtLocationFlutterPlugin(
             ClientSdkService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
             userListenerKeyword: locationNotificationModel,

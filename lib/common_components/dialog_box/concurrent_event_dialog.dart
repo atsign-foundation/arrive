@@ -2,7 +2,7 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class ConcurrentEventDialog extends StatelessWidget {
   final String event, inviteCount, eventDate;

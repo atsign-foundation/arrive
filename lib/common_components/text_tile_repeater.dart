@@ -1,5 +1,5 @@
 import 'package:atsign_location_app/common_components/tiles/text_tile.dart';
-import 'package:atsign_common/services/size_config.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 

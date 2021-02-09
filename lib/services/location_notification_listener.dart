@@ -4,10 +4,10 @@ import 'dart:typed_data';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_location/location_modal/hybrid_model.dart';
-import 'package:atsign_location/location_modal/location_notification.dart';
-import 'package:atsign_location/service/location_service.dart';
-import 'package:atsign_location/service/send_location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/data_services/hive/hive_db.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
@@ -70,31 +70,33 @@ class LocationNotificationListener {
       }
     });
     if (!contains) {
-      print('!contains');
-      String atsign = newUser.atsignCreator;
-      LatLng _latlng = newUser.getLatLng;
-      var _image = await getImageOfAtsignNew(atsign);
+      if (newUser.getLatLng != LatLng(0, 0)) {
+        print('!contains from main app');
+        String atsign = newUser.atsignCreator;
+        LatLng _latlng = newUser.getLatLng;
+        var _image = await getImageOfAtsignNew(atsign);
 
-      HybridModel user = HybridModel(
-          displayName: newUser.atsignCreator,
-          latLng: _latlng,
-          image: _image,
-          eta: '?');
+        HybridModel user = HybridModel(
+            displayName: newUser.atsignCreator,
+            latLng: _latlng,
+            image: _image,
+            eta: '?');
 
-      allUsersList.add(user);
-      _allUsersController.add(allUsersList);
-      print('atHybridUsersSink added');
-      atHybridUsersSink.add(allUsersList);
-      LocationService().newList(allUsersList);
+        allUsersList.add(user);
+        _allUsersController.add(allUsersList);
+        print('atHybridUsersSink added');
+        atHybridUsersSink.add(allUsersList);
+        LocationService().newList(allUsersList);
+      }
     } else {
-      print('contains');
-      print(newUser.getLatLng.toString());
-      print(allUsersList[index].latLng.toString());
+      print('contains from main app');
       if (newUser.getLatLng == LatLng(0, 0)) {
         allUsersList.remove(allUsersList[index]);
         LocationService().removeUser(newUser.atsignCreator);
         atHybridUsersSink.add(allUsersList);
-      } else if (allUsersList[index].latLng != newUser.getLatLng) {
+      } else
+      // if (allUsersList[index].latLng != newUser.getLatLng) // to not update location when same lat , long received(throwing error)
+      {
         allUsersList[index].latLng = newUser.getLatLng;
         allUsersList[index].eta = '?';
         _allUsersController.add(allUsersList);
