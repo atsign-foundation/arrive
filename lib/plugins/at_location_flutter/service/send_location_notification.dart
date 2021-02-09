@@ -24,8 +24,8 @@ class SendLocationNotification {
     atClient = newAtClient;
     //Location().changeSettings(interval: 10);
     print('receivingAtsigns length - ${receivingAtsigns.length}');
-    // updateMyLocation2();
-    manualLocationSend();
+    updateMyLocation2();
+    // manualLocationSend();
   }
 
   updateMyLocation() async {
