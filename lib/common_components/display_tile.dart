@@ -55,7 +55,15 @@ class _DisplayTileState extends State<DisplayTile> {
           Stack(
             children: [
               (image != null)
-                  ? Image.memory(image, width: 50, height: 50)
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Image.memory(
+                        image,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.fill,
+                      ),
+                    )
                   : widget.atsignCreator != null
                       ? ContactInitial(
                           initials: widget.atsignCreator.substring(1, 3))
