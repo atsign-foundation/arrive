@@ -249,12 +249,12 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
               ),
               SlidingUpPanel(
                 controller: pc,
-                minHeight: widget.userListenerKeyword != null ? 123 : 205,
+                minHeight: widget.userListenerKeyword != null ? 130 : 205,
                 maxHeight: widget.userListenerKeyword != null
                     ? ((widget.userListenerKeyword.atsignCreator ==
                             LocationService().getAtSign())
                         ? 291
-                        : 123)
+                        : 130)
                     : 431,
                 // collapsed: CollapsedContent(UniqueKey(), false,
                 //     eventListenerKeyword: widget.eventListenerKeyword,
@@ -300,6 +300,11 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
             widget.eventListenerKeyword.group.members.elementAt(0).atSign;
       } else
         chatWith = widget.eventListenerKeyword.atsignCreator;
+    } else if (LocationService().userListenerKeyword != null) {
+      chatWith = LocationService().userListenerKeyword.atsignCreator ==
+              widget.atClientInstance.currentAtSign
+          ? LocationService().userListenerKeyword.receiver
+          : LocationService().userListenerKeyword.atsignCreator;
     }
     if (widget.eventListenerKeyword != null) {
       setChatWithAtSign(chatWith);
