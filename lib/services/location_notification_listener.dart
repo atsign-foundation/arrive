@@ -71,7 +71,7 @@ class LocationNotificationListener {
     });
     if (!contains) {
       if (newUser.getLatLng != LatLng(0, 0)) {
-        print('!contains');
+        print('!contains from main app');
         String atsign = newUser.atsignCreator;
         LatLng _latlng = newUser.getLatLng;
         var _image = await getImageOfAtsignNew(atsign);
@@ -89,14 +89,14 @@ class LocationNotificationListener {
         LocationService().newList(allUsersList);
       }
     } else {
-      print('contains');
-      print(newUser.getLatLng.toString());
-      print(allUsersList[index].latLng.toString());
+      print('contains from main app');
       if (newUser.getLatLng == LatLng(0, 0)) {
         allUsersList.remove(allUsersList[index]);
         LocationService().removeUser(newUser.atsignCreator);
         atHybridUsersSink.add(allUsersList);
-      } else if (allUsersList[index].latLng != newUser.getLatLng) {
+      } else
+      // if (allUsersList[index].latLng != newUser.getLatLng) // to not update location when same lat , long received(throwing error)
+      {
         allUsersList[index].latLng = newUser.getLatLng;
         allUsersList[index].eta = '?';
         _allUsersController.add(allUsersList);
