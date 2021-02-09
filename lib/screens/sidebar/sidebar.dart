@@ -85,7 +85,15 @@ class _SideBarState extends State<SideBar> {
               child: Row(
                 children: [
                   (image != null)
-                      ? Image.memory(image, width: 50, height: 50)
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          child: Image.memory(
+                            image,
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.fill,
+                          ),
+                        )
                       : ContactInitial(
                           initials: ClientSdkService.getInstance()
                               .atClientServiceInstance
