@@ -118,7 +118,7 @@ class _ShareLocationNotifierDialogState
                   Text(
                       (widget.eventData != null)
                           ? '${widget.userName} wants to share an event with you. Are you sure you want to join and share your location with the group?'
-                          : ((widget.locationData != null)
+                          : ((!widget.locationData.isRequest)
                               ? '${widget.userName} wants to share their location with you. Are you sure you want to accept their location?'
                               : '${widget.userName} wants you to share your location? Are you sure you want to share?'),
                       style: CustomTextStyles().grey16,

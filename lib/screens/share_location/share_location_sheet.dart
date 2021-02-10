@@ -61,7 +61,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
           CustomInputField(
             width: 330.toWidth,
             height: 50,
-            //isReadOnly: true,
+            isReadOnly: true,
             hintText: 'Type @sign or search from contact',
             icon: Icons.contacts_rounded,
             onTap: () {
