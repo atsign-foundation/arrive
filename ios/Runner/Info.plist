@@ -2,29 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-	<key>NSAllowsArbitraryLoads</key>
-	<true/>
-	<key>NSExceptionDomains</key>
-	<dict>
-		<key>appanalytics.embarcadero.com</key>
-		<dict>
-			<key>NSExceptionAllowsInsecureHTTPLoads</key>
-			<true/>
-		</dict>
-	</dict>
-	</dict>
-	<key>NSLocationAlwaysUsageDescription</key>	
-	<string>The Location access is used to get your current Location</string>	
-	<key>NSLocationWhenInUseUsageDescription</key>	
-	<string>Because</string>
-    <key>NSCameraUsageDescription</key>
-    <string>The camera is used to scan QR code to pair your device with your @sign</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>photos is required to upload for a group image</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>microphone permission is needed because of plugin dependencies.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -34,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>@arrive</string>
+	<string>@rrive</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,6 +22,29 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>appanalytics.embarcadero.com</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to scan QR code to pair your device with your @sign</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>The Location access is used to get your current Location</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Because</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>microphone permission is needed because of plugin dependencies.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>photos is required to upload for a group image</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -52,8 +52,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
