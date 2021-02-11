@@ -69,13 +69,13 @@ dependencies:
   # at_events_flutter: 
   #   path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_events_flutter
   at_contacts_group_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_group_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_group_flutter
   at_contacts_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_flutter
   atsign_authentication_helper :
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
   at_chat_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_chat_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_chat_flutter
   # at_location_flutter:
   #   path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_location_flutter
 

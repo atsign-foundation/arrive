@@ -120,6 +120,14 @@ class BackendService {
     print('fn call back:${response} , notification key: ${notificationKey}');
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
+    var operation = responseJson['operation'];
+    print('_notificationCallback opeartion $operation');
+    if ((operation == 'delete') &&
+        atKey.toString().contains('locationNotify')) {
+      print('$notificationKey deleted');
+      LocationNotificationListener().deleteReceivedData(fromAtSign);
+      return;
+    }
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
         .catchError((e) =>

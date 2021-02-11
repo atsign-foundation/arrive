@@ -5,6 +5,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notif
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/show_location.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
 import 'package:flutter/material.dart';
@@ -119,8 +120,9 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                       if (snapshot.hasError) {
                         return Center(
                           child: Text(
-                            'error',
-                            style: TextStyle(fontSize: 400),
+                            'Error in getting location information',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 26),
                           ),
                         );
                       } else {
@@ -158,6 +160,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           ),
                           layers: [
                             TileLayerOptions(
+                              // errorImage: ,
                               fnWhenZoomChanges: (zoom) =>
                                   fnWhenZoomChanges(zoom),
                               minNativeZoom: 2,
@@ -204,7 +207,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                         );
                       }
                     } else {
-                      return Center(child: CircularProgressIndicator());
+                      return ShowLocation(UniqueKey());
                     }
                   }),
               Positioned(
