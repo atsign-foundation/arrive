@@ -6,7 +6,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/send_loc
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -30,7 +29,7 @@ class HomeEventService {
   get getAllEvents => allEvents;
 
   onLocationModelTap(LocationNotificationModel locationNotificationModel) {
-    String currentAtsign = ClientSdkService.getInstance()
+    String currentAtsign = BackendService.getInstance()
         .atClientServiceInstance
         .atClient
         .currentAtSign;
@@ -72,7 +71,7 @@ class HomeEventService {
       NavService.navKey.currentContext,
       MaterialPageRoute(
         builder: (context) => AtLocationFlutterPlugin(
-            ClientSdkService.getInstance().atClientServiceInstance.atClient,
+            BackendService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
             onEventCancel: () async {
           await provider.cancelEvent(eventNotificationModel);
@@ -89,7 +88,7 @@ class HomeEventService {
             isSharing: isSharing,
           );
 
-          bool isAdmin = ClientSdkService.getInstance()
+          bool isAdmin = BackendService.getInstance()
                       .atClientServiceInstance
                       .atClient
                       .currentAtSign ==
@@ -128,7 +127,7 @@ class HomeEventService {
       NavService.navKey.currentContext,
       MaterialPageRoute(
         builder: (context) => AtLocationFlutterPlugin(
-            ClientSdkService.getInstance().atClientServiceInstance.atClient,
+            BackendService.getInstance().atClientServiceInstance.atClient,
             allUsersList: LocationNotificationListener().allUsersList,
             userListenerKeyword: locationNotificationModel,
             onShareToggle: locationNotificationModel.key
@@ -136,7 +135,7 @@ class HomeEventService {
                 ? LocationSharingService().updateWithShareLocationAcknowledge
                 : RequestLocationService().requestLocationAcknowledgment,
             onRequest: locationNotificationModel.atsignCreator ==
-                    ClientSdkService.getInstance()
+                    BackendService.getInstance()
                         .atClientServiceInstance
                         .atClient
                         .currentAtSign
@@ -180,7 +179,7 @@ bool isActionRequired(EventNotificationModel event) {
   if (event.isCancelled) return true;
 
   bool isRequired = true;
-  String currentAtsign = ClientSdkService.getInstance()
+  String currentAtsign = BackendService.getInstance()
       .atClientServiceInstance
       .atClient
       .currentAtSign;
@@ -204,7 +203,7 @@ bool isActionRequired(EventNotificationModel event) {
 String getActionString(EventNotificationModel event) {
   if (event.isCancelled) return 'Cancelled';
   String label = 'Action required';
-  String currentAtsign = ClientSdkService.getInstance()
+  String currentAtsign = BackendService.getInstance()
       .atClientServiceInstance
       .atClient
       .currentAtSign;
@@ -242,7 +241,7 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
     if (hybridNotificationModel.locationNotificationModel.key
         .contains('sharelocation')) {
       return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-              ClientSdkService.getInstance()
+              BackendService.getInstance()
                   .atClientServiceInstance
                   .atClient
                   .currentAtSign
@@ -251,14 +250,14 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
     } else {
       return hybridNotificationModel.locationNotificationModel.isAccepted
           ? (hybridNotificationModel.locationNotificationModel.atsignCreator ==
-                  ClientSdkService.getInstance()
+                  BackendService.getInstance()
                       .atClientServiceInstance
                       .atClient
                       .currentAtSign
               ? 'Sharing my location $time'
               : 'Sharing his location $time')
           : (hybridNotificationModel.locationNotificationModel.atsignCreator ==
-                  ClientSdkService.getInstance()
+                  BackendService.getInstance()
                       .atClientServiceInstance
                       .atClient
                       .currentAtSign
@@ -280,7 +279,7 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
     if (hybridNotificationModel.locationNotificationModel.key
         .contains('sharelocation'))
       return hybridNotificationModel.locationNotificationModel.atsignCreator !=
-              ClientSdkService.getInstance()
+              BackendService.getInstance()
                   .atClientServiceInstance
                   .atClient
                   .currentAtSign
@@ -296,7 +295,7 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
                   : 'Awaiting response');
     else
       return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-              ClientSdkService.getInstance()
+              BackendService.getInstance()
                   .atClientServiceInstance
                   .atClient
                   .currentAtSign
@@ -321,7 +320,7 @@ getTitle(HybridNotificationModel hybridNotificationModel) {
     if (hybridNotificationModel.locationNotificationModel.key
         .contains('sharelocation'))
       return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-              ClientSdkService.getInstance()
+              BackendService.getInstance()
                   .atClientServiceInstance
                   .atClient
                   .currentAtSign
@@ -329,7 +328,7 @@ getTitle(HybridNotificationModel hybridNotificationModel) {
           : hybridNotificationModel.locationNotificationModel.atsignCreator;
     else
       return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-              ClientSdkService.getInstance()
+              BackendService.getInstance()
                   .atClientServiceInstance
                   .atClient
                   .currentAtSign

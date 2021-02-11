@@ -1,7 +1,6 @@
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +135,7 @@ class EventProvider extends BaseModel {
       String atkeyMicrosecondId =
           eventData.key.split('createevent-')[1].split('@')[0];
 
-      String currentAtsign = ClientSdkService.getInstance()
+      String currentAtsign = BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .currentAtSign;

@@ -5,11 +5,11 @@ import 'package:atsign_authentication_helper/utils/constants.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
-class ClientSdkService {
-  static final ClientSdkService _singleton = ClientSdkService._internal();
-  ClientSdkService._internal();
+class BackendService {
+  static final BackendService _singleton = BackendService._internal();
+  BackendService._internal();
 
-  factory ClientSdkService.getInstance() {
+  factory BackendService.getInstance() {
     return _singleton;
   }
   AtClientService atClientServiceInstance;

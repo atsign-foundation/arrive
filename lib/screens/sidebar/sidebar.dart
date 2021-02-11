@@ -6,7 +6,7 @@ import 'package:at_contacts_flutter/widgets/contacts_initials.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -44,7 +44,7 @@ class _SideBarState extends State<SideBar> {
   }
 
   getEventCreator() async {
-    AtContact contact = await getAtSignDetails(ClientSdkService.getInstance()
+    AtContact contact = await getAtSignDetails(BackendService.getInstance()
         .atClientServiceInstance
         .atClient
         .currentAtSign);
@@ -95,7 +95,7 @@ class _SideBarState extends State<SideBar> {
                           ),
                         )
                       : ContactInitial(
-                          initials: ClientSdkService.getInstance()
+                          initials: BackendService.getInstance()
                               .atClientServiceInstance
                               .atClient
                               .currentAtSign
@@ -114,7 +114,7 @@ class _SideBarState extends State<SideBar> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          ClientSdkService.getInstance()
+                          BackendService.getInstance()
                                   .atClientServiceInstance
                                   .atClient
                                   .currentAtSign ??
@@ -138,9 +138,8 @@ class _SideBarState extends State<SideBar> {
               'Contacts',
               Icons.contacts_rounded,
               () async {
-                ClientSdkService clientSdkService =
-                    ClientSdkService.getInstance();
-                String currentAtSign = await clientSdkService.getAtSign();
+                BackendService backendService = BackendService.getInstance();
+                String currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
                     arguments: {
                       'currentAtSign': currentAtSign,
@@ -155,9 +154,8 @@ class _SideBarState extends State<SideBar> {
               'Groups',
               Icons.group,
               () async {
-                ClientSdkService clientSdkService =
-                    ClientSdkService.getInstance();
-                String currentAtSign = await clientSdkService.getAtSign();
+                BackendService backendService = BackendService.getInstance();
+                String currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
                   'currentAtSign': currentAtSign,
                 });

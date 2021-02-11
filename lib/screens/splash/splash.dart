@@ -6,7 +6,6 @@ import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -26,7 +25,6 @@ class _SplashState extends State<Splash> {
   BackendService backendService;
   Completer c = Completer();
   bool authenticating = false;
-  ClientSdkService clientSdkService = ClientSdkService.getInstance();
 
   @override
   void initState() {
@@ -63,9 +61,9 @@ class _SplashState extends State<Splash> {
   void _initBackendService() async {
     backendService = BackendService.getInstance();
     backendService.atClientServiceInstance = new AtClientService();
-    clientSdkService = ClientSdkService.getInstance();
-    // clientSdkService.atClientServiceInstance = new AtClientService();
-    var isOnBoard = await clientSdkService.onboard();
+    backendService = BackendService.getInstance();
+    // backendService.atClientServiceInstance = new AtClientService();
+    var isOnBoard = await backendService.onboard();
     if (isOnBoard != null && isOnBoard == true) {
       print('on board $isOnBoard');
       await BackendService.getInstance().onboard();
@@ -167,9 +165,9 @@ class _SplashState extends State<Splash> {
                       MaterialPageRoute(
                         builder: (context) => ScanQrScreen(
                           atClientServiceInstance:
-                              clientSdkService.atClientServiceInstance,
+                              backendService.atClientServiceInstance,
                           atClientPreference:
-                              ClientSdkService.getInstance().atClientPreference,
+                              BackendService.getInstance().atClientPreference,
                           nextScreen: HomeScreen(),
                         ),
                       ),

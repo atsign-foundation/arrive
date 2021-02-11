@@ -6,7 +6,6 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
 
-import 'client_sdk_service.dart';
 import 'nav_service.dart';
 
 class RequestLocationService {
@@ -28,12 +27,12 @@ class RequestLocationService {
             ..atsignCreator = atsign
             ..key = atKey.key
             ..isRequest = true
-            ..receiver = ClientSdkService.getInstance()
+            ..receiver = BackendService.getInstance()
                 .atClientServiceInstance
                 .atClient
                 .currentAtSign;
 
-      var result = await ClientSdkService.getInstance()
+      var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .put(
@@ -83,7 +82,7 @@ class RequestLocationService {
             DateTime.now().add(Duration(minutes: minutes));
       }
 
-      var result = await ClientSdkService.getInstance()
+      var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .put(
@@ -111,12 +110,12 @@ class RequestLocationService {
           .split('requestlocation-')[1]
           .split('@')[0];
 
-      List<String> response = await ClientSdkService.getInstance()
+      List<String> response = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .getKeys(
             regex: 'requestlocation-$atkeyMicrosecondId',
-            // sharedBy: ClientSdkService.getInstance()
+            // sharedBy: BackendService.getInstance()
             //     .atClientServiceInstance
             //     .atClient
             //     .currentAtSign
@@ -142,7 +141,7 @@ class RequestLocationService {
           LocationNotificationModel.convertLocationNotificationToJson(
               locationNotificationModel);
       var result;
-      result = await ClientSdkService.getInstance()
+      result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .put(key, notification);
@@ -169,7 +168,7 @@ class RequestLocationService {
   removePerson(LocationNotificationModel locationNotificationModel) async {
     var result;
     if (locationNotificationModel.atsignCreator !=
-        ClientSdkService.getInstance()
+        BackendService.getInstance()
             .atClientServiceInstance
             .atClient
             .currentAtSign) {
@@ -196,7 +195,7 @@ class RequestLocationService {
       locationNotificationModel.receiver,
     );
 
-    var result = await ClientSdkService.getInstance()
+    var result = await BackendService.getInstance()
         .atClientServiceInstance
         .atClient
         .put(
@@ -211,7 +210,7 @@ class RequestLocationService {
         .split('requestlocation-')[1]
         .split('@')[0];
 
-    List<String> response = await ClientSdkService.getInstance()
+    List<String> response = await BackendService.getInstance()
         .atClientServiceInstance
         .atClient
         .getKeys(
@@ -222,7 +221,7 @@ class RequestLocationService {
 
     locationNotificationModel.isAcknowledgment = true;
 
-    var result = await ClientSdkService.getInstance()
+    var result = await BackendService.getInstance()
         .atClientServiceInstance
         .atClient
         .delete(key);
@@ -237,7 +236,7 @@ class RequestLocationService {
       ..metadata.ccd = true
       ..key = key
       ..sharedWith = sharedWith
-      ..sharedBy = ClientSdkService.getInstance()
+      ..sharedBy = BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .currentAtSign;

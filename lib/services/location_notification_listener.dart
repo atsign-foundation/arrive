@@ -15,7 +15,7 @@ import 'package:hive/hive.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 
-import 'client_sdk_service.dart';
+import 'backend_service.dart';
 
 class LocationNotificationListener {
   LocationNotificationListener._();
@@ -130,7 +130,7 @@ class LocationNotificationListener {
       AtContact contact;
       Uint8List image;
       AtContactsImpl atContact = await AtContactsImpl.getInstance(
-          ClientSdkService.getInstance()
+          BackendService.getInstance()
               .atClientServiceInstance
               .atClient
               .currentAtSign);

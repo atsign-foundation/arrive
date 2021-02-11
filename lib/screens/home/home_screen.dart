@@ -14,7 +14,6 @@ import 'package:atsign_location_app/screens/request_location/request_location_sh
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -50,31 +49,31 @@ class _HomeScreenState extends State<HomeScreen> {
     initializeContacts();
     getMyLocation();
     LocationNotificationListener()
-        .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+        .init(BackendService.getInstance().atClientServiceInstance.atClient);
     eventProvider = context.read<EventProvider>();
     // eventProvider
-    //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+    //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
 
     hybridProvider = context.read<HybridProvider>();
     // hybridProvider
-    //     .init(ClientSdkService.getInstance().atClientServiceInstance.atClient);
+    //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<EventProvider>(context, listen: false).init(
-          ClientSdkService.getInstance().atClientServiceInstance.atClient);
-      Provider.of<ShareLocationProvider>(context, listen: false).init(
-          ClientSdkService.getInstance().atClientServiceInstance.atClient);
-      Provider.of<RequestLocationProvider>(context, listen: false).init(
-          ClientSdkService.getInstance().atClientServiceInstance.atClient);
-      Provider.of<HybridProvider>(context, listen: false).init(
-          ClientSdkService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<EventProvider>(context, listen: false)
+          .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<ShareLocationProvider>(context, listen: false)
+          .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<RequestLocationProvider>(context, listen: false)
+          .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      Provider.of<HybridProvider>(context, listen: false)
+          .init(BackendService.getInstance().atClientServiceInstance.atClient);
     });
   }
 
   initializeContacts() async {
-    currentAtSign = await ClientSdkService.getInstance().getAtSign();
+    currentAtSign = await BackendService.getInstance().getAtSign();
     initializeContactsService(
-        ClientSdkService.getInstance().atClientServiceInstance.atClient,
+        BackendService.getInstance().atClientServiceInstance.atClient,
         currentAtSign,
         rootDomain: MixedConstants.ROOT_DOMAIN);
   }
@@ -253,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottomSheet(
                     context,
                     CreateEvent(
-                        ClientSdkService.getInstance()
+                        BackendService.getInstance()
                             .atClientServiceInstance
                             .atClient,
                         onEventSaved: (EventNotificationModel event) {

@@ -10,7 +10,6 @@ import 'package:atsign_location_app/common_components/dialog_box/share_location_
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/models/message_notification.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -325,7 +324,7 @@ class BackendService {
 
   getAllNotificationKeys() async {
     atClientInstance =
-        ClientSdkService.getInstance().atClientServiceInstance.atClient;
+        BackendService.getInstance().atClientServiceInstance.atClient;
     List<String> response = await atClientInstance.getKeys(
       regex: '1610648226523619',
       // sharedBy: '@test_ga3',

@@ -16,7 +16,7 @@ import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/models/enums_model.dart';
 import 'package:atsign_location_app/screens/event/event_time_selection.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
-import 'package:atsign_location_app/services/client_sdk_service.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -251,7 +251,7 @@ class _ShareLocationNotifierDialogState
                       (widget.eventData != null)
                           ? null
                           : ((!widget.locationData.isRequest)
-                              //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
+                              //locationData.atsignCreator != BackendService.getInstance().currentAtsign
                               ? {
                                   print('accept share location'),
                                   LocationSharingService()
@@ -279,7 +279,7 @@ class _ShareLocationNotifierDialogState
                               print('${widget.eventData.key}'),
                               widget.eventData.group.members.forEach((element) {
                                 if (element.atSign ==
-                                    ClientSdkService.getInstance()
+                                    BackendService.getInstance()
                                         .atClientServiceInstance
                                         .atClient
                                         .currentAtSign) {
@@ -298,7 +298,7 @@ class _ShareLocationNotifierDialogState
                                   }),
                             }
                           : ((!widget.locationData.isRequest)
-                              //locationData.atsignCreator != ClientSdkService.getInstance().currentAtsign
+                              //locationData.atsignCreator != BackendService.getInstance().currentAtsign
                               ? {
                                   print('accept share location'),
                                   LocationSharingService()
