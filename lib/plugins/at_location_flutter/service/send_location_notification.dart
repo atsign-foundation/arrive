@@ -143,26 +143,26 @@ class SendLocationNotification {
   }
 
   sendNull(LocationNotificationModel locationNotificationModel) async {
-    var result = false;
-    locationNotificationModel.lat = 0;
-    locationNotificationModel.long = 0;
     String atkeyMicrosecondId =
         locationNotificationModel.key.split('-')[1].split('@')[0];
-    AtKey atKey = newAtKey(-1, "locationNotify-$atkeyMicrosecondId",
+    AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
         locationNotificationModel.receiver);
-    while (!result) {
-      try {
-        result = await atClient.put(
-            atKey,
-            LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
-        print('null sent');
-      } catch (e) {
-        print('error in sending nul $e');
-        // return false;
+    var result = await atClient.delete(atKey);
+    print('$atKey delete operation $result');
+  }
+
+  deleteAllLocationKey() async {
+    List<String> response = await atClient.getKeys(
+      regex: 'locationnotify',
+    );
+    response.forEach((key) async {
+      if (!'@$key'.contains('cached')) {
+        // the keys i have created
+        AtKey atKey = AtKey.fromString(key);
+        var result = await atClient.delete(atKey);
+        print('$key is deleted ? $result');
       }
-    }
-    return result;
+    });
   }
 
   AtKey newAtKey(int ttr, String key, String sharedWith) {

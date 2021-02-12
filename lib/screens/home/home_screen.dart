@@ -97,8 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
           body: Stack(
             children: [
               (myLatLng != null)
-                  ? ShowLocation(myLatLng)
-                  : Center(child: CircularProgressIndicator()),
+                  ? ShowLocation(UniqueKey(), location: myLatLng)
+                  : ShowLocation(
+                      UniqueKey(),
+                    ),
               Positioned(
                 top: 0,
                 right: 0,

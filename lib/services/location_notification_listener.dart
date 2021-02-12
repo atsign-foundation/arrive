@@ -70,41 +70,38 @@ class LocationNotificationListener {
       }
     });
     if (!contains) {
-      if (newUser.getLatLng != LatLng(0, 0)) {
-        print('!contains from main app');
-        String atsign = newUser.atsignCreator;
-        LatLng _latlng = newUser.getLatLng;
-        var _image = await getImageOfAtsignNew(atsign);
+      print('!contains from main app');
+      String atsign = newUser.atsignCreator;
+      LatLng _latlng = newUser.getLatLng;
+      var _image = await getImageOfAtsignNew(atsign);
 
-        HybridModel user = HybridModel(
-            displayName: newUser.atsignCreator,
-            latLng: _latlng,
-            image: _image,
-            eta: '?');
+      HybridModel user = HybridModel(
+          displayName: newUser.atsignCreator,
+          latLng: _latlng,
+          image: _image,
+          eta: '?');
 
-        allUsersList.add(user);
-        _allUsersController.add(allUsersList);
-        print('atHybridUsersSink added');
-        atHybridUsersSink.add(allUsersList);
-        LocationService().newList(allUsersList);
-      }
+      allUsersList.add(user);
+      _allUsersController.add(allUsersList);
+      print('atHybridUsersSink added');
+      atHybridUsersSink.add(allUsersList);
+      LocationService().newList(allUsersList);
     } else {
-      print('contains from main app');
-      if (newUser.getLatLng == LatLng(0, 0)) {
-        allUsersList.remove(allUsersList[index]);
-        LocationService().removeUser(newUser.atsignCreator);
-        atHybridUsersSink.add(allUsersList);
-      } else
       // if (allUsersList[index].latLng != newUser.getLatLng) // to not update location when same lat , long received(throwing error)
-      {
-        allUsersList[index].latLng = newUser.getLatLng;
-        allUsersList[index].eta = '?';
-        _allUsersController.add(allUsersList);
-        print('atHybridUsersSink added');
-        atHybridUsersSink.add(allUsersList);
-        LocationService().newList(allUsersList);
-      }
+
+      allUsersList[index].latLng = newUser.getLatLng;
+      allUsersList[index].eta = '?';
+      _allUsersController.add(allUsersList);
+      print('atHybridUsersSink added');
+      atHybridUsersSink.add(allUsersList);
+      LocationService().newList(allUsersList);
     }
+  }
+
+  deleteReceivedData(String atsign) {
+    allUsersList.removeWhere((element) => element.displayName == atsign);
+    LocationService().removeUser(atsign);
+    atHybridUsersSink.add(allUsersList);
   }
 
   Future<dynamic> getImageOfAtsign(String atsign) async {

@@ -27,7 +27,7 @@ class _SelectedLocationState extends State<SelectedLocation> {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            ShowLocation(widget.point),
+            ShowLocation(UniqueKey(), location: widget.point),
             Positioned(
               top: 0,
               left: 0,
