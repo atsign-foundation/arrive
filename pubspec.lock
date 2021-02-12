@@ -60,9 +60,9 @@ packages:
   at_common_flutter:
     dependency: transitive
     description:
-      name: at_common_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../at_widgets/at_common_flutter"
+      relative: true
+    source: path
     version: "0.0.2"
   at_commons:
     dependency: "direct main"

@@ -46,8 +46,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                     Text('Select Date', style: CustomTextStyles().greyLabel14),
                     SizedBox(height: 6.toHeight),
                     CustomInputField(
-                      width: 330.toWidth,
-                      height: 50,
+                      width: 350.toWidth,
+                      height: 50.toHeight,
                       isReadOnly: true,
                       hintText: 'Select Date',
                       icon: Icons.date_range,
@@ -76,8 +76,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         CustomInputField(
-                          width: 155,
-                          height: 50,
+                          width: 155.toWidth,
+                          height: 50.toHeight,
                           isReadOnly: true,
                           hintText: 'Start',
                           icon: Icons.access_time,
@@ -100,8 +100,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                           },
                         ),
                         CustomInputField(
-                            width: 155,
-                            height: 50,
+                            width: 155.toWidth,
+                            height: 50.toHeight,
                             hintText: 'Stop',
                             isReadOnly: true,
                             icon: Icons.access_time,

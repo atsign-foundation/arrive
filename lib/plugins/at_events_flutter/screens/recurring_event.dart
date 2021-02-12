@@ -58,8 +58,8 @@ class _RecurringEventState extends State<RecurringEvent> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 CustomInputField(
-                  width: 155,
-                  height: 50,
+                  width: 155.toWidth,
+                  height: 50.toHeight,
                   hintText: 'repeat cycle',
                   icon: Icons.keyboard_arrow_down,
                   initialValue: eventData.event.repeatDuration != null
@@ -76,7 +76,7 @@ class _RecurringEventState extends State<RecurringEvent> {
                 ),
                 Container(
                   color: AllColors().INPUT_GREY_BACKGROUND,
-                  width: 155,
+                  width: 155.toWidth,
                   padding: EdgeInsets.only(left: 10, right: 10),
                   child: DropdownButton(
                     isExpanded: true,
@@ -123,7 +123,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             isRepeatEveryWeek
                 ? Container(
                     color: AllColors().INPUT_GREY_BACKGROUND,
-                    width: 330.toWidth,
+                    width: 350.toWidth,
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: DropdownButton(
                       isExpanded: true,
@@ -154,8 +154,8 @@ class _RecurringEventState extends State<RecurringEvent> {
                     ),
                   )
                 : CustomInputField(
-                    width: 330.toWidth,
-                    height: 50,
+                    width: 350.toWidth,
+                    height: 50.toHeight,
                     isReadOnly: true,
                     hintText: 'Occurs on',
                     icon: Icons.access_time,
@@ -186,8 +186,8 @@ class _RecurringEventState extends State<RecurringEvent> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 CustomInputField(
-                  width: 155,
-                  height: 50,
+                  width: 155.toWidth,
+                  height: 50.toHeight,
                   isReadOnly: true,
                   hintText: 'Start',
                   icon: Icons.access_time,
@@ -209,8 +209,8 @@ class _RecurringEventState extends State<RecurringEvent> {
                   },
                 ),
                 CustomInputField(
-                  width: 155,
-                  height: 50,
+                  width: 155.toWidth,
+                  height: 50.toHeight,
                   isReadOnly: true,
                   hintText: 'Stop',
                   icon: Icons.access_time,
@@ -239,8 +239,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('Never',
-                    style: Theme.of(context).primaryTextTheme.headline3),
+                Text('Never', style: CustomTextStyles().greyLabel12),
                 Radio(
                   groupValue: eventData.event.endsOn,
                   toggleable: true,
@@ -256,7 +255,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('On', style: Theme.of(context).primaryTextTheme.headline3),
+                Text('On', style: CustomTextStyles().greyLabel12),
                 Radio(
                   groupValue: eventData.event.endsOn,
                   toggleable: true,
@@ -271,8 +270,8 @@ class _RecurringEventState extends State<RecurringEvent> {
             ),
             SizedBox(height: 6.toHeight),
             CustomInputField(
-              width: 330.toWidth,
-              height: 50,
+              width: 350.toWidth,
+              height: 50.toHeight,
               isReadOnly: true,
               hintText: 'Select Date',
               icon: Icons.date_range,
@@ -300,8 +299,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text('After',
-                    style: Theme.of(context).primaryTextTheme.headline3),
+                Text('After', style: CustomTextStyles().greyLabel12),
                 Radio(
                   groupValue: eventData.event.endsOn,
                   toggleable: true,
@@ -316,8 +314,8 @@ class _RecurringEventState extends State<RecurringEvent> {
             ),
             SizedBox(height: 6.toHeight),
             CustomInputField(
-              width: 330.toWidth,
-              height: 50,
+              width: 350.toWidth,
+              height: 50.toHeight,
               hintText: 'Start',
               // icon: Icons.keyboard_arrow_down,
               initialValue: eventData.event.endEventAfterOccurance != null

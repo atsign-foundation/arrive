@@ -248,6 +248,7 @@ class _SideBarState extends State<SideBar> {
           Icon(
             icon,
             color: AllColors().DARK_GREY,
+            size: 16.toFont,
           ),
           SizedBox(
             width: 15.toWidth,
