@@ -1,5 +1,6 @@
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:at_common_flutter/widgets/custom_input_field.dart';
+import 'package:atsign_location_app/common_components/custom_input_field.dart';
+// import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/location_tile.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/selected_location.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
@@ -15,6 +16,8 @@ class SelectLocation extends StatefulWidget {
 }
 
 class _SelectLocationState extends State<SelectLocation> {
+  String inputText = '';
+  bool isLoader = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,9 +31,28 @@ class _SelectLocationState extends State<SelectLocation> {
               Expanded(
                 child: CustomInputField(
                   hintText: 'Search an area, street name…',
-                  onSubmitted: (String str) =>
-                      SearchLocationService().getAddressLatLng(str),
-                  value: (val) {},
+                  onSubmitted: (String str) async {
+                    setState(() {
+                      isLoader = true;
+                    });
+                    await SearchLocationService().getAddressLatLng(str);
+                    setState(() {
+                      isLoader = false;
+                    });
+                  },
+                  value: (val) {
+                    inputText = val;
+                  },
+                  icon: Icons.search,
+                  onIconTap: () async {
+                    setState(() {
+                      isLoader = true;
+                    });
+                    await SearchLocationService().getAddressLatLng(inputText);
+                    setState(() {
+                      isLoader = false;
+                    });
+                  },
                 ),
               ),
               SizedBox(width: 10.toWidth),
@@ -59,6 +81,11 @@ class _SelectLocationState extends State<SelectLocation> {
           SizedBox(height: 20.toHeight),
           Divider(),
           SizedBox(height: 20.toHeight),
+          isLoader
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SizedBox(),
           StreamBuilder(
             stream: SearchLocationService().atLocationStream,
             builder: (BuildContext context,

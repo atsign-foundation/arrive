@@ -6,9 +6,10 @@ class CustomInputField extends StatelessWidget {
   final String hintText;
   final double width, height;
   final IconData icon;
-  final Function onTap, onIconTap;
+  final Function onTap, onIconTap, onSubmitted;
   final Color iconColor;
   final bool isReadOnly;
+  final ValueChanged<String> value;
 
   CustomInputField(
       {this.hintText = '',
@@ -18,7 +19,9 @@ class CustomInputField extends StatelessWidget {
       this.icon,
       this.onTap,
       this.onIconTap,
-      this.isReadOnly = false});
+      this.isReadOnly = false,
+      this.onSubmitted,
+      this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +45,14 @@ class CustomInputField extends StatelessWidget {
               ),
               onTap: onTap ?? null,
               readOnly: isReadOnly,
+              onChanged: (val) {
+                value(val);
+              },
+              onSubmitted: (str) {
+                if (onSubmitted != null) {
+                  onSubmitted(str);
+                }
+              },
             ),
           ),
           icon != null
