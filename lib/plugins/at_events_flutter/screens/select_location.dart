@@ -59,14 +59,12 @@ class _SelectLocationState extends State<SelectLocation> {
           SizedBox(height: 20.toHeight),
           Divider(),
           SizedBox(height: 20.toHeight),
-          Text('Search Results', style: CustomTextStyles().lightGreyLabel12),
-          SizedBox(height: 20.toHeight),
           StreamBuilder(
             stream: SearchLocationService().atLocationStream,
             builder: (BuildContext context,
                 AsyncSnapshot<List<LocationModal>> snapshot) {
               return snapshot.connectionState == ConnectionState.waiting
-                  ? Text('Search for a Location')
+                  ? SizedBox()
                   : snapshot.hasData
                       ? snapshot.data.length == 0
                           ? Text('No such location found')

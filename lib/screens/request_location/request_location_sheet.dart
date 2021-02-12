@@ -75,7 +75,15 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
             },
           ),
           (selectedContact != null)
-              ? (OverlappingContacts(selectedList: [selectedContact]))
+              ? (OverlappingContacts(
+                  selectedList: [selectedContact],
+                  onRemove: () {
+                    setState(() {
+                      selectedContact = null;
+                    });
+                  },
+                  isMultipleUser: false,
+                ))
               : SizedBox(),
           Expanded(child: SizedBox()),
           Center(
