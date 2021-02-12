@@ -12,7 +12,11 @@ import 'package:at_common_flutter/services/size_config.dart';
 
 class OverlappingContacts extends StatefulWidget {
   final List<AtContact> selectedList;
-  const OverlappingContacts({Key key, this.selectedList}) : super(key: key);
+  Function onRemove;
+  bool isMultipleUser;
+  OverlappingContacts(
+      {Key key, this.selectedList, this.onRemove, this.isMultipleUser = true})
+      : super(key: key);
   @override
   _OverlappingContactsState createState() => _OverlappingContactsState();
 }
@@ -23,12 +27,14 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          isExpanded = !isExpanded;
-        });
+        widget.isMultipleUser
+            ? setState(() {
+                isExpanded = !isExpanded;
+              })
+            : null;
       },
       child: Container(
-        height: (isExpanded) ? 300.toHeight : 50.toHeight,
+        height: (isExpanded) ? 300.toHeight : 60,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Color(0xffF7F7FF),
@@ -127,19 +133,33 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                 ],
               ),
             ),
-            Positioned(
-              top: 10.toHeight,
-              right: 0,
-              child: Container(
-                width: 20.toWidth,
-                child: Icon(
-                  (isExpanded)
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  size: 15.toFont,
-                ),
-              ),
-            ),
+            widget.isMultipleUser
+                ? Positioned(
+                    top: 10.toHeight,
+                    right: 0,
+                    child: Container(
+                      width: 20.toWidth,
+                      child: Icon(
+                        (isExpanded)
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        size: 15.toFont,
+                      ),
+                    ),
+                  )
+                : Positioned(
+                    top: 10.toHeight,
+                    right: 0,
+                    child: InkWell(
+                      onTap: widget.onRemove,
+                      child: Container(
+                          width: 20.toWidth,
+                          child: Icon(
+                            Icons.close,
+                            color: Color(0xffA8A8A8),
+                          )),
+                    ),
+                  ),
             (isExpanded)
                 ? Positioned(
                     top: 50.toHeight,
@@ -163,10 +183,11 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                             onTileTap: () {},
                             isSelected: widget.selectedList
                                 .contains(widget.selectedList[index]),
-                            onRemove: () {
-                              EventService().removeSelectedContact(index);
-                              EventService().update();
-                            },
+                            onRemove: widget.onRemove ??
+                                () {
+                                  EventService().removeSelectedContact(index);
+                                  EventService().update();
+                                },
                             name: widget.selectedList[index].tags != null &&
                                     widget.selectedList[index].tags['name'] !=
                                         null

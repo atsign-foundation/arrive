@@ -78,7 +78,7 @@ class SendLocationNotification {
             notification.long = myLocation.longitude;
             String atkeyMicrosecondId =
                 notification.key.split('-')[1].split('@')[0];
-            AtKey atKey = newAtKey(5000, "locationNotify-$atkeyMicrosecondId",
+            AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
                 notification.receiver);
             try {
               var result = await atClient.put(
@@ -125,7 +125,7 @@ class SendLocationNotification {
             notification.long = myLocation.longitude;
             String atkeyMicrosecondId =
                 notification.key.split('-')[1].split('@')[0];
-            AtKey atKey = newAtKey(5000, "locationNotify-$atkeyMicrosecondId",
+            AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
                 notification.receiver);
             try {
               // var result = await

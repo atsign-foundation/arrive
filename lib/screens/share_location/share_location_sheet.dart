@@ -84,7 +84,15 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
             },
           ),
           (selectedContact != null)
-              ? (OverlappingContacts(selectedList: [selectedContact]))
+              ? (OverlappingContacts(
+                  selectedList: [selectedContact],
+                  onRemove: () {
+                    setState(() {
+                      selectedContact = null;
+                    });
+                  },
+                  isMultipleUser: false,
+                ))
               : SizedBox(),
           SizedBox(height: 25),
           Text(

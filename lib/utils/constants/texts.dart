@@ -20,7 +20,7 @@ class AllText {
   // ignore: non_constant_identifier_names
   String MSG_NOTIFY = 'msgNotify';
   // ignore: non_constant_identifier_names
-  String LOCATION_NOTIFY = 'locationNotify';
+  String LOCATION_NOTIFY = 'locationnotify';
   // ignore: non_constant_identifier_names
   String EVENT_NOTIFY = 'eventnotify';
 

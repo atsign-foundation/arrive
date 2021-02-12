@@ -309,8 +309,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
           ? LocationService().userListenerKeyword.receiver
           : LocationService().userListenerKeyword.atsignCreator;
     }
-    if (widget.eventListenerKeyword != null) {
-      setChatWithAtSign(chatWith);
-    }
+    setChatWithAtSign(chatWith);
   }
 }
