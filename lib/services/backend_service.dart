@@ -123,7 +123,7 @@ class BackendService {
     var operation = responseJson['operation'];
     print('_notificationCallback opeartion $operation');
     if ((operation == 'delete') &&
-        atKey.toString().contains('locationNotify')) {
+        atKey.toString().toLowerCase().contains('locationnotify')) {
       print('$notificationKey deleted');
       LocationNotificationListener().deleteReceivedData(fromAtSign);
       return;
@@ -132,7 +132,7 @@ class BackendService {
         .decrypt(value, fromAtSign)
         .catchError((e) =>
             print("error in decrypting: ${e.errorCode} ${e.errorMessage}"));
-    if (atKey.toString().contains('locationNotify')) {
+    if (atKey.toString().toLowerCase().contains('locationnotify')) {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       LocationNotificationListener().updateHybridList(msg);
@@ -271,6 +271,7 @@ class BackendService {
     AtKey key = AtKey.fromString(response[0]);
 
     presentEventData.group = acknowledgedEvent.group;
+    presentEventData.isUpdate = true;
 
     var notification =
         EventNotificationModel.convertEventNotificationToJson(presentEventData);

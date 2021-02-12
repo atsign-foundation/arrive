@@ -29,7 +29,7 @@ class LocationNotificationListener {
   String atsign;
   List<HybridModel> allUsersList;
   // ignore: non_constant_identifier_names
-  String LOCATION_NOTIFY = 'locationNotify';
+  String LOCATION_NOTIFY = 'locationnotify';
   bool sendLocation;
 
   StreamController _allUsersController;
