@@ -5,12 +5,10 @@ import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
 import 'package:atsign_location_app/screens/event/event_log.dart';
-import 'package:atsign_location_app/screens/faqs/faqs.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_screen.dart';
 import 'package:atsign_location_app/screens/selected_location.dart/selected_location.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
-import 'package:atsign_location_app/screens/terms_conditions/terms_conditions_screen.dart';
 import 'package:atsign_location_app/screens/website_webview/website_webview.dart';
 import 'package:flutter/material.dart';
 
@@ -23,10 +21,13 @@ class SetupRoutes {
       Routes.HOME: (context) => HomeScreen(),
       Routes.EVENT_LOG: (context) => EventLog(),
       Routes.FAQS: (context) => WebsiteScreen(
-            title: 'Atsign',
+            title: 'FAQ',
             url: '${MixedConstants.WEBSITE_URL}/faqs',
           ),
-      Routes.TERMS_CONDITIONS_SCREEN: (context) => TermsConditions(),
+      Routes.TERMS_CONDITIONS_SCREEN: (context) => WebsiteScreen(
+            title: 'Terms & Condition',
+            url: '${MixedConstants.WEBSITE_URL}/terms-conditions',
+          ),
       Routes.GROUP_LIST: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
         return GroupList(

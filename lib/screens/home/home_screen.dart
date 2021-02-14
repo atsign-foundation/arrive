@@ -1,5 +1,6 @@
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
@@ -19,6 +20,7 @@ import 'package:atsign_location_app/services/location_notification_listener.dart
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
@@ -113,20 +115,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Positioned(bottom: 264.toHeight, child: header()),
-              SlidingUpPanel(
-                controller: pc,
-                minHeight: 267.toHeight,
-                maxHeight: 530.toHeight,
-                // collapsed: Text('sss'),
-                panel: collapsedContent(false),
-                // panel: Text(''),
-              )
+              ProviderHandler<HybridProvider>(
+                functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
+                showError: true,
+                load: (provider) => provider.getAllHybridEvents(),
+                loaderBuilder: (provider) {
+                  return Container(
+                    child: SlidingUpPanel(
+                        controller: pc,
+                        minHeight: 267.toHeight,
+                        maxHeight: 530.toHeight,
+                        panelBuilder: (scrollController) => collapsedContent(
+                            false,
+                            scrollController,
+                            Center(
+                              child: CircularProgressIndicator(),
+                            )
+                            // panel: Text(''),
+                            )),
+                  );
+                },
+                errorBuilder: (provider) {
+                  return SlidingUpPanel(
+                      controller: pc,
+                      minHeight: 267.toHeight,
+                      maxHeight: 530.toHeight,
+                      panelBuilder: (scrollController) => collapsedContent(
+                          false,
+                          scrollController,
+                          emptyWidget('Something went wrong!!')));
+                },
+                successBuilder: (provider) {
+                  return SlidingUpPanel(
+                    controller: pc,
+                    minHeight: 267.toHeight,
+                    maxHeight: 530.toHeight,
+                    panelBuilder: (scrollController) {
+                      if (provider.allHybridNotifications.length > 0)
+                        return collapsedContent(
+                            false,
+                            scrollController,
+                            getListView(provider.allHybridNotifications,
+                                provider, scrollController));
+                      else
+                        return collapsedContent(false, scrollController,
+                            emptyWidget('No Data Found!!'));
+                    },
+                  );
+                },
+              ),
             ],
           )),
     );
   }
 
-  Widget collapsedContent(bool isExpanded) {
+  Widget collapsedContent(
+      bool isExpanded, ScrollController slidingScrollController, dynamic T) {
+    if (pc.isPanelAnimating) {
+      print('animating');
+    }
     return Container(
         height: !isExpanded ? 260.toHeight : 530.toHeight,
         padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
@@ -143,82 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-        child: ProviderHandler<HybridProvider>(
-            functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
-            showError: true,
-            load: (provider) => provider.getAllHybridEvents(),
-            errorBuilder: (provider) => Center(
-                  child: Text('Some error occured'),
-                ),
-            successBuilder: (provider) {
-              if (provider.allHybridNotifications.length == 0) {
-                return Center(
-                  child: Text('No data found'),
-                );
-              } else {
-                return ListView.separated(
-                    // physics: NeverScrollableScrollPhysics(),
-                    itemCount: provider.allHybridNotifications.length,
-                    shrinkWrap: true,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
-                    },
-                    itemBuilder: (BuildContext context, int index) {
-                      if (provider.allHybridNotifications[index]
-                                  .notificationType ==
-                              NotificationType.Event &&
-                          provider.allHybridNotifications[index]
-                                  .eventNotificationModel !=
-                              null) {
-                        return InkWell(
-                          onTap: () {
-                            HomeEventService().onEventModelTap(
-                                provider.allHybridNotifications[index]
-                                    .eventNotificationModel,
-                                provider);
-                          },
-                          child: DisplayTile(
-                            atsignCreator: provider
-                                .allHybridNotifications[index]
-                                .eventNotificationModel
-                                .atsignCreator,
-                            title: getTitle(
-                                provider.allHybridNotifications[index]),
-                            subTitle: getSubTitle(
-                                provider.allHybridNotifications[index]),
-                            semiTitle: getSemiTitle(
-                                provider.allHybridNotifications[index]),
-                          ),
-                        );
-                      } else if (provider.allHybridNotifications[index]
-                                  .notificationType ==
-                              NotificationType.Location &&
-                          provider.allHybridNotifications[index]
-                                  .locationNotificationModel !=
-                              null) {
-                        return InkWell(
-                          onTap: () {
-                            HomeEventService().onLocationModelTap(provider
-                                .allHybridNotifications[index]
-                                .locationNotificationModel);
-                          },
-                          child: DisplayTile(
-                            atsignCreator: provider
-                                .allHybridNotifications[index]
-                                .locationNotificationModel
-                                .atsignCreator,
-                            title: getTitle(
-                                provider.allHybridNotifications[index]),
-                            subTitle: getSubTitle(
-                                provider.allHybridNotifications[index]),
-                            semiTitle: getSemiTitle(
-                                provider.allHybridNotifications[index]),
-                          ),
-                        );
-                      }
-                    });
-              }
-            }));
+        child: T);
   }
 
   Widget header() {
@@ -296,6 +268,107 @@ class _HomeScreenState extends State<HomeScreen> {
               })
         ],
       ),
+    );
+  }
+
+  getListView(List<HybridNotificationModel> allHybridNotifications,
+      EventProvider provider, ScrollController slidingScrollController) {
+    return ListView(
+      children: allHybridNotifications.map((hybridElement) {
+        return Column(
+          children: [
+            InkWell(
+              onTap: () {
+                if (hybridElement.notificationType == NotificationType.Event)
+                  HomeEventService().onEventModelTap(
+                      hybridElement.eventNotificationModel, provider);
+                else
+                  HomeEventService().onLocationModelTap(
+                      hybridElement.locationNotificationModel);
+              },
+              child: DisplayTile(
+                atsignCreator:
+                    hybridElement.notificationType == NotificationType.Event
+                        ? hybridElement.eventNotificationModel.atsignCreator
+                        : hybridElement.locationNotificationModel.atsignCreator,
+                title: getTitle(hybridElement),
+                subTitle: getSubTitle(hybridElement),
+                semiTitle: getSemiTitle(hybridElement),
+              ),
+            ),
+            Divider()
+          ],
+        );
+      }).toList(),
+    );
+    // return ListView.separated(
+    //     controller: slidingScrollController,
+
+    //     // physics: isExpanded
+    //     //     ? AlwaysScrollableScrollPhysics()
+    //     //     : NeverScrollableScrollPhysics(),
+    //     itemCount: allHybridNotifications.length,
+    //     shrinkWrap: true,
+    //     separatorBuilder: (BuildContext context, int index) {
+    //       return Divider();
+    //     },
+    //     itemBuilder: (BuildContext context, int index) {
+    //       if (allHybridNotifications[index].notificationType ==
+    //               NotificationType.Event &&
+    //           allHybridNotifications[index].eventNotificationModel != null) {
+    //         return InkWell(
+    //           onTap: () {
+    //             HomeEventService().onEventModelTap(
+    //                 allHybridNotifications[index].eventNotificationModel,
+    //                 provider);
+    //           },
+    //           child: DisplayTile(
+    //             atsignCreator: allHybridNotifications[index]
+    //                 .eventNotificationModel
+    //                 .atsignCreator,
+    //             title: getTitle(allHybridNotifications[index]),
+    //             subTitle: getSubTitle(allHybridNotifications[index]),
+    //             semiTitle: getSemiTitle(allHybridNotifications[index]),
+    //           ),
+    //         );
+    //       } else if (allHybridNotifications[index].notificationType ==
+    //               NotificationType.Location &&
+    //           allHybridNotifications[index].locationNotificationModel != null) {
+    //         return InkWell(
+    //           onTap: () {
+    //             HomeEventService().onLocationModelTap(
+    //                 allHybridNotifications[index].locationNotificationModel);
+    //           },
+    //           child: DisplayTile(
+    //             atsignCreator: allHybridNotifications[index]
+    //                 .locationNotificationModel
+    //                 .atsignCreator,
+    //             title: getTitle(allHybridNotifications[index]),
+    //             subTitle: getSubTitle(allHybridNotifications[index]),
+    //             semiTitle: getSemiTitle(allHybridNotifications[index]),
+    //           ),
+    //         );
+    //       }
+    //     });
+  }
+
+  Widget emptyWidget(String title) {
+    return Column(
+      children: [
+        Image.asset(
+          AllImages().EMPTY_GROUP,
+          width: 181.toWidth,
+          height: 181.toWidth,
+          fit: BoxFit.cover,
+        ),
+        SizedBox(
+          height: 15.toHeight,
+        ),
+        Text(title, style: CustomTextStyles().grey16),
+        SizedBox(
+          height: 5.toHeight,
+        ),
+      ],
     );
   }
 }
