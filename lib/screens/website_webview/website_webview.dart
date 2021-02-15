@@ -3,6 +3,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/utils/colors.dart'
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class WebsiteScreen extends StatefulWidget {
   final String title;
@@ -35,7 +36,7 @@ class _WebsiteScreenState extends State<WebsiteScreen> {
           icon: Icon(
             Icons.arrow_back,
             color: AllColors().Black,
-            size: 22,
+            size: 25.toHeight,
           ),
         ),
         title: Text(widget.title, style: CustomTextStyles().black18),

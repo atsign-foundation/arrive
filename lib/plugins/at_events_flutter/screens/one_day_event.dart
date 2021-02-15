@@ -1,14 +1,15 @@
 import 'dart:convert';
 
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:at_common_flutter/widgets/custom_button.dart';
-import 'package:at_common_flutter/widgets/custom_input_field.dart';
+// import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_heading.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:at_common_flutter/widgets/custom_button.dart';
+import 'package:atsign_location_app/common_components/custom_input_field.dart';
 
 class OneDayEvent extends StatefulWidget {
   @override
@@ -33,7 +34,7 @@ class _OneDayEventState extends State<OneDayEvent> {
       padding: EdgeInsets.all(25),
       child: SingleChildScrollView(
         child: Container(
-          height: SizeConfig().screenHeight * 0.8,
+          height: SizeConfig().screenHeight * 0.85,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -46,8 +47,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                     Text('Select Date', style: CustomTextStyles().greyLabel14),
                     SizedBox(height: 6.toHeight),
                     CustomInputField(
-                      width: 330.toWidth,
-                      height: 50,
+                      width: 350.toWidth,
+                      height: 50.toHeight,
                       isReadOnly: true,
                       hintText: 'Select Date',
                       icon: Icons.date_range,
@@ -76,8 +77,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         CustomInputField(
-                          width: 155,
-                          height: 50,
+                          width: 155.toWidth,
+                          height: 50.toHeight,
                           isReadOnly: true,
                           hintText: 'Start',
                           icon: Icons.access_time,
@@ -100,8 +101,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                           },
                         ),
                         CustomInputField(
-                            width: 155,
-                            height: 50,
+                            width: 155.toWidth,
+                            height: 50.toHeight,
                             hintText: 'Stop',
                             isReadOnly: true,
                             icon: Icons.access_time,

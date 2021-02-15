@@ -12,6 +12,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/h
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:at_lookup/src/connection/outbound_connection.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'distance_calculate.dart';
@@ -32,7 +33,8 @@ class LocationService {
       onEventExit,
       onShareToggle,
       onRequest,
-      onRemove;
+      onRemove,
+      showToast;
 
   HybridModel eventData;
   HybridModel myData;
@@ -60,6 +62,7 @@ class LocationService {
       Function eventExit,
       Function newOnRemove,
       Function newOnRequest,
+      Function showToast,
       Function newOnShareToggle}) {
     hybridUsersList = [];
     atsignsAtMonitor = [];
@@ -94,6 +97,9 @@ class LocationService {
     }
     if (eventExit != null) {
       onEventExit = eventExit;
+    }
+    if (showToast != null) {
+      this.showToast = showToast;
     }
     updateHybridList();
   }
@@ -166,29 +172,35 @@ class LocationService {
 
   // called when any new/updated data is received in the main app
   newList(List<HybridModel> allUsersFromMainApp) {
-    if (userListenerKeyword != null) {
-      allUsersFromMainApp.forEach((user) async {
-        if (user.displayName == userListenerKeyword.atsignCreator)
-          await updateDetails(user);
-      });
-      _atHybridUsersController.add(hybridUsersList);
-    } else if (eventListenerKeyword != null) {
-      allUsersFromMainApp.forEach((user) async {
-        if (atsignsAtMonitor.contains(user.displayName))
-          await updateDetails(user);
-      });
-      _atHybridUsersController.add(hybridUsersList);
+    if (_atHybridUsersController != null &&
+        !_atHybridUsersController.isClosed) {
+      if (userListenerKeyword != null) {
+        allUsersFromMainApp.forEach((user) async {
+          if (user.displayName == userListenerKeyword.atsignCreator)
+            await updateDetails(user);
+        });
+        _atHybridUsersController.add(hybridUsersList);
+      } else if (eventListenerKeyword != null) {
+        allUsersFromMainApp.forEach((user) async {
+          if (atsignsAtMonitor.contains(user.displayName))
+            await updateDetails(user);
+        });
+        _atHybridUsersController.add(hybridUsersList);
+      }
     }
   }
 
   // called when a user stops sharing his location
   removeUser(String atsign) {
-    if (userListenerKeyword != null) {
-      hybridUsersList.removeWhere((element) => element.displayName == atsign);
-      _atHybridUsersController.add(hybridUsersList);
-    } else if (eventListenerKeyword != null) {
-      hybridUsersList.removeWhere((element) => element.displayName == atsign);
-      _atHybridUsersController.add(hybridUsersList);
+    if (_atHybridUsersController != null &&
+        !_atHybridUsersController.isClosed) {
+      if (userListenerKeyword != null) {
+        hybridUsersList.removeWhere((element) => element.displayName == atsign);
+        _atHybridUsersController.add(hybridUsersList);
+      } else if (eventListenerKeyword != null) {
+        hybridUsersList.removeWhere((element) => element.displayName == atsign);
+        _atHybridUsersController.add(hybridUsersList);
+      }
     }
   }
 
@@ -215,8 +227,10 @@ class LocationService {
     await _calculateEta(user);
     if (index != null)
       hybridUsersList[index] = user;
-    else
+    else {
       hybridUsersList.add(user);
+      showToast('${user.displayName} started sharing their location');
+    }
   }
 
   _calculateEta(HybridModel user) async {

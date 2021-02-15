@@ -11,6 +11,7 @@ class FaqsScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         centerTitle: true,
+        padding: true,
         title: 'FAQ',
         action: PopButton(label: 'Close'),
       ),

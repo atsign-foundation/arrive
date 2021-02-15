@@ -36,14 +36,14 @@ class FloatingIcon extends StatelessWidget {
         ],
       ),
       child: IconButton(
-          padding: EdgeInsets.all(10.toHeight),
-          //iconSize: 20.toHeight,
+          padding: EdgeInsets.all(10),
+          // iconSize: 20.toHeight,
           icon: Icon(
             icon != null ? icon : Icons.table_rows,
             color: iconColor != null
                 ? iconColor
                 : Theme.of(context).scaffoldBackgroundColor,
-            size: 27.toFont,
+            size: 25.toFont,
           ),
           onPressed: onPressed ?? () => Scaffold.of(context).openEndDrawer()),
     );
