@@ -168,8 +168,11 @@ class _ShareLocationNotifierDialogState
                   ),
                   SizedBox(height: 10.toHeight),
                   widget.eventData != null
-                      ? Text(widget.eventData.title,
-                          style: CustomTextStyles().black18)
+                      ? Text(
+                          widget.eventData.title,
+                          style: CustomTextStyles().black18,
+                          textAlign: TextAlign.center,
+                        )
                       : SizedBox(),
                   SizedBox(height: 5.toHeight),
                   widget.eventData != null

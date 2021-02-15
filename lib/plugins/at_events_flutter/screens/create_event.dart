@@ -1,8 +1,9 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:at_common_flutter/widgets/custom_button.dart';
-import 'package:at_common_flutter/widgets/custom_input_field.dart';
+// import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
+import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/bottom_sheet.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/error_screen.dart';
@@ -61,7 +62,7 @@ class _CreateEventState extends State<CreateEvent> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
-      height: SizeConfig().screenHeight * 1,
+      height: SizeConfig().screenHeight,
       padding: EdgeInsets.fromLTRB(25, 25, 25, 10),
       child: SingleChildScrollView(
         child: Container(

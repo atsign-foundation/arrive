@@ -60,12 +60,14 @@ class _EventLogState extends State<EventLog> {
                           unselectedLabelColor: AllColors().DARK_GREY,
                           tabs: [
                             Tab(
+                              // text: 'Upcoming',
                               child: Text(
                                 'Upcoming',
                                 style: CustomTextStyles().boldLabel16,
                               ),
                             ),
                             Tab(
+                              // text: 'Past',
                               child: Text('Past',
                                   style: CustomTextStyles().boldLabel16),
                             )

@@ -31,6 +31,7 @@ class _SelectLocationState extends State<SelectLocation> {
               Expanded(
                 child: CustomInputField(
                   hintText: 'Search an area, street name…',
+                  initialValue: inputText,
                   onSubmitted: (String str) async {
                     setState(() {
                       isLoader = true;

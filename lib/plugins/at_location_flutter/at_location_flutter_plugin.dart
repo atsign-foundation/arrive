@@ -1,6 +1,7 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_chat_flutter/screens/chat_screen.dart';
 import 'package:at_chat_flutter/utils/init_chat_service.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
@@ -8,6 +9,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/location
 import 'package:atsign_location_app/plugins/at_location_flutter/show_location.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/src/layer/marker_layer.dart';
@@ -61,6 +63,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   bool isEventAdmin = false;
   bool showMarker;
   GlobalKey<ScaffoldState> scaffoldKey;
+  BuildContext globalContext;
 
   @override
   void initState() {
@@ -74,7 +77,8 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
         eventExit: widget.onEventExit ?? null,
         newOnRemove: widget.onRemove,
         newOnRequest: widget.onRequest,
-        newOnShareToggle: widget.onShareToggle);
+        newOnShareToggle: widget.onShareToggle,
+        showToast: showToast);
 
     if (widget.eventListenerKeyword != null) {
       if (widget.atClientInstance.currentAtSign ==
@@ -99,6 +103,10 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
     setAtsignToChatWith();
   }
 
+  showToast(String msg) {
+    if (globalContext != null) CustomToast().show(msg, globalContext);
+  }
+
   void dispose() {
     super.dispose();
     LocationService().dispose();
@@ -107,6 +115,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
 
   @override
   Widget build(BuildContext context) {
+    globalContext = context;
     return SafeArea(
       child: Scaffold(
           key: scaffoldKey,
@@ -274,13 +283,13 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
 
   fnWhenZoomChanges(double zoom) {
     print('fnWhenZoomChanges $zoom');
-    if ((zoom > 2) && (!showMarker)) {
+    if ((zoom > 1) && (!showMarker)) {
       print('greater $zoom');
       setState(() {
         showMarker = true;
       });
     }
-    if ((zoom < 2) && (showMarker)) {
+    if ((zoom < 1) && (showMarker)) {
       print('less $zoom');
       setState(() {
         showMarker = false;
