@@ -19,19 +19,21 @@ class ShowLocation extends StatefulWidget {
 
 class _ShowLocationState extends State<ShowLocation> {
   final MapController mapController = MapController();
-  bool showMarker;
+  bool showMarker, noPointReceived;
   Marker marker;
   @override
   void initState() {
     super.initState();
     showMarker = true;
+    noPointReceived = false;
     print('widget.location ${widget.location}');
     if (widget.location != null)
       marker = buildMarker(new HybridModel(latLng: widget.location),
           singleMarker: true);
     else {
-      // marker = buildMarker(new HybridModel(latLng: LatLng(45, 45)),
-      //     singleMarker: true);
+      noPointReceived = true;
+      marker = buildMarker(new HybridModel(latLng: LatLng(45, 45)),
+          singleMarker: true);
       showMarker = false;
     }
   }
@@ -73,6 +75,7 @@ class _ShowLocationState extends State<ShowLocation> {
   }
 
   fnWhenZoomChanges(double zoom) {
+    if (noPointReceived) return;
     if ((zoom > 2) && (!showMarker)) {
       setState(() {
         showMarker = true;
