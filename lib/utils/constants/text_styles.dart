@@ -106,7 +106,7 @@ class CustomTextStyles {
 
   TextStyle darkGrey16 = TextStyle(
     color: AllColors().DARK_GREY,
-    fontSize: 15.toFont,
+    fontSize: 16.toFont,
   );
 
   TextStyle grey16 = TextStyle(
