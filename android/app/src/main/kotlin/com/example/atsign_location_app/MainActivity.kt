@@ -1,4 +1,4 @@
-package com.example.atsign_location_app
+package com.atsign.arrive
 
 import io.flutter.embedding.android.FlutterActivity
 
