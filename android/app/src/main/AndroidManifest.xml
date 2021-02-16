@@ -15,7 +15,7 @@
     <uses-feature android:name="android.hardware.camera.flash" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="@rrive"
+        android:label="@arrive"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

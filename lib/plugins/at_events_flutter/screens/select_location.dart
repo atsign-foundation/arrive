@@ -1,5 +1,6 @@
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 // import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/location_tile.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/selected_location.dart';
@@ -68,6 +69,10 @@ class _SelectLocationState extends State<SelectLocation> {
           InkWell(
               onTap: () async {
                 LatLng point = await MyLocation().myLocation();
+                if (point == null) {
+                  CustomToast().show('Unable to access location', context);
+                  return;
+                }
                 onLocationSelect(context, point);
               },
               child: Column(

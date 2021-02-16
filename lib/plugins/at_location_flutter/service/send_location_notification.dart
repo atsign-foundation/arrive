@@ -64,32 +64,34 @@ class SendLocationNotification {
     // LatLng myLocation = LatLng(lat, long);
     if (receivingAtsigns.length > 0)
       timer = Timer.periodic(Duration(seconds: 5), (Timer t) async {
-        receivingAtsigns.forEach((notification) async {
-          bool isSend = false;
+        if (myLocation != null) {
+          receivingAtsigns.forEach((notification) async {
+            bool isSend = false;
 
-          if (notification.to == null)
-            isSend = true;
-          else if ((DateTime.now().difference(notification.from) >
-                  Duration(seconds: 0)) &&
-              (notification.to.difference(DateTime.now()) >
-                  Duration(seconds: 0))) isSend = true;
-          if (isSend) {
-            notification.lat = myLocation.latitude;
-            notification.long = myLocation.longitude;
-            String atkeyMicrosecondId =
-                notification.key.split('-')[1].split('@')[0];
-            AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
-                notification.receiver);
-            try {
-              var result = await atClient.put(
-                  atKey,
-                  LocationNotificationModel.convertLocationNotificationToJson(
-                      notification));
-            } catch (e) {
-              print('error in sending location: $e');
+            if (notification.to == null)
+              isSend = true;
+            else if ((DateTime.now().difference(notification.from) >
+                    Duration(seconds: 0)) &&
+                (notification.to.difference(DateTime.now()) >
+                    Duration(seconds: 0))) isSend = true;
+            if (isSend) {
+              notification.lat = myLocation.latitude;
+              notification.long = myLocation.longitude;
+              String atkeyMicrosecondId =
+                  notification.key.split('-')[1].split('@')[0];
+              AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
+                  notification.receiver);
+              try {
+                var result = await atClient.put(
+                    atKey,
+                    LocationNotificationModel.convertLocationNotificationToJson(
+                        notification));
+              } catch (e) {
+                print('error in sending location: $e');
+              }
             }
-          }
-        });
+          });
+        }
         myLocation = await MyLocation().myLocation();
         // myLocation = LatLng(44, -112);
       });

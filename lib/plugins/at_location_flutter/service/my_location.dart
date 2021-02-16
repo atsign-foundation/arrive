@@ -1,3 +1,5 @@
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
 
@@ -16,7 +18,7 @@ class MyLocation {
     if (!_serviceEnabled) {
       _serviceEnabled = await _location.requestService();
       if (!_serviceEnabled) {
-        return LatLng(0, 0);
+        return null;
       }
     }
     print('_serviceEnabled $_serviceEnabled');
@@ -24,7 +26,7 @@ class MyLocation {
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await _location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
-        return LatLng(0, 0);
+        return null;
       }
     }
     print('_permissionGranted $_permissionGranted');

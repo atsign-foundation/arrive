@@ -110,7 +110,8 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   void dispose() {
     super.dispose();
     LocationService().dispose();
-    _popupController.streamController.close();
+    if (_popupController.streamController != null)
+      _popupController.streamController.close();
   }
 
   @override

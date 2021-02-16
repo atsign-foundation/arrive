@@ -16,6 +16,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'distance_calculate.dart';
+import 'package:flutter/material.dart';
 
 class LocationService {
   LocationService._();
@@ -120,6 +121,11 @@ class LocationService {
   addMyDetailsToHybridUsersList() async {
     String _atsign = getAtSign();
     LatLng mylatlng = await MyLocation().myLocation();
+    if (mylatlng == null) {
+      showToast('Location permission not granted');
+      return;
+    }
+
     var _image = await getImageOfAtsignNew(_atsign);
 
     HybridModel _myData = HybridModel(
