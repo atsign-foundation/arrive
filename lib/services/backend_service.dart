@@ -157,7 +157,7 @@ class BackendService {
     } else if (atKey.toString().contains('eventacknowledged')) {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
-      createEventAcknowledge(msg, atKey);
+      createEventAcknowledge(msg, atKey, fromAtSign);
     } else if (atKey.toString().contains('requestlocationacknowledged')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -247,8 +247,8 @@ class BackendService {
     );
   }
 
-  createEventAcknowledge(
-      EventNotificationModel acknowledgedEvent, String atKey) async {
+  createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
+      String fromAtSign) async {
     String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
     print(
         'acknowledged notification received:${acknowledgedEvent} , key:${atKey} , ${eventId}');
@@ -270,7 +270,8 @@ class BackendService {
 
     presentEventData.group.members.forEach((presentGroupMember) {
       acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
-        if (acknowledgedGroupMember.atSign == presentGroupMember.atSign) {
+        if (acknowledgedGroupMember.atSign == presentGroupMember.atSign &&
+            acknowledgedGroupMember.atSign == fromAtSign) {
           presentGroupMember.tags = acknowledgedGroupMember.tags;
         }
       });
