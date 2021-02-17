@@ -264,13 +264,17 @@ class BackendService {
 
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-$eventId',
-      // sharedBy: '@test_ga3',
-      // sharedWith: '@test_ga3',
     );
 
     AtKey key = AtKey.fromString(response[0]);
 
-    presentEventData.group = acknowledgedEvent.group;
+    presentEventData.group.members.forEach((presentGroupMember) {
+      acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
+        if (acknowledgedGroupMember.atSign == presentGroupMember.atSign) {
+          presentGroupMember.tags = acknowledgedGroupMember.tags;
+        }
+      });
+    });
     presentEventData.isUpdate = true;
 
     var notification =
