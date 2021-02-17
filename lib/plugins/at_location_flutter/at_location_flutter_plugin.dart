@@ -248,7 +248,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                 right: 0,
                 child: FloatingIcon(
                     bgColor: Theme.of(context).accentColor,
-                    icon: Icons.all_inclusive,
+                    icon: Icons.zoom_out_map,
                     iconColor: AllColors().Black,
                     onPressed: () {
                       _popupController.hidePopup();
