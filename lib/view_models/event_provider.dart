@@ -365,17 +365,10 @@ class EventProvider extends BaseModel {
     tempKey = 'createevent-$newLocationDataKeyId';
     List<String> key = [];
 
-    if (eventNotificationModel.atsignCreator == currentAtSign) {
-      key = await atClientInstance.getKeys(
-        regex: tempKey,
-        sharedBy: eventNotificationModel.atsignCreator,
-      );
-    } else {
-      key = await atClientInstance.getKeys(
-        regex: tempKey,
-        sharedBy: eventNotificationModel.atsignCreator,
-      );
-    }
+    key = await atClientInstance.getKeys(
+      regex: tempKey,
+      sharedBy: eventNotificationModel.atsignCreator,
+    );
 
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Event, key: key[0]);
