@@ -6,77 +6,94 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/location
 import 'package:flutter/material.dart';
 
 Widget buildPopup(HybridModel user) {
-  print('popup builder called');
   return Stack(
     alignment: Alignment.center,
     children: [
+      Positioned(bottom: 0, child: pointedBottom()),
       Container(
-        width: 200,
+        width: ((LocationService().eventListenerKeyword != null) &&
+                (user == LocationService().eventData))
+            ? 140
+            : 200,
         height: 82,
         alignment: Alignment.topCenter,
-        child: Container(
-          color: Colors.white,
-          height: 76,
-          child: Row(
-            children: [
-              (LocationService().eventListenerKeyword != null) &&
-                      (user == LocationService().eventData)
-                  ? SizedBox()
-                  : Container(
-                      padding: EdgeInsets.all(10),
-                      color: Colors.blue[100],
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.car_rental,
-                            color: Colors.grey[600],
-                            size: 32,
-                          ),
-                          Text(
-                            // eta.length > index ? eta[index] : '?',
-                            user.eta ?? '?',
-                            style: TextStyle(
-                                fontSize: 15, color: Colors.grey[600]),
-                          )
-                        ],
-                      ),
-                    ),
-              Flexible(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        child: user.image != null
-                            ? CustomCircleAvatar(
-                                byteImage: user.image, nonAsset: true, size: 30)
-                            : ContactInitial(
-                                initials: user.displayName.substring(1, 3),
-                                size: 60,
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          child: Container(
+            color: Colors.white,
+            height: 76,
+            child: Row(
+              mainAxisAlignment:
+                  ((LocationService().eventListenerKeyword != null) &&
+                          (user == LocationService().eventData))
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
+              children: [
+                ((LocationService().eventListenerKeyword != null) &&
+                        (user == LocationService().eventData))
+                    ? SizedBox()
+                    : Expanded(
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          color: Colors.blue[100],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Icon(
+                                Icons.car_rental,
+                                color: Colors.grey[600],
+                                size: 32,
                               ),
-                      ),
-                      Text(
-                        user.displayName ??
-                            'AnthonyAnthonyAnthonyAnthonyAnthony',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black,
+                              Flexible(
+                                child: Text(
+                                  user.eta ?? '?',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.grey[600]),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    ],
+                      ),
+                Flexible(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          child: user.image != null
+                              ? CustomCircleAvatar(
+                                  byteImage: user.image,
+                                  nonAsset: true,
+                                  size: 30)
+                              : ContactInitial(
+                                  initials: user.displayName.substring(1, 3),
+                                  size: 60,
+                                ),
+                        ),
+                        Text(
+                          user.displayName ?? '...',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
-      Positioned(bottom: 0, child: pointedBottom())
     ],
   );
 }

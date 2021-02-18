@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
 import 'package:at_chat_flutter/widgets/contacts_initials.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/colors.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
@@ -38,7 +39,7 @@ class _DisplayTileState extends State<DisplayTile> {
 
   getEventCreator() async {
     atContact = await AtContactsImpl.getInstance(LocationService().getAtSign());
-    contact = await atContact.get(widget.atsignCreator);
+    contact = await getAtSignDetails(widget.atsignCreator);
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
