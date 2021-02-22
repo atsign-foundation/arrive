@@ -210,7 +210,7 @@ class TileLayerOptions extends LayerOptions {
     this.additionalOptions = const <String, String>{},
     this.subdomains = const <String>[],
     this.keepBuffer = 2,
-    this.backgroundColor = const Color(0xFFE0E0E0),
+    this.backgroundColor = const Color(0xFF86CCFA),
     this.placeholderImage,
     this.errorImage,
     this.tileProvider = const CachedNetworkTileProvider(),

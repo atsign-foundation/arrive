@@ -1,5 +1,6 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_common_flutter/at_common_flutter.dart';
+import 'package:atsign_location_app/common_components/loading_widget.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/bottom_sheet.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
@@ -32,7 +33,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
   bool isCreator, isSharing, isSharingEvent = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isCreator = (LocationService().myData != null) &&
             (widget.eventListenerKeyword != null)
@@ -263,6 +263,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           Switch(
                               value: isSharingEvent,
                               onChanged: (value) async {
+                                LoadingDialog().show();
                                 print(value);
                                 if (widget.isAdmin) {
                                   LocationService()
@@ -303,6 +304,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   CustomToast().show(
                                       'somehting went wrong , please try again.',
                                       context);
+                                LoadingDialog().hide();
                               })
                         ],
                       ),
@@ -316,11 +318,13 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                           .elementAt(0)
                                           .tags['isExited'] ==
                                       false) {
+                                    LoadingDialog().show();
                                     await LocationService().onEventExit(
                                         isExited: true,
                                         keyType: widget.isAdmin
                                             ? ATKEY_TYPE_ENUM.CREATEEVENT
                                             : ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT);
+                                    LoadingDialog().hide();
                                     Navigator.of(context).pop();
                                   }
                                 },
@@ -335,15 +339,17 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 ),
                               ),
                             ),
-                      Divider(),
+                      widget.isAdmin ? SizedBox() : Divider(),
                       widget.isAdmin
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {
                                   if (!widget
                                       .eventListenerKeyword.isCancelled) {
+                                    LoadingDialog().show();
                                     var result =
                                         await LocationService().onEventCancel();
+                                    LoadingDialog().hide();
                                     Navigator.of(context).pop();
                                   }
                                 },
@@ -451,6 +457,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 Switch(
                                     value: isSharing,
                                     onChanged: (value) async {
+                                      LoadingDialog().show();
                                       var result;
                                       print(
                                           "${LocationService().onShareToggle}");
@@ -482,6 +489,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                             'some thing went wrong , try again.',
                                             context);
                                       }
+                                      LoadingDialog().hide();
                                     })
                               ],
                             )
