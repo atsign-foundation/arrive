@@ -251,18 +251,16 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
           Tasks(
               task: 'Request Location',
-              icon: Icons.refresh,
+              icon: Icons.sync,
+              angle: (-3.14 / 2),
               onTap: () async {
                 bottomSheet(context, RequestLocationSheet(),
                     SizeConfig().screenHeight * 0.5);
-
-                // SendLocationNotification().manualLocationSend(39, -121);
               }),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
-                // eventProvider.updateEventAccordingToAcknowledgedData();
                 bottomSheet(context, ShareLocationSheet(),
                     SizeConfig().screenHeight * 0.6);
               })

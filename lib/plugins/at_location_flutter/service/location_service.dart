@@ -131,7 +131,7 @@ class LocationService {
 
     HybridModel _myData = HybridModel(
         displayName: _atsign, latLng: mylatlng, eta: '?', image: _image);
-    _myData.marker = buildMarker(_myData);
+    _myData.marker = buildMarker(_myData, singleMarker: true);
 
     myData = _myData;
     if ((eventListenerKeyword != null) && (eventData != null))

@@ -4,9 +4,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flut
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-
 import 'circle_marker_painter.dart';
-import 'pointed_bottom.dart';
 
 Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
   return Marker(
@@ -15,10 +13,24 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
     width: 50,
     point: user.latLng,
     builder: (ctx) => singleMarker
-        ? Icon(
-            Icons.location_on,
-            size: 60,
-            color: AllColors().ORANGE,
+        ? Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(
+                Icons.circle,
+                size: 36,
+                color: AllColors().DARK_BLUE,
+              ),
+              Positioned(
+                child: SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CustomPaint(
+                    painter: CircleMarkerPainter(color: AllColors().DARK_BLUE),
+                  ),
+                ),
+              ),
+            ],
           )
         : Stack(
             alignment: Alignment.center,
@@ -40,7 +52,7 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
                   painter: CircleMarkerPainter(),
                 ),
               ),
-              Positioned(top: 50, child: pointedBottom(color: Colors.black)),
+              // Positioned(top: 50, child: pointedBottom(color: Colors.black)),
             ],
           ),
   );
