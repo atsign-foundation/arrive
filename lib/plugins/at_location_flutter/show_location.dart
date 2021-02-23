@@ -56,7 +56,7 @@ class _ShowLocationState extends State<ShowLocation> {
             urlTemplate:
                 "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MixedConstants.MAP_KEY}",
           ),
-          showMarker ? MarkerLayerOptions(markers: [marker]) : null,
+          MarkerLayerOptions(markers: [marker]),
         ],
       )),
     );

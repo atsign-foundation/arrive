@@ -20,7 +20,8 @@ class HybridProvider extends RequestLocationProvider {
   HybridProvider();
   AtClientImpl atClientInstance;
   String currentAtSign;
-  List<HybridNotificationModel> allHybridNotifications;
+  List<HybridNotificationModel> allHybridNotifications,
+      allPastEventNotifications;
   List<LocationNotificationModel> shareLocationData;
   // ignore: non_constant_identifier_names
   String HYBRID_GET_ALL_EVENTS = 'hybrid_get_all_events';
@@ -36,6 +37,7 @@ class HybridProvider extends RequestLocationProvider {
   init(AtClientImpl clientInstance) {
     print('hyrbid clientInstance $clientInstance');
     allHybridNotifications = [];
+    allPastEventNotifications = [];
     shareLocationData = [];
     super.init(clientInstance);
   }
@@ -54,10 +56,63 @@ class HybridProvider extends RequestLocationProvider {
     ];
 
     HomeEventService().setAllEventsList(allHybridNotifications);
+    filterPastEventsFromList();
 
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
     findAtSignsToShareLocationWith();
     initialiseLacationSharing();
+  }
+
+  filterPastEventsFromList() {
+    for (int i = 0; i < allHybridNotifications.length; i++) {
+      if (allHybridNotifications[i].notificationType ==
+          NotificationType.Event) {
+        if (allHybridNotifications[i]
+                .eventNotificationModel
+                .event
+                .date
+                .difference(DateTime.now())
+                .inDays ==
+            0) {
+          if (allHybridNotifications[i]
+                  .eventNotificationModel
+                  .event
+                  .endTime
+                  .hour <
+              TimeOfDay.now().hour) {
+            allPastEventNotifications.add(allHybridNotifications[i]);
+          } else {
+            if ((allHybridNotifications[i]
+                        .eventNotificationModel
+                        .event
+                        .endTime
+                        .hour ==
+                    TimeOfDay.now().hour) &&
+                ((allHybridNotifications[i]
+                        .eventNotificationModel
+                        .event
+                        .endTime
+                        .minute <
+                    TimeOfDay.now().minute)))
+              allPastEventNotifications.add(allHybridNotifications[i]);
+          }
+        } else if (allHybridNotifications[i]
+                .eventNotificationModel
+                .event
+                .date
+                .difference(DateTime.now())
+                .inDays <
+            0) {
+          allPastEventNotifications.add(allHybridNotifications[i]);
+        }
+      }
+    }
+    allPastEventNotifications.forEach((element) {
+      print('removed event data in hybrid_prvider ${element.key}');
+      print('${element.locationNotificationModel}');
+    });
+    allHybridNotifications
+        .removeWhere((element) => allPastEventNotifications.contains(element));
   }
 
   mapUpdatedData(HybridNotificationModel notification, {bool remove = false}) {

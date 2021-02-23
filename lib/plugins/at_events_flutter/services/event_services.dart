@@ -259,13 +259,14 @@ class EventService {
         if (eventData.event.startTime.minute < TimeOfDay.now().minute)
           return 'Start Time cannot be in past';
       }
-      if (eventData.event.endTime.hour < TimeOfDay.now().hour) {
+    }
+
+    if (eventData.event.endTime.hour < TimeOfDay.now().hour) {
+      return 'End Time cannot be in past';
+    }
+    if (eventData.event.endTime.hour == TimeOfDay.now().hour) {
+      if (eventData.event.endTime.minute < TimeOfDay.now().minute)
         return 'End Time cannot be in past';
-      }
-      if (eventData.event.endTime.hour == TimeOfDay.now().hour) {
-        if (eventData.event.endTime.minute < TimeOfDay.now().minute)
-          return 'End Time cannot be in past';
-      }
     }
 
     if (eventData.event.endTime.hour < eventData.event.startTime.hour) {
