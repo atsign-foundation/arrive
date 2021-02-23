@@ -136,6 +136,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                       CustomToast().show(formValid, context);
                       return;
                     }
+                    EventService().eventNotificationModel.event.isRecurring =
+                        false;
                     EventService().update(eventData: eventData);
                     Navigator.of(context).pop();
                   },

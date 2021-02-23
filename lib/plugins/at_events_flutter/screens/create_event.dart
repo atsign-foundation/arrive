@@ -97,8 +97,7 @@ class _CreateEventState extends State<CreateEvent> {
                                     width: 350.toWidth,
                                     height: 50.toHeight,
                                     isReadOnly: true,
-                                    hintText:
-                                        'Type @sign or search from contact',
+                                    hintText: 'Select @sign from contact',
                                     icon: Icons.contacts_rounded,
                                     onTap: () {
                                       Navigator.push(
@@ -180,9 +179,18 @@ class _CreateEventState extends State<CreateEvent> {
                                   Row(
                                     children: <Widget>[
                                       Expanded(
-                                        child: Text('One Day Event',
-                                            style:
-                                                CustomTextStyles().greyLabel14),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            bottomSheet(
+                                                context,
+                                                OneDayEvent(),
+                                                SizeConfig().screenHeight *
+                                                    0.9);
+                                          },
+                                          child: Text('One Day Event',
+                                              style: CustomTextStyles()
+                                                  .greyLabel14),
+                                        ),
                                       ),
                                       Checkbox(
                                         value: (EventService()
@@ -199,14 +207,14 @@ class _CreateEventState extends State<CreateEvent> {
                                             : false,
                                         onChanged: (value) {
                                           print(value);
-
-                                          if (value) {
-                                            EventService()
-                                                .eventNotificationModel
-                                                .event
-                                                .isRecurring = !value;
-                                            EventService().update();
-                                          }
+                                          // if (value) {
+                                          //   EventService()
+                                          //       .eventNotificationModel
+                                          //       .event
+                                          //       .isRecurring = !value;
+                                          //   EventService().update();
+                                          // }
+                                          /// TODO: Now it will change from OneDayEvent
                                           bottomSheet(context, OneDayEvent(),
                                               SizeConfig().screenHeight * 0.9);
                                         },
@@ -241,9 +249,19 @@ class _CreateEventState extends State<CreateEvent> {
                                   Row(
                                     children: <Widget>[
                                       Expanded(
-                                        child: Text(
-                                          'Recurring Event',
-                                          style: CustomTextStyles().greyLabel14,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            bottomSheet(
+                                                context,
+                                                RecurringEvent(),
+                                                SizeConfig().screenHeight *
+                                                    0.9);
+                                          },
+                                          child: Text(
+                                            'Recurring Event',
+                                            style:
+                                                CustomTextStyles().greyLabel14,
+                                          ),
                                         ),
                                       ),
                                       Checkbox(
@@ -260,14 +278,14 @@ class _CreateEventState extends State<CreateEvent> {
                                             ? true
                                             : false,
                                         onChanged: (value) {
-                                          if (value) {
-                                            EventService()
-                                                .eventNotificationModel
-                                                .event
-                                                .isRecurring = value;
+                                          // if (value) {
+                                          //   EventService()
+                                          //       .eventNotificationModel
+                                          //       .event
+                                          //       .isRecurring = value;
 
-                                            EventService().update();
-                                          }
+                                          //   EventService().update();
+                                          // }
                                           bottomSheet(context, RecurringEvent(),
                                               SizeConfig().screenHeight * 0.9);
                                         },

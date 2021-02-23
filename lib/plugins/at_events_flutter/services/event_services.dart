@@ -240,6 +240,8 @@ class EventService {
     }
   }
 
+// startTime & endTime cannot be less than DateTime.now()
+// endTime cannot be behind starttime
   dynamic checForOneDayEventFormValidation(EventNotificationModel eventData) {
     if (eventData.event.date == null) {
       return 'add event date';
@@ -247,8 +249,36 @@ class EventService {
       return 'add event start time';
     } else if (eventData.event.endTime == null) {
       return 'add event end time';
-    } else
-      return true;
+    }
+    // for time
+    if (!isEventUpdate) {
+      if (eventData.event.startTime.hour < TimeOfDay.now().hour) {
+        return 'Start Time cannot be in past';
+      }
+      if (eventData.event.startTime.hour == TimeOfDay.now().hour) {
+        if (eventData.event.startTime.minute < TimeOfDay.now().minute)
+          return 'Start Time cannot be in past';
+      }
+      if (eventData.event.endTime.hour < TimeOfDay.now().hour) {
+        return 'End Time cannot be in past';
+      }
+      if (eventData.event.endTime.hour == TimeOfDay.now().hour) {
+        if (eventData.event.endTime.minute < TimeOfDay.now().minute)
+          return 'End Time cannot be in past';
+      }
+    }
+
+    if (eventData.event.endTime.hour < eventData.event.startTime.hour) {
+      return 'Start time cannot be after End time';
+    }
+    if (eventData.event.endTime.hour == eventData.event.startTime.hour) {
+      if (eventData.event.endTime.minute < eventData.event.startTime.minute)
+        return 'Start time cannot be after End time';
+    }
+    if (eventData.event.endTime == eventData.event.startTime) {
+      return 'Start time and End time cannot be same';
+    }
+    return true;
   }
 
   dynamic checForRecurringeDayEventFormValidation(
