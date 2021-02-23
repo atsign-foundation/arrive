@@ -60,7 +60,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   final PanelController pc = PanelController();
   PopupController _popupController = PopupController();
   MapController mapController = MapController();
-  bool isEventAdmin = false, noPointReceived;
+  bool isEventAdmin = false;
   bool showMarker;
   GlobalKey<ScaffoldState> scaffoldKey;
   BuildContext globalContext;
@@ -148,16 +148,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                         markers.forEach((element) {
                           print('point - ${element.point}');
                         });
-                        if (markers.length == 0) {
-                          markers[0] = buildMarker(
-                              new HybridModel(latLng: LatLng(45, 45)),
-                              singleMarker: true);
-                          noPointReceived = true;
-                          showMarker = false;
-                        } else {
-                          noPointReceived = false;
-                          showMarker = true;
-                        }
 
                         return FlutterMap(
                           mapController: mapController,
