@@ -21,7 +21,7 @@ typedef ErrorTileCallBack = void Function(Tile tile, dynamic error);
 /// A tile is an image bound to a specific geographical position.
 class TileLayerOptions extends LayerOptions {
   // to execute a function when zoom changes
-  final Function fnWhenZoomChanges;
+  // final Function fnWhenZoomChanges;
 
   /// Defines the structure to create the URLs for the tiles.
   /// `{s}` means one of the available subdomains (can be omitted)
@@ -198,7 +198,7 @@ class TileLayerOptions extends LayerOptions {
 
   TileLayerOptions({
     Key key,
-    this.fnWhenZoomChanges,
+    // this.fnWhenZoomChanges,
     this.urlTemplate,
     double tileSize = 256.0,
     double minZoom = 0.0,

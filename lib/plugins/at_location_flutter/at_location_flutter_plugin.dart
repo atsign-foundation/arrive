@@ -20,6 +20,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flut
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map_marker_popup/src/popup_snap.dart';
 import 'package:latlong/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'common_components/build_marker.dart';
 import 'common_components/collapsed_content.dart';
 import 'common_components/floating_icon.dart';
 import 'common_components/marker_cluster.dart';
@@ -59,8 +60,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   final PanelController pc = PanelController();
   PopupController _popupController = PopupController();
   MapController mapController = MapController();
-  List<LatLng> points;
-  bool isEventAdmin = false;
+  bool isEventAdmin = false, noPointReceived;
   bool showMarker;
   GlobalKey<ScaffoldState> scaffoldKey;
   BuildContext globalContext;
@@ -141,7 +141,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                         List<HybridModel> users = snapshot.data;
                         List<Marker> markers =
                             users.map((user) => user.marker).toList();
-                        points = users.map((user) => user.latLng).toList();
                         print('markers length = ${markers.length}');
                         users.forEach((element) {
                           print('displayanme - ${element.displayName}');
@@ -149,6 +148,16 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                         markers.forEach((element) {
                           print('point - ${element.point}');
                         });
+                        if (markers.length == 0) {
+                          markers[0] = buildMarker(
+                              new HybridModel(latLng: LatLng(45, 45)),
+                              singleMarker: true);
+                          noPointReceived = true;
+                          showMarker = false;
+                        } else {
+                          noPointReceived = false;
+                          showMarker = true;
+                        }
 
                         return FlutterMap(
                           mapController: mapController,
@@ -171,8 +180,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           layers: [
                             TileLayerOptions(
                               // errorImage: ,
-                              fnWhenZoomChanges: (zoom) =>
-                                  fnWhenZoomChanges(zoom),
                               minNativeZoom: 2,
                               maxNativeZoom: 18,
                               minZoom: 2,
@@ -255,8 +262,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                       LocationService().hybridUsersList.length > 0
                           ? mapController.move(
                               LocationService().hybridUsersList[0].latLng, 4)
-                          // mapController.move(
-                          //     LocationService().hybridUsersList[0].latLng, 3)
                           : null;
                     }),
               ),
@@ -269,9 +274,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                         ? 291
                         : 130)
                     : 431,
-                // collapsed: CollapsedContent(UniqueKey(), false,
-                //     eventListenerKeyword: widget.eventListenerKeyword,
-                //     userListenerKeyword: widget.userListenerKeyword),
                 panel: CollapsedContent(UniqueKey(), true, this.isEventAdmin,
                     widget.atClientInstance,
                     eventListenerKeyword: widget.eventListenerKeyword,
@@ -280,22 +282,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
             ],
           )),
     );
-  }
-
-  fnWhenZoomChanges(double zoom) {
-    print('fnWhenZoomChanges $zoom');
-    if ((zoom > 1) && (!showMarker)) {
-      print('greater $zoom');
-      setState(() {
-        showMarker = true;
-      });
-    }
-    if ((zoom < 1) && (showMarker)) {
-      print('less $zoom');
-      setState(() {
-        showMarker = false;
-      });
-    }
   }
 
   getAtSignAndInitializeChat() async {
