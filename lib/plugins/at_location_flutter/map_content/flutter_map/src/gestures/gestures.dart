@@ -67,7 +67,14 @@ abstract class MapGestureMixin extends State<FlutterMap>
 
     setState(() {
       final focalOffset = _offsetToPoint(details.localFocalPoint);
-      final newZoom = _getZoomForScale(_mapZoomStart, details.scale);
+      // TODO: Added it to restrict zoom out
+      var newZoom = map.zoom;
+      if (!((map.zoom <= 1) &&
+          (_getZoomForScale(_mapZoomStart, details.scale) <= 1))) {
+        newZoom = _getZoomForScale(_mapZoomStart, details.scale);
+      }
+      //
+      // final newZoom = _getZoomForScale(_mapZoomStart, details.scale);
       final focalStartPt = map.project(_focalStartGlobal, newZoom);
       final newCenterPt = focalStartPt - focalOffset + map.size / 2.0;
       final newCenter = map.unproject(newCenterPt, newZoom);

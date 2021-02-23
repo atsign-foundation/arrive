@@ -738,8 +738,10 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     _resetGrid();
 
     if (_tileZoom != null) {
-      widget.options
-          .fnWhenZoomChanges(_tileZoom); // execute the zoomChanges Function
+      //TODO: Modification to disappear marker
+      // widget.options
+      //     .fnWhenZoomChanges(_tileZoom);
+      // execute the zoomChanges Function
       _update(center);
     }
 
