@@ -22,7 +22,7 @@ class AllColors {
   // ignore: non_constant_identifier_names
   Color BLUE = Color(0xFFC1D9E9);
   // ignore: non_constant_identifier_names
-  Color DARK_BLUE = Color(0xFF007bb0);
+  Color DARK_BLUE = Color(0xFF03c6fc);
   // ignore: non_constant_identifier_names
   Color LIGHT_PINK = Color(0xFFFED2CF);
   // ignore: non_constant_identifier_names

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class CircleMarkerPainter extends CustomPainter {
   Color color;
-  CircleMarkerPainter({this.color});
+  PaintingStyle paintingStyle;
+  CircleMarkerPainter({this.color, this.paintingStyle});
   final _paint = Paint()
     ..color = Colors.orange
     ..strokeWidth = 5
@@ -11,6 +12,7 @@ class CircleMarkerPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     _paint.color = color ?? Colors.orange;
+    _paint.style = paintingStyle ?? PaintingStyle.stroke;
     canvas.drawOval(
       Rect.fromLTWH(0, 0, size.width, size.height),
       _paint,

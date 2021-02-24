@@ -93,35 +93,40 @@ class EventService {
   }
 
   sendEventNotification() async {
-    EventNotificationModel eventNotification = eventNotificationModel;
-    eventNotification.isUpdate = false;
-    eventNotification.isSharing = true;
+    try {
+      EventNotificationModel eventNotification = eventNotificationModel;
+      eventNotification.isUpdate = false;
+      eventNotification.isSharing = true;
 
-    eventNotification.key =
-        "createevent-${DateTime.now().microsecondsSinceEpoch}";
-    eventNotification.atsignCreator = atClientInstance.currentAtSign;
-    var notification = EventNotificationModel.convertEventNotificationToJson(
-        EventService().eventNotificationModel);
+      eventNotification.key =
+          "createevent-${DateTime.now().microsecondsSinceEpoch}";
+      eventNotification.atsignCreator = atClientInstance.currentAtSign;
+      var notification = EventNotificationModel.convertEventNotificationToJson(
+          EventService().eventNotificationModel);
 
-    AtKey atKey = AtKey()
-      ..metadata = Metadata()
-      ..metadata.ttr = -1
-      ..key = eventNotification.key
-      ..sharedWith = eventNotification.group.members.elementAt(0).atSign
-      ..sharedBy = eventNotification.atsignCreator;
+      AtKey atKey = AtKey()
+        ..metadata = Metadata()
+        ..metadata.ttr = -1
+        ..key = eventNotification.key
+        ..sharedWith = eventNotification.group.members.elementAt(0).atSign
+        ..sharedBy = eventNotification.atsignCreator;
 
-    print(
-        'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: ${notification}');
-    var result = await atClientInstance.put(atKey, notification);
-    eventNotificationModel = eventNotification;
-    if (onEventSaved != null) {
-      // String key =
-      //     '${atKey.sharedWith}:${eventNotification.key}:${atKey.sharedBy}';
-      // eventNotification.key = key;
-      onEventSaved(eventNotification);
+      print(
+          'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: ${notification}');
+      var result = await atClientInstance.put(atKey, notification);
+      eventNotificationModel = eventNotification;
+      if (onEventSaved != null) {
+        // String key =
+        //     '${atKey.sharedWith}:${eventNotification.key}:${atKey.sharedBy}';
+        // eventNotification.key = key;
+        onEventSaved(eventNotification);
+      }
+      print('send event:$result');
+      return result;
+    } catch (e) {
+      print('error in SendEventNotification $e');
+      return false;
     }
-    print('send event:$result');
-    return result;
   }
 
   addNewGroupMembers(List<AtContact> selectedContactList) {
