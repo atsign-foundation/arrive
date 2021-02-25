@@ -2,6 +2,7 @@ import 'package:at_common_flutter/services/size_config.dart';
 import 'package:at_common_flutter/widgets/custom_button.dart';
 import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/bottom_sheet.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/floating_icon.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/one_day_event.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/recurring_event.dart';
@@ -116,6 +117,15 @@ class _SelectedLocationState extends State<SelectedLocation> {
                         child: CustomButton(
                           buttonText: 'Save',
                           onPressed: () {
+                            if (EventService()
+                                .eventNotificationModel
+                                .venue
+                                .label
+                                .isEmpty) {
+                              CustomToast()
+                                  .show('Cannot leave LABEL empty', context);
+                              return;
+                            }
                             EventService()
                                 .eventNotificationModel
                                 .venue

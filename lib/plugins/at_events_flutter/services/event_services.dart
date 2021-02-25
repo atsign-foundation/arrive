@@ -93,35 +93,40 @@ class EventService {
   }
 
   sendEventNotification() async {
-    EventNotificationModel eventNotification = eventNotificationModel;
-    eventNotification.isUpdate = false;
-    eventNotification.isSharing = true;
+    try {
+      EventNotificationModel eventNotification = eventNotificationModel;
+      eventNotification.isUpdate = false;
+      eventNotification.isSharing = true;
 
-    eventNotification.key =
-        "createevent-${DateTime.now().microsecondsSinceEpoch}";
-    eventNotification.atsignCreator = atClientInstance.currentAtSign;
-    var notification = EventNotificationModel.convertEventNotificationToJson(
-        EventService().eventNotificationModel);
+      eventNotification.key =
+          "createevent-${DateTime.now().microsecondsSinceEpoch}";
+      eventNotification.atsignCreator = atClientInstance.currentAtSign;
+      var notification = EventNotificationModel.convertEventNotificationToJson(
+          EventService().eventNotificationModel);
 
-    AtKey atKey = AtKey()
-      ..metadata = Metadata()
-      ..metadata.ttr = -1
-      ..key = eventNotification.key
-      ..sharedWith = eventNotification.group.members.elementAt(0).atSign
-      ..sharedBy = eventNotification.atsignCreator;
+      AtKey atKey = AtKey()
+        ..metadata = Metadata()
+        ..metadata.ttr = -1
+        ..key = eventNotification.key
+        ..sharedWith = eventNotification.group.members.elementAt(0).atSign
+        ..sharedBy = eventNotification.atsignCreator;
 
-    print(
-        'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: ${notification}');
-    var result = await atClientInstance.put(atKey, notification);
-    eventNotificationModel = eventNotification;
-    if (onEventSaved != null) {
-      // String key =
-      //     '${atKey.sharedWith}:${eventNotification.key}:${atKey.sharedBy}';
-      // eventNotification.key = key;
-      onEventSaved(eventNotification);
+      print(
+          'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: ${notification}');
+      var result = await atClientInstance.put(atKey, notification);
+      eventNotificationModel = eventNotification;
+      if (onEventSaved != null) {
+        // String key =
+        //     '${atKey.sharedWith}:${eventNotification.key}:${atKey.sharedBy}';
+        // eventNotification.key = key;
+        onEventSaved(eventNotification);
+      }
+      print('send event:$result');
+      return result;
+    } catch (e) {
+      print('error in SendEventNotification $e');
+      return false;
     }
-    print('send event:$result');
-    return result;
   }
 
   addNewGroupMembers(List<AtContact> selectedContactList) {
@@ -240,6 +245,8 @@ class EventService {
     }
   }
 
+// startTime & endTime cannot be less than DateTime.now()
+// endTime cannot be behind starttime
   dynamic checForOneDayEventFormValidation(EventNotificationModel eventData) {
     if (eventData.event.date == null) {
       return 'add event date';
@@ -247,8 +254,37 @@ class EventService {
       return 'add event start time';
     } else if (eventData.event.endTime == null) {
       return 'add event end time';
-    } else
-      return true;
+    }
+    // for time
+    if (!isEventUpdate) {
+      if (eventData.event.startTime.hour < TimeOfDay.now().hour) {
+        return 'Start Time cannot be in past';
+      }
+      if (eventData.event.startTime.hour == TimeOfDay.now().hour) {
+        if (eventData.event.startTime.minute < TimeOfDay.now().minute)
+          return 'Start Time cannot be in past';
+      }
+    }
+
+    if (eventData.event.endTime.hour < TimeOfDay.now().hour) {
+      return 'End Time cannot be in past';
+    }
+    if (eventData.event.endTime.hour == TimeOfDay.now().hour) {
+      if (eventData.event.endTime.minute < TimeOfDay.now().minute)
+        return 'End Time cannot be in past';
+    }
+
+    if (eventData.event.endTime.hour < eventData.event.startTime.hour) {
+      return 'Start time cannot be after End time';
+    }
+    if (eventData.event.endTime.hour == eventData.event.startTime.hour) {
+      if (eventData.event.endTime.minute < eventData.event.startTime.minute)
+        return 'Start time cannot be after End time';
+    }
+    if (eventData.event.endTime == eventData.event.startTime) {
+      return 'Start time and End time cannot be same';
+    }
+    return true;
   }
 
   dynamic checForRecurringeDayEventFormValidation(

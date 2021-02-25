@@ -4,10 +4,13 @@ import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:provider/provider.dart';
 
 class EventLog extends StatefulWidget {
   @override
@@ -98,7 +101,14 @@ class _EventLogState extends State<EventLog> {
 }
 
 Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
+  // List<HybridNotificationModel> events = [];
   List<HybridNotificationModel> events = [];
+  Provider.of<HybridProvider>(NavService.navKey.currentContext, listen: false)
+      .allHybridNotifications
+      .map((notification) {
+    if (notification.notificationType == NotificationType.Event)
+      events.add(notification);
+  });
   DateTime todaysDate = DateTime.now();
   allEvents.forEach((event) {
     DateTime eventDate = event.eventNotificationModel.event.date;
@@ -129,19 +139,22 @@ Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
 }
 
 Widget getPastEvents(List<HybridNotificationModel> allEvents) {
-  List<HybridNotificationModel> events = [];
-  DateTime todaysDate = DateTime.now();
+  List<HybridNotificationModel> events = Provider.of<HybridProvider>(
+          NavService.navKey.currentContext,
+          listen: false)
+      .allPastEventNotifications;
+  // DateTime todaysDate = DateTime.now();
 
-  allEvents.forEach((event) {
-    DateTime eventDate = event.eventNotificationModel.event.date;
+  // allEvents.forEach((event) {
+  //   DateTime eventDate = event.eventNotificationModel.event.date;
 
-    if (!(event.eventNotificationModel.event.date.year == todaysDate.year &&
-            event.eventNotificationModel.event.date.month == todaysDate.month &&
-            event.eventNotificationModel.event.date.day == todaysDate.day) &&
-        (todaysDate.compareTo(eventDate) == 1)) {
-      events.add(event);
-    }
-  });
+  //   if (!(event.eventNotificationModel.event.date.year == todaysDate.year &&
+  //           event.eventNotificationModel.event.date.month == todaysDate.month &&
+  //           event.eventNotificationModel.event.date.day == todaysDate.day) &&
+  //       (todaysDate.compareTo(eventDate) == 1)) {
+  //     events.add(event);
+  //   }
+  // });
   return ListView.separated(
     scrollDirection: Axis.vertical,
     itemCount: events.length,

@@ -339,6 +339,8 @@ class _RecurringEventState extends State<RecurringEvent> {
                     CustomToast().show(formValid, context);
                     return;
                   }
+                  EventService().eventNotificationModel.event.isRecurring =
+                      true;
                   EventService().update(eventData: eventData);
                   Navigator.of(context).pop();
                 },

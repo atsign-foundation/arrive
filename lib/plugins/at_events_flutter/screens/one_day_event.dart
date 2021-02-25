@@ -61,8 +61,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                             initialDate: (eventData.event.date != null)
                                 ? eventData.event.date
                                 : DateTime.now(),
-                            firstDate: DateTime(2015, 8),
-                            lastDate: DateTime(2101));
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2030));
 
                         if (datePicked != null) {
                           setState(() {
@@ -87,11 +87,11 @@ class _OneDayEventState extends State<OneDayEvent> {
                               : '',
                           onTap: () async {
                             final TimeOfDay timePicked = await showTimePicker(
-                              context: context,
-                              initialTime: eventData.event.startTime != null
-                                  ? eventData.event.startTime
-                                  : TimeOfDay.now(),
-                            );
+                                context: context,
+                                initialTime: eventData.event.startTime != null
+                                    ? eventData.event.startTime
+                                    : TimeOfDay.now(),
+                                initialEntryMode: TimePickerEntryMode.input);
 
                             if (timePicked != null) {
                               setState(() {
@@ -111,11 +111,11 @@ class _OneDayEventState extends State<OneDayEvent> {
                                 : '',
                             onTap: () async {
                               final TimeOfDay timePicked = await showTimePicker(
-                                context: context,
-                                initialTime: eventData.event.endTime != null
-                                    ? eventData.event.endTime
-                                    : TimeOfDay.now(),
-                              );
+                                  context: context,
+                                  initialTime: eventData.event.endTime != null
+                                      ? eventData.event.endTime
+                                      : TimeOfDay.now(),
+                                  initialEntryMode: TimePickerEntryMode.input);
 
                               if (timePicked != null)
                                 eventData.event.endTime = timePicked;
@@ -136,6 +136,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                       CustomToast().show(formValid, context);
                       return;
                     }
+                    EventService().eventNotificationModel.event.isRecurring =
+                        false;
                     EventService().update(eventData: eventData);
                     Navigator.of(context).pop();
                   },

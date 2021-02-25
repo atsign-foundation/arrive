@@ -47,37 +47,17 @@ dependencies:
   location: ^3.0.0
 
   at_client_mobile: ^1.0.0+3
-    # path: /Users/nitesh/Desktop/atsign-foundation/at_client_sdk/at_client_mobile
   at_contact: ^1.0.0
-    # path: ../../atsign-foundation/at_libraries/at_contact
   at_commons: ^1.0.1+3
-    # path: ../../../Downloads/Archive/atsign_foundation/at_commons
   at_lookup: ^1.0.0+3
-    # path: ../../../Downloads/Archive/atsign_foundation/at_lookup
-
-  # atsign_events: 
-  #   path: ../../new_atsign/atsign-events
-  # atsign_contacts_group:
-  #   path: ../../new_atsign/atsign-contact-groups
-  # atsign_contacts:  
-  #   path: ../../new_atsign/atsign-contacts
-  # atsign_authentication_helper :
-  #   path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
-  # atsign_location:
-  #   path: ../../new_atsign/atsign-location
-
-  # at_events_flutter: 
-  #   path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_events_flutter
   at_contacts_group_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_group_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_group_flutter
   at_contacts_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_flutter
   atsign_authentication_helper :
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
   at_chat_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_chat_flutter
-  # at_location_flutter:
-  #   path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_location_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_chat_flutter
 
 
 

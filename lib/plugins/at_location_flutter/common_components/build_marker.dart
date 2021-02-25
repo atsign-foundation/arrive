@@ -4,44 +4,114 @@ import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flut
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
-
 import 'circle_marker_painter.dart';
-import 'pointed_bottom.dart';
+import 'marker_custom_painter.dart';
 
 Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
   return Marker(
-    anchorPos: AnchorPos.align(AnchorAlign.center),
-    height: 50,
-    width: 50,
-    point: user.latLng,
-    builder: (ctx) => singleMarker
-        ? Icon(
-            Icons.location_on,
-            size: 60,
-            color: AllColors().ORANGE,
-          )
-        : Stack(
-            alignment: Alignment.center,
-            children: [
-              CircleAvatar(
-                radius: 20,
-                child: user.image != null
-                    ? CustomCircleAvatar(
-                        byteImage: user.image, nonAsset: true, size: 30)
-                    : ContactInitial(
-                        initials: user.displayName.substring(1, 3),
-                        size: 60,
-                      ),
-              ),
-              SizedBox(
-                width: 40,
-                height: 40,
-                child: CustomPaint(
-                  painter: CircleMarkerPainter(),
+      anchorPos: AnchorPos.align(AnchorAlign.center),
+      height: 75,
+      width: 50,
+      point: user.latLng,
+      builder: (ctx) => singleMarker
+          ? Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  bottom: 25,
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CustomPaint(
+                      painter: CircleMarkerPainter(
+                          color: AllColors().WHITE,
+                          paintingStyle: PaintingStyle.fill),
+                    ),
+                  ),
                 ),
-              ),
-              Positioned(top: 50, child: pointedBottom(color: Colors.black)),
-            ],
-          ),
-  );
+                Positioned(
+                  top: 10,
+                  child: Icon(
+                    Icons.circle,
+                    size: 40,
+                    color: AllColors().DARK_BLUE,
+                  ),
+                ),
+              ],
+            )
+          : Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  bottom: 25,
+                  child: CustomPaint(
+                    size: Size(
+                        40,
+                        (40 * 1.137455469677715)
+                            .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                    painter: RPSCustomPainter(),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  child: CircleAvatar(
+                    radius: 15,
+                    backgroundColor: AllColors().ORANGE,
+                    child: user.image != null
+                        ? CustomCircleAvatar(
+                            byteImage: user.image, nonAsset: true, size: 30)
+                        : ContactInitial(
+                            initials: user.displayName.substring(1, 3),
+                            size: 30,
+                            backgroundColor: AllColors().ORANGE,
+                          ),
+                  ),
+                ),
+              ],
+            )
+
+      // singleMarker
+      //     ? Stack(
+      //         alignment: Alignment.center,
+      //         children: [
+      //           Icon(
+      //             Icons.circle,
+      //             size: 36,
+      //             color: AllColors().DARK_BLUE,
+      //           ),
+      //           Positioned(
+      //             child: SizedBox(
+      //               width: 40,
+      //               height: 40,
+      //               child: CustomPaint(
+      //                 painter: CircleMarkerPainter(color: AllColors().DARK_BLUE),
+      //               ),
+      //             ),
+      //           ),
+      //         ],
+      //       )
+      //     : Stack(
+      //         alignment: Alignment.center,
+      //         children: [
+      //           CircleAvatar(
+      //             radius: 20,
+      //             child: user.image != null
+      //                 ? CustomCircleAvatar(
+      //                     byteImage: user.image, nonAsset: true, size: 30)
+      //                 : ContactInitial(
+      //                     initials: user.displayName.substring(1, 3),
+      //                     size: 60,
+      //                   ),
+      //           ),
+      //           SizedBox(
+      //             width: 40,
+      //             height: 40,
+      //             child: CustomPaint(
+      //               painter: CircleMarkerPainter(),
+      //             ),
+      //           ),
+      //           // Positioned(top: 50, child: pointedBottom(color: Colors.black)),
+      //         ],
+      //       ),
+      );
 }

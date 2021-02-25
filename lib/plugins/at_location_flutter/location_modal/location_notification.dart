@@ -46,8 +46,10 @@ class LocationNotificationModel {
         isExited = json['isExited'] == 'true' ? true : false,
         isRequest = json['isRequest'] == 'true' ? true : false,
         isSharing = json['isSharing'] == 'true' ? true : false,
-        from = json['from'] != 'null' ? DateTime.parse(json['from']) : null,
-        to = json['to'] != 'null' ? DateTime.parse(json['to']) : null,
+        from = json['from'] != 'null'
+            ? DateTime.parse(json['from']).toLocal()
+            : null,
+        to = json['to'] != 'null' ? DateTime.parse(json['to']).toLocal() : null,
         updateMap = json['updateMap'] == 'true' ? true : false;
   Map<String, dynamic> toJson() => {
         'lat': lat,
@@ -65,8 +67,8 @@ class LocationNotificationModel {
       'lat': locationNotificationModel.lat.toString(),
       'long': locationNotificationModel.long.toString(),
       'key': locationNotificationModel.key.toString(),
-      'from': locationNotificationModel.from.toString(),
-      'to': locationNotificationModel.to.toString(),
+      'from': locationNotificationModel.from.toUtc().toString(),
+      'to': locationNotificationModel.to.toUtc().toString(),
       'isAcknowledgment': locationNotificationModel.isAcknowledgment.toString(),
       'isRequest': locationNotificationModel.isRequest.toString(),
       'isAccepted': locationNotificationModel.isAccepted.toString(),
