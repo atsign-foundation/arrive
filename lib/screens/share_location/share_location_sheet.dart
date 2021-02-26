@@ -7,18 +7,13 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-
-import 'package:atsign_location_app/routes/route_names.dart';
-import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:provider/provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class ShareLocationSheet extends StatefulWidget {
@@ -33,7 +28,6 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isLoading = false;
   }
@@ -46,7 +40,6 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CustomAppBar(
             centerTitle: false,
@@ -62,7 +55,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
             width: 330.toWidth,
             height: 50,
             isReadOnly: true,
-            hintText: 'Type @sign or search from contact',
+            hintText: 'Search @sign from contact',
             icon: Icons.contacts_rounded,
             onTap: () {
               Navigator.push(
@@ -113,11 +106,15 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
               value: selectedOption,
               hint: Text("Occurs on"),
+              style:
+                  TextStyle(color: AllColors().DARK_GREY, fontSize: 13.toFont),
               items: ['30 mins', '2 hours', '24 hours', 'Until turned off']
                   .map((String option) {
                 return new DropdownMenuItem<String>(
                   value: option,
-                  child: Text(option),
+                  child: Text(option,
+                      style: TextStyle(
+                          color: AllColors().DARK_GREY, fontSize: 13.toFont)),
                 );
               }).toList(),
               onChanged: (value) {

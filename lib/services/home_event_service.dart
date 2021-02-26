@@ -56,7 +56,6 @@ class HomeEventService {
 
   onEventModelTap(
       EventNotificationModel eventNotificationModel, EventProvider provider) {
-    // print('event tapped:${eventNotificationModel.isSharing}');
     if (isActionRequired(eventNotificationModel) &&
         !eventNotificationModel.isCancelled) {
       return BackendService.getInstance().showMyDialog(
@@ -157,7 +156,7 @@ class HomeEventService {
                           onSuccess: (provider) {});
                     } else {
                       CustomToast()
-                          .show('some thing went wrong , try again.', context);
+                          .show('Something went wrong ,try again !', context);
                     }
                   }
                 : null,
@@ -227,7 +226,7 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
   if (hybridNotificationModel.notificationType == NotificationType.Event) {
     return hybridNotificationModel.eventNotificationModel.event != null
         ? hybridNotificationModel.eventNotificationModel.event.date != null
-            ? 'event on ${dateToString(hybridNotificationModel.eventNotificationModel.event.date)}'
+            ? 'Event on ${dateToString(hybridNotificationModel.eventNotificationModel.event.date)}'
             : ''
         : '';
   } else if (hybridNotificationModel.notificationType ==
@@ -246,7 +245,7 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
                   .atClient
                   .currentAtSign
           ? 'Can see my location $time'
-          : 'Can see his location $time';
+          : 'Can see their location $time';
     } else {
       return hybridNotificationModel.locationNotificationModel.isAccepted
           ? (hybridNotificationModel.locationNotificationModel.atsignCreator ==
@@ -255,7 +254,7 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
                       .atClient
                       .currentAtSign
               ? 'Sharing my location $time'
-              : 'Sharing his location $time')
+              : 'Sharing their location $time')
           : (hybridNotificationModel.locationNotificationModel.atsignCreator ==
                   BackendService.getInstance()
                       .atClientServiceInstance
@@ -284,12 +283,12 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
                   .atClient
                   .currentAtSign
           ? (hybridNotificationModel.locationNotificationModel.isAccepted
-              ? ''
+              ? null
               : hybridNotificationModel.locationNotificationModel.isExited
                   ? 'Received Share location request rejected'
                   : 'Action required')
           : (hybridNotificationModel.locationNotificationModel.isAccepted
-              ? ''
+              ? null
               : hybridNotificationModel.locationNotificationModel.isExited
                   ? 'Sent Share location request rejected'
                   : 'Awaiting response');
@@ -301,12 +300,12 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
                   .currentAtSign
           ? (!hybridNotificationModel.locationNotificationModel.isExited
               ? (hybridNotificationModel.locationNotificationModel.isAccepted
-                  ? ''
+                  ? null
                   : 'Action required')
               : 'Request rejected')
           : (!hybridNotificationModel.locationNotificationModel.isExited
               ? (hybridNotificationModel.locationNotificationModel.isAccepted
-                  ? ''
+                  ? null
                   : 'Awaiting response')
               : 'Request rejected');
   }
@@ -317,22 +316,12 @@ getTitle(HybridNotificationModel hybridNotificationModel) {
     return hybridNotificationModel.eventNotificationModel.title;
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
-    if (hybridNotificationModel.locationNotificationModel.key
-        .contains('sharelocation'))
-      return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-              BackendService.getInstance()
-                  .atClientServiceInstance
-                  .atClient
-                  .currentAtSign
-          ? hybridNotificationModel.locationNotificationModel.receiver
-          : hybridNotificationModel.locationNotificationModel.atsignCreator;
-    else
-      return hybridNotificationModel.locationNotificationModel.atsignCreator ==
-              BackendService.getInstance()
-                  .atClientServiceInstance
-                  .atClient
-                  .currentAtSign
-          ? hybridNotificationModel.locationNotificationModel.receiver
-          : hybridNotificationModel.locationNotificationModel.atsignCreator;
+    return hybridNotificationModel.locationNotificationModel.atsignCreator ==
+            BackendService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign
+        ? hybridNotificationModel.locationNotificationModel.receiver
+        : hybridNotificationModel.locationNotificationModel.atsignCreator;
   }
 }

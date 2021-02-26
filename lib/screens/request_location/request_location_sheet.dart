@@ -53,7 +53,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
             width: 330.toWidth,
             height: 50,
             isReadOnly: true,
-            hintText: 'Type @sign or search from contact',
+            hintText: 'Search @sign from contact',
             icon: Icons.contacts_rounded,
             onTap: () {
               Navigator.push(
@@ -129,7 +129,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
           showLoader: false,
           onSuccess: (provider) {});
     } else {
-      CustomToast().show('some thing went wrong , try again.', context);
+      CustomToast().show('Something went wrong , try again.', context);
       setState(() {
         isLoading = false;
       });

@@ -1,5 +1,6 @@
+import 'package:atsign_location_app/common_components/display_tile.dart';
+import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_heading.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
@@ -7,15 +8,11 @@ import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
-import 'display_tile.dart';
-import 'draggable_symbol.dart';
-
 class Participants extends StatelessWidget {
   bool active;
   List<HybridModel> data;
   List<String> atsign;
-  // Key key;
-  // EventNotificationModel eventListenerKeyword;
+
   Participants(this.active, {this.data, this.atsign});
   List<String> untrackedAtsigns = [];
   List<String> trackedAtsigns = [];

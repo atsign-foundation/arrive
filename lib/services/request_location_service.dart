@@ -42,6 +42,7 @@ class RequestLocationService {
       print('requestLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
+      print(e);
       return [false];
     }
   }

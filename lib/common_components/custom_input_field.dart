@@ -29,48 +29,51 @@ class CustomInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     textController.text = initialValue;
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: ColorConstants.inputFieldGrey,
-        borderRadius: BorderRadius.circular(5),
-      ),
-      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: TextField(
-              readOnly: isReadOnly,
-              decoration: InputDecoration(
-                hintText: hintText,
-                enabledBorder: InputBorder.none,
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                    color: ColorConstants.darkGrey, fontSize: 10.toFont),
+    return InkWell(
+      onTap: onTap ?? null,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: ColorConstants.inputFieldGrey,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                readOnly: isReadOnly,
+                decoration: InputDecoration(
+                  hintText: hintText,
+                  enabledBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                      color: ColorConstants.darkGrey, fontSize: 13.toFont),
+                ),
+                onTap: onTap ?? null,
+                onChanged: (val) {
+                  value(val);
+                },
+                controller: textController,
+                onSubmitted: (str) {
+                  if (onSubmitted != null) {
+                    onSubmitted(str);
+                  }
+                },
               ),
-              onTap: onTap ?? null,
-              onChanged: (val) {
-                value(val);
-              },
-              controller: textController,
-              onSubmitted: (str) {
-                if (onSubmitted != null) {
-                  onSubmitted(str);
-                }
-              },
             ),
-          ),
-          icon != null
-              ? InkWell(
-                  onTap: onIconTap ?? onTap,
-                  child: Icon(
-                    icon,
-                    color: iconColor ?? ColorConstants.darkGrey,
-                  ),
-                )
-              : SizedBox()
-        ],
+            icon != null
+                ? InkWell(
+                    onTap: onIconTap ?? onTap,
+                    child: Icon(
+                      icon,
+                      color: iconColor ?? ColorConstants.darkGrey,
+                    ),
+                  )
+                : SizedBox()
+          ],
+        ),
       ),
     );
   }

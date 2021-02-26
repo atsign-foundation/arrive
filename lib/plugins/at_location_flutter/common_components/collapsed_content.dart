@@ -1,7 +1,9 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_common_flutter/at_common_flutter.dart';
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/display_tile.dart';
+import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/bottom_sheet.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
@@ -13,9 +15,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:flutter/material.dart';
-
-import 'display_tile.dart';
-import 'draggable_symbol.dart';
 
 class CollapsedContent extends StatefulWidget {
   Key key;

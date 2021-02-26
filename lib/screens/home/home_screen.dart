@@ -285,10 +285,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       hybridElement.locationNotificationModel);
               },
               child: DisplayTile(
-                atsignCreator:
-                    hybridElement.notificationType == NotificationType.Event
-                        ? hybridElement.eventNotificationModel.atsignCreator
-                        : hybridElement.locationNotificationModel.atsignCreator,
+                atsignCreator: hybridElement.notificationType ==
+                        NotificationType.Event
+                    ? hybridElement.eventNotificationModel.atsignCreator
+                    : (hybridElement.locationNotificationModel.atsignCreator ==
+                            BackendService.getInstance()
+                                .atClientServiceInstance
+                                .atClient
+                                .currentAtSign
+                        ? hybridElement.locationNotificationModel.receiver
+                        : hybridElement
+                            .locationNotificationModel.atsignCreator),
+                number: hybridElement.notificationType == NotificationType.Event
+                    ? hybridElement.eventNotificationModel.group.members.length
+                    : null,
                 title: getTitle(hybridElement),
                 subTitle: getSubTitle(hybridElement),
                 semiTitle: getSemiTitle(hybridElement),
