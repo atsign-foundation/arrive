@@ -61,6 +61,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                 MaterialPageRoute(
                   builder: (context) => ContactsScreen(
                     asSelectionScreen: true,
+                    asSingleSelectionScreen: true,
                     context: context,
                     selectedList: (selectedList) {
                       print(selectedList);

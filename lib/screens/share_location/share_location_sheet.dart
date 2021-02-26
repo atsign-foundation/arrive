@@ -70,6 +70,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                 MaterialPageRoute(
                   builder: (context) => ContactsScreen(
                     asSelectionScreen: true,
+                    asSingleSelectionScreen: true,
                     context: context,
                     selectedList: (selectedList) {
                       print(selectedList);
