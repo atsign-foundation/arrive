@@ -204,7 +204,12 @@ class _RecurringEventState extends State<RecurringEvent> {
                     );
 
                     if (timePicked != null) {
-                      eventData.event.startTime = timePicked;
+                      eventData.event.startTime = DateTime(
+                          eventData.event.date.year,
+                          eventData.event.date.month,
+                          eventData.event.date.day,
+                          timePicked.hour,
+                          timePicked.minute);
                       setState(() {});
                     }
                   },
@@ -227,7 +232,12 @@ class _RecurringEventState extends State<RecurringEvent> {
                     );
 
                     if (timePicked != null) {
-                      eventData.event.endTime = timePicked;
+                      eventData.event.endTime = DateTime(
+                          eventData.event.date.year,
+                          eventData.event.date.month,
+                          eventData.event.date.day,
+                          timePicked.hour,
+                          timePicked.minute);
                       setState(() {});
                     }
                   },

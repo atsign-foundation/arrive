@@ -377,8 +377,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
     DateTime to = widget.userListenerKeyword.to;
     String time;
     if (to != null)
-      time =
-          'until ${timeOfDayToString(TimeOfDay.fromDateTime(widget.userListenerKeyword.to))} today';
+      time = 'until ${timeOfDayToString(widget.userListenerKeyword.to)} today';
     else
       time = '';
 

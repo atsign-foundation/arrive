@@ -235,7 +235,7 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
     to = hybridNotificationModel.locationNotificationModel.to;
     if (to != null)
       time =
-          'until ${timeOfDayToString(TimeOfDay.fromDateTime(hybridNotificationModel.locationNotificationModel.to))} today';
+          'until ${timeOfDayToString(hybridNotificationModel.locationNotificationModel.to)} today';
     else
       time = '';
     if (hybridNotificationModel.locationNotificationModel.key

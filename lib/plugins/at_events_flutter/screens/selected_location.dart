@@ -117,30 +117,35 @@ class _SelectedLocationState extends State<SelectedLocation> {
                         child: CustomButton(
                           buttonText: 'Save',
                           onPressed: () {
-                            if (EventService()
-                                .eventNotificationModel
-                                .venue
-                                .label
-                                .isEmpty) {
+                            if ((EventService()
+                                        .eventNotificationModel
+                                        .venue
+                                        .label !=
+                                    null) &&
+                                (EventService()
+                                    .eventNotificationModel
+                                    .venue
+                                    .label
+                                    .isNotEmpty)) {
+                              EventService()
+                                  .eventNotificationModel
+                                  .venue
+                                  .latitude = widget.point.latitude;
+
+                              EventService()
+                                  .eventNotificationModel
+                                  .venue
+                                  .longitude = widget.point.longitude;
+
+                              EventService().update(
+                                  eventData:
+                                      EventService().eventNotificationModel);
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                            } else {
                               CustomToast()
                                   .show('Cannot leave LABEL empty', context);
-                              return;
                             }
-                            EventService()
-                                .eventNotificationModel
-                                .venue
-                                .latitude = widget.point.latitude;
-
-                            EventService()
-                                .eventNotificationModel
-                                .venue
-                                .longitude = widget.point.longitude;
-
-                            EventService().update(
-                                eventData:
-                                    EventService().eventNotificationModel);
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
                           },
                           width: 165.toWidth,
                           height: 48.toHeight,

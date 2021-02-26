@@ -283,8 +283,10 @@ class HybridProvider extends RequestLocationProvider {
         if (isOneDayEventOccursToday(
             notification.eventNotificationModel.event)) {
           DateTime date = notification.eventNotificationModel.event.date;
-          TimeOfDay from = notification.eventNotificationModel.event.startTime;
-          TimeOfDay to = notification.eventNotificationModel.event.endTime;
+          TimeOfDay from = TimeOfDay.fromDateTime(
+              notification.eventNotificationModel.event.startTime);
+          TimeOfDay to = TimeOfDay.fromDateTime(
+              notification.eventNotificationModel.event.endTime);
           AtContact groupMember =
               notification.eventNotificationModel.group.members.elementAt(0);
 
