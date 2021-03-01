@@ -177,9 +177,9 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 '${snapshot.data.atsignCreator} and ${snapshot.data.group.members.length} more' ??
                                     'Event participants',
                             atsignCreator: snapshot.data.atsignCreator,
-                            semiTitle:
-                                '${snapshot.data.group.members.length} people' ??
-                                    'No of people',
+                            semiTitle: (snapshot.data.group.members.length == 1)
+                                ? '${snapshot.data.group.members.length} person'
+                                : '${snapshot.data.group.members.length} people',
                             number: snapshot.data.group.members.length,
                             subTitle:
                                 'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
@@ -434,13 +434,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             ? '${widget.userListenerKeyword.receiver}'
                             : '${widget.userListenerKeyword.atsignCreator}'),
                     Text(
-                      amICreator ? 'This user does not share his location' : '',
+                      amICreator
+                          ? 'This user does not share their location'
+                          : '',
                       style: CustomTextStyles().grey12,
                     ),
                     Text(
                       amICreator
                           ? 'Sharing my location $time'
-                          : 'Sharing his location $time',
+                          : 'Sharing their location $time',
                       style: CustomTextStyles().black12,
                     )
                   ],
@@ -548,6 +550,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {
+                                  LoadingDialog().show();
                                   try {
                                     print(
                                         LocationService().onRemove.toString());
@@ -556,7 +559,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                     if (result) {
                                       SendLocationNotification()
                                           .sendNull(widget.userListenerKeyword);
+                                      LoadingDialog().hide();
+
                                       Navigator.pop(context);
+                                    } else {
+                                      LoadingDialog().hide();
+
+                                      CustomToast().show(
+                                          'Something went wrong, try again.',
+                                          context);
                                     }
                                   } catch (e) {
                                     print(e);

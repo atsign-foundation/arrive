@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:at_contact/at_contact.dart';
-import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 
 // !isExited && !isisAccepted => decide later

@@ -143,8 +143,7 @@ class HomeEventService {
                         .sendRequestLocationEvent(
                             locationNotificationModel.receiver);
                     if (result[0] == true) {
-                      CustomToast()
-                          .show('Share Location Request sent', context);
+                      CustomToast().show('Request Location sent', context);
                       providerCallback<HybridProvider>(
                           NavService.navKey.currentContext,
                           task: (provider) => provider.addNewEvent(
@@ -285,12 +284,12 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
           ? (hybridNotificationModel.locationNotificationModel.isAccepted
               ? null
               : hybridNotificationModel.locationNotificationModel.isExited
-                  ? 'Received Share location request rejected'
+                  ? 'Received Share location rejected'
                   : 'Action required')
           : (hybridNotificationModel.locationNotificationModel.isAccepted
               ? null
               : hybridNotificationModel.locationNotificationModel.isExited
-                  ? 'Sent Share location request rejected'
+                  ? 'Sent Share location rejected'
                   : 'Awaiting response');
     else
       return hybridNotificationModel.locationNotificationModel.atsignCreator ==
