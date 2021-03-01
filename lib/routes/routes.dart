@@ -1,13 +1,9 @@
-// import 'package:at_contacts_group_flutter/screens/empty_group/empty_group.dart';
-// import 'package:at_contacts_group_flutter/screens/list/group_list.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
 import 'package:atsign_location_app/screens/event/event_log.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
-import 'package:atsign_location_app/screens/request_location/request_location_screen.dart';
-import 'package:atsign_location_app/screens/selected_location.dart/selected_location.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
 import 'package:atsign_location_app/screens/website_webview/website_webview.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +30,6 @@ class SetupRoutes {
           currentAtsign: args['currentAtSign'],
         );
       },
-      Routes.SELECTED_LOCATION: (context) => SelectedLocation(),
-      Routes.REQUEST_LOCATION_EVENT: (context) => RequestLocationScreen(),
       Routes.CONTACT_SCREEN: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
         return ContactsScreen(

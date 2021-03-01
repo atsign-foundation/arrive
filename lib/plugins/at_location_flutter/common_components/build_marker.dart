@@ -61,7 +61,7 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
                         ? CustomCircleAvatar(
                             byteImage: user.image, nonAsset: true, size: 30)
                         : ContactInitial(
-                            initials: 'user.displayName'.substring(1, 3),
+                            initials: user.displayName.substring(1, 3),
                             size: 30,
                             backgroundColor: AllColors().ORANGE,
                           ),

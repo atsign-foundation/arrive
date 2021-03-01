@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -92,7 +91,9 @@ class _DisplayTileState extends State<DisplayTile> {
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: widget.semiTitle != null
+                  ? MainAxisAlignment.spaceEvenly
+                  : MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(

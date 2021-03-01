@@ -1,7 +1,9 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_common_flutter/at_common_flutter.dart';
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/display_tile.dart';
+import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/bottom_sheet.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
@@ -13,9 +15,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:flutter/material.dart';
-
-import 'display_tile.dart';
-import 'draggable_symbol.dart';
 
 class CollapsedContent extends StatefulWidget {
   Key key;
@@ -264,47 +263,57 @@ class _CollapsedContentState extends State<CollapsedContent> {
                               value: isSharingEvent,
                               onChanged: (value) async {
                                 LoadingDialog().show();
-                                print(value);
-                                if (widget.isAdmin) {
-                                  LocationService()
-                                      .eventListenerKeyword
-                                      .isSharing = value;
-                                } else {
-                                  LocationService()
-                                      .eventListenerKeyword
-                                      .group
-                                      .members
-                                      .elementAt(0)
-                                      .tags['isSharing'] = value;
-                                }
-
-                                print(
-                                    'in collapsed content:${EventNotificationModel.convertEventNotificationToJson(LocationService().eventListenerKeyword)}');
-
-                                var result = await LocationService()
-                                    .onEventExit(
-                                        isSharing: value,
-                                        keyType: widget.isAdmin
-                                            ? ATKEY_TYPE_ENUM.CREATEEVENT
-                                            : ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                                        eventData: LocationService()
-                                            .eventListenerKeyword);
-                                print('share off:${result}');
-                                if (result == true) {
-                                  // onLocationOff(value);
-                                  setState(() {
-                                    isSharingEvent = value;
-                                  });
-
+                                try {
+                                  print(value);
                                   if (widget.isAdmin) {
-                                    LocationService().onEventUpdate(
-                                        LocationService().eventListenerKeyword);
+                                    LocationService()
+                                        .eventListenerKeyword
+                                        .isSharing = value;
+                                  } else {
+                                    LocationService()
+                                        .eventListenerKeyword
+                                        .group
+                                        .members
+                                        .elementAt(0)
+                                        .tags['isSharing'] = value;
                                   }
-                                } else
+
+                                  print(
+                                      'in collapsed content:${EventNotificationModel.convertEventNotificationToJson(LocationService().eventListenerKeyword)}');
+
+                                  var result = await LocationService()
+                                      .onEventExit(
+                                          isSharing: value,
+                                          keyType: widget.isAdmin
+                                              ? ATKEY_TYPE_ENUM.CREATEEVENT
+                                              : ATKEY_TYPE_ENUM
+                                                  .ACKNOWLEDGEEVENT,
+                                          eventData: LocationService()
+                                              .eventListenerKeyword);
+                                  print('share off:${result}');
+                                  if (result == true) {
+                                    // onLocationOff(value);
+                                    setState(() {
+                                      isSharingEvent = value;
+                                    });
+
+                                    if (widget.isAdmin) {
+                                      LocationService().onEventUpdate(
+                                          LocationService()
+                                              .eventListenerKeyword);
+                                    }
+                                  } else
+                                    CustomToast().show(
+                                        'something went wrong , please try again.',
+                                        context);
+                                  LoadingDialog().hide();
+                                } catch (e) {
+                                  print(e);
                                   CustomToast().show(
-                                      'somehting went wrong , please try again.',
+                                      'something went wrong , please try again.',
                                       context);
-                                LoadingDialog().hide();
+                                  LoadingDialog().hide();
+                                }
                               })
                         ],
                       ),
@@ -319,13 +328,22 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                           .tags['isExited'] ==
                                       false) {
                                     LoadingDialog().show();
-                                    await LocationService().onEventExit(
-                                        isExited: true,
-                                        keyType: widget.isAdmin
-                                            ? ATKEY_TYPE_ENUM.CREATEEVENT
-                                            : ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT);
-                                    LoadingDialog().hide();
-                                    Navigator.of(context).pop();
+                                    try {
+                                      await LocationService().onEventExit(
+                                          isExited: true,
+                                          keyType: widget.isAdmin
+                                              ? ATKEY_TYPE_ENUM.CREATEEVENT
+                                              : ATKEY_TYPE_ENUM
+                                                  .ACKNOWLEDGEEVENT);
+                                      LoadingDialog().hide();
+                                      Navigator.of(context).pop();
+                                    } catch (e) {
+                                      print(e);
+                                      CustomToast().show(
+                                          'something went wrong , please try again.',
+                                          context);
+                                      LoadingDialog().hide();
+                                    }
                                   }
                                 },
                                 child: Text(
@@ -347,10 +365,18 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   if (!widget
                                       .eventListenerKeyword.isCancelled) {
                                     LoadingDialog().show();
-                                    var result =
-                                        await LocationService().onEventCancel();
-                                    LoadingDialog().hide();
-                                    Navigator.of(context).pop();
+                                    try {
+                                      var result = await LocationService()
+                                          .onEventCancel();
+                                      LoadingDialog().hide();
+                                      Navigator.of(context).pop();
+                                    } catch (e) {
+                                      print(e);
+                                      CustomToast().show(
+                                          'something went wrong , please try again.',
+                                          context);
+                                      LoadingDialog().hide();
+                                    }
                                   }
                                 },
                                 child: Text(
@@ -457,38 +483,47 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                     value: isSharing,
                                     onChanged: (value) async {
                                       LoadingDialog().show();
-                                      var result;
-                                      print(
-                                          "${LocationService().onShareToggle}");
-                                      if (widget.userListenerKeyword.key
-                                          .contains("sharelocation")) {
-                                        result = await LocationService()
-                                            .onShareToggle(
-                                                widget.userListenerKeyword,
-                                                isSharing: value);
-                                      } else if (widget.userListenerKeyword.key
-                                          .contains("requestlocation")) {
-                                        result = await LocationService()
-                                            .onShareToggle(
-                                                widget.userListenerKeyword,
-                                                true,
-                                                isSharing: value);
-                                      }
-                                      print('result $result');
-                                      if (result) {
-                                        if (!value) {
-                                          SendLocationNotification().sendNull(
-                                              widget.userListenerKeyword);
+                                      try {
+                                        var result;
+                                        print(
+                                            "${LocationService().onShareToggle}");
+                                        if (widget.userListenerKeyword.key
+                                            .contains("sharelocation")) {
+                                          result = await LocationService()
+                                              .onShareToggle(
+                                                  widget.userListenerKeyword,
+                                                  isSharing: value);
+                                        } else if (widget
+                                            .userListenerKeyword.key
+                                            .contains("requestlocation")) {
+                                          result = await LocationService()
+                                              .onShareToggle(
+                                                  widget.userListenerKeyword,
+                                                  true,
+                                                  isSharing: value);
                                         }
-                                        setState(() {
-                                          isSharing = value;
-                                        });
-                                      } else {
+                                        print('result $result');
+                                        if (result) {
+                                          if (!value) {
+                                            SendLocationNotification().sendNull(
+                                                widget.userListenerKeyword);
+                                          }
+                                          setState(() {
+                                            isSharing = value;
+                                          });
+                                        } else {
+                                          CustomToast().show(
+                                              'some thing went wrong , try again.',
+                                              context);
+                                        }
+                                        LoadingDialog().hide();
+                                      } catch (e) {
+                                        print(e);
                                         CustomToast().show(
-                                            'some thing went wrong , try again.',
+                                            'something went wrong , please try again.',
                                             context);
+                                        LoadingDialog().hide();
                                       }
-                                      LoadingDialog().hide();
                                     })
                               ],
                             )
@@ -512,13 +547,22 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {
-                                  print(LocationService().onRemove.toString());
-                                  var result = await LocationService()
-                                      .onRemove(widget.userListenerKeyword);
-                                  if (result) {
-                                    SendLocationNotification()
-                                        .sendNull(widget.userListenerKeyword);
-                                    Navigator.pop(context);
+                                  try {
+                                    print(
+                                        LocationService().onRemove.toString());
+                                    var result = await LocationService()
+                                        .onRemove(widget.userListenerKeyword);
+                                    if (result) {
+                                      SendLocationNotification()
+                                          .sendNull(widget.userListenerKeyword);
+                                      Navigator.pop(context);
+                                    }
+                                  } catch (e) {
+                                    print(e);
+                                    CustomToast().show(
+                                        'something went wrong , please try again.',
+                                        context);
+                                    LoadingDialog().hide();
                                   }
                                 },
                                 child: Text(

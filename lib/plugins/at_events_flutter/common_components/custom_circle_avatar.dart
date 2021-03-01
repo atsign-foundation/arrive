@@ -27,7 +27,6 @@ class CustomCircleAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(size.toWidth),
       ),
-      // border: Border.all(width: 0.5, color: ColorConstants.fontSecondary)),
       child: nonAsset
           ? ClipRRect(
               borderRadius: BorderRadius.all(Radius.circular(30)),

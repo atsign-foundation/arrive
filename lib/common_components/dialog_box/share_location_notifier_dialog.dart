@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-
-import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
@@ -10,10 +8,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/services/event_ser
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
-import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/common_components/provider_handler.dart';
-import 'package:atsign_location_app/models/enums_model.dart';
 import 'package:atsign_location_app/screens/event/event_time_selection.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
@@ -23,7 +18,6 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
-import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/utils/constants/texts.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
@@ -60,17 +54,26 @@ class _ShareLocationNotifierDialogState
   bool isOverlap = false;
   AtContact contact;
   Uint8List image;
+  String locationUserImageToShow;
 
   @override
   void initState() {
+    locationUserImageToShow = (widget.locationData.atsignCreator ==
+            BackendService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign
+        ? widget.locationData.receiver
+        : widget.locationData.atsignCreator);
     if (widget.eventData != null) checkForEventOverlap();
     getEventCreator();
+    super.initState();
   }
 
   getEventCreator() async {
     AtContact contact = await getAtSignDetails(widget.eventData != null
         ? widget.eventData.atsignCreator
-        : widget.locationData.atsignCreator);
+        : locationUserImageToShow);
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
@@ -141,8 +144,7 @@ class _ShareLocationNotifierDialogState
                               initials: widget.eventData != null
                                   ? widget.eventData.atsignCreator
                                       .substring(1, 3)
-                                  : widget.locationData.atsignCreator
-                                      .substring(1, 3),
+                                  : locationUserImageToShow.substring(1, 3),
                               size: 60,
                             ),
                       widget.showMembersCount
@@ -177,7 +179,9 @@ class _ShareLocationNotifierDialogState
                   SizedBox(height: 5.toHeight),
                   widget.eventData != null
                       ? Text(
-                          '${widget.eventData.group.members.length} peoples invited',
+                          (widget.eventData.group.members.length == 1)
+                              ? '${widget.eventData.group.members.length} person invited'
+                              : '${widget.eventData.group.members.length} people invited',
                           style: CustomTextStyles().grey14)
                       : SizedBox(),
                   SizedBox(height: 10.toHeight),
