@@ -29,48 +29,51 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
+    authenticating = true;
 
     _initBackendService();
-    // acceptFiles();
-    // _checkForPermissionStatus();
   }
 
   String state;
   void _initBackendService() async {
-    backendService = BackendService.getInstance();
-    backendService.atClientServiceInstance = new AtClientService();
-    backendService = BackendService.getInstance();
-    // backendService.atClientServiceInstance = new AtClientService();
-    setState(() {
-      authenticating = true;
-    });
-    var isOnBoard = await backendService.onboard();
+    try {
+      backendService = BackendService.getInstance();
+      backendService.atClientServiceInstance = new AtClientService();
+      backendService = BackendService.getInstance();
 
-    if (isOnBoard != null && isOnBoard == true) {
-      print('on board $isOnBoard');
-      await BackendService.getInstance().onboard();
-      await BackendService.getInstance().startMonitor();
-      setState(() {
-        authenticating = false;
-      });
-      SetupRoutes.push(context, Routes.HOME);
-    }
+      var isOnBoard = await backendService.onboard();
 
-    setState(() {
-      authenticating = false;
-    });
-
-    // _notificationService.setOnNotificationClick(onNotificationClick);
-    SystemChannels.lifecycle.setMessageHandler((msg) {
-      print('set message handler');
-      state = msg;
-      debugPrint('SystemChannels> $msg');
-      backendService.app_lifecycle_state = msg;
-      if (backendService.monitorConnection != null &&
-          backendService.monitorConnection.isInValid()) {
-        backendService.startMonitor();
+      if (isOnBoard != null && isOnBoard == true) {
+        print('on board $isOnBoard');
+        await BackendService.getInstance().onboard();
+        await BackendService.getInstance().startMonitor();
+        if (mounted)
+          setState(() {
+            authenticating = false;
+          });
+        SetupRoutes.push(context, Routes.HOME);
       }
-    });
+      if (mounted)
+        setState(() {
+          authenticating = false;
+        });
+
+      SystemChannels.lifecycle.setMessageHandler((msg) {
+        print('set message handler');
+        state = msg;
+        debugPrint('SystemChannels> $msg');
+        backendService.app_lifecycle_state = msg;
+        if (backendService.monitorConnection != null &&
+            backendService.monitorConnection.isInValid()) {
+          backendService.startMonitor();
+        }
+      });
+    } catch (e) {
+      if (mounted)
+        setState(() {
+          authenticating = false;
+        });
+    }
   }
 
   @override
