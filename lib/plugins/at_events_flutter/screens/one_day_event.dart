@@ -143,6 +143,11 @@ class _OneDayEventState extends State<OneDayEvent> {
                                     : TimeOfDay.now(),
                                 initialEntryMode: TimePickerEntryMode.input);
 
+                            if (eventData.event.date == null) {
+                              eventData.event.date = DateTime.now();
+                              eventData.event.endDate = DateTime.now();
+                            }
+
                             if (timePicked != null) {
                               setState(() {
                                 eventData.event.startTime = DateTime(
@@ -172,6 +177,12 @@ class _OneDayEventState extends State<OneDayEvent> {
                                           eventData.event.endTime)
                                       : TimeOfDay.now(),
                                   initialEntryMode: TimePickerEntryMode.input);
+
+                              if (eventData.event.endDate == null) {
+                                CustomToast()
+                                    .show('Select start time first', context);
+                                return;
+                              }
 
                               if (timePicked != null) {
                                 setState(() {
