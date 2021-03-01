@@ -31,30 +31,8 @@ class _SplashState extends State<Splash> {
     super.initState();
 
     _initBackendService();
-    // _checkToOnboard();
     // acceptFiles();
     // _checkForPermissionStatus();
-  }
-
-  void _checkToOnboard() async {
-    // onboard call to get the already setup atsigns
-    await backendService.onboard().then((isChecked) async {
-      if (!isChecked) {
-        c.complete(true);
-        print("onboard returned: $isChecked");
-      } else {
-        await backendService.startMonitor();
-        onboardSuccess = true;
-        // // if (FilePickerProvider().selectedFiles.isNotEmpty) {
-        // //   BuildContext cd = NavService.navKey.currentContext;
-        // //   await Navigator.pushReplacementNamed(cd, Routes.WELCOME_SCREEN);
-        // }
-        c.complete(true);
-      }
-    }).catchError((error) async {
-      c.complete(true);
-      print("Error in authenticating: $error");
-    });
   }
 
   String state;
@@ -63,13 +41,24 @@ class _SplashState extends State<Splash> {
     backendService.atClientServiceInstance = new AtClientService();
     backendService = BackendService.getInstance();
     // backendService.atClientServiceInstance = new AtClientService();
+    setState(() {
+      authenticating = true;
+    });
     var isOnBoard = await backendService.onboard();
+
     if (isOnBoard != null && isOnBoard == true) {
       print('on board $isOnBoard');
       await BackendService.getInstance().onboard();
       await BackendService.getInstance().startMonitor();
+      setState(() {
+        authenticating = false;
+      });
       SetupRoutes.push(context, Routes.HOME);
     }
+
+    setState(() {
+      authenticating = false;
+    });
 
     // _notificationService.setOnNotificationClick(onNotificationClick);
     SystemChannels.lifecycle.setMessageHandler((msg) {
@@ -121,22 +110,22 @@ class _SplashState extends State<Splash> {
                 style: CustomTextStyles().blackPlayfairDisplay38,
               ),
             ),
-            Positioned(
-              top: 511.toHeight,
-              left: 16.toWidth,
-              child: Text(
-                'Lorem ipsum dolor sit amet, consectetur',
-                style: CustomTextStyles().darkGrey15,
-              ),
-            ),
-            Positioned(
-              top: 530.toHeight,
-              left: 16.toWidth,
-              child: Text(
-                'adipiscing elit.',
-                style: CustomTextStyles().darkGrey15,
-              ),
-            ),
+            // Positioned(
+            //   top: 511.toHeight,
+            //   left: 16.toWidth,
+            //   child: Text(
+            //     'Lorem ipsum dolor sit amet, consectetur',
+            //     style: CustomTextStyles().darkGrey15,
+            //   ),
+            // ),
+            // Positioned(
+            //   top: 530.toHeight,
+            //   left: 16.toWidth,
+            //   child: Text(
+            //     'adipiscing elit.',
+            //     style: CustomTextStyles().darkGrey15,
+            //   ),
+            // ),
             Positioned(
               bottom: 32.toHeight,
               left: 16.toWidth,
@@ -152,14 +141,23 @@ class _SplashState extends State<Splash> {
                   height: 40,
                   width: 120,
                   radius: 100.toHeight,
-                  child: Text(
-                    'Explore',
-                    style: CustomTextStyles().white15,
-                  ),
+                  child: authenticating
+                      ? Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : Text(
+                          'Explore',
+                          style: CustomTextStyles().white15,
+                        ),
                   // onTap: () => cramAuthWithoutQR(),
 
                   // onTap: () => SetupRoutes.push(context, Routes.HOME),
                   onTap: () async {
+                    if (authenticating) return;
                     await Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

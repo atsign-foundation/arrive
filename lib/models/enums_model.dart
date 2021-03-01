@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum LOC_START_TIME_ENUM { TWO_HOURS, SIXTY_HOURS, THIRTY_HOURS }
 enum LOC_END_TIME_ENUM { TEN_MIN, AFTER_EVERY_ONE_REACHED, AT_EOD }
 

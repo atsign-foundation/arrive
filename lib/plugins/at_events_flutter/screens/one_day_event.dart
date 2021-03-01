@@ -72,6 +72,15 @@ class _OneDayEventState extends State<OneDayEvent> {
                                 eventData.event.date = datePicked;
                                 if (eventData.event.endDate == null)
                                   eventData.event.endDate = datePicked;
+
+                                if (eventData.event.startTime != null) {
+                                  eventData.event.startTime = DateTime(
+                                      eventData.event.date.year,
+                                      eventData.event.date.month,
+                                      eventData.event.date.day,
+                                      eventData.event.startTime.hour,
+                                      eventData.event.startTime.minute);
+                                }
                               });
                             }
                           },
@@ -88,8 +97,8 @@ class _OneDayEventState extends State<OneDayEvent> {
                           onTap: () async {
                             final DateTime datePicked = await showDatePicker(
                                 context: context,
-                                initialDate: (eventData.event.date != null)
-                                    ? eventData.event.date
+                                initialDate: (eventData.event.endDate != null)
+                                    ? eventData.event.endDate
                                     : DateTime.now(),
                                 firstDate: DateTime.now(),
                                 lastDate: DateTime(2030));

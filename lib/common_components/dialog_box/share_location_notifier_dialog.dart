@@ -26,10 +26,10 @@ import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
 class ShareLocationNotifierDialog extends StatefulWidget {
-  final String event, invitedPeopleCount, timeAndDate, userName;
+  String event, invitedPeopleCount, timeAndDate, userName;
   final EventNotificationModel eventData;
   final LocationNotificationModel locationData;
-  final bool showMembersCount;
+  bool showMembersCount;
 
   int minutes;
   ShareLocationNotifierDialog(
@@ -58,16 +58,24 @@ class _ShareLocationNotifierDialogState
 
   @override
   void initState() {
-    locationUserImageToShow = (widget.locationData.atsignCreator ==
-            BackendService.getInstance()
-                .atClientServiceInstance
-                .atClient
-                .currentAtSign
-        ? widget.locationData.receiver
-        : widget.locationData.atsignCreator);
+    if (widget.locationData != null) {
+      locationUserImageToShow = (widget.locationData.atsignCreator ==
+              BackendService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign
+          ? widget.locationData.receiver
+          : widget.locationData.atsignCreator);
+
+      widget.userName = locationUserImageToShow;
+    }
     if (widget.eventData != null) checkForEventOverlap();
     getEventCreator();
     super.initState();
+
+    if (widget.eventData != null) {
+      widget.showMembersCount = true;
+    }
   }
 
   getEventCreator() async {
@@ -123,7 +131,7 @@ class _ShareLocationNotifierDialogState
                           ? '${widget.userName} wants to share an event with you. Are you sure you want to join and share your location with the group?'
                           : ((!widget.locationData.isRequest)
                               ? '${widget.userName} wants to share their location with you. Are you sure you want to accept their location?'
-                              : '${widget.userName} wants you to share your location? Are you sure you want to share?'),
+                              : '${widget.userName} wants you to share your location. Are you sure you want to share?'),
                       style: CustomTextStyles().grey16,
                       textAlign: TextAlign.center),
                   SizedBox(height: 30),
@@ -152,15 +160,15 @@ class _ShareLocationNotifierDialogState
                               right: 0,
                               bottom: 0,
                               child: Container(
-                                width: 40,
-                                height: 40,
+                                width: 30,
+                                height: 30,
                                 decoration: BoxDecoration(
                                   color: AllColors().BLUE,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Center(
                                     child: Text(
-                                  '+10',
+                                  '+${widget.eventData.group.members.length}',
                                   style: CustomTextStyles().black10,
                                 )),
                               ),
@@ -168,7 +176,7 @@ class _ShareLocationNotifierDialogState
                           : SizedBox()
                     ],
                   ),
-                  SizedBox(height: 10.toHeight),
+                  SizedBox(height: widget.eventData != null ? 10.toHeight : 0),
                   widget.eventData != null
                       ? Text(
                           widget.eventData.title,
@@ -176,7 +184,7 @@ class _ShareLocationNotifierDialogState
                           textAlign: TextAlign.center,
                         )
                       : SizedBox(),
-                  SizedBox(height: 5.toHeight),
+                  SizedBox(height: widget.eventData != null ? 5.toHeight : 0),
                   widget.eventData != null
                       ? Text(
                           (widget.eventData.group.members.length == 1)
@@ -184,7 +192,7 @@ class _ShareLocationNotifierDialogState
                               : '${widget.eventData.group.members.length} people invited',
                           style: CustomTextStyles().grey14)
                       : SizedBox(),
-                  SizedBox(height: 10.toHeight),
+                  SizedBox(height: widget.eventData != null ? 10.toHeight : 0),
                   widget.eventData != null
                       ? Text(
                           '${timeOfDayToString(widget.eventData.event.startTime)} on ${dateToString(widget.eventData.event.date)}',

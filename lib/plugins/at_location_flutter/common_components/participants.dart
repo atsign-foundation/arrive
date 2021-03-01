@@ -39,25 +39,25 @@ class Participants extends StatelessWidget {
           children: [
             DraggableSymbol(),
             CustomHeading(heading: 'Participants', action: 'Cancel'),
-            SizedBox(
-              height: 10.toHeight,
-            ),
+            // SizedBox(
+            //   height: 10.toHeight,
+            // ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: 46.toWidth,
-                  height: 46.toWidth,
-                  decoration: new BoxDecoration(
-                    color: AllColors().MILD_GREY,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Icon(Icons.add, color: AllColors().ORANGE),
-                  ),
-                ),
-                SizedBox(width: 20.toWidth),
-                Text('Add Participant', style: CustomTextStyles().darkGrey16)
+                // Container(
+                //   width: 46.toWidth,
+                //   height: 46.toWidth,
+                //   decoration: new BoxDecoration(
+                //     color: AllColors().MILD_GREY,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: Center(
+                //     child: Icon(Icons.add, color: AllColors().ORANGE),
+                //   ),
+                // ),
+                // SizedBox(width: 20.toWidth),
+                // Text('Add Participant', style: CustomTextStyles().darkGrey16)
               ],
             ),
             SizedBox(

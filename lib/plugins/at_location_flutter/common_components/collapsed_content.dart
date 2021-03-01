@@ -180,6 +180,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             semiTitle:
                                 '${snapshot.data.group.members.length} people' ??
                                     'No of people',
+                            number: snapshot.data.group.members.length,
                             subTitle:
                                 'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
                             action: Transform.rotate(

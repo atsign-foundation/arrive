@@ -260,8 +260,8 @@ getSubTitle(HybridNotificationModel hybridNotificationModel) {
                       .atClientServiceInstance
                       .atClient
                       .currentAtSign
-              ? 'Requested Location received'
-              : 'Requested Location sent');
+              ? 'Request Location received'
+              : 'Request Location sent');
     }
   }
 }

@@ -70,41 +70,10 @@ class HybridProvider extends RequestLocationProvider {
         if (allHybridNotifications[i]
                 .eventNotificationModel
                 .event
-                .date
+                .endTime
                 .difference(DateTime.now())
-                .inDays ==
-            0) {
-          if (allHybridNotifications[i]
-                  .eventNotificationModel
-                  .event
-                  .endTime
-                  .hour <
-              TimeOfDay.now().hour) {
-            allPastEventNotifications.add(allHybridNotifications[i]);
-          } else {
-            if ((allHybridNotifications[i]
-                        .eventNotificationModel
-                        .event
-                        .endTime
-                        .hour ==
-                    TimeOfDay.now().hour) &&
-                ((allHybridNotifications[i]
-                        .eventNotificationModel
-                        .event
-                        .endTime
-                        .minute <
-                    TimeOfDay.now().minute)))
-              allPastEventNotifications.add(allHybridNotifications[i]);
-          }
-        } else if (allHybridNotifications[i]
-                .eventNotificationModel
-                .event
-                .date
-                .difference(DateTime.now())
-                .inDays <
-            0) {
-          allPastEventNotifications.add(allHybridNotifications[i]);
-        }
+                .inMinutes <
+            0) allPastEventNotifications.add(allHybridNotifications[i]);
       }
     }
     allPastEventNotifications.forEach((element) {

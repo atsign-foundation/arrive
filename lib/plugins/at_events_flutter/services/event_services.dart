@@ -107,6 +107,7 @@ class EventService {
       AtKey atKey = AtKey()
         ..metadata = Metadata()
         ..metadata.ttr = -1
+        ..metadata.ccd = true
         ..key = eventNotification.key
         ..sharedWith = eventNotification.group.members.elementAt(0).atSign
         ..sharedBy = eventNotification.atsignCreator;
