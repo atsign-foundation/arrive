@@ -426,7 +426,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DisplayTile(
-                        title: 'Name',
+                        title: amICreator
+                            ? '${widget.userListenerKeyword.receiver}'
+                            : '${widget.userListenerKeyword.atsignCreator}',
+                        showName: true,
                         atsignCreator: amICreator
                             ? '${widget.userListenerKeyword.receiver}'
                             : '${widget.userListenerKeyword.atsignCreator}',
