@@ -239,7 +239,7 @@ class _SideBarState extends State<SideBar> {
                 child: Container(
               height: 0,
             )),
-            iconText('Switch @sign', Icons.logout, () {}),
+            // iconText('Switch @sign', Icons.logout, () {}),
           ],
         ),
       ),
