@@ -197,14 +197,24 @@ class _RecurringEventState extends State<RecurringEvent> {
                       : '',
                   onTap: () async {
                     final TimeOfDay timePicked = await showTimePicker(
-                      context: context,
-                      initialTime: eventData.event.startTime != null
-                          ? eventData.event.startTime
-                          : TimeOfDay.now(),
-                    );
+                        context: context,
+                        initialTime: eventData.event.startTime != null
+                            ? TimeOfDay.fromDateTime(eventData.event.startTime)
+                            : TimeOfDay.now(),
+                        initialEntryMode: TimePickerEntryMode.input);
+
+                    if (eventData.event.date == null) {
+                      eventData.event.date = DateTime.now();
+                      eventData.event.endDate = DateTime.now();
+                    }
 
                     if (timePicked != null) {
-                      eventData.event.startTime = timePicked;
+                      eventData.event.startTime = DateTime(
+                          eventData.event.date.year,
+                          eventData.event.date.month,
+                          eventData.event.date.day,
+                          timePicked.hour,
+                          timePicked.minute);
                       setState(() {});
                     }
                   },
@@ -220,14 +230,24 @@ class _RecurringEventState extends State<RecurringEvent> {
                       : '',
                   onTap: () async {
                     final TimeOfDay timePicked = await showTimePicker(
-                      context: context,
-                      initialTime: eventData.event.endTime != null
-                          ? eventData.event.endTime
-                          : TimeOfDay.now(),
-                    );
+                        context: context,
+                        initialTime: eventData.event.endTime != null
+                            ? TimeOfDay.fromDateTime(eventData.event.endTime)
+                            : TimeOfDay.now(),
+                        initialEntryMode: TimePickerEntryMode.input);
+
+                    if (eventData.event.endDate == null) {
+                      CustomToast().show('Select start time first', context);
+                      return;
+                    }
 
                     if (timePicked != null) {
-                      eventData.event.endTime = timePicked;
+                      eventData.event.endTime = DateTime(
+                          eventData.event.date.year,
+                          eventData.event.date.month,
+                          eventData.event.date.day,
+                          timePicked.hour,
+                          timePicked.minute);
                       setState(() {});
                     }
                   },

@@ -107,6 +107,7 @@ class EventService {
       AtKey atKey = AtKey()
         ..metadata = Metadata()
         ..metadata.ttr = -1
+        ..metadata.ccd = true
         ..key = eventNotification.key
         ..sharedWith = eventNotification.group.members.elementAt(0).atSign
         ..sharedBy = eventNotification.atsignCreator;
@@ -250,37 +251,36 @@ class EventService {
   dynamic checForOneDayEventFormValidation(EventNotificationModel eventData) {
     if (eventData.event.date == null) {
       return 'add event date';
-    } else if (eventData.event.startTime == null) {
+    }
+    if (eventData.event.endDate == null) {
+      return 'add event date';
+    }
+    if (eventData.event.startTime == null) {
       return 'add event start time';
-    } else if (eventData.event.endTime == null) {
+    }
+    if (eventData.event.endTime == null) {
       return 'add event end time';
     }
     // for time
     if (!isEventUpdate) {
-      if (eventData.event.startTime.hour < TimeOfDay.now().hour) {
+      if (eventData.event.startTime.difference(DateTime.now()).inMinutes < 0)
         return 'Start Time cannot be in past';
-      }
-      if (eventData.event.startTime.hour == TimeOfDay.now().hour) {
-        if (eventData.event.startTime.minute < TimeOfDay.now().minute)
-          return 'Start Time cannot be in past';
-      }
     }
 
-    if (eventData.event.endTime.hour < TimeOfDay.now().hour) {
+    if (eventData.event.endTime.difference(DateTime.now()).inMinutes < 0) {
       return 'End Time cannot be in past';
     }
-    if (eventData.event.endTime.hour == TimeOfDay.now().hour) {
-      if (eventData.event.endTime.minute < TimeOfDay.now().minute)
-        return 'End Time cannot be in past';
-    }
 
-    if (eventData.event.endTime.hour < eventData.event.startTime.hour) {
+    if (eventData.event.endTime
+            .difference(eventData.event.startTime)
+            .inMinutes <
+        0) {
+      print('valdation eventData.event.startTime ${eventData.event.startTime}');
+      print('valdation eventData.event.endTime ${eventData.event.endTime}');
+
       return 'Start time cannot be after End time';
     }
-    if (eventData.event.endTime.hour == eventData.event.startTime.hour) {
-      if (eventData.event.endTime.minute < eventData.event.startTime.minute)
-        return 'Start time cannot be after End time';
-    }
+
     if (eventData.event.endTime == eventData.event.startTime) {
       return 'Start time and End time cannot be same';
     }

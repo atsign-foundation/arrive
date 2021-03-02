@@ -1,9 +1,7 @@
 import 'dart:typed_data';
-
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_contacts_flutter/widgets/contacts_initials.dart';
-import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
@@ -11,13 +9,10 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
-import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:latlong/latlong.dart';
-import 'package:provider/provider.dart';
 
 class SideBar extends StatefulWidget {
   @override
@@ -244,7 +239,7 @@ class _SideBarState extends State<SideBar> {
                 child: Container(
               height: 0,
             )),
-            iconText('Switch @sign', Icons.logout, () {}),
+            // iconText('Switch @sign', Icons.logout, () {}),
           ],
         ),
       ),

@@ -19,7 +19,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print(context.owner);
     return Padding(
       padding: EdgeInsets.only(right: (padding) ? 16.toWidth : 0),
       child: AppBar(

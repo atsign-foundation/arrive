@@ -1,8 +1,6 @@
 import 'package:at_common_flutter/widgets/custom_button.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_circle_avatar.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/utils/colors.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';

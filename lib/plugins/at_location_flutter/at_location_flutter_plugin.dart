@@ -1,6 +1,7 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_chat_flutter/screens/chat_screen.dart';
 import 'package:at_chat_flutter/utils/init_chat_service.dart';
+import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
@@ -9,7 +10,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/location
 import 'package:atsign_location_app/plugins/at_location_flutter/show_location.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
-import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:flutter/material.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/src/layer/marker_layer.dart';
@@ -20,9 +20,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flut
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map_marker_popup/src/popup_snap.dart';
 import 'package:latlong/latlong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'common_components/build_marker.dart';
 import 'common_components/collapsed_content.dart';
-import 'common_components/floating_icon.dart';
 import 'common_components/marker_cluster.dart';
 import 'common_components/popup.dart';
 

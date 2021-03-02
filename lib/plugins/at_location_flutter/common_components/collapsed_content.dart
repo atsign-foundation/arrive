@@ -1,7 +1,9 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_common_flutter/at_common_flutter.dart';
+import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/display_tile.dart';
+import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/bottom_sheet.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
@@ -13,9 +15,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:flutter/material.dart';
-
-import 'display_tile.dart';
-import 'draggable_symbol.dart';
 
 class CollapsedContent extends StatefulWidget {
   Key key;
@@ -178,9 +177,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 '${snapshot.data.atsignCreator} and ${snapshot.data.group.members.length} more' ??
                                     'Event participants',
                             atsignCreator: snapshot.data.atsignCreator,
-                            semiTitle:
-                                '${snapshot.data.group.members.length} people' ??
-                                    'No of people',
+                            semiTitle: (snapshot.data.group.members.length == 1)
+                                ? '${snapshot.data.group.members.length} person'
+                                : '${snapshot.data.group.members.length} people',
+                            number: snapshot.data.group.members.length,
                             subTitle:
                                 'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
                             action: Transform.rotate(
@@ -404,8 +404,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
     DateTime to = widget.userListenerKeyword.to;
     String time;
     if (to != null)
-      time =
-          'until ${timeOfDayToString(TimeOfDay.fromDateTime(widget.userListenerKeyword.to))} today';
+      time = 'until ${timeOfDayToString(widget.userListenerKeyword.to)} today';
     else
       time = '';
 
@@ -427,7 +426,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DisplayTile(
-                        title: 'Name',
+                        title: amICreator
+                            ? '${widget.userListenerKeyword.receiver}'
+                            : '${widget.userListenerKeyword.atsignCreator}',
+                        showName: true,
                         atsignCreator: amICreator
                             ? '${widget.userListenerKeyword.receiver}'
                             : '${widget.userListenerKeyword.atsignCreator}',
@@ -435,13 +437,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             ? '${widget.userListenerKeyword.receiver}'
                             : '${widget.userListenerKeyword.atsignCreator}'),
                     Text(
-                      amICreator ? 'This user does not share his location' : '',
+                      amICreator
+                          ? 'This user does not share their location'
+                          : '',
                       style: CustomTextStyles().grey12,
                     ),
                     Text(
                       amICreator
                           ? 'Sharing my location $time'
-                          : 'Sharing his location $time',
+                          : 'Sharing their location $time',
                       style: CustomTextStyles().black12,
                     )
                   ],
@@ -549,6 +553,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {
+                                  LoadingDialog().show();
                                   try {
                                     print(
                                         LocationService().onRemove.toString());
@@ -557,7 +562,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                     if (result) {
                                       SendLocationNotification()
                                           .sendNull(widget.userListenerKeyword);
+                                      LoadingDialog().hide();
+
                                       Navigator.pop(context);
+                                    } else {
+                                      LoadingDialog().hide();
+
+                                      CustomToast().show(
+                                          'Something went wrong, try again.',
+                                          context);
                                     }
                                   } catch (e) {
                                     print(e);

@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -11,6 +10,7 @@ class DisplayTile extends StatefulWidget {
   final String title, semiTitle, subTitle, atsignCreator, invitedBy;
   final int number;
   final Widget action;
+  final bool showName;
   DisplayTile(
       {@required this.title,
       this.atsignCreator,
@@ -18,6 +18,7 @@ class DisplayTile extends StatefulWidget {
       this.semiTitle,
       this.invitedBy,
       this.number,
+      this.showName = false,
       this.action});
 
   @override
@@ -28,6 +29,7 @@ class _DisplayTileState extends State<DisplayTile> {
   Uint8List image;
   AtContact contact;
   AtContactsImpl atContact;
+  String name;
   @override
   void initState() {
     super.initState();
@@ -41,6 +43,8 @@ class _DisplayTileState extends State<DisplayTile> {
         List<int> intList = contact.tags['image'].cast<int>();
         setState(() {
           image = Uint8List.fromList(intList);
+          if (widget.showName) name = contact.tags['name'].toString();
+          print('name $name');
         });
       }
     }
@@ -92,11 +96,13 @@ class _DisplayTileState extends State<DisplayTile> {
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: widget.semiTitle != null
+                  ? MainAxisAlignment.spaceEvenly
+                  : MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.title,
+                  name ?? widget.title,
                   style: Theme.of(context).primaryTextTheme.headline3,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
