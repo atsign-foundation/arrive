@@ -292,22 +292,36 @@ class HybridProvider extends RequestLocationProvider {
 
   bool isOneDayEventOccursToday(Event event) {
     bool isEventToday = false;
-    if (event.endTime.hour + event.endTime.minute / 60.0 >
-        event.startTime.hour + event.startTime.minute / 60.0) {
-      if (dateToString(event.date) == dateToString(DateTime.now()))
-        isEventToday = true;
-    } else {
-      DateTime todaysDate = DateTime.now();
-      if ((dateToString(DateTime(
-                  event.date.year, event.date.month, event.date.day)) ==
-              dateToString(DateTime(
-                  todaysDate.year, todaysDate.month, todaysDate.day))) ||
-          (dateToString(DateTime(
-                  event.date.year, event.date.month, event.date.day + 1)) ==
-              dateToString(
-                  DateTime(todaysDate.year, todaysDate.month, todaysDate.day))))
-        isEventToday = true;
+    // if (event.endTime.hour + event.endTime.minute / 60.0 >
+    //     event.startTime.hour + event.startTime.minute / 60.0) {
+    //   if (dateToString(event.date) == dateToString(DateTime.now()))
+    //     isEventToday = true;
+    // } else {
+    //   DateTime todaysDate = DateTime.now();
+    //   if ((dateToString(DateTime(
+    //               event.date.year, event.date.month, event.date.day)) ==
+    //           dateToString(DateTime(
+    //               todaysDate.year, todaysDate.month, todaysDate.day))) ||
+    //       (dateToString(DateTime(
+    //               event.date.year, event.date.month, event.date.day + 1)) ==
+    //           dateToString(
+    //               DateTime(todaysDate.year, todaysDate.month, todaysDate.day))))
+    //     isEventToday = true;
+    // }
+
+    if (dateToString(event.date) == dateToString(DateTime.now())) {
+      isEventToday = true;
     }
+
+    if (dateToString(event.endDate) == dateToString(DateTime.now())) {
+      isEventToday = true;
+    }
+
+    if (DateTime.now().isAfter(event.date) &&
+        DateTime.now().isBefore(event.endDate)) {
+      isEventToday = true;
+    }
+
     return isEventToday;
   }
 
