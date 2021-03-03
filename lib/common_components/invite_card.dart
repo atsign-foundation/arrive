@@ -54,20 +54,21 @@ class _InviteCardState extends State<InviteCard> {
             children: [
               CustomCircleAvatar(
                 image: AllImages().PERSON2,
-                size: 74,
+                size: 50,
                 isMemoryImage: true,
                 contactInitial: widget.atSign,
+                memoryImage: memoryImage,
               ),
               widget.memberCount != null
                   ? Positioned(
                       right: 0,
                       bottom: 0,
                       child: Container(
-                        width: 40,
-                        height: 40,
+                        width: 25,
+                        height: 25,
                         decoration: BoxDecoration(
                           color: AllColors().BLUE,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Center(
                             child: Text(

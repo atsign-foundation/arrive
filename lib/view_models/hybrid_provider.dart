@@ -252,34 +252,32 @@ class HybridProvider extends RequestLocationProvider {
         if (isOneDayEventOccursToday(
             notification.eventNotificationModel.event)) {
           DateTime date = notification.eventNotificationModel.event.date;
-          TimeOfDay from = TimeOfDay.fromDateTime(
-              notification.eventNotificationModel.event.startTime);
-          TimeOfDay to = TimeOfDay.fromDateTime(
-              notification.eventNotificationModel.event.endTime);
-          AtContact groupMember =
-              notification.eventNotificationModel.group.members.elementAt(0);
+          if (notification.eventNotificationModel.event.endDate != null) {
+            DateTime endDate =
+                notification.eventNotificationModel.event.endDate;
+            TimeOfDay from = TimeOfDay.fromDateTime(
+                notification.eventNotificationModel.event.startTime);
+            TimeOfDay to = TimeOfDay.fromDateTime(
+                notification.eventNotificationModel.event.endTime);
+            AtContact groupMember =
+                notification.eventNotificationModel.group.members.elementAt(0);
 
-          location.from =
-              DateTime(date.year, date.month, date.day, from.hour, from.minute);
+            location.from = DateTime(
+                date.year, date.month, date.day, from.hour, from.minute);
 
-          location.from = startTimeEnumToTimeOfDay(
-              groupMember.tags['shareFrom'].toString(), location.from);
+            location.from = startTimeEnumToTimeOfDay(
+                groupMember.tags['shareFrom'].toString(), location.from);
 
-          if (to.hour + to.minute / 60.0 > from.hour + from.minute / 60.0) {
-            location.to =
-                DateTime(date.year, date.month, date.day, to.hour, to.minute);
-          } else {
             location.to = DateTime(
-                date.year, date.month, date.day + 1, to.hour, to.minute);
-          }
+                endDate.year, endDate.month, endDate.day, to.hour, to.minute);
 
-          location.to = endTimeEnumToTimeOfDay(
-              groupMember.tags['shareTo'].toString(), location.to);
-          location.key = notification.key;
-          // print(
-          // '${groupMember.tags} , title:${notification.eventNotificationModel.title} :adding data to share location: ${notification.eventNotificationModel.event.startTime} , to :${notification.eventNotificationModel.event.endTime} : after edit form :${location.from} , after edit to : ${location.to}');
-          shareLocationData.add(location);
-          return location;
+            location.to = endTimeEnumToTimeOfDay(
+                groupMember.tags['shareTo'].toString(), location.to);
+            location.key = notification.key;
+
+            shareLocationData.add(location);
+            return location;
+          }
         }
       }
     } else if (notification.notificationType == NotificationType.Location) {
