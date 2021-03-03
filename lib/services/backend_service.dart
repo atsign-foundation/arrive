@@ -265,7 +265,7 @@ class BackendService {
       regex: 'createevent-$eventId',
     );
 
-    AtKey key = AtKey.fromString(response[0]);
+    AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
     presentEventData.group.members.forEach((presentGroupMember) {
       acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
@@ -346,7 +346,7 @@ class BackendService {
     print('keys:${response}');
     print('sharedBy:${response[0]}, ${response[0].contains('cached')}');
 
-    AtKey key = AtKey.fromString(response[1]);
+    AtKey key = BackendService.getInstance().getAtKey(response[1]);
     print('key :${key.key} , ${key}');
 
     AtValue result = await atClientInstance.get(key).catchError(
@@ -365,12 +365,18 @@ class BackendService {
       regex: '1610602925484075',
     );
     print('response:${response}, ${response.length}');
-    AtKey key0 = AtKey.fromString(response[0]);
-    AtKey key1 = AtKey.fromString(response[1]);
+    AtKey key0 = BackendService.getInstance().getAtKey(response[0]);
+    AtKey key1 = BackendService.getInstance().getAtKey(response[1]);
     print('key0 :${key0} ,key1: ${key1}');
 
     // var result =
     //     await atClientInstance.put(key, json.encode({'changed': 'value2'}));
     // print('update result:${result}');
+  }
+
+  getAtKey(String regexKey) {
+    AtKey atKey = AtKey.fromString(regexKey);
+    atKey.metadata.ttr = -1;
+    return atKey;
   }
 }

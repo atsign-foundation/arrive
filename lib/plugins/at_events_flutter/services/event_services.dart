@@ -7,6 +7,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/common_components/
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/texts.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:flutter/material.dart';
 import 'package:at_contact/at_contact.dart';
 
@@ -79,7 +80,8 @@ class EventService {
 
   Future<dynamic> editEvent() async {
     try {
-      AtKey atKey = AtKey.fromString(eventNotificationModel.key);
+      AtKey atKey =
+          BackendService.getInstance().getAtKey(eventNotificationModel.key);
       var eventData = EventNotificationModel.convertEventNotificationToJson(
           EventService().eventNotificationModel);
       var result = await atClientInstance.put(atKey, eventData);

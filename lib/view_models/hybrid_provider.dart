@@ -147,7 +147,7 @@ class HybridProvider extends RequestLocationProvider {
       // tempNotification = HybridNotificationModel(NotificationType.Event);
       // tempNotification.key = notification.eventNotificationModel.key;
       // tempNotification.atKey =
-      //     AtKey.fromString(notification.eventNotificationModel.key);
+      //     BackendService.getInstance().getAtKey(notification.eventNotificationModel.key);
       // tempNotification.atValue = await getAtValue(tempNotification.atKey);
       // tempNotification.eventNotificationModel =
       //     notification.eventNotificationModel;

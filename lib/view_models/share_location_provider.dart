@@ -4,11 +4,10 @@ import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 
 import 'package:atsign_location_app/services/location_sharing_service.dart';
-import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
 
@@ -60,7 +59,7 @@ class ShareLocationProvider extends EventProvider {
     });
 
     allShareLocationNotifications.forEach((notification) {
-      AtKey atKey = AtKey.fromString(notification.key);
+      AtKey atKey = BackendService.getInstance().getAtKey(notification.key);
       notification.atKey = atKey;
     });
 
@@ -146,7 +145,8 @@ class ShareLocationProvider extends EventProvider {
             await atClientInstance.getKeys(regex: acknowledgedKeyId);
         print('lenhtg ${allRegexResponses.length}');
         if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
-          AtKey acknowledgedAtKey = AtKey.fromString(allRegexResponses[0]);
+          AtKey acknowledgedAtKey =
+              BackendService.getInstance().getAtKey(allRegexResponses[0]);
 
           AtValue result = await atClientInstance
               .get(acknowledgedAtKey)
@@ -201,7 +201,8 @@ class ShareLocationProvider extends EventProvider {
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Location, key: key[0]);
     //allShareLocationNotifications.add(tempHyridNotificationModel);
-    tempHyridNotificationModel.atKey = AtKey.fromString(key[0]);
+    tempHyridNotificationModel.atKey =
+        BackendService.getInstance().getAtKey(key[0]);
     tempHyridNotificationModel.atValue =
         await getAtValue(tempHyridNotificationModel.atKey);
     tempHyridNotificationModel.locationNotificationModel =

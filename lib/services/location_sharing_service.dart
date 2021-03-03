@@ -130,7 +130,7 @@ class LocationSharingService {
             regex: 'sharelocation-$atkeyMicrosecondId',
           );
 
-      AtKey key = AtKey.fromString(response[0]);
+      AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
       locationNotificationModel.isAcknowledgment = true;
 
@@ -186,7 +186,7 @@ class LocationSharingService {
           regex: 'sharelocation-$atkeyMicrosecondId',
         );
 
-    AtKey key = AtKey.fromString(response[0]);
+    AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
     locationNotificationModel.isAcknowledgment = true;
 

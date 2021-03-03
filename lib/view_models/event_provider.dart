@@ -63,7 +63,7 @@ class EventProvider extends BaseModel {
     });
 
     allNotifications.forEach((notification) {
-      AtKey atKey = AtKey.fromString(notification.key);
+      AtKey atKey = BackendService.getInstance().getAtKey(notification.key);
       notification.atKey = atKey;
     });
 
@@ -250,8 +250,10 @@ class EventProvider extends BaseModel {
         for (int j = 0; j < allRegexResponses.length; j++) {
           if (allRegexResponses[j] != null &&
               !allNotifications[i].key.contains('cached')) {
-            AtKey acknowledgedAtKey = AtKey.fromString(allRegexResponses[j]);
-            AtKey createEventAtKey = AtKey.fromString(allNotifications[i].key);
+            AtKey acknowledgedAtKey =
+                BackendService.getInstance().getAtKey(allRegexResponses[j]);
+            AtKey createEventAtKey =
+                BackendService.getInstance().getAtKey(allNotifications[i].key);
 
             AtValue result = await atClientInstance
                 .get(acknowledgedAtKey)
@@ -323,7 +325,7 @@ class EventProvider extends BaseModel {
         List<String> response = await atClientInstance.getKeys(
           regex: '${eventData.key}',
         );
-        AtKey key = AtKey.fromString(response[0]);
+        AtKey key = BackendService.getInstance().getAtKey(response[0]);
         bool result = await updateEvent(eventData, key);
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
@@ -374,7 +376,8 @@ class EventProvider extends BaseModel {
         HybridNotificationModel(NotificationType.Event, key: key[0]);
     eventNotificationModel.key = key[0];
     //allRequestNotifications.add(tempHyridNotificationModel);
-    tempHyridNotificationModel.atKey = AtKey.fromString(key[0]);
+    tempHyridNotificationModel.atKey =
+        BackendService.getInstance().getAtKey(key[0]);
     tempHyridNotificationModel.atValue =
         await getAtValue(tempHyridNotificationModel.atKey);
     tempHyridNotificationModel.eventNotificationModel = eventNotificationModel;
