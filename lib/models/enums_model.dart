@@ -1,4 +1,4 @@
-enum LOC_START_TIME_ENUM { TWO_HOURS, SIXTY_HOURS, THIRTY_HOURS }
+enum LOC_START_TIME_ENUM { TWO_HOURS, SIXTY_MIN, THIRTY_MIN }
 enum LOC_END_TIME_ENUM { TEN_MIN, AFTER_EVERY_ONE_REACHED, AT_EOD }
 
 DateTime startTimeEnumToTimeOfDay(String startTimeEnum, DateTime startTime) {
@@ -12,12 +12,12 @@ DateTime startTimeEnumToTimeOfDay(String startTimeEnum, DateTime startTime) {
       return startTime.subtract(Duration(hours: 2));
       break;
 
-    case 'LOC_START_TIME_ENUM.SIXTY_HOURS':
-      return startTime.subtract(Duration(hours: 6));
+    case 'LOC_START_TIME_ENUM.SIXTY_MIN':
+      return startTime.subtract(Duration(minutes: 60));
       break;
 
-    case 'LOC_START_TIME_ENUM.THIRTY_HOURS':
-      return startTime.subtract(Duration(hours: 3));
+    case 'LOC_START_TIME_ENUM.THIRTY_MIN':
+      return startTime.subtract(Duration(minutes: 30));
       break;
   }
 }

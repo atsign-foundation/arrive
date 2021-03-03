@@ -1,6 +1,5 @@
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/invite_card.dart';
-import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
 import 'package:atsign_location_app/common_components/tiles/text_tile.dart';
 import 'package:atsign_location_app/models/enums_model.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -35,6 +34,9 @@ class _EventTimeSelectionState extends State<EventTimeSelection> {
             // invitedPeopleCount: '10 people invited',
             timeAndDate:
                 '${timeOfDayToString(widget.eventNotificationModel.event.startTime)} on ${dateToString(widget.eventNotificationModel.event.date)}',
+            atSign: widget.eventNotificationModel.atsignCreator,
+            memberCount:
+                '+${widget.eventNotificationModel.group.members.length}',
           ),
           SizedBox(height: 10),
           Divider(),
@@ -64,13 +66,13 @@ class _EventTimeSelectionState extends State<EventTimeSelection> {
                                 break;
                               case 1:
                                 widget.onSelectionChanged(widget.isStartTime
-                                    ? LOC_START_TIME_ENUM.SIXTY_HOURS
+                                    ? LOC_START_TIME_ENUM.SIXTY_MIN
                                     : LOC_END_TIME_ENUM
                                         .AFTER_EVERY_ONE_REACHED);
                                 break;
                               case 2:
                                 widget.onSelectionChanged(widget.isStartTime
-                                    ? LOC_START_TIME_ENUM.THIRTY_HOURS
+                                    ? LOC_START_TIME_ENUM.THIRTY_MIN
                                     : LOC_END_TIME_ENUM.AT_EOD);
                                 break;
                             }
