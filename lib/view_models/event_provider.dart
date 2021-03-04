@@ -100,21 +100,32 @@ class EventProvider extends BaseModel {
   }
 
   convertJsonToEventModel() {
+    List<HybridNotificationModel> tempRemoveEventArray = [];
+
     for (int i = 0; i < allNotifications.length; i++) {
-      if (allNotifications[i].atValue != 'null' &&
-          allNotifications[i].atValue != null) {
-        EventNotificationModel event = EventNotificationModel.fromJson(
-            jsonDecode(allNotifications[i].atValue.value));
+      try {
+        if (allNotifications[i].atValue != 'null' &&
+            allNotifications[i].atValue != null) {
+          EventNotificationModel event = EventNotificationModel.fromJson(
+              jsonDecode(allNotifications[i].atValue.value));
 
-        if (event != null &&
-            // event.isCancelled == false &&
-            event.group.members.length > 0) {
-          event.key = allNotifications[i].key;
+          if (event != null &&
+              // event.isCancelled == false &&
+              event.group.members.length > 0) {
+            event.key = allNotifications[i].key;
 
-          allNotifications[i].eventNotificationModel = event;
+            allNotifications[i].eventNotificationModel = event;
+          }
+        } else {
+          tempRemoveEventArray.add(allNotifications[i]);
         }
+      } catch (e) {
+        tempRemoveEventArray.add(allNotifications[i]);
       }
     }
+
+    allNotifications
+        .removeWhere((element) => tempRemoveEventArray.contains(element));
     // allNotifications.sort((a, b) => b.eventNotificationModel.event.date
     //     .compareTo(a.eventNotificationModel.event.date));
   }
