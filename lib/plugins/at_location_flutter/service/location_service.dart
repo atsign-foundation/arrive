@@ -202,10 +202,20 @@ class LocationService {
     if (_atHybridUsersController != null &&
         !_atHybridUsersController.isClosed) {
       if (userListenerKeyword != null) {
-        hybridUsersList.removeWhere((element) => element.displayName == atsign);
+        hybridUsersList.removeWhere((element) =>
+            ((element.displayName == atsign) &&
+                (element.displayName != myData.displayName)));
+        hybridUsersList.forEach((element) {
+          print('still in users list ${element.displayName}');
+        });
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
-        hybridUsersList.removeWhere((element) => element.displayName == atsign);
+        hybridUsersList.removeWhere((element) =>
+            ((element.displayName == atsign) &&
+                (element.displayName != myData.displayName)));
+        hybridUsersList.forEach((element) {
+          print('still in users list ${element.displayName}');
+        });
         _atHybridUsersController.add(hybridUsersList);
       }
     }
