@@ -71,8 +71,7 @@ class _SideBarState extends State<SideBar> {
     return Drawer(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
-        padding:
-            EdgeInsets.symmetric(horizontal: 30.toWidth, vertical: 0.toHeight),
+        padding: EdgeInsets.symmetric(horizontal: 22, vertical: 0.toHeight),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +136,8 @@ class _SideBarState extends State<SideBar> {
               Icons.contacts_rounded,
               () async {
                 BackendService backendService = BackendService.getInstance();
-                String currentAtSign = await backendService.getAtSign();
+                String currentAtSign =
+                    backendService.atClientInstance.currentAtSign;
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
                     arguments: {
                       'currentAtSign': currentAtSign,
@@ -153,7 +153,8 @@ class _SideBarState extends State<SideBar> {
               Icons.group,
               () async {
                 BackendService backendService = BackendService.getInstance();
-                String currentAtSign = await backendService.getAtSign();
+                String currentAtSign =
+                    backendService.atClientInstance.currentAtSign;
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
                   'currentAtSign': currentAtSign,
                 });
