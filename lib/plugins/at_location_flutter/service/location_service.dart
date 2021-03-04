@@ -230,13 +230,30 @@ class LocationService {
 
   // returns new marker and eta
   addDetails(HybridModel user, {int index}) async {
-    user.marker = buildMarker(user);
-    await _calculateEta(user);
-    if (index != null)
-      hybridUsersList[index] = user;
-    else {
-      hybridUsersList.add(user);
-      showToast('${user.displayName} started sharing their location');
+    try {
+      user.marker = buildMarker(user);
+      await _calculateEta(user);
+      if ((index != null)) {
+        if ((index < hybridUsersList.length)) hybridUsersList[index] = user;
+      } else {
+        bool _continue = true;
+        hybridUsersList.forEach((hybridUser) {
+          if (hybridUser.displayName == user.displayName) {
+            print('hybridUser.displayName == user.displayName');
+            hybridUser = user;
+            _continue = false;
+            return;
+          }
+        });
+        if (_continue) {
+          print('hybridUsersList.add(user);');
+          hybridUsersList.add(user);
+          showToast('${user.displayName} started sharing their location');
+        }
+      }
+    } catch (e) {
+      print(e);
+      showToast('Something went wrong');
     }
   }
 

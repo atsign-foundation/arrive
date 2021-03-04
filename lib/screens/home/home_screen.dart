@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Positioned(bottom: 264.toHeight, child: header()),
               ProviderHandler<HybridProvider>(
                 functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
-                showError: true,
+                showError: false,
                 load: (provider) => provider.getAllHybridEvents(),
                 loaderBuilder: (provider) {
                   return Container(

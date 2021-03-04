@@ -44,23 +44,27 @@ class HybridProvider extends RequestLocationProvider {
 
   getAllHybridEvents() async {
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Loading);
+    try {
+      await super.getAllEvents();
+      await super.getSingleUserLocationSharing();
+      await super.getSingleUserLocationRequest();
 
-    await super.getAllEvents();
-    await super.getSingleUserLocationSharing();
-    await super.getSingleUserLocationRequest();
+      allHybridNotifications = [
+        ...super.allNotifications,
+        ...super.allShareLocationNotifications,
+        ...super.allRequestNotifications
+      ];
 
-    allHybridNotifications = [
-      ...super.allNotifications,
-      ...super.allShareLocationNotifications,
-      ...super.allRequestNotifications
-    ];
+      HomeEventService().setAllEventsList(allHybridNotifications);
+      filterPastEventsFromList();
 
-    HomeEventService().setAllEventsList(allHybridNotifications);
-    filterPastEventsFromList();
-
-    setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
-    findAtSignsToShareLocationWith();
-    initialiseLacationSharing();
+      setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
+      findAtSignsToShareLocationWith();
+      initialiseLacationSharing();
+    } catch (e) {
+      print(e);
+      setStatus(HYBRID_GET_ALL_EVENTS, Status.Error);
+    }
   }
 
   filterPastEventsFromList() {
