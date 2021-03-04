@@ -86,7 +86,7 @@ class EventProvider extends BaseModel {
 
     setStatus(GET_ALL_EVENTS, Status.Done);
 
-    checkForAcknowledgeEvents();
+    updateEventDataAccordingToAcknowledgedData();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -246,7 +246,6 @@ class EventProvider extends BaseModel {
       }
     });
 
-//
     List<String> allRegexResponses = [];
     for (int i = 0; i < allNotifications.length; i++) {
       allRegexResponses = [];
@@ -279,8 +278,6 @@ class EventProvider extends BaseModel {
                 acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
             String evenetKeyId = 'createevent-$atkeyMicrosecondId';
 
-            print('evenetKeyId:${evenetKeyId}');
-
             for (int k = 0; k < allNotifications.length; k++) {
               if (allNotifications[k]
                   .eventNotificationModel
@@ -289,12 +286,14 @@ class EventProvider extends BaseModel {
                 storedEvent = allNotifications[k].eventNotificationModel;
 
                 if (!compareEvents(storedEvent, acknowledgedEvent)) {
-                  acknowledgedEvent.isUpdate = true;
+                  storedEvent.isUpdate = true;
+                  storedEvent.group = acknowledgedEvent.group;
 
                   var updateResult =
-                      await updateEvent(acknowledgedEvent, createEventAtKey);
+                      await updateEvent(storedEvent, createEventAtKey);
+                  print('ack data updated:${storedEvent.title}');
                   if (updateResult is bool && updateResult == true)
-                    mapUpdatedEventDataToWidget(acknowledgedEvent);
+                    mapUpdatedEventDataToWidget(storedEvent);
                 } else {
                   print('matched : no changes');
                 }
