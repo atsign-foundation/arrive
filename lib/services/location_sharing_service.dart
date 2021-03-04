@@ -61,6 +61,7 @@ class LocationSharingService {
           'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.key}');
       return [result, locationNotificationModel];
     } catch (e) {
+      print("error in sendShareLocationEvent $e");
       return [false];
     }
   }
