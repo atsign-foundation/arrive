@@ -111,13 +111,17 @@ class RequestLocationProvider extends ShareLocationProvider {
 
     for (int i = 0; i < allRequestNotifications.length; i++) {
       if ((allRequestNotifications[i].locationNotificationModel == 'null') ||
-          (allRequestNotifications[i].locationNotificationModel == null) ||
-          (allRequestNotifications[i]
-                  .locationNotificationModel
-                  .to
-                  .difference(DateTime.now())
-                  .inMinutes <
-              0)) tempNotification.add(allRequestNotifications[i]);
+          (allRequestNotifications[i].locationNotificationModel == null))
+        tempNotification.add(allRequestNotifications[i]);
+      else {
+        if ((allRequestNotifications[i].locationNotificationModel.to != null) &&
+            (allRequestNotifications[i]
+                        .locationNotificationModel
+                        .to
+                        .difference(DateTime.now()))
+                    .inMinutes <
+                0) tempNotification.add(allRequestNotifications[i]);
+      }
     }
     allRequestNotifications
         .removeWhere((element) => tempNotification.contains(element));

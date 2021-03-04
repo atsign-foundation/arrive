@@ -110,13 +110,18 @@ class ShareLocationProvider extends EventProvider {
       if ((allShareLocationNotifications[i].locationNotificationModel ==
               'null') ||
           (allShareLocationNotifications[i].locationNotificationModel ==
-              null) ||
-          (allShareLocationNotifications[i]
-                  .locationNotificationModel
-                  .to
-                  .difference(DateTime.now())
-                  .inMinutes <
-              0)) tempArray.add(allShareLocationNotifications[i]);
+              null)) {
+        tempArray.add(allShareLocationNotifications[i]);
+      } else {
+        if ((allShareLocationNotifications[i].locationNotificationModel.to !=
+                null) &&
+            (allShareLocationNotifications[i]
+                    .locationNotificationModel
+                    .to
+                    .difference(DateTime.now())
+                    .inMinutes <
+                0)) tempArray.add(allShareLocationNotifications[i]);
+      }
     }
     allShareLocationNotifications
         .removeWhere((element) => tempArray.contains(element));
