@@ -185,10 +185,13 @@ bool isActionRequired(EventNotificationModel event) {
   if (event.group.members.length < 1) return true;
 
   event.group.members.forEach((member) {
+    if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
+    if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
+
     if ((member.tags['isAccepted'] != null &&
             member.tags['isAccepted'] == true) &&
         member.tags['isExited'] == false &&
-        member.atSign == currentAtsign) {
+        member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
       isRequired = false;
     }
   });
@@ -209,9 +212,12 @@ String getActionString(EventNotificationModel event) {
   if (event.group.members.length < 1) return '';
 
   event.group.members.forEach((member) {
+    if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
+    if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
+
     if (member.tags['isExited'] != null &&
         member.tags['isExited'] == true &&
-        member.atSign == currentAtsign) {
+        member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
       label = 'Request declined';
     }
   });

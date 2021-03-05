@@ -171,8 +171,9 @@ class HybridProvider extends RequestLocationProvider {
       LocationNotificationModel location = LocationNotificationModel();
       if (notification.notificationType == NotificationType.Event) {
         if (!notification.eventNotificationModel.isCancelled) {
-          if ((notification.eventNotificationModel.atsignCreator ==
-              currentAtsign)) {
+          if ((notification.eventNotificationModel.atsignCreator
+                  .toLowerCase() ==
+              currentAtsign.toLowerCase())) {
             if (notification.eventNotificationModel.isSharing) {
               location = LocationNotificationModel()
                 ..atsignCreator =
@@ -210,8 +211,9 @@ class HybridProvider extends RequestLocationProvider {
           }
         }
       } else if (notification.notificationType == NotificationType.Location) {
-        if ((notification.locationNotificationModel.atsignCreator ==
-                currentAtsign) &&
+        if ((notification.locationNotificationModel.atsignCreator
+                    .toLowerCase() ==
+                currentAtsign.toLowerCase()) &&
             (notification.locationNotificationModel.isSharing) &&
             (notification.locationNotificationModel.isAccepted) &&
             (!notification.locationNotificationModel.isExited)) {

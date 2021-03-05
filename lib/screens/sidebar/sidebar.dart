@@ -136,8 +136,7 @@ class _SideBarState extends State<SideBar> {
               Icons.contacts_rounded,
               () async {
                 BackendService backendService = BackendService.getInstance();
-                String currentAtSign =
-                    backendService.atClientInstance.currentAtSign;
+                String currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
                     arguments: {
                       'currentAtSign': currentAtSign,
@@ -153,8 +152,7 @@ class _SideBarState extends State<SideBar> {
               Icons.group,
               () async {
                 BackendService backendService = BackendService.getInstance();
-                String currentAtSign =
-                    backendService.atClientInstance.currentAtSign;
+                String currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
                   'currentAtSign': currentAtSign,
                 });

@@ -151,13 +151,17 @@ class EventProvider extends BaseModel {
           .atClient
           .currentAtSign;
 
-      if (eventData.atsignCreator == currentAtsign) {
+      if (eventData.atsignCreator.toLowerCase() ==
+          currentAtsign.toLowerCase()) {
         eventData.isSharing =
             isSharing != null ? isSharing : eventData.isSharing;
       }
 
       eventData.group.members.forEach((member) {
-        if (member.atSign == currentAtsign) {
+        if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
+        if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
+
+        if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
           member.tags['isAccepted'] =
               isAccepted != null ? isAccepted : member.tags['isAccepted'];
           member.tags['isSharing'] =
@@ -170,12 +174,8 @@ class EventProvider extends BaseModel {
       AtKey key = formAtKey(keyType, atkeyMicrosecondId,
           eventData.atsignCreator, currentAtsign, event);
 
-      // print('event key:${key} , keyType:${keyType}');
-
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-      print(
-          'update event data:${eventData.group.members.elementAt(0).tags['isSharing']}');
 
       print('notification data:${notification}');
       var result = await atClientInstance.put(key, notification);
@@ -201,6 +201,7 @@ class EventProvider extends BaseModel {
           if (event.notificationType == NotificationType.Event &&
               event.key == eventData.key) {
             atKey = event.atKey;
+            atKey.metadata.ttr = -1;
           }
         });
         return atKey;
