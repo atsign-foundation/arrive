@@ -33,7 +33,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: SizeConfig().screenHeight * 0.4,
+      height: 400,
       padding: EdgeInsets.all(25),
       child: Column(
         mainAxisSize: MainAxisSize.min,

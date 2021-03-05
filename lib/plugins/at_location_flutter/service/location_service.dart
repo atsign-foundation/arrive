@@ -202,10 +202,20 @@ class LocationService {
     if (_atHybridUsersController != null &&
         !_atHybridUsersController.isClosed) {
       if (userListenerKeyword != null) {
-        hybridUsersList.removeWhere((element) => element.displayName == atsign);
+        hybridUsersList.removeWhere((element) =>
+            ((element.displayName == atsign) &&
+                (element.displayName != myData.displayName)));
+        hybridUsersList.forEach((element) {
+          print('still in users list ${element.displayName}');
+        });
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
-        hybridUsersList.removeWhere((element) => element.displayName == atsign);
+        hybridUsersList.removeWhere((element) =>
+            ((element.displayName == atsign) &&
+                (element.displayName != myData.displayName)));
+        hybridUsersList.forEach((element) {
+          print('still in users list ${element.displayName}');
+        });
         _atHybridUsersController.add(hybridUsersList);
       }
     }
@@ -230,13 +240,30 @@ class LocationService {
 
   // returns new marker and eta
   addDetails(HybridModel user, {int index}) async {
-    user.marker = buildMarker(user);
-    await _calculateEta(user);
-    if (index != null)
-      hybridUsersList[index] = user;
-    else {
-      hybridUsersList.add(user);
-      showToast('${user.displayName} started sharing their location');
+    try {
+      user.marker = buildMarker(user);
+      await _calculateEta(user);
+      if ((index != null)) {
+        if ((index < hybridUsersList.length)) hybridUsersList[index] = user;
+      } else {
+        bool _continue = true;
+        hybridUsersList.forEach((hybridUser) {
+          if (hybridUser.displayName == user.displayName) {
+            print('hybridUser.displayName == user.displayName');
+            hybridUser = user;
+            _continue = false;
+            return;
+          }
+        });
+        if (_continue) {
+          print('hybridUsersList.add(user);');
+          hybridUsersList.add(user);
+          showToast('${user.displayName} started sharing their location');
+        }
+      }
+    } catch (e) {
+      print(e);
+      showToast('Something went wrong');
     }
   }
 

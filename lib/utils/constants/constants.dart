@@ -19,8 +19,8 @@ class MixedConstants {
 
   static List<String> startTimeOptions = [
     '2 hours before the event',
-    '60 hours before the event',
-    '30 hours before the event'
+    '60 minutes before the event',
+    '30 minutes before the event'
   ];
 
   static List<String> endTimeOptions = [

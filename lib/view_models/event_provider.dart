@@ -63,7 +63,7 @@ class EventProvider extends BaseModel {
     });
 
     allNotifications.forEach((notification) {
-      AtKey atKey = AtKey.fromString(notification.key);
+      AtKey atKey = BackendService.getInstance().getAtKey(notification.key);
       notification.atKey = atKey;
     });
 
@@ -86,7 +86,7 @@ class EventProvider extends BaseModel {
 
     setStatus(GET_ALL_EVENTS, Status.Done);
 
-    checkForAcknowledgeEvents();
+    updateEventDataAccordingToAcknowledgedData();
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -100,21 +100,32 @@ class EventProvider extends BaseModel {
   }
 
   convertJsonToEventModel() {
+    List<HybridNotificationModel> tempRemoveEventArray = [];
+
     for (int i = 0; i < allNotifications.length; i++) {
-      if (allNotifications[i].atValue != 'null' &&
-          allNotifications[i].atValue != null) {
-        EventNotificationModel event = EventNotificationModel.fromJson(
-            jsonDecode(allNotifications[i].atValue.value));
+      try {
+        if (allNotifications[i].atValue != 'null' &&
+            allNotifications[i].atValue != null) {
+          EventNotificationModel event = EventNotificationModel.fromJson(
+              jsonDecode(allNotifications[i].atValue.value));
 
-        if (event != null &&
-            // event.isCancelled == false &&
-            event.group.members.length > 0) {
-          event.key = allNotifications[i].key;
+          if (event != null &&
+              // event.isCancelled == false &&
+              event.group.members.length > 0) {
+            event.key = allNotifications[i].key;
 
-          allNotifications[i].eventNotificationModel = event;
+            allNotifications[i].eventNotificationModel = event;
+          }
+        } else {
+          tempRemoveEventArray.add(allNotifications[i]);
         }
+      } catch (e) {
+        tempRemoveEventArray.add(allNotifications[i]);
       }
     }
+
+    allNotifications
+        .removeWhere((element) => tempRemoveEventArray.contains(element));
     // allNotifications.sort((a, b) => b.eventNotificationModel.event.date
     //     .compareTo(a.eventNotificationModel.event.date));
   }
@@ -235,7 +246,6 @@ class EventProvider extends BaseModel {
       }
     });
 
-//
     List<String> allRegexResponses = [];
     for (int i = 0; i < allNotifications.length; i++) {
       allRegexResponses = [];
@@ -250,8 +260,10 @@ class EventProvider extends BaseModel {
         for (int j = 0; j < allRegexResponses.length; j++) {
           if (allRegexResponses[j] != null &&
               !allNotifications[i].key.contains('cached')) {
-            AtKey acknowledgedAtKey = AtKey.fromString(allRegexResponses[j]);
-            AtKey createEventAtKey = AtKey.fromString(allNotifications[i].key);
+            AtKey acknowledgedAtKey =
+                BackendService.getInstance().getAtKey(allRegexResponses[j]);
+            AtKey createEventAtKey =
+                BackendService.getInstance().getAtKey(allNotifications[i].key);
 
             AtValue result = await atClientInstance
                 .get(acknowledgedAtKey)
@@ -266,8 +278,6 @@ class EventProvider extends BaseModel {
                 acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
             String evenetKeyId = 'createevent-$atkeyMicrosecondId';
 
-            print('evenetKeyId:${evenetKeyId}');
-
             for (int k = 0; k < allNotifications.length; k++) {
               if (allNotifications[k]
                   .eventNotificationModel
@@ -276,12 +286,14 @@ class EventProvider extends BaseModel {
                 storedEvent = allNotifications[k].eventNotificationModel;
 
                 if (!compareEvents(storedEvent, acknowledgedEvent)) {
-                  acknowledgedEvent.isUpdate = true;
+                  storedEvent.isUpdate = true;
+                  storedEvent.group = acknowledgedEvent.group;
 
                   var updateResult =
-                      await updateEvent(acknowledgedEvent, createEventAtKey);
+                      await updateEvent(storedEvent, createEventAtKey);
+                  print('ack data updated:${storedEvent.title}');
                   if (updateResult is bool && updateResult == true)
-                    mapUpdatedEventDataToWidget(acknowledgedEvent);
+                    mapUpdatedEventDataToWidget(storedEvent);
                 } else {
                   print('matched : no changes');
                 }
@@ -323,7 +335,7 @@ class EventProvider extends BaseModel {
         List<String> response = await atClientInstance.getKeys(
           regex: '${eventData.key}',
         );
-        AtKey key = AtKey.fromString(response[0]);
+        AtKey key = BackendService.getInstance().getAtKey(response[0]);
         bool result = await updateEvent(eventData, key);
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
@@ -374,7 +386,8 @@ class EventProvider extends BaseModel {
         HybridNotificationModel(NotificationType.Event, key: key[0]);
     eventNotificationModel.key = key[0];
     //allRequestNotifications.add(tempHyridNotificationModel);
-    tempHyridNotificationModel.atKey = AtKey.fromString(key[0]);
+    tempHyridNotificationModel.atKey =
+        BackendService.getInstance().getAtKey(key[0]);
     tempHyridNotificationModel.atValue =
         await getAtValue(tempHyridNotificationModel.atKey);
     tempHyridNotificationModel.eventNotificationModel = eventNotificationModel;

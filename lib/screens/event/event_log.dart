@@ -66,13 +66,15 @@ class _EventLogState extends State<EventLog> {
                               // text: 'Upcoming',
                               child: Text(
                                 'Upcoming',
-                                style: CustomTextStyles().boldLabel16,
+                                style: TextStyle(
+                                    fontSize: 16.toFont, letterSpacing: 1),
                               ),
                             ),
                             Tab(
                               // text: 'Past',
                               child: Text('Past',
-                                  style: CustomTextStyles().boldLabel16),
+                                  style: TextStyle(
+                                      fontSize: 16.toFont, letterSpacing: 1)),
                             )
                           ],
                         ),

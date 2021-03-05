@@ -35,7 +35,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: SizeConfig().screenHeight * 0.5,
+      height: 500,
       padding: EdgeInsets.all(25),
       child: Column(
         mainAxisSize: MainAxisSize.min,

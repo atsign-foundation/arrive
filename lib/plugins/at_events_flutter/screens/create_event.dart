@@ -103,6 +103,7 @@ class _CreateEventState extends State<CreateEvent> {
                                         MaterialPageRoute(
                                           builder: (context) => ContactsScreen(
                                             asSelectionScreen: true,
+                                            asSingleSelectionScreen: true,
                                             context: context,
                                             selectedList: (selectedList) {
                                               selectedContactList =

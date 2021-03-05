@@ -133,7 +133,7 @@ class _SplashState extends State<Splash> {
               bottom: 32.toHeight,
               left: 16.toWidth,
               child: Text(
-                ' The @ Company Copyright 2020',
+                ' The @ Company Copyright 2021',
                 style: CustomTextStyles().darkGrey13,
               ),
             ),

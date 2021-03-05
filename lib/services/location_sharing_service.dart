@@ -1,14 +1,5 @@
-import 'dart:convert';
-
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
-
-import 'package:atsign_location_app/services/nav_service.dart';
-import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'backend_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
@@ -70,6 +61,7 @@ class LocationSharingService {
           'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.key}');
       return [result, locationNotificationModel];
     } catch (e) {
+      print("error in sendShareLocationEvent $e");
       return [false];
     }
   }
@@ -130,7 +122,7 @@ class LocationSharingService {
             regex: 'sharelocation-$atkeyMicrosecondId',
           );
 
-      AtKey key = AtKey.fromString(response[0]);
+      AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
       locationNotificationModel.isAcknowledgment = true;
 
@@ -140,6 +132,18 @@ class LocationSharingService {
           LocationNotificationModel.convertLocationNotificationToJson(
               locationNotificationModel);
 
+      if ((locationNotificationModel.from != null) &&
+          (locationNotificationModel.to != null)) {
+        key.metadata.ttl = locationNotificationModel.to
+                .difference(locationNotificationModel.from)
+                .inMinutes *
+            60000;
+        key.metadata.ttr = locationNotificationModel.to
+                .difference(locationNotificationModel.from)
+                .inMinutes *
+            60000;
+        key.metadata.expiresAt = locationNotificationModel.to;
+      }
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
@@ -186,7 +190,7 @@ class LocationSharingService {
           regex: 'sharelocation-$atkeyMicrosecondId',
         );
 
-    AtKey key = AtKey.fromString(response[0]);
+    AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
     locationNotificationModel.isAcknowledgment = true;
 
