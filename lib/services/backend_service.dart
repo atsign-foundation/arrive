@@ -269,8 +269,18 @@ class BackendService {
 
     presentEventData.group.members.forEach((presentGroupMember) {
       acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
-        if (acknowledgedGroupMember.atSign == presentGroupMember.atSign &&
-            acknowledgedGroupMember.atSign == fromAtSign) {
+        if (acknowledgedGroupMember.atSign[0] != '@')
+          acknowledgedGroupMember.atSign = '@' + acknowledgedGroupMember.atSign;
+
+        if (presentGroupMember.atSign[0] != '@')
+          presentGroupMember.atSign = '@' + presentGroupMember.atSign;
+
+        if (fromAtSign[0] != '@') fromAtSign = '@' + fromAtSign;
+
+        if (acknowledgedGroupMember.atSign.toLowerCase() ==
+                presentGroupMember.atSign.toLowerCase() &&
+            acknowledgedGroupMember.atSign.toLowerCase() ==
+                fromAtSign.toLowerCase()) {
           presentGroupMember.tags = acknowledgedGroupMember.tags;
         }
       });
@@ -290,6 +300,7 @@ class BackendService {
   }
 
   mapUpdatedDataToWidget(HybridNotificationModel notification) {
+    print('map:${notification.eventNotificationModel.group}');
     providerCallback<HybridProvider>(NavService.navKey.currentContext,
         task: (t) => t.mapUpdatedData(notification),
         showLoader: false,
