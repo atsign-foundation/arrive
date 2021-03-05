@@ -157,6 +157,9 @@ class EventProvider extends BaseModel {
       }
 
       eventData.group.members.forEach((member) {
+        if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
+        if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
+
         if (member.atSign == currentAtsign) {
           member.tags['isAccepted'] =
               isAccepted != null ? isAccepted : member.tags['isAccepted'];
@@ -174,8 +177,6 @@ class EventProvider extends BaseModel {
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-      print(
-          'update event data:${eventData.group.members.elementAt(0).tags['isSharing']}');
 
       print('notification data:${notification}');
       var result = await atClientInstance.put(key, notification);
@@ -201,6 +202,7 @@ class EventProvider extends BaseModel {
           if (event.notificationType == NotificationType.Event &&
               event.key == eventData.key) {
             atKey = event.atKey;
+            atKey.metadata.ttr = -1;
           }
         });
         return atKey;
