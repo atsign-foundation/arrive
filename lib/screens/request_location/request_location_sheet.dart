@@ -88,15 +88,17 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
               : SizedBox(),
           Expanded(child: SizedBox()),
           Center(
-            child: CustomButton(
-              child: Text('Request',
-                  style: TextStyle(
-                      color: Theme.of(context).scaffoldBackgroundColor)),
-              onTap: onRequestTap,
-              bgColor: Theme.of(context).primaryColor,
-              width: 164,
-              height: 48,
-            ),
+            child: isLoading
+                ? CircularProgressIndicator()
+                : CustomButton(
+                    child: Text('Request',
+                        style: TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor)),
+                    onTap: onRequestTap,
+                    bgColor: Theme.of(context).primaryColor,
+                    width: 164,
+                    height: 48,
+                  ),
           )
         ],
       ),
