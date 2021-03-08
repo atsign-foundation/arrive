@@ -300,7 +300,6 @@ class BackendService {
   }
 
   mapUpdatedDataToWidget(HybridNotificationModel notification) {
-    print('map:${notification.eventNotificationModel.group}');
     providerCallback<HybridProvider>(NavService.navKey.currentContext,
         task: (t) => t.mapUpdatedData(notification),
         showLoader: false,
@@ -360,8 +359,9 @@ class BackendService {
     AtKey key = BackendService.getInstance().getAtKey(response[1]);
     print('key :${key.key} , ${key}');
 
-    AtValue result = await atClientInstance.get(key).catchError(
-        (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+    AtValue result = await atClientInstance
+        .get(key)
+        .catchError((e) => print("error in get ${e}"));
     print('result - ${result.value}');
 
     EventNotificationModel msg =
