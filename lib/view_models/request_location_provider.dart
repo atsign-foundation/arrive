@@ -161,8 +161,7 @@ class RequestLocationProvider extends ShareLocationProvider {
 
           AtValue result = await atClientInstance
               .get(acknowledgedAtKey)
-              .catchError((e) =>
-                  print("error in get ${e.errorCode} ${e.errorMessage}"));
+              .catchError((e) => print("error in get ${e}"));
 
           LocationNotificationModel acknowledgedEvent =
               LocationNotificationModel.fromJson(jsonDecode(result.value));
@@ -234,8 +233,9 @@ class RequestLocationProvider extends ShareLocationProvider {
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
-    AtValue atvalue = await atClientInstance.get(key).catchError(
-        (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+    AtValue atvalue = await atClientInstance
+        .get(key)
+        .catchError((e) => print("error in get ${e}"));
 
     if (atvalue != null)
       return atvalue;

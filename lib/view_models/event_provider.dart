@@ -90,8 +90,9 @@ class EventProvider extends BaseModel {
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
-    AtValue atvalue = await atClientInstance.get(key).catchError(
-        (e) => print("error in get ${e.errorCode} ${e.errorMessage}"));
+    AtValue atvalue = await atClientInstance
+        .get(key)
+        .catchError((e) => print("error in get ${e}"));
 
     if (atvalue != null)
       return atvalue;
@@ -268,8 +269,7 @@ class EventProvider extends BaseModel {
 
             AtValue result = await atClientInstance
                 .get(acknowledgedAtKey)
-                .catchError((e) =>
-                    print("error in get ${e.errorCode} ${e.errorMessage}"));
+                .catchError((e) => print("error in get ${e}"));
 
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));

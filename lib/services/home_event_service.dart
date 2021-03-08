@@ -104,10 +104,11 @@ class HomeEventService {
                     ? eventNotificationModel.group.members.elementAt(0).atSign
                     : eventNotificationModel.atsignCreator;
           if (isSharing != null) {
-            if (!isSharing) {
+            if (!isSharing && result) {
               Provider.of<HybridProvider>(NavService.navKey.currentContext,
                       listen: false)
                   .removeLocationSharing(locationNotificationModel);
+
               isNullSent = await SendLocationNotification()
                   .sendNull(locationNotificationModel);
             }
