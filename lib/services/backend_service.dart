@@ -70,6 +70,8 @@ class BackendService {
     atClientPreference.hiveStoragePath = path;
     atClientPreference.downloadPath = downloadDirectory.path;
     atClientPreference.outboundConnectionTimeout = MixedConstants.TIME_OUT;
+    atClientPreference.namespace = 'ARRIVE';
+    atClientPreference.syncRegex = 'ARRIVE';
     var result = await atClientServiceInstance.onboard(
       atClientPreference: atClientPreference,
       atsign: atsign,
