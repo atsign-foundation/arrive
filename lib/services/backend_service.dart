@@ -70,8 +70,8 @@ class BackendService {
     atClientPreference.hiveStoragePath = path;
     atClientPreference.downloadPath = downloadDirectory.path;
     atClientPreference.outboundConnectionTimeout = MixedConstants.TIME_OUT;
-    atClientPreference.namespace = 'ARRIVE';
-    atClientPreference.syncRegex = 'ARRIVE';
+    // atClientPreference.namespace = 'ARRIVE';
+    // atClientPreference.syncRegex = 'ARRIVE';
     var result = await atClientServiceInstance.onboard(
       atClientPreference: atClientPreference,
       atsign: atsign,
@@ -250,55 +250,60 @@ class BackendService {
 
   createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
       String fromAtSign) async {
-    String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
-    print(
-        'acknowledged notification received:${acknowledgedEvent} , key:${atKey} , ${eventId}');
+    try {
+      String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
+      print(
+          'acknowledged notification received:${acknowledgedEvent} , key:${atKey} , ${eventId}');
 
-    EventNotificationModel presentEventData;
-    HomeEventService().allEvents.forEach((element) {
-      if (element.key.contains('createevent-$eventId')) {
-        presentEventData = EventNotificationModel.fromJson(jsonDecode(
-            EventNotificationModel.convertEventNotificationToJson(
-                element.eventNotificationModel)));
-      }
-    });
-
-    List<String> response = await atClientInstance.getKeys(
-      regex: 'createevent-$eventId',
-    );
-
-    AtKey key = BackendService.getInstance().getAtKey(response[0]);
-
-    presentEventData.group.members.forEach((presentGroupMember) {
-      acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
-        if (acknowledgedGroupMember.atSign[0] != '@')
-          acknowledgedGroupMember.atSign = '@' + acknowledgedGroupMember.atSign;
-
-        if (presentGroupMember.atSign[0] != '@')
-          presentGroupMember.atSign = '@' + presentGroupMember.atSign;
-
-        if (fromAtSign[0] != '@') fromAtSign = '@' + fromAtSign;
-
-        if (acknowledgedGroupMember.atSign.toLowerCase() ==
-                presentGroupMember.atSign.toLowerCase() &&
-            acknowledgedGroupMember.atSign.toLowerCase() ==
-                fromAtSign.toLowerCase()) {
-          presentGroupMember.tags = acknowledgedGroupMember.tags;
+      EventNotificationModel presentEventData;
+      HomeEventService().allEvents.forEach((element) {
+        if (element.key.contains('createevent-$eventId')) {
+          presentEventData = EventNotificationModel.fromJson(jsonDecode(
+              EventNotificationModel.convertEventNotificationToJson(
+                  element.eventNotificationModel)));
         }
       });
-    });
-    presentEventData.isUpdate = true;
 
-    var notification =
-        EventNotificationModel.convertEventNotificationToJson(presentEventData);
+      List<String> response = await atClientInstance.getKeys(
+        regex: 'createevent-$eventId',
+      );
 
-    print('notification:$notification');
+      AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
-    var result = await atClientInstance.put(key, notification);
-    if (result)
-      mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
-          eventNotificationModel: acknowledgedEvent));
-    print('acknowledgement received:$result');
+      presentEventData.group.members.forEach((presentGroupMember) {
+        acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
+          if (acknowledgedGroupMember.atSign[0] != '@')
+            acknowledgedGroupMember.atSign =
+                '@' + acknowledgedGroupMember.atSign;
+
+          if (presentGroupMember.atSign[0] != '@')
+            presentGroupMember.atSign = '@' + presentGroupMember.atSign;
+
+          if (fromAtSign[0] != '@') fromAtSign = '@' + fromAtSign;
+
+          if (acknowledgedGroupMember.atSign.toLowerCase() ==
+                  presentGroupMember.atSign.toLowerCase() &&
+              acknowledgedGroupMember.atSign.toLowerCase() ==
+                  fromAtSign.toLowerCase()) {
+            presentGroupMember.tags = acknowledgedGroupMember.tags;
+          }
+        });
+      });
+      presentEventData.isUpdate = true;
+
+      var notification = EventNotificationModel.convertEventNotificationToJson(
+          presentEventData);
+
+      print('notification:$notification');
+
+      var result = await atClientInstance.put(key, notification);
+      if (result)
+        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
+            eventNotificationModel: acknowledgedEvent));
+      print('acknowledgement received:$result');
+    } catch (e) {
+      print('error in event acknowledment:$e');
+    }
   }
 
   mapUpdatedDataToWidget(HybridNotificationModel notification) {
@@ -323,69 +328,69 @@ class BackendService {
             locationNotificationModel: locationNotificationModel);
   }
 
-  sendMessage() async {
-    AtKey atKey = AtKey()
-      ..metadata = Metadata()
-      ..metadata.ttr = -1
-      // ..metadata.ttr = 10
-      ..key = "${AllText().MSG_NOTIFY}/${DateTime.now()}"
-      // ..key = "${AllText().LOCATION_NOTIFY}}"
-      ..sharedWith = '@baila82brilliant';
-    print('atKey: ${atKey.metadata}');
+  // sendMessage() async {
+  //   AtKey atKey = AtKey()
+  //     ..metadata = Metadata()
+  //     ..metadata.ttr = -1
+  //     // ..metadata.ttr = 10
+  //     ..key = "${AllText().MSG_NOTIFY}/${DateTime.now()}"
+  //     // ..key = "${AllText().LOCATION_NOTIFY}}"
+  //     ..sharedWith = '@baila82brilliant';
+  //   print('atKey: ${atKey.metadata}');
 
-    var notification = json.encode({
-      'content': 'Hi..',
-      'acknowledged': 'false',
-      'timeStamp': DateTime.now().toString()
-    });
-    // var notification = json.encode({
-    //   'lat': '12',
-    //   'long': '10'
-    //   // 'timeStamp': DateTime.now().toString()
-    // });
-    var result = await atClientInstance.put(atKey, notification);
-    print('send msg result:$result');
-  }
+  //   var notification = json.encode({
+  //     'content': 'Hi..',
+  //     'acknowledged': 'false',
+  //     'timeStamp': DateTime.now().toString()
+  //   });
+  //   // var notification = json.encode({
+  //   //   'lat': '12',
+  //   //   'long': '10'
+  //   //   // 'timeStamp': DateTime.now().toString()
+  //   // });
+  //   var result = await atClientInstance.put(atKey, notification);
+  //   print('send msg result:$result');
+  // }
 
-  getAllNotificationKeys() async {
-    atClientInstance =
-        BackendService.getInstance().atClientServiceInstance.atClient;
-    List<String> response = await atClientInstance.getKeys(
-      regex: '1610648226523619',
-      // sharedBy: '@test_ga3',
-      // sharedWith: '@test_ga3',
-    );
-    print('keys:${response}');
-    print('sharedBy:${response[0]}, ${response[0].contains('cached')}');
+  // getAllNotificationKeys() async {
+  //   atClientInstance =
+  //       BackendService.getInstance().atClientServiceInstance.atClient;
+  //   List<String> response = await atClientInstance.getKeys(
+  //     regex: '1610648226523619',
+  //     // sharedBy: '@test_ga3',
+  //     // sharedWith: '@test_ga3',
+  //   );
+  //   print('keys:${response}');
+  //   print('sharedBy:${response[0]}, ${response[0].contains('cached')}');
 
-    AtKey key = BackendService.getInstance().getAtKey(response[1]);
-    print('key :${key.key} , ${key}');
+  //   AtKey key = BackendService.getInstance().getAtKey(response[1]);
+  //   print('key :${key.key} , ${key}');
 
-    AtValue result = await atClientInstance
-        .get(key)
-        .catchError((e) => print("error in get ${e}"));
-    print('result - ${result.value}');
+  //   AtValue result = await atClientInstance
+  //       .get(key)
+  //       .catchError((e) => print("error in get ${e}"));
+  //   print('result - ${result.value}');
 
-    EventNotificationModel msg =
-        EventNotificationModel.fromJson(jsonDecode(result.value));
+  //   EventNotificationModel msg =
+  //       EventNotificationModel.fromJson(jsonDecode(result.value));
 
-    print(
-        'EventNotificationModel msg:${msg.group.name},members: ${msg.group.members}');
-  }
+  //   print(
+  //       'EventNotificationModel msg:${msg.group.name},members: ${msg.group.members}');
+  // }
 
-  updateNotification() async {
-    List<String> response = await atClientInstance.getKeys(
-      regex: '1610602925484075',
-    );
-    print('response:${response}, ${response.length}');
-    AtKey key0 = BackendService.getInstance().getAtKey(response[0]);
-    AtKey key1 = BackendService.getInstance().getAtKey(response[1]);
-    print('key0 :${key0} ,key1: ${key1}');
+  // updateNotification() async {
+  //   List<String> response = await atClientInstance.getKeys(
+  //     regex: '1610602925484075',
+  //   );
+  //   print('response:${response}, ${response.length}');
+  //   AtKey key0 = BackendService.getInstance().getAtKey(response[0]);
+  //   AtKey key1 = BackendService.getInstance().getAtKey(response[1]);
+  //   print('key0 :${key0} ,key1: ${key1}');
 
-    // var result =
-    //     await atClientInstance.put(key, json.encode({'changed': 'value2'}));
-    // print('update result:${result}');
-  }
+  //   // var result =
+  //   //     await atClientInstance.put(key, json.encode({'changed': 'value2'}));
+  //   // print('update result:${result}');
+  // }
 
   getAtKey(String regexKey) {
     AtKey atKey = AtKey.fromString(regexKey);
