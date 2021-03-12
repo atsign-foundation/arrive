@@ -297,10 +297,13 @@ class BackendService {
 
       print('notification:$notification');
 
-    var result = await atClientInstance.put(key, notification);
-    if (result is bool && result) {
-      mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
-          eventNotificationModel: presentEventData));
+      var result = await atClientInstance.put(key, notification);
+      if (result is bool && result) {
+        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
+            eventNotificationModel: presentEventData));
+      }
+    } catch (e) {
+      print('error in event acknowledgemwnt:$e');
     }
   }
 
