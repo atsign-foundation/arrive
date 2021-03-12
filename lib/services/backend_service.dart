@@ -303,7 +303,7 @@ class BackendService {
             eventNotificationModel: presentEventData));
       }
     } catch (e) {
-      print('error in event acknowledgemwnt:$e');
+      print('error in event acknowledgement: $e');
     }
   }
 
