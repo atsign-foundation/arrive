@@ -149,7 +149,9 @@ class _CreateEventState extends State<CreateEvent> {
                                     height: 50.toHeight,
                                     hintText: 'Title of the event',
                                     initialValue: eventData.title != null
-                                        ? eventData.title
+                                        ? EventService()
+                                            .eventNotificationModel
+                                            .title
                                         : '',
                                     value: (val) {
                                       EventService()

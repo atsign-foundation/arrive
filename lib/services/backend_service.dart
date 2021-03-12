@@ -150,9 +150,10 @@ class BackendService {
               provider.findAtSignsToShareLocationWith();
               provider.initialiseLacationSharing();
             });
-      } else if (eventData.isUpdate)
+      } else if (eventData.isUpdate) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
+      }
     } else if (atKey.toString().contains('eventacknowledged')) {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -293,10 +294,10 @@ class BackendService {
     print('notification:$notification');
 
     var result = await atClientInstance.put(key, notification);
-    if (result)
+    if (result is bool && result) {
       mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
-          eventNotificationModel: acknowledgedEvent));
-    print('acknowledgement received:$result');
+          eventNotificationModel: presentEventData));
+    }
   }
 
   mapUpdatedDataToWidget(HybridNotificationModel notification) {
