@@ -70,23 +70,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
 
   Widget forEvent(bool expanded, BuildContext context,
       {ValueChanged onLocationOff}) {
-    if (widget.isAdmin) {
-      if (LocationService().eventListenerKeyword.isSharing)
-        isSharingEvent = true;
-    } else {
-      if (LocationService().eventListenerKeyword != null) {
-        if (LocationService()
-                .eventListenerKeyword
-                .group
-                .members
-                .elementAt(0)
-                .tags['isSharing'] ==
-            true) {
-          isSharingEvent = true;
-        }
-      }
-    }
-
     return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,10 +176,16 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   borderRadius: BorderRadius.circular(20.0),
                                   color: AllColors().ORANGE,
                                 ),
-                                child: Icon(
-                                  Icons.send_outlined,
-                                  color: AllColors().WHITE,
-                                  size: 25,
+                                child: InkWell(
+                                  onTap: () {
+                                    print(
+                                        'event data:${EventNotificationModel.convertEventNotificationToJson(snapshot.data)}');
+                                  },
+                                  child: Icon(
+                                    Icons.send_outlined,
+                                    color: AllColors().WHITE,
+                                    size: 25,
+                                  ),
                                 ),
                               ),
                             )),
@@ -233,164 +222,195 @@ class _CollapsedContentState extends State<CollapsedContent> {
               }),
           expanded
               ? Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Divider(),
-                      Text(
-                        'Address',
-                        style: CustomTextStyles().darkGrey14,
-                      ),
-                      SizedBox(
-                        height: 3,
-                      ),
-                      Flexible(
-                        child: Text(
-                          '${widget.eventListenerKeyword.venue.label}' ??
-                              'Event location',
-                          style: CustomTextStyles().darkGrey14,
-                        ),
-                      ),
-                      Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Share Location',
-                            style: CustomTextStyles().darkGrey16,
-                          ),
-                          Switch(
-                              value: isSharingEvent,
-                              onChanged: (value) async {
-                                LoadingDialog().show();
-                                try {
-                                  print(value);
-                                  if (widget.isAdmin) {
-                                    LocationService()
-                                        .eventListenerKeyword
-                                        .isSharing = value;
-                                  } else {
-                                    LocationService()
-                                        .eventListenerKeyword
-                                        .group
-                                        .members
-                                        .elementAt(0)
-                                        .tags['isSharing'] = value;
-                                  }
-
-                                  print(
-                                      'in collapsed content:${EventNotificationModel.convertEventNotificationToJson(LocationService().eventListenerKeyword)}');
-
-                                  var result = await LocationService()
-                                      .onEventExit(
-                                          isSharing: value,
-                                          keyType: widget.isAdmin
-                                              ? ATKEY_TYPE_ENUM.CREATEEVENT
-                                              : ATKEY_TYPE_ENUM
-                                                  .ACKNOWLEDGEEVENT,
-                                          eventData: LocationService()
-                                              .eventListenerKeyword);
-                                  print('share off:${result}');
-                                  if (result == true) {
-                                    // onLocationOff(value);
-                                    setState(() {
-                                      isSharingEvent = value;
-                                    });
-
-                                    if (widget.isAdmin) {
-                                      LocationService().onEventUpdate(
-                                          LocationService()
-                                              .eventListenerKeyword);
-                                    }
-                                  } else
-                                    CustomToast().show(
-                                        'something went wrong , please try again.',
-                                        context);
-                                  LoadingDialog().hide();
-                                } catch (e) {
-                                  print(e);
-                                  CustomToast().show(
-                                      'something went wrong , please try again.',
-                                      context);
-                                  LoadingDialog().hide();
-                                }
-                              })
-                        ],
-                      ),
-                      Divider(),
-                      widget.isAdmin
-                          ? SizedBox()
-                          : Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  if (widget.eventListenerKeyword.group.members
-                                          .elementAt(0)
-                                          .tags['isExited'] ==
-                                      false) {
-                                    LoadingDialog().show();
-                                    try {
-                                      await LocationService().onEventExit(
-                                          isExited: true,
-                                          keyType: widget.isAdmin
-                                              ? ATKEY_TYPE_ENUM.CREATEEVENT
-                                              : ATKEY_TYPE_ENUM
-                                                  .ACKNOWLEDGEEVENT);
-                                      LoadingDialog().hide();
-                                      Navigator.of(context).pop();
-                                    } catch (e) {
-                                      print(e);
-                                      CustomToast().show(
-                                          'something went wrong , please try again.',
-                                          context);
-                                      LoadingDialog().hide();
-                                    }
-                                  }
-                                },
+                  child: StreamBuilder(
+                      stream: LocationService().eventStream,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<EventNotificationModel> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return SizedBox();
+                        } else {
+                          print(
+                              'in event snapshot:${snapshot.data.group.members.elementAt(0).tags['isSharing']}');
+                          isSharingEvent = false;
+                          if (widget.isAdmin) {
+                            if (snapshot.data.isSharing) isSharingEvent = true;
+                          } else {
+                            if (snapshot.data != null) {
+                              if (snapshot.data.group.members
+                                      .elementAt(0)
+                                      .tags['isSharing'] ==
+                                  true) {
+                                isSharingEvent = true;
+                              }
+                            }
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Divider(),
+                              Text(
+                                'Address',
+                                style: CustomTextStyles().darkGrey14,
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                              Flexible(
                                 child: Text(
-                                  widget.eventListenerKeyword.group.members
-                                              .elementAt(0)
-                                              .tags['isExited'] ==
-                                          true
-                                      ? 'Exited'
-                                      : 'Exit Event',
-                                  style: CustomTextStyles().orange16,
+                                  '${widget.eventListenerKeyword.venue.label}' ??
+                                      'Event location',
+                                  style: CustomTextStyles().darkGrey14,
                                 ),
                               ),
-                            ),
-                      widget.isAdmin ? SizedBox() : Divider(),
-                      widget.isAdmin
-                          ? Expanded(
-                              child: InkWell(
-                                onTap: () async {
-                                  if (!widget
-                                      .eventListenerKeyword.isCancelled) {
-                                    LoadingDialog().show();
-                                    try {
-                                      var result = await LocationService()
-                                          .onEventCancel();
-                                      LoadingDialog().hide();
-                                      Navigator.of(context).pop();
-                                    } catch (e) {
-                                      print(e);
-                                      CustomToast().show(
-                                          'something went wrong , please try again.',
-                                          context);
-                                      LoadingDialog().hide();
-                                    }
-                                  }
-                                },
-                                child: Text(
-                                  widget.eventListenerKeyword.isCancelled
-                                      ? 'Event Cancelled'
-                                      : 'Cancel Event',
-                                  style: CustomTextStyles().orange16,
-                                ),
+                              Divider(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Share Location',
+                                    style: CustomTextStyles().darkGrey16,
+                                  ),
+                                  Switch(
+                                      value: isSharingEvent,
+                                      onChanged: (value) async {
+                                        LoadingDialog().show();
+                                        try {
+                                          print(value);
+                                          if (widget.isAdmin) {
+                                            LocationService()
+                                                .eventListenerKeyword
+                                                .isSharing = value;
+                                          } else {
+                                            LocationService()
+                                                .eventListenerKeyword
+                                                .group
+                                                .members
+                                                .elementAt(0)
+                                                .tags['isSharing'] = value;
+                                          }
+
+                                          var result = await LocationService()
+                                              .onEventExit(
+                                                  isSharing: value,
+                                                  keyType: widget.isAdmin
+                                                      ? ATKEY_TYPE_ENUM
+                                                          .CREATEEVENT
+                                                      : ATKEY_TYPE_ENUM
+                                                          .ACKNOWLEDGEEVENT,
+                                                  eventData: LocationService()
+                                                      .eventListenerKeyword);
+                                          print('share off:${result}');
+                                          if (result == true) {
+                                            // onLocationOff(value);
+
+                                            if (widget.isAdmin) {
+                                              LocationService().onEventUpdate(
+                                                  LocationService()
+                                                      .eventListenerKeyword);
+                                            } else {
+                                              CustomToast().show(
+                                                  'Request to update data is submitted',
+                                                  context);
+                                            }
+                                          } else
+                                            CustomToast().show(
+                                                'something went wrong , please try again.',
+                                                context);
+                                          LoadingDialog().hide();
+                                        } catch (e) {
+                                          print(e);
+                                          CustomToast().show(
+                                              'something went wrong , please try again.',
+                                              context);
+                                          LoadingDialog().hide();
+                                        }
+                                      })
+                                ],
                               ),
-                            )
-                          : SizedBox()
-                    ],
-                  ),
+                              Divider(),
+                              widget.isAdmin
+                                  ? SizedBox()
+                                  : Expanded(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          if (widget.eventListenerKeyword.group
+                                                  .members
+                                                  .elementAt(0)
+                                                  .tags['isExited'] ==
+                                              false) {
+                                            LoadingDialog().show();
+                                            try {
+                                              await LocationService()
+                                                  .onEventExit(
+                                                      isExited: true,
+                                                      keyType: widget.isAdmin
+                                                          ? ATKEY_TYPE_ENUM
+                                                              .CREATEEVENT
+                                                          : ATKEY_TYPE_ENUM
+                                                              .ACKNOWLEDGEEVENT);
+                                              LoadingDialog().hide();
+                                              Navigator.of(context).pop();
+                                            } catch (e) {
+                                              print(e);
+                                              CustomToast().show(
+                                                  'something went wrong , please try again.',
+                                                  context);
+                                              LoadingDialog().hide();
+                                            }
+                                          }
+                                        },
+                                        child: Text(
+                                          widget.eventListenerKeyword.group
+                                                      .members
+                                                      .elementAt(0)
+                                                      .tags['isExited'] ==
+                                                  true
+                                              ? 'Exited'
+                                              : 'Exit Event',
+                                          style: CustomTextStyles().orange16,
+                                        ),
+                                      ),
+                                    ),
+                              widget.isAdmin ? SizedBox() : Divider(),
+                              widget.isAdmin
+                                  ? Expanded(
+                                      child: InkWell(
+                                        onTap: () async {
+                                          if (!widget.eventListenerKeyword
+                                              .isCancelled) {
+                                            LoadingDialog().show();
+                                            try {
+                                              var result =
+                                                  await LocationService()
+                                                      .onEventCancel();
+                                              LoadingDialog().hide();
+                                              Navigator.of(context).pop();
+                                            } catch (e) {
+                                              print(e);
+                                              CustomToast().show(
+                                                  'something went wrong , please try again.',
+                                                  context);
+                                              LoadingDialog().hide();
+                                            }
+                                          }
+                                        },
+                                        child: Text(
+                                          widget.eventListenerKeyword
+                                                  .isCancelled
+                                              ? 'Event Cancelled'
+                                              : 'Cancel Event',
+                                          style: CustomTextStyles().orange16,
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox()
+                            ],
+                          );
+                        }
+                      }),
                 )
               : SizedBox(
                   height: 2,
