@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:at_client_mobile/at_client_mobile.dart';
-import 'package:atsign_authentication_helper/utils/constants.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 
 class BackendService {

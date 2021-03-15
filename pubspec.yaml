@@ -45,6 +45,7 @@ dependencies:
   proj4dart: ^1.0.4
   meta: ^1.1.0
   location: ^3.0.0
+  at_onboarding_flutter: ^1.0.0+1
 
   at_client_mobile: ^1.0.0+3
   at_contact: ^1.0.0
@@ -54,8 +55,6 @@ dependencies:
     path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_group_flutter
   at_contacts_flutter:
     path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_flutter
-  atsign_authentication_helper :
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
   at_chat_flutter:
     path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_chat_flutter
 

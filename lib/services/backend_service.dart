@@ -47,6 +47,7 @@ class BackendService {
   String get currentAtsign => _atsign;
   OutboundConnection monitorConnection;
   Directory downloadDirectory;
+  Map<String, AtClientService> atClientServiceMap = {};
 
   Future<bool> onboard({String atsign}) async {
     atClientServiceInstance = AtClientService();
