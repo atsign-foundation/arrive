@@ -47,6 +47,7 @@ class BackendService {
   String get currentAtsign => _atsign;
   OutboundConnection monitorConnection;
   Directory downloadDirectory;
+  Map<String, AtClientService> atClientServiceMap = {};
 
   Future<bool> onboard({String atsign}) async {
     atClientServiceInstance = AtClientService();
@@ -80,9 +81,23 @@ class BackendService {
     return result;
   }
 
+  Future<AtClientPreference> getAtClientPreference() async {
+    final appDocumentDirectory =
+        await path_provider.getApplicationSupportDirectory();
+    String path = appDocumentDirectory.path;
+    var _atClientPreference = AtClientPreference()
+      ..isLocalStoreRequired = true
+      ..commitLogPath = path
+      // ..namespace = AppConstants.appNamespace
+      ..syncStrategy = SyncStrategy.IMMEDIATE
+      ..rootDomain = MixedConstants.ROOT_DOMAIN
+      ..hiveStoragePath = path;
+    return _atClientPreference;
+  }
+
   ///Fetches atsign from device keychain.
   Future<String> getAtSign() async {
-    return await atClientServiceInstance.getAtSign();
+    return atClientServiceInstance.atClient.currentAtSign;
   }
 
   // ///Fetches privatekey for [atsign] from device keychain.
@@ -152,9 +167,10 @@ class BackendService {
               provider.findAtSignsToShareLocationWith();
               provider.initialiseLacationSharing();
             });
-      } else if (eventData.isUpdate)
+      } else if (eventData.isUpdate) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
+      }
     } else if (atKey.toString().contains('eventacknowledged')) {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
@@ -297,12 +313,12 @@ class BackendService {
       print('notification:$notification');
 
       var result = await atClientInstance.put(key, notification);
-      if (result)
+      if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
-            eventNotificationModel: acknowledgedEvent));
-      print('acknowledgement received:$result');
+            eventNotificationModel: presentEventData));
+      }
     } catch (e) {
-      print('error in event acknowledment:$e');
+      print('error in event acknowledgement: $e');
     }
   }
 
