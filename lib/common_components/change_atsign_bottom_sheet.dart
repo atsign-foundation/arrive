@@ -8,7 +8,10 @@ import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/request_location_provider.dart';
+import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
@@ -64,23 +67,36 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                             .makeAtSignPrimary(atSign);
                         BackendService.getInstance().atClientInstance =
                             backendService.atClientServiceMap[atsign].atClient;
-                        BackendService.getInstance()
-                                .atClientServiceInstance
-                                .atClient =
-                            BackendService.getInstance().atClientInstance;
+                        BackendService.getInstance().atClientServiceInstance =
+                            backendService.atClientServiceMap[atsign];
 
                         // await BackendService.getInstance()
                         //     .onboard(atsign: atSign);
                         BackendService.getInstance().startMonitor();
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                          Provider.of<EventProvider>(context, listen: false)
+                              .init(BackendService.getInstance()
+                                  .atClientServiceInstance
+                                  .atClient);
+                          Provider.of<ShareLocationProvider>(context,
+                                  listen: false)
+                              .init(BackendService.getInstance()
+                                  .atClientServiceInstance
+                                  .atClient);
+                          Provider.of<RequestLocationProvider>(context,
+                                  listen: false)
+                              .init(BackendService.getInstance()
+                                  .atClientServiceInstance
+                                  .atClient);
+                          Provider.of<HybridProvider>(context, listen: false)
+                              .init(BackendService.getInstance()
+                                  .atClientServiceInstance
+                                  .atClient);
+
                           Provider.of<HybridProvider>(context, listen: false)
                               .init(backendService
                                   .atClientServiceMap[atsign].atClient);
-                          providerCallback<HybridProvider>(context,
-                              task: (t) => t.getAllHybridEvents(),
-                              taskName: (t) => t.HYBRID_GET_ALL_EVENTS,
-                              onSuccess: (t) {});
                         });
 
                         SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
