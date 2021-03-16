@@ -32,6 +32,9 @@ class _SplashState extends State<Splash> {
     super.initState();
     authenticating = true;
 
+    BackendService.getInstance().getAtClientPreference().then(
+        (value) => BackendService.getInstance().atClientPreference = value);
+
     _initBackendService();
   }
 
@@ -40,23 +43,41 @@ class _SplashState extends State<Splash> {
     try {
       backendService = BackendService.getInstance();
       backendService.atClientServiceInstance = new AtClientService();
-      backendService = BackendService.getInstance();
-
       var isOnBoard = await backendService.onboard();
-
-      if (isOnBoard != null && isOnBoard == true) {
-        print('on board $isOnBoard');
-        await BackendService.getInstance().startMonitor();
-        if (mounted)
-          setState(() {
-            authenticating = false;
-          });
-        SetupRoutes.push(context, Routes.HOME);
+      String currentAtSign;
+      if (backendService.atClientInstance != null) {
+        currentAtSign = backendService.atClientInstance.currentAtSign;
+      } else {
+        currentAtSign = '';
       }
-      if (mounted)
+
+      if (BackendService.getInstance().atClientPreference != null) {
+        Onboarding(
+          atsign: currentAtSign,
+          context: context,
+          atClientPreference: BackendService.getInstance().atClientPreference,
+          domain: MixedConstants.ROOT_DOMAIN,
+          onboard: (value, atsign) async {
+            print('_initBackendService onboarded: ${value} , atsign:${atsign}');
+            BackendService.getInstance().atClientServiceMap = value;
+            await BackendService.getInstance().onboard();
+            BackendService.getInstance().startMonitor();
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          },
+          onError: (error) {
+            print('_initBackendService error in onboarding: ${error}');
+          },
+        );
+      } else {
         setState(() {
           authenticating = false;
         });
+      }
 
       SystemChannels.lifecycle.setMessageHandler((msg) {
         print('set message handler');

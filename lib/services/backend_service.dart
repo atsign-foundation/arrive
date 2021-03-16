@@ -81,9 +81,23 @@ class BackendService {
     return result;
   }
 
+  Future<AtClientPreference> getAtClientPreference() async {
+    final appDocumentDirectory =
+        await path_provider.getApplicationSupportDirectory();
+    String path = appDocumentDirectory.path;
+    var _atClientPreference = AtClientPreference()
+      ..isLocalStoreRequired = true
+      ..commitLogPath = path
+      // ..namespace = AppConstants.appNamespace
+      ..syncStrategy = SyncStrategy.ONDEMAND
+      ..rootDomain = MixedConstants.ROOT_DOMAIN
+      ..hiveStoragePath = path;
+    return _atClientPreference;
+  }
+
   ///Fetches atsign from device keychain.
   Future<String> getAtSign() async {
-    return await atClientServiceInstance.getAtSign();
+    return atClientServiceInstance.atClient.currentAtSign;
   }
 
   // ///Fetches privatekey for [atsign] from device keychain.

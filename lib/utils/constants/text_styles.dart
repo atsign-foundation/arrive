@@ -129,6 +129,13 @@ class CustomTextStyles {
     fontSize: 14.toFont,
   );
 
+  static TextStyle whiteBold({int size = 16}) => TextStyle(
+        color: Colors.white,
+        fontSize: size.toFont,
+        letterSpacing: 0.1,
+        fontWeight: FontWeight.w700,
+      );
+
   // copied from atmosphere app
 
 }

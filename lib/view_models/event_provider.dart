@@ -47,6 +47,8 @@ class EventProvider extends BaseModel {
       regex: 'createevent-',
     );
 
+    print('get all events: ${response}');
+
     if (response.length == 0) {
       setStatus(GET_ALL_EVENTS, Status.Done);
       return;
@@ -147,10 +149,8 @@ class EventProvider extends BaseModel {
       String atkeyMicrosecondId =
           eventData.key.split('createevent-')[1].split('@')[0];
 
-      String currentAtsign = BackendService.getInstance()
-          .atClientServiceInstance
-          .atClient
-          .currentAtSign;
+      String currentAtsign =
+          BackendService.getInstance().atClientInstance.currentAtSign;
 
       if (eventData.atsignCreator.toLowerCase() ==
           currentAtsign.toLowerCase()) {
