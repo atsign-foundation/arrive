@@ -27,6 +27,11 @@ class RequestLocationProvider extends ShareLocationProvider {
   String MAP_UPDATED_REQUEST_LOCATION_DATA = 'map_updated_request_event';
 
   init(AtClientImpl clientInstance) {
+    reset(GET_ALL_REQUEST_EVENTS);
+    reset(CHECK_REQUEST_ACKNOWLEDGED_EVENT);
+    reset(ADD_REQUEST_EVENT);
+    reset(MAP_UPDATED_REQUEST_LOCATION_DATA);
+
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
     allRequestNotifications = [];

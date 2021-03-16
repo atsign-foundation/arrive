@@ -33,6 +33,11 @@ class EventProvider extends BaseModel {
 
   init(AtClientImpl clientInstance) {
     print('event clientInstance $clientInstance');
+    reset(GET_ALL_EVENTS);
+    reset(UPDATE_EVENTS);
+    reset(CHECK_ACKNOWLEDGED_EVENT);
+    reset(MAP_UPDATED_EVENTS);
+    reset(GET_SINGLE_USER);
 
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
