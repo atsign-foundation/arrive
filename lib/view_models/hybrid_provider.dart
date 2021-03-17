@@ -40,14 +40,19 @@ class HybridProvider extends RequestLocationProvider {
     allPastEventNotifications = [];
     shareLocationData = [];
     super.init(clientInstance);
+    reset(HYBRID_GET_ALL_EVENTS);
+    reset(HYBRID_CHECK_ACKNOWLEDGED_EVENT);
+    reset(HYBRID_ADD_EVENT);
+    reset(HYBRID_MAP_UPDATED_EVENT_DATA);
+    reset(FIND_ATSIGNS_TO_SHARE_WITH);
   }
 
   getAllHybridEvents() async {
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Loading);
     try {
-      await super.getAllEvents();
       await super.getSingleUserLocationSharing();
       await super.getSingleUserLocationRequest();
+      await super.getAllEvents();
 
       allHybridNotifications = [
         ...super.allNotifications,

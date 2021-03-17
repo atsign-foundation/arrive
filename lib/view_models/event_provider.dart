@@ -33,6 +33,11 @@ class EventProvider extends BaseModel {
 
   init(AtClientImpl clientInstance) {
     print('event clientInstance $clientInstance');
+    reset(GET_ALL_EVENTS);
+    reset(UPDATE_EVENTS);
+    reset(CHECK_ACKNOWLEDGED_EVENT);
+    reset(MAP_UPDATED_EVENTS);
+    reset(GET_SINGLE_USER);
 
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
@@ -46,6 +51,8 @@ class EventProvider extends BaseModel {
     List<String> response = await atClientInstance.getKeys(
       regex: 'createevent-',
     );
+
+    print('get all events: ${response}');
 
     if (response.length == 0) {
       setStatus(GET_ALL_EVENTS, Status.Done);
@@ -147,10 +154,8 @@ class EventProvider extends BaseModel {
       String atkeyMicrosecondId =
           eventData.key.split('createevent-')[1].split('@')[0];
 
-      String currentAtsign = BackendService.getInstance()
-          .atClientServiceInstance
-          .atClient
-          .currentAtSign;
+      String currentAtsign =
+          BackendService.getInstance().atClientInstance.currentAtSign;
 
       if (eventData.atsignCreator.toLowerCase() ==
           currentAtsign.toLowerCase()) {

@@ -27,6 +27,10 @@ class ShareLocationProvider extends EventProvider {
   String MAP_UPDATED_LOCATION_DATA = 'map_updated_event';
 
   init(AtClientImpl clientInstance) {
+    reset(GET_ALL_EVENTS);
+    reset(ADD_EVENT);
+    reset(CHECK_ACKNOWLEDGED_EVENT);
+    reset(MAP_UPDATED_LOCATION_DATA);
     print('share clientInstance ${clientInstance == null}');
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;

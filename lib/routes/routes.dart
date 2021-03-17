@@ -35,6 +35,7 @@ class SetupRoutes {
         return ContactsScreen(
           asSelectionScreen: args['asSelectionScreen'],
           context: context,
+          onSendIconPressed: args['onSendIconPressed'],
         );
       },
     };

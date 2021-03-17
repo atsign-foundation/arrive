@@ -45,7 +45,9 @@ dependencies:
   proj4dart: ^1.0.4
   meta: ^1.1.0
   geolocator: ^6.2.1
+  at_onboarding_flutter: ^1.0.0+1
 
+  
   at_client_mobile: ^1.0.0+3
   at_contact: ^1.0.0
   at_commons: ^1.0.1+3
