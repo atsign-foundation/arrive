@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     initializeContacts();
-    getMyLocation();
+    _getMyLocation();
     LocationNotificationListener()
         .init(BackendService.getInstance().atClientServiceInstance.atClient);
     eventProvider = context.read<EventProvider>();
@@ -80,8 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
         rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
-  getMyLocation() async {
-    LatLng newMyLatLng = await MyLocation().myLocation();
+  _getMyLocation() async {
+    LatLng newMyLatLng = await getMyLocation();
     if (newMyLatLng != null)
       setState(() {
         myLatLng = newMyLatLng;

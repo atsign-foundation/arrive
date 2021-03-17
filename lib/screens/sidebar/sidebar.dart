@@ -216,7 +216,7 @@ class _SideBarState extends State<SideBar> {
                   value: state,
                   onChanged: (value) async {
                     if (value) {
-                      LatLng latlng = await MyLocation().myLocation();
+                      LatLng latlng = await getMyLocation();
                       if (latlng == null) {
                         CustomToast()
                             .show('Location permission not granted', context);

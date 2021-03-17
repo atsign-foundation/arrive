@@ -44,7 +44,7 @@ dependencies:
   vector_math: ^2.0.0
   proj4dart: ^1.0.4
   meta: ^1.1.0
-  location: ^3.2.4
+  geolocator: ^6.2.1
   at_onboarding_flutter: ^1.0.0+1
 
   
@@ -55,10 +55,11 @@ dependencies:
   at_contacts_group_flutter:
     path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_group_flutter
   at_contacts_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_flutter
+  atsign_authentication_helper :
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
   at_chat_flutter:
     path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_chat_flutter
-
 
 
 dev_dependencies:

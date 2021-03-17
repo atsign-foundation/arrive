@@ -68,7 +68,7 @@ class _SelectLocationState extends State<SelectLocation> {
           SizedBox(height: 18.toHeight),
           InkWell(
               onTap: () async {
-                LatLng point = await MyLocation().myLocation();
+                LatLng point = await getMyLocation();
                 if (point == null) {
                   CustomToast().show('Unable to access location', context);
                   return;

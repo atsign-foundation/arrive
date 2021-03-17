@@ -121,12 +121,13 @@ class LocationService {
 
   addMyDetailsToHybridUsersList() async {
     String _atsign = getAtSign();
-    LatLng mylatlng = await MyLocation().myLocation();
+    LatLng mylatlng = await getMyLocation();
     if (mylatlng == null) {
       showToast('Location permission not granted');
       return;
     }
 
+    // TODO: Do this only once
     var _image = await getImageOfAtsignNew(_atsign);
 
     HybridModel _myData = HybridModel(
@@ -287,6 +288,7 @@ class LocationService {
     }
   }
 
+  // TODO: Dont get any image here, else it will do a lookup everytime we enter the map view
   getImageOfAtsignNew(String atsign) async {
     AtContact contact;
     Uint8List image;
