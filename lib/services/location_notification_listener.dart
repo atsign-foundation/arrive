@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -31,6 +32,7 @@ class LocationNotificationListener {
   // ignore: non_constant_identifier_names
   String LOCATION_NOTIFY = 'locationnotify';
   bool sendLocation;
+  List<KeyLocationModel> allLocationNotifications = [];
 
   StreamController _allUsersController;
   Stream<List<HybridModel>> get atHybridUsersStream =>
@@ -43,6 +45,87 @@ class LocationNotificationListener {
     atClientServiceInstance = AtClientService();
     allUsersList = [];
     _allUsersController = StreamController<List<HybridModel>>.broadcast();
+
+    getAllLocationData();
+  }
+
+  getAllLocationData() async {
+    List<String> response = await atClientInstance.getKeys(
+      regex: '$LOCATION_NOTIFY',
+      //  sharedBy: '@bob🛠'
+    );
+    print('response $response');
+    if (response.length == 0) {
+      return;
+    }
+
+    await Future.forEach(response, (key) async {
+      if ('@$key'.contains('cached')) {
+        AtKey atKey = BackendService.getInstance().getAtKey(key);
+        AtValue value = await getAtValue(atKey);
+        if (value != null) {
+          KeyLocationModel tempKeyLocationModel =
+              KeyLocationModel(key: key, atKey: atKey, atValue: value);
+          allLocationNotifications.add(tempKeyLocationModel);
+        }
+      }
+    });
+
+    convertJsonToLocationModel();
+    filterData();
+
+    createHybridFromKeyLocationModel();
+  }
+
+  convertJsonToLocationModel() {
+    for (int i = 0; i < allLocationNotifications.length; i++) {
+      try {
+        if ((allLocationNotifications[i].atValue.value != null) &&
+            (allLocationNotifications[i].atValue.value != "null")) {
+          LocationNotificationModel locationNotificationModel =
+              LocationNotificationModel.fromJson(
+                  jsonDecode(allLocationNotifications[i].atValue.value));
+          allLocationNotifications[i].locationNotificationModel =
+              locationNotificationModel;
+        }
+      } catch (e) {
+        print('error in convertJsonToLocationModel:$e');
+      }
+    }
+  }
+
+  filterData() {
+    List<KeyLocationModel> tempArray = [];
+    for (int i = 0; i < allLocationNotifications.length; i++) {
+      if ((allLocationNotifications[i].locationNotificationModel == 'null') ||
+          (allLocationNotifications[i].locationNotificationModel == null) ||
+          (allLocationNotifications[i]
+                  .locationNotificationModel
+                  .to
+                  .difference(DateTime.now())
+                  .inMinutes <
+              0)) tempArray.add(allLocationNotifications[i]);
+    }
+    tempArray.forEach((element) {
+      print('removed ${element.key}');
+    });
+    allLocationNotifications
+        .removeWhere((element) => tempArray.contains(element));
+  }
+
+  createHybridFromKeyLocationModel() {
+    allLocationNotifications.forEach((keyLocationModel) async {
+      var _image = await getImageOfAtsignNew(
+          keyLocationModel.locationNotificationModel.atsignCreator);
+      HybridModel user = HybridModel(
+          displayName: keyLocationModel.locationNotificationModel.atsignCreator,
+          latLng: keyLocationModel.locationNotificationModel.getLatLng,
+          image: _image,
+          eta: '?');
+      print('HybridModel named ${user.displayName}');
+      allUsersList.add(user);
+    });
+    atHybridUsersSink.add(allUsersList);
   }
 
   updateShareLocation(bool value) async {
@@ -143,4 +226,29 @@ class LocationNotificationListener {
       return null;
     }
   }
+
+  Future<dynamic> getAtValue(AtKey key) async {
+    try {
+      AtValue atvalue = await atClientInstance
+          .get(key)
+          .catchError((e) => print("error in get ${e}"));
+
+      if (atvalue != null)
+        return atvalue;
+      else
+        return null;
+    } catch (e) {
+      print('getAtValue:$e');
+      return null;
+    }
+  }
+}
+
+class KeyLocationModel {
+  String key;
+  AtKey atKey;
+  AtValue atValue;
+  LocationNotificationModel locationNotificationModel;
+  KeyLocationModel(
+      {this.key, this.atKey, this.atValue, this.locationNotificationModel});
 }

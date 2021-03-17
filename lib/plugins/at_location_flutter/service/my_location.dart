@@ -1,41 +1,30 @@
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
-import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
-import 'package:location/location.dart';
 
-class MyLocation {
-  MyLocation._();
-  static final _instance = MyLocation._();
-  factory MyLocation() => _instance;
+Future<LatLng> getMyLocation() async {
+  bool serviceEnabled;
+  LocationPermission permission;
 
-  Future<LatLng> myLocation() async {
-    Location _location = new Location();
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
-
-    _serviceEnabled = await _location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await _location.requestService();
-      if (!_serviceEnabled) {
-        return null;
-      }
-    }
-    print('_serviceEnabled $_serviceEnabled');
-    _permissionGranted = await _location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return null;
-      }
-    }
-    print('_permissionGranted $_permissionGranted');
-
-    // return LatLng(37.785834, -122.406417);
-
-    _locationData = await _location.getLocation();
-    print('_locationData $_locationData');
-
-    return LatLng(_locationData.latitude, _locationData.longitude);
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // return Future.error('Location services are disabled.');
+    return null;
   }
+
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.deniedForever) {
+      // return Future.error(
+      //     'Location permissions are permanently denied, we cannot request permissions.');
+      return null;
+    }
+
+    if (permission == LocationPermission.denied) {
+      // return Future.error('Location permissions are denied');
+      return null;
+    }
+  }
+  Position position = await Geolocator.getCurrentPosition();
+  return LatLng(position.latitude, position.longitude);
 }

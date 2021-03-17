@@ -2,22 +2,24 @@ import 'dart:async';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
+import 'package:atsign_location_app/routes/route_names.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
-import 'package:location/location.dart';
 
 class SendLocationNotification {
   SendLocationNotification._();
   static SendLocationNotification _instance = SendLocationNotification._();
   factory SendLocationNotification() => _instance;
   Timer timer;
-
   List<LocationNotificationModel> receivingAtsigns;
-
   AtClientImpl atClient;
-
+  StreamSubscription<Position> positionStream;
   init(List<LocationNotificationModel> atsigns, AtClientImpl newAtClient) {
     if ((timer != null) && (timer.isActive)) timer.cancel();
 
@@ -25,35 +27,46 @@ class SendLocationNotification {
     atClient = newAtClient;
     //Location().changeSettings(interval: 10);
     print('receivingAtsigns length - ${receivingAtsigns.length}');
-    updateMyLocation2();
-    // manualLocationSend();
+
+    if (positionStream != null) positionStream.cancel();
+    updateMyLocation();
   }
 
-  updateMyLocation() async {
-    Location().onLocationChanged.listen((event) {
-      print('listening event:${event}');
-      receivingAtsigns.forEach((notification) async {
-        if ((DateTime.now().difference(notification.from) >
-                Duration(seconds: 0)) &&
-            (notification.to.difference(DateTime.now()) >
-                Duration(seconds: 0))) {
-          print('inside forEach');
+  // addMember(String atsign) {
+  //   // send
+  //   // add
+  // }
 
-          notification.lat = event.latitude;
-          notification.long = event.longitude;
-          AtKey atKey = newAtKey(-1, notification.key, notification.receiver);
+  updateMyLocation() async {
+    print('updateMyLocation');
+    positionStream = Geolocator.getPositionStream(distanceFilter: 100)
+        .listen((myLocation) async {
+      receivingAtsigns.forEach((notification) async {
+        bool isSend = false;
+
+        if (notification.to == null)
+          isSend = true;
+        else if ((DateTime.now().difference(notification.from) >
+                Duration(seconds: 0)) &&
+            (notification.to.difference(DateTime.now()) > Duration(seconds: 0)))
+          isSend = true;
+        if (isSend) {
+          notification.lat = myLocation.latitude;
+          notification.long = myLocation.longitude;
+          String atkeyMicrosecondId =
+              notification.key.split('-')[1].split('@')[0];
+          AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
+              notification.receiver);
           try {
             var result = await atClient.put(
                 atKey,
                 LocationNotificationModel.convertLocationNotificationToJson(
                     notification));
-            print('location sent:${result}');
           } catch (e) {
             print('error in sending location: $e');
           }
         }
       });
-      print('completed 1 round');
     });
   }
 
@@ -61,7 +74,7 @@ class SendLocationNotification {
 // SEVERE|2021-01-28 14:25:33.371574|AtClientImpl|error in put: FormatException: Invalid radix-10 number (at character 2)
 //  [{"id"
   updateMyLocation2() async {
-    LatLng myLocation = await MyLocation().myLocation();
+    LatLng myLocation = await getMyLocation();
     // LatLng myLocation = LatLng(lat, long);
     if (receivingAtsigns.length > 0)
       timer = Timer.periodic(Duration(seconds: 5), (Timer t) async {
@@ -93,7 +106,7 @@ class SendLocationNotification {
             }
           });
         }
-        myLocation = await MyLocation().myLocation();
+        myLocation = await getMyLocation();
         // myLocation = LatLng(44, -112);
       });
   }
@@ -172,6 +185,7 @@ class SendLocationNotification {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = ttr
+      ..metadata.ccd = true
       ..key = key
       ..sharedWith = sharedWith
       ..sharedBy = atClient.currentAtSign;
