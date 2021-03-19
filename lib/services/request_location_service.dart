@@ -91,10 +91,18 @@ class RequestLocationService {
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel));
       print('requestLocationAcknowledgment $result');
-      if ((result) && (!isSharing)) {
-        Provider.of<HybridProvider>(NavService.navKey.currentContext,
-                listen: false)
-            .removeLocationSharing(locationNotificationModel);
+      if (result) {
+        // TODO: We have added this here, so that we need not wait for the updated data from the creator
+        if (isSharing)
+          Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                  listen: false)
+              .addMemberToSendingLocationList(BackendService.getInstance()
+                  .convertEventToHybrid(NotificationType.Location,
+                      locationNotificationModel: locationNotificationModel));
+        else
+          Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                  listen: false)
+              .removeLocationSharing(locationNotificationModel.key);
       }
       return result;
     } catch (e) {

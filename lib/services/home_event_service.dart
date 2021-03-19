@@ -104,14 +104,24 @@ class HomeEventService {
                     ? eventNotificationModel.group.members.elementAt(0).atSign
                     : eventNotificationModel.atsignCreator;
           if (isSharing != null) {
+            // For creator => we are calling onEventUpdate so if isSharing becomes true, addMember list gets updated
+            // For group member => if isSharing becomes true => we are waiting for the creator to update the original data & it then gets added to addMember list
             if (!isSharing && result) {
               Provider.of<HybridProvider>(NavService.navKey.currentContext,
                       listen: false)
-                  .removeLocationSharing(locationNotificationModel);
+                  .removeLocationSharing(locationNotificationModel.key);
 
               isNullSent = await SendLocationNotification()
                   .sendNull(locationNotificationModel);
             }
+          }
+          if ((isExited != null) && (isExited && result)) {
+            Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                    listen: false)
+                .removeLocationSharing(locationNotificationModel.key);
+
+            isNullSent = await SendLocationNotification()
+                .sendNull(locationNotificationModel);
           }
 
           return result;

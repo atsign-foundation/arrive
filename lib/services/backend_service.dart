@@ -163,10 +163,7 @@ class BackendService {
                 eventNotificationModel: eventData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {
-              provider.findAtSignsToShareLocationWith();
-              provider.initialiseLacationSharing();
-            });
+            onSuccess: (provider) {});
       } else if (eventData.isUpdate) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
@@ -195,10 +192,7 @@ class BackendService {
                     .isAccepted)), // if isAccepted = true => dont remove, else remove
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
-            onSuccess: (provider) {
-              provider.findAtSignsToShareLocationWith();
-              provider.initialiseLacationSharing();
-            });
+            onSuccess: (provider) {});
 
         print('add this to our list');
       } else {
@@ -328,8 +322,8 @@ class BackendService {
         showLoader: false,
         taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
         onSuccess: (t) {
-          t.findAtSignsToShareLocationWith();
-          t.initialiseLacationSharing();
+          // t.findAtSignsToShareLocationWith();
+          // t.initialiseLacationSharing();
         });
   }
 

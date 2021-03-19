@@ -148,11 +148,12 @@ class LocationSharingService {
           .atClientServiceInstance
           .atClient
           .put(key, notification);
-      if (result)
+      if (result) {
         BackendService.getInstance().mapUpdatedDataToWidget(
             BackendService.getInstance().convertEventToHybrid(
                 NotificationType.Location,
                 locationNotificationModel: locationNotificationModel));
+      }
 
       print('update result - $result');
       return result;

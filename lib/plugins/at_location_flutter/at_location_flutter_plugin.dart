@@ -147,6 +147,10 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           print('point - ${element.point}');
                         });
 
+                        LatLng _center = widget.eventListenerKeyword != null
+                            ? LocationService().eventData.latLng
+                            : LocationService().myData?.latLng;
+
                         return FlutterMap(
                           mapController: mapController,
                           options: MapOptions(
@@ -157,9 +161,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                               widget.right ?? 20,
                               widget.bottom ?? 20,
                             )),
-                            center: widget.eventListenerKeyword != null
-                                ? LocationService().eventData.latLng
-                                : LocationService().myData.latLng,
+                            center: _center,
                             zoom: 8,
                             plugins: [MarkerClusterPlugin(UniqueKey())],
                             onTap: (_) => _popupController

@@ -139,7 +139,16 @@ class LocationService {
       await _calculateEta(myData); //To add eta for the user
 
     hybridUsersList.add(myData);
-    _atHybridUsersController.add(hybridUsersList);
+    // Future.delayed(const Duration(milliseconds: 200), () {
+    //   print('MyDetails added');
+    //   _atHybridUsersController.add(hybridUsersList);
+    // });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _atHybridUsersController.add(hybridUsersList);
+    });
+
+    // _atHybridUsersController.add(hybridUsersList);
 
     atsignsAtMonitor
         ?.remove(myData.displayName); // So, that i dont get my own notification
@@ -164,32 +173,31 @@ class LocationService {
   // called for the first time pckage is entered from main app
   updateHybridList() async {
     if (userListenerKeyword != null) {
-      allUsersList.forEach((user) async {
+      await Future.forEach(allUsersList, (user) async {
         if (user.displayName == userListenerKeyword.atsignCreator)
           await updateDetails(user);
       });
     } else if (eventListenerKeyword != null) {
-      allUsersList.forEach((user) async {
+      await Future.forEach(allUsersList, (user) async {
         if (atsignsAtMonitor.contains(user.displayName))
           await updateDetails(user);
       });
     }
-
     _atHybridUsersController.add(hybridUsersList);
   }
 
   // called when any new/updated data is received in the main app
-  newList(List<HybridModel> allUsersFromMainApp) {
+  newList(List<HybridModel> allUsersFromMainApp) async {
     if (_atHybridUsersController != null &&
         !_atHybridUsersController.isClosed) {
       if (userListenerKeyword != null) {
-        allUsersFromMainApp.forEach((user) async {
+        await Future.forEach(allUsersFromMainApp, (user) async {
           if (user.displayName == userListenerKeyword.atsignCreator)
             await updateDetails(user);
         });
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
-        allUsersFromMainApp.forEach((user) async {
+        await Future.forEach(allUsersFromMainApp, (user) async {
           if (atsignsAtMonitor.contains(user.displayName))
             await updateDetails(user);
         });

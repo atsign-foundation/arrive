@@ -131,10 +131,7 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
               locationNotificationModel: result[1])),
           taskName: (provider) => provider.HYBRID_ADD_EVENT,
           showLoader: false,
-          onSuccess: (provider) {
-            provider.findAtSignsToShareLocationWith();
-            provider.initialiseLacationSharing();
-          });
+          onSuccess: (provider) {});
     } else {
       CustomToast().show('some thing went wrong , try again.', context);
       setState(() {

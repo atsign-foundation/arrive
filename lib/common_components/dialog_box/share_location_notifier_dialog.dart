@@ -309,7 +309,7 @@ class _ShareLocationNotifierDialogState
                                   taskName: (t) => t.UPDATE_EVENTS,
                                   onSuccess: (t) {
                                     Navigator.of(context).pop();
-                                    t.getAllEvents();
+                                    // t.getAllEvents();
                                   }),
                             }
                           : ((!widget.locationData.isRequest)
@@ -376,6 +376,6 @@ updateEvent(EventNotificationModel eventData) {
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();
         Navigator.of(NavService.navKey.currentContext).pop();
-        t.getAllEvents();
+        // t.getAllEvents();
       });
 }
