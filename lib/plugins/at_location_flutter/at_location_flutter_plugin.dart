@@ -261,7 +261,10 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                 maxHeight: widget.userListenerKeyword != null
                     ? ((widget.userListenerKeyword.atsignCreator ==
                             LocationService().getAtSign())
-                        ? 291
+                        ? widget.userListenerKeyword.key
+                                .contains("requestlocation")
+                            ? 240
+                            : 291
                         : 130)
                     : 431,
                 panel: CollapsedContent(UniqueKey(), true, this.isEventAdmin,
