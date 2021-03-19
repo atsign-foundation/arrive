@@ -42,7 +42,7 @@ class _OneDayEventState extends State<OneDayEvent> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    CustomHeading(heading: 'One Day Event', action: 'Cancel'),
+                    CustomHeading(heading: 'Select Timings', action: 'Cancel'),
                     SizedBox(height: 25),
                     Text('Select Date', style: CustomTextStyles().greyLabel14),
                     SizedBox(height: 6.toHeight),

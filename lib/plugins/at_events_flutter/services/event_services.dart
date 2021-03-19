@@ -227,16 +227,16 @@ class EventService {
   dynamic createEventFormValidation() {
     EventNotificationModel eventData = EventService().eventNotificationModel;
     if (eventData.group.members == null || eventData.group.members.length < 1) {
-      return 'add contacts';
+      return 'Add contacts';
     } else if (eventData.title == null || eventData.title.trim().length < 1) {
-      return 'add title';
+      return 'Add title';
     } else if (eventData.venue == null ||
         eventData.venue.label == null ||
         eventData.venue.latitude == null ||
         eventData.venue.longitude == null) {
-      return 'add venue';
+      return 'Add venue';
     } else if (eventData.event.isRecurring == null) {
-      return 'select event type';
+      return 'Select Timings';
     } else if (eventData.event.isRecurring == false &&
         checForOneDayEventFormValidation(eventData) is String) {
       return checForOneDayEventFormValidation(eventData);
