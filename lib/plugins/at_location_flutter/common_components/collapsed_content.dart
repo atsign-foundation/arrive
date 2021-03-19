@@ -569,7 +569,9 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             )
                           : SizedBox(),
                       amICreator ? Divider() : SizedBox(),
-                      amICreator
+                      (amICreator &&
+                              (widget.userListenerKeyword.key
+                                  .contains("sharelocation")))
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {

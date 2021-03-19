@@ -188,7 +188,7 @@ class _CreateEventState extends State<CreateEvent> {
                                                 SizeConfig().screenHeight *
                                                     0.9);
                                           },
-                                          child: Text('One Day Event',
+                                          child: Text('Select Timings',
                                               style: CustomTextStyles()
                                                   .greyLabel14),
                                         ),
@@ -247,52 +247,52 @@ class _CreateEventState extends State<CreateEvent> {
                                           : SizedBox()
                                       : SizedBox(),
                                   SizedBox(height: 20.toHeight),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            bottomSheet(
-                                                context,
-                                                RecurringEvent(),
-                                                SizeConfig().screenHeight *
-                                                    0.9);
-                                          },
-                                          child: Text(
-                                            'Recurring Event',
-                                            style:
-                                                CustomTextStyles().greyLabel14,
-                                          ),
-                                        ),
-                                      ),
-                                      Checkbox(
-                                        value: (EventService()
-                                                        .eventNotificationModel
-                                                        .event
-                                                        .isRecurring !=
-                                                    null &&
-                                                EventService()
-                                                        .eventNotificationModel
-                                                        .event
-                                                        .isRecurring ==
-                                                    true)
-                                            ? true
-                                            : false,
-                                        onChanged: (value) {
-                                          // if (value) {
-                                          //   EventService()
-                                          //       .eventNotificationModel
-                                          //       .event
-                                          //       .isRecurring = value;
+                                  // Row(
+                                  //   children: <Widget>[
+                                  //     Expanded(
+                                  //       child: GestureDetector(
+                                  //         onTap: () {
+                                  //           bottomSheet(
+                                  //               context,
+                                  //               RecurringEvent(),
+                                  //               SizeConfig().screenHeight *
+                                  //                   0.9);
+                                  //         },
+                                  //         child: Text(
+                                  //           'Recurring Event',
+                                  //           style:
+                                  //               CustomTextStyles().greyLabel14,
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //     Checkbox(
+                                  //       value: (EventService()
+                                  //                       .eventNotificationModel
+                                  //                       .event
+                                  //                       .isRecurring !=
+                                  //                   null &&
+                                  //               EventService()
+                                  //                       .eventNotificationModel
+                                  //                       .event
+                                  //                       .isRecurring ==
+                                  //                   true)
+                                  //           ? true
+                                  //           : false,
+                                  //       onChanged: (value) {
+                                  //         // if (value) {
+                                  //         //   EventService()
+                                  //         //       .eventNotificationModel
+                                  //         //       .event
+                                  //         //       .isRecurring = value;
 
-                                          //   EventService().update();
-                                          // }
-                                          bottomSheet(context, RecurringEvent(),
-                                              SizeConfig().screenHeight * 0.9);
-                                        },
-                                      )
-                                    ],
-                                  ),
+                                  //         //   EventService().update();
+                                  //         // }
+                                  //         bottomSheet(context, RecurringEvent(),
+                                  //             SizeConfig().screenHeight * 0.9);
+                                  //       },
+                                  //     )
+                                  //   ],
+                                  // ),
                                   (EventService()
                                                   .eventNotificationModel
                                                   .event

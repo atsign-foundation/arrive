@@ -243,8 +243,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           taskName: (provider) => provider.HYBRID_ADD_EVENT,
                           showLoader: false,
                           onSuccess: (provider) {
-                            provider.findAtSignsToShareLocationWith();
-                            provider.initialiseLacationSharing();
+                            // provider.findAtSignsToShareLocationWith();
+                            // provider.initialiseLacationSharing();
                           });
                     }, createdEvents: allEvents),
                     SizeConfig().screenHeight * 0.9,
