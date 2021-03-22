@@ -43,7 +43,6 @@ class RequestLocationProvider extends ShareLocationProvider {
 
     List<String> requestLocationResponse = await atClientInstance.getKeys(
       regex: 'requestlocation-',
-      // sharedWith: '@test_ga3',
     );
 
     if (requestLocationResponse.length == 0) {
@@ -54,25 +53,20 @@ class RequestLocationProvider extends ShareLocationProvider {
     requestLocationResponse.forEach((key) {
       if (('@${key.split(':')[1]}'.contains(currentAtSign)) ||
           ('@${key.split(':')[0]}'.contains(currentAtSign))) {
-        print('key -> $key');
         HybridNotificationModel tempHyridNotificationModel =
             HybridNotificationModel(NotificationType.Location, key: key);
         allRequestNotifications.add(tempHyridNotificationModel);
-        // allKeys.add(element);
       }
     });
 
     allRequestNotifications.forEach((notification) {
       AtKey atKey = BackendService.getInstance().getAtKey(notification.key);
-      print('atkey -> $atKey');
       notification.atKey = atKey;
     });
 
     for (int i = 0; i < allRequestNotifications.length; i++) {
       AtValue value = await getAtValue(allRequestNotifications[i].atKey);
       if (value != null) {
-        print('notification.value -> $value');
-
         allRequestNotifications[i].atValue = value;
       }
     }
@@ -84,8 +78,6 @@ class RequestLocationProvider extends ShareLocationProvider {
   }
 
   convertJsonToLocationModelRequest() {
-    print(
-        'allRequestNotifications.length -> ${allRequestNotifications.length}');
     for (int i = 0; i < allRequestNotifications.length; i++) {
       if (allRequestNotifications[i].atValue.value != null) {
         LocationNotificationModel locationNotificationModel =
@@ -93,15 +85,11 @@ class RequestLocationProvider extends ShareLocationProvider {
                 jsonDecode(allRequestNotifications[i].atValue.value));
         allRequestNotifications[i].locationNotificationModel =
             locationNotificationModel;
-        print(
-            'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
       }
     }
   }
 
   filterDataRequest() {
-    // check for whether the key has requestAcknowledge or only request
-    // then if i am the creator and exited is true then remove it from my list
     List<HybridNotificationModel> tempNotification = [];
     allRequestNotifications.forEach((notification) {
       if ((notification.locationNotificationModel != null)) {
@@ -115,6 +103,7 @@ class RequestLocationProvider extends ShareLocationProvider {
         .removeWhere((element) => tempNotification.contains(element));
 
     for (int i = 0; i < allRequestNotifications.length; i++) {
+      // ignore: unrelated_type_equality_checks
       if ((allRequestNotifications[i].locationNotificationModel == 'null') ||
           (allRequestNotifications[i].locationNotificationModel == null))
         tempNotification.add(allRequestNotifications[i]);
@@ -141,10 +130,7 @@ class RequestLocationProvider extends ShareLocationProvider {
         onSuccess: (provider) {});
   }
 
-//"@mixedmartialartsexcess:sharelocation-1611303124945962@test_ga4"
   updateEventAccordingToAcknowledgedDataRequest() async {
-    // from all the notifications check whose isAcknowledgment is false
-    // check for sharelocationacknowledged notification with same keyID, if present then update
     setStatus(CHECK_REQUEST_ACKNOWLEDGED_EVENT, Status.Loading);
 
     allRequestNotifications.forEach((notification) async {
@@ -153,20 +139,19 @@ class RequestLocationProvider extends ShareLocationProvider {
           (!notification.locationNotificationModel.isAcknowledgment)) {
         String atkeyMicrosecondId =
             notification.key.split('requestlocation-')[1].split('@')[0];
-        print('atkeyMicrosecondId $atkeyMicrosecondId');
         String acknowledgedKeyId =
             'requestlocationacknowledged-$atkeyMicrosecondId';
 
         List<String> allRegexResponses =
             await atClientInstance.getKeys(regex: acknowledgedKeyId);
-        print('lenhtg ${allRegexResponses.length}');
         if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
           AtKey acknowledgedAtKey =
               BackendService.getInstance().getAtKey(allRegexResponses[0]);
 
           AtValue result = await atClientInstance
               .get(acknowledgedAtKey)
-              .catchError((e) => print("error in get ${e}"));
+              // ignore: return_of_invalid_type_from_catch_error
+              .catchError((e) => print("error in get $e"));
 
           LocationNotificationModel acknowledgedEvent =
               LocationNotificationModel.fromJson(jsonDecode(result.value));
@@ -180,8 +165,6 @@ class RequestLocationProvider extends ShareLocationProvider {
 
   mapUpdatedLocationDataToWidgetRequest(LocationNotificationModel locationData,
       {bool remove = false}) {
-    // TODO: rethink the logic
-    //    When we add a requestLocationAcknowledge then we should remove its equivalent requestLocation key
     setStatus(MAP_UPDATED_REQUEST_LOCATION_DATA, Status.Loading);
     String newLocationDataKeyId =
         locationData.key.split('requestlocation-')[1].split('@')[0];
@@ -192,11 +175,8 @@ class RequestLocationProvider extends ShareLocationProvider {
           allRequestNotifications[i].locationNotificationModel = locationData;
         else
           allRequestNotifications.remove(allRequestNotifications[i]);
-        // if ((locationData.isAccepted)) // if accepted and i am creator
-        //   allRequestNotifications.remove(allRequestNotifications[i]);
       }
     }
-    // TODO: check for request declined
     setStatus(MAP_UPDATED_REQUEST_LOCATION_DATA, Status.Done);
   }
 
@@ -218,13 +198,11 @@ class RequestLocationProvider extends ShareLocationProvider {
     } else {
       key = await atClientInstance.getKeys(
         regex: tempKey,
-        // sharedBy: locationNotificationModel.atsignCreator,
       );
     }
 
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Location, key: key[0]);
-    //allRequestNotifications.add(tempHyridNotificationModel);
     tempHyridNotificationModel.atKey =
         BackendService.getInstance().getAtKey(key[0]);
     tempHyridNotificationModel.atValue =
@@ -240,7 +218,8 @@ class RequestLocationProvider extends ShareLocationProvider {
   Future<dynamic> getAtValue(AtKey key) async {
     AtValue atvalue = await atClientInstance
         .get(key)
-        .catchError((e) => print("error in get ${e}"));
+        // ignore: return_of_invalid_type_from_catch_error
+        .catchError((e) => print("error in get $e"));
 
     if (atvalue != null)
       return atvalue;
