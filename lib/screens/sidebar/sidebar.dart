@@ -65,10 +65,6 @@ class _SideBarState extends State<SideBar> {
 
   @override
   Widget build(BuildContext context) {
-    // state = Provider.of<ThemeProvider>(context, listen: false).isDark == true
-    //     ? true
-    //     : false;
-
     return Drawer(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -182,29 +178,6 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 40.toHeight,
             ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Text(
-            //       'Dark Theme',
-            //       style: CustomTextStyles().darkGrey16,
-            //     ),
-            //     Switch(
-            //       value: state,
-            //       onChanged: (value) {
-            //         value
-            //             ? Provider.of<ThemeProvider>(context, listen: false)
-            //                 .setTheme(ThemeColor.Dark)
-            //             : Provider.of<ThemeProvider>(context, listen: false)
-            //                 .setTheme(ThemeColor.Light);
-
-            //         setState(() {
-            //           state = value;
-            //         });
-            //       },
-            //     )
-            //   ],
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

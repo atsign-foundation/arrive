@@ -70,7 +70,6 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
                                         : (value == '24 hours'
                                             ? (24 * 60)
                                             : null)));
-                                print('hours = $minutes');
                                 onShareLocation();
                               },
                             ),
