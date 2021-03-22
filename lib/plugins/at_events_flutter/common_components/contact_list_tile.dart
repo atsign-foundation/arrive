@@ -58,7 +58,6 @@ class _ContactListTileState extends State<ContactListTile> {
         subtitle: Text(
           widget.atSign,
           style: TextStyle(
-            // color: ColorConstants.fadedText,
             fontSize: 14.toFont,
           ),
         ),

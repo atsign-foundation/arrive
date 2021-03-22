@@ -135,7 +135,4 @@ class CustomTextStyles {
         letterSpacing: 0.1,
         fontWeight: FontWeight.w700,
       );
-
-  // copied from atmosphere app
-
 }

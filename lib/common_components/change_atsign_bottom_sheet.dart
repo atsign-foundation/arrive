@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
@@ -51,7 +50,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                 itemCount: widget.atSignList.length,
                 itemBuilder: (context, index) => GestureDetector(
                   onTap: () async {
-                    await Onboarding(
+                    Onboarding(
                       atsign: widget.atSignList[index],
                       context: context,
                       atClientPreference: atClientPrefernce,
@@ -60,7 +59,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       onboard: (value, atsign) async {
                         backendService.atClientServiceMap = value;
 
-                        String atSign = await backendService
+                        String atSign = backendService
                             .atClientServiceMap[atsign].atClient.currentAtSign;
 
                         await backendService.atClientServiceMap[atsign]
@@ -70,8 +69,6 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                         BackendService.getInstance().atClientServiceInstance =
                             backendService.atClientServiceMap[atsign];
 
-                        // await BackendService.getInstance()
-                        //     .onboard(atsign: atSign);
                         BackendService.getInstance().startMonitor();
 
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -150,7 +147,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                     onboard: (value, atsign) async {
                       backendService.atClientServiceMap = value;
 
-                      String atSign = await backendService
+                      String atSign = backendService
                           .atClientServiceMap[atsign].atClient.currentAtSign;
                       await backendService.atClientServiceMap[atsign]
                           .makeAtSignPrimary(atSign);

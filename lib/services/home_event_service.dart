@@ -36,6 +36,7 @@ class HomeEventService {
 
     if (locationNotificationModel.key.contains('sharelocation'))
       locationNotificationModel.atsignCreator != currentAtsign
+          // ignore: unnecessary_statements
           ? (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
               : BackendService.getInstance().showMyDialog(
@@ -44,11 +45,13 @@ class HomeEventService {
           : navigatorPushToMap(locationNotificationModel);
     else if (locationNotificationModel.key.contains('requestlocation'))
       locationNotificationModel.atsignCreator == currentAtsign
+          // ignore: unnecessary_statements
           ? (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
               : BackendService.getInstance().showMyDialog(
                   locationNotificationModel.atsignCreator,
                   locationData: locationNotificationModel))
+          // ignore: unnecessary_statements
           : (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
               : null);
@@ -63,8 +66,7 @@ class HomeEventService {
           eventData: eventNotificationModel);
     }
 
-    eventNotificationModel.isUpdate =
-        true; //we are updating isUpdate, so we can map event in home screen and not show dialog
+    eventNotificationModel.isUpdate = true;
 
     Navigator.push(
       NavService.navKey.currentContext,
@@ -104,8 +106,6 @@ class HomeEventService {
                     ? eventNotificationModel.group.members.elementAt(0).atSign
                     : eventNotificationModel.atsignCreator;
           if (isSharing != null) {
-            // For creator => we are calling onEventUpdate so if isSharing becomes true, addMember list gets updated
-            // For group member => if isSharing becomes true => we are waiting for the creator to update the original data & it then gets added to addMember list
             if (!isSharing && result) {
               Provider.of<HybridProvider>(NavService.navKey.currentContext,
                       listen: false)

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:at_common_flutter/services/size_config.dart';
-// import 'package:at_common_flutter/widgets/custom_button.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_heading.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
@@ -72,7 +71,6 @@ class _RecurringEventState extends State<RecurringEvent> {
                       eventData.event.repeatDuration = repeatCycle;
                     } else
                       eventData.event.repeatDuration = null;
-                    print('repeat cycle:${eventData.event.repeatDuration}');
                   },
                 ),
                 Container(
@@ -147,8 +145,6 @@ class _RecurringEventState extends State<RecurringEvent> {
                         if (weekday != null) {
                           eventData.event.occursOn = weekday;
                         }
-
-                        print(eventData.event.occursOn);
 
                         setState(() {});
                       },
@@ -338,7 +334,6 @@ class _RecurringEventState extends State<RecurringEvent> {
               width: 350.toWidth,
               height: 50.toHeight,
               hintText: 'Start',
-              // icon: Icons.keyboard_arrow_down,
               initialValue: eventData.event.endEventAfterOccurance != null
                   ? eventData.event.endEventAfterOccurance.toString()
                   : '',

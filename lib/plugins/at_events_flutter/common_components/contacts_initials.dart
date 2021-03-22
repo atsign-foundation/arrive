@@ -24,11 +24,10 @@ class ContactInitial extends StatelessWidget {
             Color.fromARGB(255, r.nextInt(255), r.nextInt(255), r.nextInt(255)),
         borderRadius: BorderRadius.circular(size.toWidth),
       ),
-      // border: Border.all(width: 0.5, color: ColorConstants.fontSecondary)),
       child: Center(
         child: Text(
           initials.toUpperCase(),
-          style: CustomTextStyles.whiteBold16,
+          style: CustomTextStyles().whiteBold16,
         ),
       ),
     );

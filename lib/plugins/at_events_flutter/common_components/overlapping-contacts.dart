@@ -10,6 +10,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/services/event_ser
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
+// ignore: must_be_immutable
 class OverlappingContacts extends StatefulWidget {
   final List<AtContact> selectedList;
   Function onRemove;
@@ -31,6 +32,7 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
             ? setState(() {
                 isExpanded = !isExpanded;
               })
+            // ignore: unnecessary_statements
             : null;
       },
       child: Container(
@@ -82,7 +84,6 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
               left: 40 +
                   double.parse((widget.selectedList.length * 25).toString()),
               child: Row(
-                // mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   (widget.selectedList.isEmpty)
@@ -98,21 +99,16 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                     width: 60.toWidth,
                                     child: Text(
                                       '${widget.selectedList[0].atSign}',
-                                      // style:
-                                      // CustomTextStyles.secondaryRegular14,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   Container(
-                                    // width: 100.toWidth,
                                     child: Text(
                                       widget.selectedList.length - 1 == 0
                                           ? ''
                                           : widget.selectedList.length - 1 == 1
                                               ? ' and ${widget.selectedList.length - 1} other'
                                               : ' and ${widget.selectedList.length - 1} others',
-                                      // style:
-                                      // CustomTextStyles.secondaryRegular14,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   )
@@ -127,7 +123,6 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                       SizedBox(
                         width: 10.toWidth,
                       ),
-                      // Expanded(child: Container()),
                     ],
                   )
                 ],

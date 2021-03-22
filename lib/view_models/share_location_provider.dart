@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 
 import 'package:atsign_location_app/services/location_sharing_service.dart';
@@ -11,7 +10,6 @@ import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
 
-// all the UI related functions will happen here
 class ShareLocationProvider extends EventProvider {
   ShareLocationProvider();
   AtClientImpl atClientInstance;
@@ -31,7 +29,6 @@ class ShareLocationProvider extends EventProvider {
     reset(ADD_EVENT);
     reset(CHECK_ACKNOWLEDGED_EVENT);
     reset(MAP_UPDATED_LOCATION_DATA);
-    print('share clientInstance ${clientInstance == null}');
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
     allShareLocationNotifications = [];
@@ -43,7 +40,6 @@ class ShareLocationProvider extends EventProvider {
 
     List<String> shareLocationResponse = await atClientInstance.getKeys(
       regex: 'sharelocation-',
-      // sharedWith: '@test_ga3',
     );
 
     if (shareLocationResponse.length == 0) {
@@ -54,11 +50,9 @@ class ShareLocationProvider extends EventProvider {
     shareLocationResponse.forEach((key) {
       if (('@${key.split(':')[1]}'.contains(currentAtSign)) ||
           ('@${key.split(':')[0]}'.contains(currentAtSign))) {
-        print('key -> $key');
         HybridNotificationModel tempHyridNotificationModel =
             HybridNotificationModel(NotificationType.Location, key: key);
         allShareLocationNotifications.add(tempHyridNotificationModel);
-        // allKeys.add(element);
       }
     });
 
@@ -70,8 +64,6 @@ class ShareLocationProvider extends EventProvider {
     for (int i = 0; i < allShareLocationNotifications.length; i++) {
       AtValue value = await getAtValue(allShareLocationNotifications[i].atKey);
       if (value != null) {
-        print('notification.value -> $value');
-
         allShareLocationNotifications[i].atValue = value;
       }
     }
@@ -83,8 +75,6 @@ class ShareLocationProvider extends EventProvider {
   }
 
   convertJsonToLocationModel() {
-    print(
-        'allShareLocationNotifications.length -> ${allShareLocationNotifications.length}');
     for (int i = 0; i < allShareLocationNotifications.length; i++) {
       try {
         if ((allShareLocationNotifications[i].atValue.value != null) &&
@@ -94,16 +84,9 @@ class ShareLocationProvider extends EventProvider {
                   jsonDecode(allShareLocationNotifications[i].atValue.value));
           allShareLocationNotifications[i].locationNotificationModel =
               locationNotificationModel;
-          print(
-              'locationNotificationModel $i -> ${locationNotificationModel.getLatLng}');
         }
-        // else {
-        //   allShareLocationNotifications
-        //       .remove(allShareLocationNotifications[i]);
-        // }
       } catch (e) {
         print('convertJsonToLocationModel:$e');
-        // allShareLocationNotifications.remove(allShareLocationNotifications[i]);
       }
     }
   }
@@ -111,6 +94,7 @@ class ShareLocationProvider extends EventProvider {
   filterData() {
     List<HybridNotificationModel> tempArray = [];
     for (int i = 0; i < allShareLocationNotifications.length; i++) {
+      // ignore: unrelated_type_equality_checks
       if ((allShareLocationNotifications[i].locationNotificationModel ==
               'null') ||
           (allShareLocationNotifications[i].locationNotificationModel ==
@@ -129,21 +113,13 @@ class ShareLocationProvider extends EventProvider {
     }
     allShareLocationNotifications
         .removeWhere((element) => tempArray.contains(element));
-
-    tempArray.forEach((element) {
-      print('removed data ${element.key}');
-      print('${element.locationNotificationModel}');
-    });
   }
 
   checkForAcknowledge() {
     updateEventAccordingToAcknowledgedData();
   }
 
-//"@mixedmartialartsexcess:sharelocation-1611303124945962@test_ga4"
   updateEventAccordingToAcknowledgedData() async {
-    // from all the notifications check whose isAcknowledgment is false
-    // check for sharelocationacknowledged notification with same keyID, if present then update
     setStatus(CHECK_ACKNOWLEDGED_EVENT, Status.Loading);
 
     allShareLocationNotifications.forEach((notification) async {
@@ -152,20 +128,19 @@ class ShareLocationProvider extends EventProvider {
           (!notification.locationNotificationModel.isAcknowledgment)) {
         String atkeyMicrosecondId =
             notification.key.split('sharelocation-')[1].split('@')[0];
-        print('atkeyMicrosecondId $atkeyMicrosecondId');
         String acknowledgedKeyId =
             'sharelocationacknowledged-$atkeyMicrosecondId';
 
         List<String> allRegexResponses =
             await atClientInstance.getKeys(regex: acknowledgedKeyId);
-        print('lenhtg ${allRegexResponses.length}');
         if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
           AtKey acknowledgedAtKey =
               BackendService.getInstance().getAtKey(allRegexResponses[0]);
 
           AtValue result = await atClientInstance
               .get(acknowledgedAtKey)
-              .catchError((e) => print("error in get ${e}"));
+              // ignore: return_of_invalid_type_from_catch_error
+              .catchError((e) => print("error in get $e"));
 
           LocationNotificationModel acknowledgedEvent =
               LocationNotificationModel.fromJson(jsonDecode(result.value));
@@ -188,7 +163,6 @@ class ShareLocationProvider extends EventProvider {
             locationData;
       }
     }
-    // TODO: check for request declined
     setStatus(MAP_UPDATED_LOCATION_DATA, Status.Done);
   }
 
@@ -203,7 +177,6 @@ class ShareLocationProvider extends EventProvider {
     if (locationNotificationModel.atsignCreator == currentAtSign) {
       key = await atClientInstance.getKeys(
         regex: tempKey,
-        // sharedWith: locationNotificationModel.receiver,
       );
     } else {
       key = await atClientInstance.getKeys(
@@ -214,7 +187,6 @@ class ShareLocationProvider extends EventProvider {
 
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Location, key: key[0]);
-    //allShareLocationNotifications.add(tempHyridNotificationModel);
     tempHyridNotificationModel.atKey =
         BackendService.getInstance().getAtKey(key[0]);
     tempHyridNotificationModel.atValue =
@@ -222,9 +194,7 @@ class ShareLocationProvider extends EventProvider {
     tempHyridNotificationModel.locationNotificationModel =
         locationNotificationModel;
     allShareLocationNotifications.add(tempHyridNotificationModel);
-    print('addDataToList:${allShareLocationNotifications}');
-    //notifyListeners();r
-    //notify listenres
+
     setStatus(ADD_EVENT, Status.Done);
     return tempHyridNotificationModel;
   }
@@ -233,7 +203,8 @@ class ShareLocationProvider extends EventProvider {
     try {
       AtValue atvalue = await atClientInstance
           .get(key)
-          .catchError((e) => print("error in get ${e}"));
+          // ignore: return_of_invalid_type_from_catch_error
+          .catchError((e) => print("error in get $e"));
 
       if (atvalue != null)
         return atvalue;

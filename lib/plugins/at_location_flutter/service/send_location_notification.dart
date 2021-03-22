@@ -29,18 +29,15 @@ class SendLocationNotification {
   }
 
   addMember(LocationNotificationModel notification) async {
-    print('addMember ${notification.receiver} ${notification.key}');
-
-    print('before adding receivingAtsigns length ${receivingAtsigns.length}');
     receivingAtsigns.forEach((element) {
       print('${element.key}');
     });
     if (receivingAtsigns
             .indexWhere((element) => element.key == notification.key) >
         -1) {
-      print('receivingAtsigns already contain ${notification.key}');
       return;
     }
+
     // send
     bool isMasterSwitchOn =
         await LocationNotificationListener().getShareLocation();
@@ -74,19 +71,11 @@ class SendLocationNotification {
     }
 
     // add
-
     receivingAtsigns.add(notification);
     print('after adding receivingAtsigns length ${receivingAtsigns.length}');
   }
 
   removeMember(String key) async {
-    print('removeMember $key');
-    // TODO: Delete
-    print('before deleting receivingAtsigns length ${receivingAtsigns.length}');
-    receivingAtsigns.forEach((element) {
-      print('${element.key}');
-    });
-
     LocationNotificationModel locationNotificationModel;
     receivingAtsigns.removeWhere((element) {
       if (key.contains(element.key)) locationNotificationModel = element;
@@ -95,22 +84,15 @@ class SendLocationNotification {
     if (locationNotificationModel != null) sendNull(locationNotificationModel);
 
     print('after deleting receivingAtsigns length ${receivingAtsigns.length}');
-    receivingAtsigns.forEach((element) {
-      print('${element.key}');
-    });
   }
 
   updateMyLocation() async {
-    print('updateMyLocation');
     positionStream = Geolocator.getPositionStream(distanceFilter: 100)
         .listen((myLocation) async {
       bool isMasterSwitchOn =
           await LocationNotificationListener().getShareLocation();
       if (isMasterSwitchOn) {
         receivingAtsigns.forEach((notification) async {
-          print('receivingAtSigns content ${notification.key}');
-
-          //TODO: Before sending check for duplicate users (notification with same receiver)
           bool isSend = false;
 
           if (notification.to == null)
@@ -127,7 +109,7 @@ class SendLocationNotification {
             AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
                 notification.receiver);
             try {
-              var result = await atClient.put(
+              await atClient.put(
                   atKey,
                   LocationNotificationModel.convertLocationNotificationToJson(
                       notification));

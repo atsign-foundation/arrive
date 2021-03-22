@@ -16,6 +16,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/location
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CollapsedContent extends StatefulWidget {
   Key key;
   bool expanded, isAdmin;
@@ -61,10 +62,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
           ],
         ),
         child: (widget.eventListenerKeyword != null)
-            ? forEvent(widget.expanded, context, onLocationOff: (void a) {
-                // print('')
-                // setState(() {});
-              })
+            ? forEvent(widget.expanded, context, onLocationOff: (void a) {})
             : forUser(widget.expanded, context));
   }
 
@@ -177,10 +175,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   color: AllColors().ORANGE,
                                 ),
                                 child: InkWell(
-                                  onTap: () {
-                                    print(
-                                        'event data:${EventNotificationModel.convertEventNotificationToJson(snapshot.data)}');
-                                  },
+                                  onTap: () {},
                                   child: Icon(
                                     Icons.send_outlined,
                                     color: AllColors().WHITE,
@@ -230,8 +225,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             ConnectionState.waiting) {
                           return SizedBox();
                         } else {
-                          print(
-                              'in event snapshot:${snapshot.data.group.members.elementAt(0).tags['isSharing']}');
                           isSharingEvent = false;
                           if (widget.isAdmin) {
                             if (snapshot.data.isSharing) isSharingEvent = true;
@@ -278,7 +271,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                       onChanged: (value) async {
                                         LoadingDialog().show();
                                         try {
-                                          print(value);
                                           if (widget.isAdmin) {
                                             LocationService()
                                                 .eventListenerKeyword
@@ -302,10 +294,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                           .ACKNOWLEDGEEVENT,
                                                   eventData: LocationService()
                                                       .eventListenerKeyword);
-                                          print('share off:${result}');
                                           if (result == true) {
-                                            // onLocationOff(value);
-
                                             if (widget.isAdmin) {
                                               LocationService().onEventUpdate(
                                                   LocationService()
@@ -383,9 +372,8 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                               .isCancelled) {
                                             LoadingDialog().show();
                                             try {
-                                              var result =
-                                                  await LocationService()
-                                                      .onEventCancel();
+                                              await LocationService()
+                                                  .onEventCancel();
                                               LoadingDialog().hide();
                                               Navigator.of(context).pop();
                                             } catch (e) {
@@ -511,8 +499,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                       LoadingDialog().show();
                                       try {
                                         var result;
-                                        print(
-                                            "${LocationService().onShareToggle}");
                                         if (widget.userListenerKeyword.key
                                             .contains("sharelocation")) {
                                           result = await LocationService()
@@ -528,7 +514,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                   true,
                                                   isSharing: value);
                                         }
-                                        print('result $result');
                                         if (result) {
                                           if (!value) {
                                             SendLocationNotification().sendNull(
@@ -577,8 +562,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 onTap: () async {
                                   LoadingDialog().show();
                                   try {
-                                    print(
-                                        LocationService().onRemove.toString());
                                     var result = await LocationService()
                                         .onRemove(widget.userListenerKeyword);
                                     if (result) {

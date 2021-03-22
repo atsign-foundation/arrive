@@ -1,7 +1,6 @@
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
-// import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/location_tile.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/selected_location.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
@@ -37,6 +36,7 @@ class _SelectLocationState extends State<SelectLocation> {
                     setState(() {
                       isLoader = true;
                     });
+                    // ignore: await_only_futures
                     await SearchLocationService().getAddressLatLng(str);
                     setState(() {
                       isLoader = false;
@@ -50,6 +50,7 @@ class _SelectLocationState extends State<SelectLocation> {
                     setState(() {
                       isLoader = true;
                     });
+                    // ignore: await_only_futures
                     await SearchLocationService().getAddressLatLng(inputText);
                     setState(() {
                       isLoader = false;

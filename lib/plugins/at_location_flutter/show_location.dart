@@ -7,6 +7,7 @@ import 'package:latlong/latlong.dart';
 import 'map_content/flutter_map/flutter_map.dart';
 import 'map_content/flutter_map_marker_cluster/src/marker_cluster_plugin.dart';
 
+// ignore: must_be_immutable
 class ShowLocation extends StatefulWidget {
   Key key;
   final LatLng location;

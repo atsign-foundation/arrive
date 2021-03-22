@@ -7,7 +7,9 @@ class ApiService {
   Future<dynamic> getRequest(String url, [Map<String, String> header]) async {
     bool val = await ConnectivityService().checkConnectivity();
     if (val) {
-      return http.get(Uri.parse(url), headers: header).then((http.Response response) {
+      return http
+          .get(Uri.parse(url), headers: header)
+          .then((http.Response response) {
         final int statusCode = response.statusCode;
         print(statusCode);
         if (statusCode == 200) {
@@ -114,14 +116,5 @@ class ConnectivityService {
     return connectivity;
   }
 
-  checkInternetConnection() {
-    // Fluttertoast.showToast(
-    //     msg: "Check Internet Connection",
-    //     toastLength: Toast.LENGTH_LONG,
-    //     gravity: ToastGravity.SNACKBAR,
-    //     timeInSecForIosWeb: 4,
-    //     backgroundColor: MyColors().GREY_COLOR,
-    //     textColor: MyColors().WHITE_TEXT_COLOR,
-    //     fontSize: 16.0);
-  }
+  checkInternetConnection() {}
 }

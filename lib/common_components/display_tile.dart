@@ -44,7 +44,6 @@ class _DisplayTileState extends State<DisplayTile> {
         setState(() {
           image = Uint8List.fromList(intList);
           if (widget.showName) name = contact.tags['name'].toString();
-          print('name $name');
         });
       }
     }
