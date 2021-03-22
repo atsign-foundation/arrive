@@ -35,7 +35,6 @@ class HiveDataProvider implements LocalDataProviderContract {
     List whereClauseArgs,
     List<String> keys,
   }) async {
-    // print("table name in delete $table");
     Box box = await _getBox(table);
     // empty box
     if (keys == null || keys.length == 0) {
@@ -50,8 +49,6 @@ class HiveDataProvider implements LocalDataProviderContract {
 
   @override
   Future<void> insertData(String table, Map<dynamic, dynamic> values) async {
-    // print("table name $table");
-    // print("value $values");
     Box box = await _getBox(table);
     if (values != null && values.length != 0)
       values.forEach((k, v) => box.put(k, v));

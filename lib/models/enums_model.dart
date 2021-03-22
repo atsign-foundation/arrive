@@ -1,6 +1,7 @@
 enum LOC_START_TIME_ENUM { TWO_HOURS, SIXTY_MIN, THIRTY_MIN }
 enum LOC_END_TIME_ENUM { TEN_MIN, AFTER_EVERY_ONE_REACHED, AT_EOD }
 
+// ignore: missing_return
 DateTime startTimeEnumToTimeOfDay(String startTimeEnum, DateTime startTime) {
   if (startTimeEnum == null ||
       startTimeEnum.trim().length == 0 ||
@@ -22,6 +23,7 @@ DateTime startTimeEnumToTimeOfDay(String startTimeEnum, DateTime startTime) {
   }
 }
 
+// ignore: missing_return
 DateTime endTimeEnumToTimeOfDay(String endTimeEnum, DateTime endTime) {
   if (endTimeEnum == null ||
       endTimeEnum.trim().length == 0 ||
