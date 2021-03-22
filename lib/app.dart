@@ -1,9 +1,6 @@
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/themes/theme.dart';
-import 'package:atsign_location_app/view_models/add_contact_provider.dart';
-import 'package:atsign_location_app/view_models/blocked_contact_provider.dart';
-import 'package:atsign_location_app/view_models/contact_provider.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
@@ -26,12 +23,6 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(providers: [
       ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(themeColor: widget.currentTheme)),
-      ChangeNotifierProvider<AddContactProvider>(
-          create: (context) => AddContactProvider()),
-      ChangeNotifierProvider<ContactProvider>(
-          create: (context) => ContactProvider()),
-      ChangeNotifierProvider<BlockedContactProvider>(
-          create: (context) => BlockedContactProvider()),
       ChangeNotifierProvider<EventProvider>(
           create: (context) => EventProvider()),
       ChangeNotifierProvider<ShareLocationProvider>(
@@ -47,7 +38,6 @@ class _MyAppState extends State<MyApp> {
 class MaterialAppClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('app dart called');
     return MaterialApp(
       title: 'AtSign Location App',
       debugShowCheckedModeBanner: false,
