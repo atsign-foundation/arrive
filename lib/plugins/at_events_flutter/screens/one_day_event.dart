@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:at_common_flutter/services/size_config.dart';
-// import 'package:at_common_flutter/widgets/custom_input_field.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_heading.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
@@ -20,9 +19,7 @@ class _OneDayEventState extends State<OneDayEvent> {
   EventNotificationModel eventData = new EventNotificationModel();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // eventData = cloneEventModel();
     eventData = EventNotificationModel.fromJson(jsonDecode(
         EventNotificationModel.convertEventNotificationToJson(
             EventService().eventNotificationModel)));

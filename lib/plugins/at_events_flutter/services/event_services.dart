@@ -6,7 +6,6 @@ import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/concurrent_event_request_dialog.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/utils/texts.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:flutter/material.dart';
 import 'package:at_contact/at_contact.dart';
@@ -69,7 +68,6 @@ class EventService {
       return result;
     } else {
       result = await sendEventNotification();
-      // if (result) EventService().onEventSaved(eventNotificationModel);
       if (result && isEventOverlap) {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
@@ -119,9 +117,6 @@ class EventService {
       var result = await atClientInstance.put(atKey, notification);
       eventNotificationModel = eventNotification;
       if (onEventSaved != null) {
-        // String key =
-        //     '${atKey.sharedWith}:${eventNotification.key}:${atKey.sharedBy}';
-        // eventNotification.key = key;
         onEventSaved(eventNotification);
       }
       print('send event:$result');
@@ -248,8 +243,6 @@ class EventService {
     }
   }
 
-// startTime & endTime cannot be less than DateTime.now()
-// endTime cannot be behind starttime
   dynamic checForOneDayEventFormValidation(EventNotificationModel eventData) {
     if (eventData.event.date == null) {
       return 'add event date';
@@ -263,7 +256,6 @@ class EventService {
     if (eventData.event.endTime == null) {
       return 'add event end time';
     }
-    // for time
     if (!isEventUpdate) {
       if (eventData.event.startTime.difference(DateTime.now()).inMinutes < 0)
         return 'Start Time cannot be in past';
@@ -277,9 +269,6 @@ class EventService {
             .difference(eventData.event.startTime)
             .inMinutes <
         0) {
-      print('valdation eventData.event.startTime ${eventData.event.startTime}');
-      print('valdation eventData.event.endTime ${eventData.event.endTime}');
-
       return 'Start time cannot be after End time';
     }
 
