@@ -25,6 +25,7 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
+// ignore: must_be_immutable
 class ShareLocationNotifierDialog extends StatefulWidget {
   String event, invitedPeopleCount, timeAndDate, userName;
   final EventNotificationModel eventData;
@@ -214,11 +215,6 @@ class _ShareLocationNotifierDialogState
                           style: CustomTextStyles().black18)
                       : SizedBox(),
                   SizedBox(height: 5.toHeight),
-                  // isOverlap
-                  //     ? Text(
-                  //         '${concurrentEvent.group.members.length} peoples invited',
-                  //         style: CustomTextStyles().grey14)
-                  //     : SizedBox(),
                   SizedBox(height: 10.toHeight),
                   isOverlap
                       ? Text(
@@ -228,47 +224,49 @@ class _ShareLocationNotifierDialogState
                   SizedBox(height: 10.toHeight),
                   CustomButton(
                     onTap: () => () async {
-                      if (widget.eventData != null) {
-                        bottomSheet(
-                            context,
-                            EventTimeSelection(
-                                eventNotificationModel: widget.eventData,
-                                title: AllText().LOC_START_TIME_TITLE,
-                                isStartTime: true,
-                                options: MixedConstants.startTimeOptions,
-                                onSelectionChanged: (dynamic startTime) {
-                                  widget.eventData.group.members
-                                      .elementAt(0)
-                                      .tags['shareFrom'] = startTime.toString();
-
-                                  bottomSheet(
-                                      context,
-                                      EventTimeSelection(
-                                        eventNotificationModel:
-                                            widget.eventData,
-                                        title: AllText().LOC_END_TIME_TITLE,
-                                        options: MixedConstants.endTimeOptions,
-                                        onSelectionChanged: (dynamic endTime) {
-                                          widget.eventData.group.members
-                                                  .elementAt(0)
-                                                  .tags['shareTo'] =
-                                              endTime.toString();
-                                          Navigator.of(context).pop();
-
-                                          updateEvent(widget.eventData);
-                                        },
-                                      ),
-                                      400);
-                                }),
-                            400);
-                      }
-
                       (widget.eventData != null)
-                          ? null
+                          // ignore: unnecessary_statements
+                          ? {
+                              bottomSheet(
+                                  context,
+                                  EventTimeSelection(
+                                      eventNotificationModel: widget.eventData,
+                                      title: AllText().LOC_START_TIME_TITLE,
+                                      isStartTime: true,
+                                      options: MixedConstants.startTimeOptions,
+                                      onSelectionChanged: (dynamic startTime) {
+                                        widget.eventData.group.members
+                                                .elementAt(0)
+                                                .tags['shareFrom'] =
+                                            startTime.toString();
+
+                                        bottomSheet(
+                                            context,
+                                            EventTimeSelection(
+                                              eventNotificationModel:
+                                                  widget.eventData,
+                                              title:
+                                                  AllText().LOC_END_TIME_TITLE,
+                                              options:
+                                                  MixedConstants.endTimeOptions,
+                                              onSelectionChanged:
+                                                  (dynamic endTime) {
+                                                widget.eventData.group.members
+                                                        .elementAt(0)
+                                                        .tags['shareTo'] =
+                                                    endTime.toString();
+                                                Navigator.of(context).pop();
+
+                                                updateEvent(widget.eventData);
+                                              },
+                                            ),
+                                            400);
+                                      }),
+                                  400)
+                            }
+                          // ignore: unnecessary_statements
                           : ((!widget.locationData.isRequest)
-                              //locationData.atsignCreator != BackendService.getInstance().currentAtsign
                               ? {
-                                  print('accept share location'),
                                   LocationSharingService()
                                       .shareLocationAcknowledgment(
                                           true, widget.locationData, true),
@@ -290,8 +288,8 @@ class _ShareLocationNotifierDialogState
                   InkWell(
                     onTap: () async {
                       (widget.eventData != null)
+                          // ignore: unnecessary_statements
                           ? {
-                              print('${widget.eventData.key}'),
                               widget.eventData.group.members.forEach((element) {
                                 if (element.atSign ==
                                     BackendService.getInstance()
@@ -309,13 +307,11 @@ class _ShareLocationNotifierDialogState
                                   taskName: (t) => t.UPDATE_EVENTS,
                                   onSuccess: (t) {
                                     Navigator.of(context).pop();
-                                    // t.getAllEvents();
                                   }),
                             }
+                          // ignore: unnecessary_statements
                           : ((!widget.locationData.isRequest)
-                              //locationData.atsignCreator != BackendService.getInstance().currentAtsign
                               ? {
-                                  print('accept share location'),
                                   LocationSharingService()
                                       .shareLocationAcknowledgment(
                                           true, widget.locationData, false),
@@ -350,13 +346,11 @@ class _ShareLocationNotifierDialogState
           title: 'How long do you want to share your location for ?',
           options: ['30 mins', '2 hours', '24 hours', 'Until turned off'],
           onChanged: (value) {
-            print('$result');
             result = (value == '30 mins'
                 ? 30
                 : (value == '2 hours'
                     ? (2 * 60)
                     : (value == '24 hours' ? (24 * 60) : null)));
-            print('hours = $result');
           },
         ),
         350, onSheetCLosed: () {
@@ -376,6 +370,5 @@ updateEvent(EventNotificationModel eventData) {
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();
         Navigator.of(NavService.navKey.currentContext).pop();
-        // t.getAllEvents();
       });
 }

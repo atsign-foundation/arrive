@@ -37,7 +37,6 @@ class FloatingIcon extends StatelessWidget {
       ),
       child: IconButton(
           padding: EdgeInsets.all(10),
-          // iconSize: 20.toHeight,
           icon: Icon(
             icon != null ? icon : Icons.table_rows,
             color: iconColor != null
