@@ -95,8 +95,12 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           children: [
                             Text(
                               snapshot.data.title ?? 'Event Location',
-                              style:
-                                  Theme.of(context).primaryTextTheme.headline1,
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .primaryTextTheme
+                                      .headline1
+                                      .color,
+                                  fontSize: 18.toFont),
                             ),
                             widget.isAdmin
                                 ? InkWell(

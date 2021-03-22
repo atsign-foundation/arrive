@@ -50,8 +50,8 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
           Text('Request From', style: CustomTextStyles().greyLabel14),
           SizedBox(height: 10),
           CustomInputField(
-            width: 330.toWidth,
-            height: 50,
+            width: SizeConfig().screenWidth * 0.95,
+            height: 50.toHeight,
             isReadOnly: true,
             hintText: 'Search @sign from contact',
             icon: Icons.contacts_rounded,
@@ -91,9 +91,12 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
             child: isLoading
                 ? CircularProgressIndicator()
                 : CustomButton(
-                    child: Text('Request',
-                        style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor)),
+                    child: Text(
+                      'Request',
+                      style: TextStyle(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          fontSize: 16.toFont),
+                    ),
                     onTap: onRequestTap,
                     bgColor: Theme.of(context).primaryColor,
                     width: 164,

@@ -196,8 +196,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget header() {
     return Container(
-      height: 82.toHeight,
-      width: 356.toWidth,
+      height: 85.toHeight,
+      width: SizeConfig().screenWidth * 0.95,
       margin:
           EdgeInsets.symmetric(horizontal: 10.toWidth, vertical: 10.toHeight),
       decoration: BoxDecoration(
@@ -255,13 +255,13 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icons.sync,
               angle: (-3.14 / 2),
               onTap: () async {
-                bottomSheet(context, RequestLocationSheet(), 400);
+                bottomSheet(context, RequestLocationSheet(), 500.toHeight);
               }),
           Tasks(
               task: 'Share Location',
               icon: Icons.person_add,
               onTap: () {
-                bottomSheet(context, ShareLocationSheet(), 500);
+                bottomSheet(context, ShareLocationSheet(), 600.toHeight);
               })
         ],
       ),
