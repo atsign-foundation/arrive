@@ -9,6 +9,7 @@ class SearchLocationService {
   static SearchLocationService _instance = SearchLocationService._();
   factory SearchLocationService() => _instance;
 
+  // ignore: close_sinks
   final _atLocationStreamController =
       StreamController<List<LocationModal>>.broadcast();
   Stream<List<LocationModal>> get atLocationStream =>
@@ -17,8 +18,6 @@ class SearchLocationService {
       _atLocationStreamController.sink;
 
   void getAddressLatLng(String address) async {
-    //For maptiler
-    //https://api.maptiler.com/geocoding/bokaro.json?key=B3Wus46C2WZFhwZKQkEx
     var url =
         "https://nominatim.openstreetmap.org/search?q=${address.replaceAll(RegExp(' '), '+')}&format=json&addressdetails=1";
     print(url);
