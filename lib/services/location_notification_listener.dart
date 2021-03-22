@@ -8,11 +8,9 @@ import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/data_services/hive/hive_db.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:hive/hive.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -52,9 +50,7 @@ class LocationNotificationListener {
   getAllLocationData() async {
     List<String> response = await atClientInstance.getKeys(
       regex: '$LOCATION_NOTIFY',
-      //  sharedBy: '@bob🛠'
     );
-    print('response $response');
     if (response.length == 0) {
       return;
     }
@@ -97,6 +93,7 @@ class LocationNotificationListener {
   filterData() {
     List<KeyLocationModel> tempArray = [];
     for (int i = 0; i < allLocationNotifications.length; i++) {
+      // ignore: unrelated_type_equality_checks
       if ((allLocationNotifications[i].locationNotificationModel == 'null') ||
           (allLocationNotifications[i].locationNotificationModel == null) ||
           (allLocationNotifications[i]
@@ -106,9 +103,7 @@ class LocationNotificationListener {
                   .inMinutes <
               0)) tempArray.add(allLocationNotifications[i]);
     }
-    tempArray.forEach((element) {
-      print('removed ${element.key}');
-    });
+
     allLocationNotifications
         .removeWhere((element) => tempArray.contains(element));
   }
@@ -122,7 +117,7 @@ class LocationNotificationListener {
           latLng: keyLocationModel.locationNotificationModel.getLatLng,
           image: _image,
           eta: '?');
-      print('HybridModel named ${user.displayName}');
+
       allUsersList.add(user);
     });
     atHybridUsersSink.add(allUsersList);
@@ -154,6 +149,7 @@ class LocationNotificationListener {
     });
     if (!contains) {
       print('!contains from main app');
+
       String atsign = newUser.atsignCreator;
       LatLng _latlng = newUser.getLatLng;
       var _image = await getImageOfAtsignNew(atsign);
@@ -166,16 +162,12 @@ class LocationNotificationListener {
 
       allUsersList.add(user);
       _allUsersController.add(allUsersList);
-      print('atHybridUsersSink added');
       atHybridUsersSink.add(allUsersList);
       LocationService().newList(allUsersList);
     } else {
-      // if (allUsersList[index].latLng != newUser.getLatLng) // to not update location when same lat , long received(throwing error)
-
       allUsersList[index].latLng = newUser.getLatLng;
       allUsersList[index].eta = '?';
       _allUsersController.add(allUsersList);
-      print('atHybridUsersSink added');
       atHybridUsersSink.add(allUsersList);
       LocationService().newList(allUsersList);
     }
@@ -231,7 +223,8 @@ class LocationNotificationListener {
     try {
       AtValue atvalue = await atClientInstance
           .get(key)
-          .catchError((e) => print("error in get ${e}"));
+          // ignore: return_of_invalid_type_from_catch_error
+          .catchError((e) => print("error in get $e"));
 
       if (atvalue != null)
         return atvalue;
