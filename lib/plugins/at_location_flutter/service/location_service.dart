@@ -259,8 +259,12 @@ class LocationService {
         user.eta = _res;
       }
     } else if ((userListenerKeyword != null) &&
-        (user.displayName != myData.displayName)) {
-      LatLng mylatlng = myData.latLng;
+        (user.displayName != atClientInstance.currentAtSign)) {
+      LatLng mylatlng;
+      if (myData != null)
+        mylatlng = myData.latLng;
+      else
+        mylatlng = await getMyLocation();
 
       var _res = await DistanceCalculate().caculateETA(mylatlng, user.latLng);
       if (_res != user.eta) {
