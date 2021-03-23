@@ -94,7 +94,7 @@ class _SelectedLocationState extends State<SelectedLocation> {
                           Text('Label', style: CustomTextStyles().greyLabel14),
                           SizedBox(height: 5.toHeight),
                           CustomInputField(
-                            width: 321.toWidth,
+                            width: SizeConfig().screenWidth * 0.95,
                             height: 50.toHeight,
                             hintText: 'Save this address as',
                             initialValue: EventService()

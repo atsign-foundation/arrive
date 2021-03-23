@@ -39,7 +39,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         child: Container(
-          height: 100,
+          height: 120.toHeight,
           width: SizeConfig().screenWidth,
           color: Colors.white,
           child: Row(
@@ -127,7 +127,10 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                             ),
                           ),
                         ),
-                        Text(widget.atSignList[index])
+                        Text(
+                          widget.atSignList[index],
+                          style: TextStyle(fontSize: 15.toFont),
+                        )
                       ],
                     ),
                   ),
@@ -175,6 +178,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                   child: Icon(
                     Icons.add_circle_outline_outlined,
                     color: Colors.orange,
+                    size: 25.toFont,
                   ),
                 ),
               )
