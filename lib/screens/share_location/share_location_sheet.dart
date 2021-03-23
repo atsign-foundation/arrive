@@ -52,8 +52,8 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
           Text('Share with', style: CustomTextStyles().greyLabel14),
           SizedBox(height: 10),
           CustomInputField(
-            width: 330.toWidth,
-            height: 50,
+            width: SizeConfig().screenWidth * 0.95,
+            height: 50.toFont,
             isReadOnly: true,
             hintText: 'Search @sign from contact',
             icon: Icons.contacts_rounded,
@@ -95,8 +95,9 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
           SizedBox(height: 10),
           Container(
             color: AllColors().INPUT_GREY_BACKGROUND,
-            width: 330.toWidth,
-            padding: EdgeInsets.only(left: 10, right: 10),
+            width: SizeConfig().screenWidth * 0.95,
+            height: 50.toFont,
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10),
             child: DropdownButton(
               isExpanded: true,
               icon: Icon(Icons.keyboard_arrow_down),
@@ -130,7 +131,8 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                 : CustomButton(
                     child: Text('Share',
                         style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor)),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            fontSize: 16.toFont)),
                     onTap: onShareTap,
                     bgColor: Theme.of(context).primaryColor,
                     width: 164,

@@ -76,7 +76,8 @@ class _RecurringEventState extends State<RecurringEvent> {
                 Container(
                   color: AllColors().INPUT_GREY_BACKGROUND,
                   width: 155.toWidth,
-                  padding: EdgeInsets.only(left: 10, right: 10),
+                  height: 50.toHeight,
+                  padding: EdgeInsets.only(left: 10, right: 10, top: 10),
                   child: DropdownButton(
                     isExpanded: true,
                     icon: Icon(Icons.keyboard_arrow_down),
@@ -122,7 +123,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             isRepeatEveryWeek
                 ? Container(
                     color: AllColors().INPUT_GREY_BACKGROUND,
-                    width: 350.toWidth,
+                    width: SizeConfig().screenWidth * 0.95,
                     padding: EdgeInsets.only(left: 10, right: 10),
                     child: DropdownButton(
                       isExpanded: true,
@@ -151,7 +152,7 @@ class _RecurringEventState extends State<RecurringEvent> {
                     ),
                   )
                 : CustomInputField(
-                    width: 350.toWidth,
+                    width: SizeConfig().screenWidth * 0.95,
                     height: 50.toHeight,
                     isReadOnly: true,
                     hintText: 'Occurs on',
@@ -287,7 +288,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             ),
             SizedBox(height: 6.toHeight),
             CustomInputField(
-              width: 350.toWidth,
+              width: SizeConfig().screenWidth * 0.95,
               height: 50.toHeight,
               isReadOnly: true,
               hintText: 'Select Date',
@@ -331,7 +332,7 @@ class _RecurringEventState extends State<RecurringEvent> {
             ),
             SizedBox(height: 6.toHeight),
             CustomInputField(
-              width: 350.toWidth,
+              width: SizeConfig().screenWidth * 0.95,
               height: 50.toHeight,
               hintText: 'Start',
               initialValue: eventData.event.endEventAfterOccurance != null

@@ -72,15 +72,17 @@ class _SelectedLocationState extends State<SelectedLocation> {
                                     Icon(
                                       Icons.location_on,
                                       color: AllColors().ORANGE,
+                                      size: 20.toFont,
                                     ),
                                     Text('', style: CustomTextStyles().black16)
                                   ],
                                 ),
                               ),
                               InkWell(
-                                  onTap: () => Navigator.pop(context),
-                                  child: Text('Cancel',
-                                      style: CustomTextStyles().orange16))
+                                onTap: () => Navigator.pop(context),
+                                child: Text('Cancel',
+                                    style: CustomTextStyles().orange16),
+                              )
                             ],
                           ),
                           SizedBox(height: 10.toHeight),
@@ -92,7 +94,8 @@ class _SelectedLocationState extends State<SelectedLocation> {
                           Text('Label', style: CustomTextStyles().greyLabel14),
                           SizedBox(height: 5.toHeight),
                           CustomInputField(
-                            width: 321.toWidth,
+                            width: SizeConfig().screenWidth * 0.95,
+                            height: 50.toHeight,
                             hintText: 'Save this address as',
                             initialValue: EventService()
                                 .eventNotificationModel

@@ -141,11 +141,11 @@ class _ShareLocationNotifierDialogState
                       image != null
                           ? ClipRRect(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(30)),
+                                  BorderRadius.all(Radius.circular(30.toFont)),
                               child: Image.memory(
                                 image,
-                                width: 50,
-                                height: 50,
+                                width: 50.toFont,
+                                height: 50.toFont,
                                 fit: BoxFit.fill,
                               ),
                             )
@@ -279,12 +279,13 @@ class _ShareLocationNotifierDialogState
                     }(),
                     child: Text('Yes',
                         style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor)),
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            fontSize: 15.toFont)),
                     bgColor: Theme.of(context).primaryColor,
-                    width: 164.toWidth,
+                    width: 164,
                     height: 48.toHeight,
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 10.toHeight),
                   InkWell(
                     onTap: () async {
                       (widget.eventData != null)
