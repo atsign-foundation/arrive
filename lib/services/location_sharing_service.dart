@@ -1,8 +1,13 @@
 import 'package:at_commons/at_commons.dart';
+import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 
 import 'backend_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
+
+import 'nav_service.dart';
 
 class LocationSharingService {
   static final LocationSharingService _singleton =
@@ -168,25 +173,38 @@ class LocationSharingService {
   }
 
   deleteKey(LocationNotificationModel locationNotificationModel) async {
-    String atkeyMicrosecondId =
-        locationNotificationModel.key.split('sharelocation-')[1].split('@')[0];
+    try {
+      String atkeyMicrosecondId = locationNotificationModel.key
+          .split('sharelocation-')[1]
+          .split('@')[0];
 
-    List<String> response = await BackendService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .getKeys(
-          regex: 'sharelocation-$atkeyMicrosecondId',
-        );
+      List<String> response = await BackendService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .getKeys(
+            regex: 'sharelocation-$atkeyMicrosecondId',
+          );
 
-    AtKey key = BackendService.getInstance().getAtKey(response[0]);
+      AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
-    locationNotificationModel.isAcknowledgment = true;
+      locationNotificationModel.isAcknowledgment = true;
 
-    var result = await BackendService.getInstance()
-        .atClientServiceInstance
-        .atClient
-        .delete(key);
-    return result;
+      var result = await BackendService.getInstance()
+          .atClientServiceInstance
+          .atClient
+          .delete(key);
+      if (result) {
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.removePerson(key.key),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+      }
+      return result;
+    } catch (e) {
+      print('error in deleting key $e');
+      return false;
+    }
   }
 
   AtKey newAtKey(int ttr, String key, String sharedWith,

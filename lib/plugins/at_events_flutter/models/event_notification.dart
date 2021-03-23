@@ -236,8 +236,10 @@ String getWeekString(Week weekday) {
 }
 
 String timeOfDayToString(DateTime time) {
-  String hhmm = '${time.hour}:${time.minute}';
-  return hhmm;
+  int minute = time.minute;
+  if (minute < 10) return '${time.hour}: 0${time.minute}';
+
+  return '${time.hour}: ${time.minute}';
 }
 
 String dateToString(DateTime date) {
