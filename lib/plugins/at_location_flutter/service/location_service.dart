@@ -117,7 +117,7 @@ class LocationService {
       return;
     }
 
-    var _image = await getImageOfAtsignNew(_atsign);
+    var _image = await getImageOfAtsign(_atsign);
 
     HybridModel _myData = HybridModel(
         displayName: _atsign, latLng: mylatlng, eta: '?', image: _image);
@@ -274,7 +274,7 @@ class LocationService {
     }
   }
 
-  getImageOfAtsignNew(String atsign) async {
+  getImageOfAtsign(String atsign) async {
     AtContact contact;
     Uint8List image;
     contact = await getAtSignDetails(atsign);
