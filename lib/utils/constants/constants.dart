@@ -14,7 +14,6 @@ class MixedConstants {
   static const String PRIVACY_POLICY =
       "https://atsign.com/apps/atmosphere/atmosphere-privacy/";
 
-  // the time to await for file transfer acknowledgement in milliseconds
   static const int TIME_OUT = 60000;
 
   static List<String> startTimeOptions = [

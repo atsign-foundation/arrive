@@ -52,13 +52,8 @@ class LocationSharingService {
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel));
-      print('atKey $atKey');
-      print(LocationNotificationModel.convertLocationNotificationToJson(
-          locationNotificationModel));
-      print('sendLocationNotification:$result');
 
-      print(
-          'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.key}');
+      print('sendLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
       print("error in sendShareLocationEvent $e");
@@ -66,8 +61,6 @@ class LocationSharingService {
     }
   }
 
-//@test_ga4:sharelocation-1611151935211511@mixedmartialartsexcess
-  //update ShareLocation Event When Accepted/Rejected
   shareLocationAcknowledgment(
       bool isShareLocationAcknowledgment,
       LocationNotificationModel locationNotificationModel,
@@ -84,12 +77,7 @@ class LocationSharingService {
           locationNotificationModel.atsignCreator);
       locationNotificationModel.isAccepted = isAccepted;
       locationNotificationModel.isExited = !isAccepted;
-      // if (!isAccepted) locationNotificationModel.isExited = true;
-      // if (isAccepted) locationNotificationModel.isExited = false;
-      print(
-          'locationNotificationModel.isExited ${locationNotificationModel.isExited}');
-      print(
-          'after convertLocationNotificationToJson -> ${locationNotificationModel.isAccepted}');
+
       var notification =
           LocationNotificationModel.convertLocationNotificationToJson(
               locationNotificationModel);
@@ -99,8 +87,7 @@ class LocationSharingService {
           .atClient
           .put(atKey, notification);
       print('sendLocationNotificationAcknowledgment:$result');
-      print(
-          'sendLocationNotificationAcknowledgment -> ${locationNotificationModel.isAccepted}');
+
       return result;
     } catch (e) {
       return false;
@@ -148,11 +135,12 @@ class LocationSharingService {
           .atClientServiceInstance
           .atClient
           .put(key, notification);
-      if (result)
+      if (result) {
         BackendService.getInstance().mapUpdatedDataToWidget(
             BackendService.getInstance().convertEventToHybrid(
                 NotificationType.Location,
                 locationNotificationModel: locationNotificationModel));
+      }
 
       print('update result - $result');
       return result;
@@ -201,7 +189,6 @@ class LocationSharingService {
     return result;
   }
 
-  //
   AtKey newAtKey(int ttr, String key, String sharedWith,
       {int ttl, DateTime expiresAt}) {
     AtKey atKey = AtKey()

@@ -10,7 +10,6 @@ import 'package:atsign_location_app/plugins/at_events_flutter/common_components/
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/one_day_event.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/screens/recurring_event.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_heading.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/select_location.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
@@ -188,7 +187,7 @@ class _CreateEventState extends State<CreateEvent> {
                                                 SizeConfig().screenHeight *
                                                     0.9);
                                           },
-                                          child: Text('One Day Event',
+                                          child: Text('Select Timings',
                                               style: CustomTextStyles()
                                                   .greyLabel14),
                                         ),
@@ -207,15 +206,6 @@ class _CreateEventState extends State<CreateEvent> {
                                             ? true
                                             : false,
                                         onChanged: (value) {
-                                          print(value);
-                                          // if (value) {
-                                          //   EventService()
-                                          //       .eventNotificationModel
-                                          //       .event
-                                          //       .isRecurring = !value;
-                                          //   EventService().update();
-                                          // }
-                                          /// TODO: Now it will change from OneDayEvent
                                           bottomSheet(context, OneDayEvent(),
                                               SizeConfig().screenHeight * 0.9);
                                         },
@@ -247,52 +237,6 @@ class _CreateEventState extends State<CreateEvent> {
                                           : SizedBox()
                                       : SizedBox(),
                                   SizedBox(height: 20.toHeight),
-                                  Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            bottomSheet(
-                                                context,
-                                                RecurringEvent(),
-                                                SizeConfig().screenHeight *
-                                                    0.9);
-                                          },
-                                          child: Text(
-                                            'Recurring Event',
-                                            style:
-                                                CustomTextStyles().greyLabel14,
-                                          ),
-                                        ),
-                                      ),
-                                      Checkbox(
-                                        value: (EventService()
-                                                        .eventNotificationModel
-                                                        .event
-                                                        .isRecurring !=
-                                                    null &&
-                                                EventService()
-                                                        .eventNotificationModel
-                                                        .event
-                                                        .isRecurring ==
-                                                    true)
-                                            ? true
-                                            : false,
-                                        onChanged: (value) {
-                                          // if (value) {
-                                          //   EventService()
-                                          //       .eventNotificationModel
-                                          //       .event
-                                          //       .isRecurring = value;
-
-                                          //   EventService().update();
-                                          // }
-                                          bottomSheet(context, RecurringEvent(),
-                                              SizeConfig().screenHeight * 0.9);
-                                        },
-                                      )
-                                    ],
-                                  ),
                                   (EventService()
                                                   .eventNotificationModel
                                                   .event

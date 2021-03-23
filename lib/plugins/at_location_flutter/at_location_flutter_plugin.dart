@@ -24,6 +24,7 @@ import 'common_components/collapsed_content.dart';
 import 'common_components/marker_cluster.dart';
 import 'common_components/popup.dart';
 
+// ignore: must_be_immutable
 class AtLocationFlutterPlugin extends StatefulWidget {
   List<LatLng> positions;
   LocationNotificationModel userListenerKeyword;
@@ -52,7 +53,6 @@ class AtLocationFlutterPlugin extends StatefulWidget {
   _AtLocationFlutterPluginState createState() =>
       _AtLocationFlutterPluginState();
 }
-//
 
 class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   final PanelController pc = PanelController();
@@ -67,7 +67,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   void initState() {
     super.initState();
     showMarker = true;
-    print('widget.onRemove ${widget.onRemove}');
     LocationService().init(widget.atClientInstance, widget.allUsersList,
         newUserListenerKeyword: widget.userListenerKeyword ?? null,
         newEventListenerKeyword: widget.eventListenerKeyword ?? null,
@@ -147,6 +146,10 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           print('point - ${element.point}');
                         });
 
+                        LatLng _center = widget.eventListenerKeyword != null
+                            ? LocationService().eventData.latLng
+                            : LocationService().myData?.latLng;
+
                         return FlutterMap(
                           mapController: mapController,
                           options: MapOptions(
@@ -157,9 +160,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                               widget.right ?? 20,
                               widget.bottom ?? 20,
                             )),
-                            center: widget.eventListenerKeyword != null
-                                ? LocationService().eventData.latLng
-                                : LocationService().myData.latLng,
+                            center: _center,
                             zoom: 8,
                             plugins: [MarkerClusterPlugin(UniqueKey())],
                             onTap: (_) => _popupController
@@ -167,7 +168,6 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           ),
                           layers: [
                             TileLayerOptions(
-                              // errorImage: ,
                               minNativeZoom: 2,
                               maxNativeZoom: 18,
                               minZoom: 2,
@@ -233,10 +233,8 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                     bgColor: Theme.of(context).primaryColor,
                     icon: Icons.message_outlined,
                     iconColor: Theme.of(context).scaffoldBackgroundColor,
-                    onPressed: () =>
-                        // bottomSheet(context, ChatScreen(), 743),
-                        scaffoldKey.currentState
-                            .showBottomSheet((context) => ChatScreen())),
+                    onPressed: () => scaffoldKey.currentState
+                        .showBottomSheet((context) => ChatScreen())),
               ),
               Positioned(
                 top: 100,
@@ -250,6 +248,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                       LocationService().hybridUsersList.length > 0
                           ? mapController.move(
                               LocationService().hybridUsersList[0].latLng, 4)
+                          // ignore: unnecessary_statements
                           : null;
                     }),
               ),
@@ -259,7 +258,10 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                 maxHeight: widget.userListenerKeyword != null
                     ? ((widget.userListenerKeyword.atsignCreator ==
                             LocationService().getAtSign())
-                        ? 291
+                        ? widget.userListenerKeyword.key
+                                .contains("requestlocation")
+                            ? 240
+                            : 291
                         : 130)
                     : 431,
                 panel: CollapsedContent(UniqueKey(), true, this.isEventAdmin,

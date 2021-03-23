@@ -1,8 +1,8 @@
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:at_common_flutter/widgets/custom_button.dart';
 import 'package:at_common_flutter/widgets/custom_input_field.dart';
+import 'package:atsign_location_app/common_components/floating_icon.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/floating_icon.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/colors.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
@@ -48,7 +48,7 @@ class _SelectedLocationState extends State<SelectedLocation> {
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey,
-                      offset: Offset(0.0, 1.0), //(x,y)
+                      offset: Offset(0.0, 1.0),
                       blurRadius: 10.0,
                     ),
                   ],

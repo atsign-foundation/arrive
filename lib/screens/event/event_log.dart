@@ -6,7 +6,6 @@ import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
-import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -63,7 +62,6 @@ class _EventLogState extends State<EventLog> {
                           unselectedLabelColor: AllColors().DARK_GREY,
                           tabs: [
                             Tab(
-                              // text: 'Upcoming',
                               child: Text(
                                 'Upcoming',
                                 style: TextStyle(
@@ -71,7 +69,6 @@ class _EventLogState extends State<EventLog> {
                               ),
                             ),
                             Tab(
-                              // text: 'Past',
                               child: Text('Past',
                                   style: TextStyle(
                                       fontSize: 16.toFont, letterSpacing: 1)),
@@ -103,7 +100,6 @@ class _EventLogState extends State<EventLog> {
 }
 
 Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
-  // List<HybridNotificationModel> events = [];
   List<HybridNotificationModel> events = [];
   Provider.of<HybridProvider>(NavService.navKey.currentContext, listen: false)
       .allHybridNotifications
@@ -145,18 +141,7 @@ Widget getPastEvents(List<HybridNotificationModel> allEvents) {
           NavService.navKey.currentContext,
           listen: false)
       .allPastEventNotifications;
-  // DateTime todaysDate = DateTime.now();
 
-  // allEvents.forEach((event) {
-  //   DateTime eventDate = event.eventNotificationModel.event.date;
-
-  //   if (!(event.eventNotificationModel.event.date.year == todaysDate.year &&
-  //           event.eventNotificationModel.event.date.month == todaysDate.month &&
-  //           event.eventNotificationModel.event.date.day == todaysDate.day) &&
-  //       (todaysDate.compareTo(eventDate) == 1)) {
-  //     events.add(event);
-  //   }
-  // });
   return ListView.separated(
     scrollDirection: Axis.vertical,
     itemCount: events.length,

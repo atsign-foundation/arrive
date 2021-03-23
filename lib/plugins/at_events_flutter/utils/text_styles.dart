@@ -123,7 +123,7 @@ class CustomTextStyles {
     fontSize: 14.toFont,
   );
 
-  static TextStyle whiteBold16 = TextStyle(
+  TextStyle whiteBold16 = TextStyle(
     color: Colors.white,
     fontSize: 16.toFont,
     fontWeight: FontWeight.w700,

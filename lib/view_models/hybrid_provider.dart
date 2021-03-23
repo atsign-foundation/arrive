@@ -1,5 +1,4 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
-import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
@@ -35,7 +34,6 @@ class HybridProvider extends RequestLocationProvider {
   String FIND_ATSIGNS_TO_SHARE_WITH = 'find_atsigns_to_share_with';
 
   init(AtClientImpl clientInstance) {
-    print('hyrbid clientInstance $clientInstance');
     allHybridNotifications = [];
     allPastEventNotifications = [];
     shareLocationData = [];
@@ -64,7 +62,6 @@ class HybridProvider extends RequestLocationProvider {
       filterPastEventsFromList();
 
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
-      findAtSignsToShareLocationWith();
       initialiseLacationSharing();
     } catch (e) {
       print(e);
@@ -85,10 +82,7 @@ class HybridProvider extends RequestLocationProvider {
             0) allPastEventNotifications.add(allHybridNotifications[i]);
       }
     }
-    allPastEventNotifications.forEach((element) {
-      print('removed event data in hybrid_prvider ${element.key}');
-      print('${element.locationNotificationModel}');
-    });
+
     allHybridNotifications
         .removeWhere((element) => allPastEventNotifications.contains(element));
   }
@@ -130,11 +124,54 @@ class HybridProvider extends RequestLocationProvider {
               allHybridNotifications.remove(allRequestNotifications[i]);
           }
         }
+
+        checkLocationSharingForMappedData(allHybridNotifications[i]);
+
         break;
       }
     }
     HomeEventService().setAllEventsList(allHybridNotifications);
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
+  }
+
+  checkLocationSharingForMappedData(HybridNotificationModel notification) {
+    if (notification.notificationType == NotificationType.Event) {
+      if ((notification.eventNotificationModel.atsignCreator.toLowerCase() ==
+          BackendService.getInstance()
+              .atClientServiceInstance
+              .atClient
+              .currentAtSign
+              .toLowerCase())) {
+        if (notification.eventNotificationModel.isSharing)
+          addMemberToSendingLocationList(notification);
+        else
+          removeLocationSharing(notification.key);
+      } else {
+        if (notification.eventNotificationModel.group.members
+                    .elementAt(0)
+                    .tags['isAccepted'] ==
+                true &&
+            notification.eventNotificationModel.group.members
+                    .elementAt(0)
+                    .tags['isSharing'] ==
+                true &&
+            notification.eventNotificationModel.group.members
+                    .elementAt(0)
+                    .tags['isExited'] ==
+                false)
+          addMemberToSendingLocationList(notification);
+        else
+          removeLocationSharing(notification.key);
+      }
+    } else {
+      if (notification.locationNotificationModel.isSharing)
+        addMemberToSendingLocationList(BackendService.getInstance()
+            .convertEventToHybrid(NotificationType.Location,
+                locationNotificationModel:
+                    notification.locationNotificationModel));
+      else
+        removeLocationSharing(notification.key);
+    }
   }
 
   addNewEvent(HybridNotificationModel notification) async {
@@ -152,18 +189,11 @@ class HybridProvider extends RequestLocationProvider {
     } else {
       tempNotification =
           await super.addDataToListEvent(notification.eventNotificationModel);
-
-      // tempNotification = HybridNotificationModel(NotificationType.Event);
-      // tempNotification.key = notification.eventNotificationModel.key;
-      // tempNotification.atKey =
-      //     BackendService.getInstance().getAtKey(notification.eventNotificationModel.key);
-      // tempNotification.atValue = await getAtValue(tempNotification.atKey);
-      // tempNotification.eventNotificationModel =
-      //     notification.eventNotificationModel;
-      // allNotifications.add(tempNotification);
     }
     allHybridNotifications.add(tempNotification);
     setStatus(HYBRID_ADD_EVENT, Status.Done);
+
+    addMemberToSendingLocationList(tempNotification);
   }
 
   findAtSignsToShareLocationWith() {
@@ -232,34 +262,9 @@ class HybridProvider extends RequestLocationProvider {
   LocationNotificationModel getLocationNotificationData(
       HybridNotificationModel notification,
       LocationNotificationModel location) {
-    // DateTime d1 = DateTime(2021);
-    // d1.month;
-    // // d1.add(Duration(days: ));
-
     if (notification.notificationType == NotificationType.Event) {
       if (notification.eventNotificationModel.event.isRecurring) {
-        // for recurring
-        if (notification.eventNotificationModel.event.repeatCycle ==
-            RepeatCycle.MONTH) {
-          // repeat cycle is month
-          List<Map<String, dynamic>> months = [];
-          for (int i = 1; i <= 12; i++) {
-            if (i % notification.eventNotificationModel.event.repeatDuration ==
-                0) {
-              print(
-                  'month matched:${notification.eventNotificationModel.title}');
-              // months.add(monthsList['$i']);
-            }
-          }
-          print('recurring months: ${months}');
-        } else if (notification.eventNotificationModel.event.repeatCycle ==
-            RepeatCycle.WEEK) {
-          // repeat every week cycle
-        }
       } else {
-        print(
-            'date matching:${dateToString(notification.eventNotificationModel.event.date)} ,${dateToString(DateTime.now())} ');
-
         if (isOneDayEventOccursToday(
             notification.eventNotificationModel.event)) {
           DateTime date = notification.eventNotificationModel.event.date;
@@ -284,6 +289,7 @@ class HybridProvider extends RequestLocationProvider {
 
             location.to = endTimeEnumToTimeOfDay(
                 groupMember.tags['shareTo'].toString(), location.to);
+
             location.key = notification.key;
 
             shareLocationData.add(location);
@@ -292,31 +298,14 @@ class HybridProvider extends RequestLocationProvider {
         }
       }
     } else if (notification.notificationType == NotificationType.Location) {
-      print(
-          'adding data to share location: ${notification.locationNotificationModel.atsignCreator}');
       shareLocationData.add(notification.locationNotificationModel);
       return location;
     }
+    return null;
   }
 
   bool isOneDayEventOccursToday(Event event) {
     bool isEventToday = false;
-    // if (event.endTime.hour + event.endTime.minute / 60.0 >
-    //     event.startTime.hour + event.startTime.minute / 60.0) {
-    //   if (dateToString(event.date) == dateToString(DateTime.now()))
-    //     isEventToday = true;
-    // } else {
-    //   DateTime todaysDate = DateTime.now();
-    //   if ((dateToString(DateTime(
-    //               event.date.year, event.date.month, event.date.day)) ==
-    //           dateToString(DateTime(
-    //               todaysDate.year, todaysDate.month, todaysDate.day))) ||
-    //       (dateToString(DateTime(
-    //               event.date.year, event.date.month, event.date.day + 1)) ==
-    //           dateToString(
-    //               DateTime(todaysDate.year, todaysDate.month, todaysDate.day))))
-    //     isEventToday = true;
-    // }
 
     if (dateToString(event.date) == dateToString(DateTime.now())) {
       isEventToday = true;
@@ -342,22 +331,85 @@ class HybridProvider extends RequestLocationProvider {
       stopLocationSharing();
   }
 
-  removeLocationSharing(LocationNotificationModel locationNotificationModel) {
-    shareLocationData
-        .removeWhere((element) => element.key == locationNotificationModel.key);
-    sendLocationSharing();
-    // if the array is recalculated it will be added
-  }
-
   sendLocationSharing() {
+    findAtSignsToShareLocationWith();
     SendLocationNotification().init(shareLocationData, atClientInstance);
   }
 
   stopLocationSharing() {
     SendLocationNotification().init([], atClientInstance);
     SendLocationNotification().deleteAllLocationKey();
-    // shareLocationData.forEach((locationData) {
-    //   SendLocationNotification().sendNull(locationData);
-    // });
+  }
+
+  // Only place it is wrongly getting accessed from is requestLocationAcknowledgment in request_location_service
+  addMemberToSendingLocationList(HybridNotificationModel notification) {
+    String currentAtsign = BackendService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .currentAtSign;
+    if ((notification.notificationType == NotificationType.Location) &&
+        (notification.locationNotificationModel.atsignCreator ==
+            currentAtsign)) {
+      SendLocationNotification()
+          .addMember(notification.locationNotificationModel);
+    } else if ((notification.notificationType == NotificationType.Event)) {
+      var _getLocationModelFromEventModel =
+          getLocationModelFromEventModel(notification);
+      if (_getLocationModelFromEventModel != null) {
+        SendLocationNotification().addMember(_getLocationModelFromEventModel);
+      }
+    }
+  }
+
+  // Only place it is wrongly getting accessed from is onEventModelTap in home_event_service
+  removeLocationSharing(String key) {
+    shareLocationData.removeWhere((element) => element.key == key);
+    SendLocationNotification().removeMember(key);
+  }
+
+  getLocationModelFromEventModel(HybridNotificationModel notification) {
+    LocationNotificationModel location = LocationNotificationModel();
+    String currentAtsign = BackendService.getInstance()
+        .atClientServiceInstance
+        .atClient
+        .currentAtSign;
+
+    if (!notification.eventNotificationModel.isCancelled) {
+      if ((notification.eventNotificationModel.atsignCreator.toLowerCase() ==
+              currentAtsign.toLowerCase()) &&
+          (notification.eventNotificationModel.isSharing)) {
+        location = LocationNotificationModel()
+          ..atsignCreator = notification.eventNotificationModel.atsignCreator
+          ..isAcknowledgment = true
+          ..isAccepted = true
+          ..receiver = notification.eventNotificationModel.group.members
+              .elementAt(0)
+              .atSign;
+        location = getLocationNotificationData(notification, location);
+        return location;
+      } else if (notification.eventNotificationModel.group.members
+                  .elementAt(0)
+                  .tags['isAccepted'] ==
+              true &&
+          notification.eventNotificationModel.group.members
+                  .elementAt(0)
+                  .tags['isSharing'] ==
+              true &&
+          notification.eventNotificationModel.group.members
+                  .elementAt(0)
+                  .tags['isExited'] ==
+              false) {
+        location = LocationNotificationModel()
+          ..atsignCreator = notification.eventNotificationModel.group.members
+              .elementAt(0)
+              .atSign
+          ..isAcknowledgment = true
+          ..isAccepted = true
+          ..receiver = notification.eventNotificationModel.atsignCreator;
+        location = getLocationNotificationData(notification, location);
+        return location;
+      }
+    }
+    return null;
   }
 }

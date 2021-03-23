@@ -55,13 +55,7 @@ class RequestLocationService {
           .split('requestlocation-')[1]
           .split('@')[0];
       AtKey atKey;
-      // if (minutes != null)
-      //   atKey = newAtKey(
-      //       60000,
-      //       "requestlocationacknowledged-$atkeyMicrosecondId",
-      //       locationNotificationModel.receiver,
-      //       ttl: (minutes * 60000));
-      // else
+
       atKey = newAtKey(
         60000,
         "requestlocationacknowledged-$atkeyMicrosecondId",
@@ -77,7 +71,6 @@ class RequestLocationService {
       if (isSharing != null) locationNotificationModel.isSharing = isSharing;
 
       if (isAccepted && (minutes != null)) {
-        // if error => remove this (minutes != null)
         locationNotificationModel.from = DateTime.now();
         locationNotificationModel.to =
             DateTime.now().add(Duration(minutes: minutes));
@@ -91,10 +84,18 @@ class RequestLocationService {
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel));
       print('requestLocationAcknowledgment $result');
-      if ((result) && (!isSharing)) {
-        Provider.of<HybridProvider>(NavService.navKey.currentContext,
-                listen: false)
-            .removeLocationSharing(locationNotificationModel);
+      if (result) {
+        //  We have added this here, so that we need not wait for the updated data from the creator
+        if (isSharing)
+          Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                  listen: false)
+              .addMemberToSendingLocationList(BackendService.getInstance()
+                  .convertEventToHybrid(NotificationType.Location,
+                      locationNotificationModel: locationNotificationModel));
+        else
+          Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                  listen: false)
+              .removeLocationSharing(locationNotificationModel.key);
       }
       return result;
     } catch (e) {
@@ -106,7 +107,6 @@ class RequestLocationService {
     LocationNotificationModel locationNotificationModel,
   ) async {
     try {
-      // dont use the locationNotificationModel sent with reuqest acknowledgment
       String atkeyMicrosecondId = locationNotificationModel.key
           .split('requestlocation-')[1]
           .split('@')[0];
@@ -116,10 +116,6 @@ class RequestLocationService {
           .atClient
           .getKeys(
             regex: 'requestlocation-$atkeyMicrosecondId',
-            // sharedBy: BackendService.getInstance()
-            //     .atClientServiceInstance
-            //     .atClient
-            //     .currentAtSign
           );
 
       AtKey key = BackendService.getInstance().getAtKey(response[0]);
@@ -154,7 +150,6 @@ class RequestLocationService {
                     NotificationType.Location,
                     locationNotificationModel: locationNotificationModel),
                 remove: false),
-            // as i requested so i wont remove this notification irrespective of yes/no
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
             onSuccess: (provider) {});
@@ -182,7 +177,6 @@ class RequestLocationService {
           await requestLocationAcknowledgment(locationNotificationModel, false);
     }
     return result;
-    // print('remove person called Request');
   }
 
   sendDeleteAck(LocationNotificationModel locationNotificationModel) async {

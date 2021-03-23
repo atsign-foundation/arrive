@@ -3,7 +3,6 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
-import 'package:flutter/material.dart';
 
 import 'base_model.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -32,7 +31,6 @@ class EventProvider extends BaseModel {
   List<HybridNotificationModel> allNotifications = [];
 
   init(AtClientImpl clientInstance) {
-    print('event clientInstance $clientInstance');
     reset(GET_ALL_EVENTS);
     reset(UPDATE_EVENTS);
     reset(CHECK_ACKNOWLEDGED_EVENT);
@@ -52,20 +50,16 @@ class EventProvider extends BaseModel {
       regex: 'createevent-',
     );
 
-    print('get all events: ${response}');
-
     if (response.length == 0) {
       setStatus(GET_ALL_EVENTS, Status.Done);
       return;
     }
 
-    //need to confirm about filteration based on regex key.
     response.forEach((key) {
       if ('@${key.split(':')[1]}'.contains(currentAtSign)) {
         HybridNotificationModel tempHyridNotificationModel =
             HybridNotificationModel(NotificationType.Event, key: key);
         allNotifications.add(tempHyridNotificationModel);
-        // allKeys.add(element);
       }
     });
 
@@ -74,17 +68,9 @@ class EventProvider extends BaseModel {
       notification.atKey = atKey;
     });
 
-    // for (int i = 0; i < allAtkeys.length; i++) {
-    //   AtValue value = await getAtValue(allAtkeys[i]);
-    //   if (value != null) {
-    //     allAtValues.add(value);
-    //   }
-    // }
-
     for (int i = 0; i < allNotifications.length; i++) {
       AtValue value = await getAtValue(allNotifications[i].atKey);
       if (value != null) {
-        print('at value event $value');
         allNotifications[i].atValue = value;
       }
     }
@@ -99,7 +85,8 @@ class EventProvider extends BaseModel {
   Future<dynamic> getAtValue(AtKey key) async {
     AtValue atvalue = await atClientInstance
         .get(key)
-        .catchError((e) => print("error in get ${e}"));
+        // ignore: return_of_invalid_type_from_catch_error
+        .catchError((e) => print("error in get $e"));
 
     if (atvalue != null)
       return atvalue;
@@ -112,14 +99,13 @@ class EventProvider extends BaseModel {
 
     for (int i = 0; i < allNotifications.length; i++) {
       try {
+        // ignore: unrelated_type_equality_checks
         if (allNotifications[i].atValue != 'null' &&
             allNotifications[i].atValue != null) {
           EventNotificationModel event = EventNotificationModel.fromJson(
               jsonDecode(allNotifications[i].atValue.value));
 
-          if (event != null &&
-              // event.isCancelled == false &&
-              event.group.members.length > 0) {
+          if (event != null && event.group.members.length > 0) {
             event.key = allNotifications[i].key;
 
             allNotifications[i].eventNotificationModel = event;
@@ -134,8 +120,6 @@ class EventProvider extends BaseModel {
 
     allNotifications
         .removeWhere((element) => tempRemoveEventArray.contains(element));
-    // allNotifications.sort((a, b) => b.eventNotificationModel.event.date
-    //     .compareTo(a.eventNotificationModel.event.date));
   }
 
   actionOnEvent(EventNotificationModel event, ATKEY_TYPE_ENUM keyType,
@@ -145,10 +129,6 @@ class EventProvider extends BaseModel {
     EventNotificationModel eventData = EventNotificationModel.fromJson(
         jsonDecode(
             EventNotificationModel.convertEventNotificationToJson(event)));
-
-    print('in action on event admin:${event.isSharing}');
-    print(
-        'in action on event member:${event.group.members.elementAt(0).tags['isSharing']}');
 
     try {
       String atkeyMicrosecondId =
@@ -183,11 +163,9 @@ class EventProvider extends BaseModel {
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
 
-      print('notification data:${notification}');
       var result = await atClientInstance.put(key, notification);
       setStatus(UPDATE_EVENTS, Status.Done);
 
-      // updateEventAccordingToAcknowledgedData();
       return result;
     } catch (e) {
       print('error in updating event $e');
@@ -196,6 +174,7 @@ class EventProvider extends BaseModel {
     }
   }
 
+  // ignore: missing_return
   AtKey formAtKey(ATKEY_TYPE_ENUM keyType, String atkeyMicrosecondId,
       String sharedWith, String sharedBy, EventNotificationModel eventData) {
     switch (keyType) {
@@ -242,11 +221,9 @@ class EventProvider extends BaseModel {
     );
 
     if (response.length == 0) {
-      // setStatus(CHECK_ACKNOWLEDGED_EVENT, Status.Done);
       return;
     }
 
-    //need to confirm about filteration based on regex key.
     response.forEach((element) {
       if ('@${element.split(':')[1]}'.contains(currentAtSign)) {
         allEventKey.add(element);
@@ -274,7 +251,8 @@ class EventProvider extends BaseModel {
 
             AtValue result = await atClientInstance
                 .get(acknowledgedAtKey)
-                .catchError((e) => print("error in get ${e}"));
+                // ignore: return_of_invalid_type_from_catch_error
+                .catchError((e) => print("error in get $e"));
 
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));
@@ -282,7 +260,6 @@ class EventProvider extends BaseModel {
 
             String acknowledgedEventKeyId =
                 acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
-            String evenetKeyId = 'createevent-$atkeyMicrosecondId';
 
             for (int k = 0; k < allNotifications.length; k++) {
               if (allNotifications[k]
@@ -297,7 +274,7 @@ class EventProvider extends BaseModel {
 
                   var updateResult =
                       await updateEvent(storedEvent, createEventAtKey);
-                  print('ack data updated:${storedEvent.title}');
+
                   if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(storedEvent);
                 } else {
@@ -376,7 +353,6 @@ class EventProvider extends BaseModel {
   }
 
   addDataToListEvent(EventNotificationModel eventNotificationModel) async {
-    // setStatus(Add, Status.Loading);
     String newLocationDataKeyId, tempKey;
     newLocationDataKeyId =
         eventNotificationModel.key.split('createevent-')[1].split('@')[0];
@@ -391,14 +367,12 @@ class EventProvider extends BaseModel {
     HybridNotificationModel tempHyridNotificationModel =
         HybridNotificationModel(NotificationType.Event, key: key[0]);
     eventNotificationModel.key = key[0];
-    //allRequestNotifications.add(tempHyridNotificationModel);
     tempHyridNotificationModel.atKey =
         BackendService.getInstance().getAtKey(key[0]);
     tempHyridNotificationModel.atValue =
         await getAtValue(tempHyridNotificationModel.atKey);
     tempHyridNotificationModel.eventNotificationModel = eventNotificationModel;
     allNotifications.add(tempHyridNotificationModel);
-    // setStatus(ADD_REQUEST_EVENT, Status.Done);
 
     return tempHyridNotificationModel;
   }

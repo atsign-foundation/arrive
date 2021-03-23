@@ -3,7 +3,6 @@ import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_eve
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -53,12 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
     LocationNotificationListener()
         .init(BackendService.getInstance().atClientServiceInstance.atClient);
     eventProvider = context.read<EventProvider>();
-    // eventProvider
-    //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
 
     hybridProvider = context.read<HybridProvider>();
-    // hybridProvider
-    //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<EventProvider>(context, listen: false)
@@ -131,9 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             scrollController,
                             Center(
                               child: CircularProgressIndicator(),
-                            )
-                            // panel: Text(''),
-                            )),
+                            ))),
                   );
                 },
                 errorBuilder: (provider) {
@@ -172,9 +165,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget collapsedContent(
       bool isExpanded, ScrollController slidingScrollController, dynamic T) {
-    if (pc.isPanelAnimating) {
-      print('animating');
-    }
     return Container(
         height: !isExpanded ? 260.toHeight : 530.toHeight,
         padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
@@ -242,10 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   eventNotificationModel: event)),
                           taskName: (provider) => provider.HYBRID_ADD_EVENT,
                           showLoader: false,
-                          onSuccess: (provider) {
-                            provider.findAtSignsToShareLocationWith();
-                            provider.initialiseLacationSharing();
-                          });
+                          onSuccess: (provider) {});
                     }, createdEvents: allEvents),
                     SizeConfig().screenHeight * 0.9,
                     onSheetCLosed: () {});
@@ -308,55 +295,6 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }).toList(),
     );
-    // return ListView.separated(
-    //     controller: slidingScrollController,
-
-    //     // physics: isExpanded
-    //     //     ? AlwaysScrollableScrollPhysics()
-    //     //     : NeverScrollableScrollPhysics(),
-    //     itemCount: allHybridNotifications.length,
-    //     shrinkWrap: true,
-    //     separatorBuilder: (BuildContext context, int index) {
-    //       return Divider();
-    //     },
-    //     itemBuilder: (BuildContext context, int index) {
-    //       if (allHybridNotifications[index].notificationType ==
-    //               NotificationType.Event &&
-    //           allHybridNotifications[index].eventNotificationModel != null) {
-    //         return InkWell(
-    //           onTap: () {
-    //             HomeEventService().onEventModelTap(
-    //                 allHybridNotifications[index].eventNotificationModel,
-    //                 provider);
-    //           },
-    //           child: DisplayTile(
-    //             atsignCreator: allHybridNotifications[index]
-    //                 .eventNotificationModel
-    //                 .atsignCreator,
-    //             title: getTitle(allHybridNotifications[index]),
-    //             subTitle: getSubTitle(allHybridNotifications[index]),
-    //             semiTitle: getSemiTitle(allHybridNotifications[index]),
-    //           ),
-    //         );
-    //       } else if (allHybridNotifications[index].notificationType ==
-    //               NotificationType.Location &&
-    //           allHybridNotifications[index].locationNotificationModel != null) {
-    //         return InkWell(
-    //           onTap: () {
-    //             HomeEventService().onLocationModelTap(
-    //                 allHybridNotifications[index].locationNotificationModel);
-    //           },
-    //           child: DisplayTile(
-    //             atsignCreator: allHybridNotifications[index]
-    //                 .locationNotificationModel
-    //                 .atsignCreator,
-    //             title: getTitle(allHybridNotifications[index]),
-    //             subTitle: getSubTitle(allHybridNotifications[index]),
-    //             semiTitle: getSemiTitle(allHybridNotifications[index]),
-    //           ),
-    //         );
-    //       }
-    //     });
   }
 
   Widget emptyWidget(String title) {

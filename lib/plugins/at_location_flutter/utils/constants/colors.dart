@@ -7,11 +7,10 @@ class AllColors {
   // ignore: non_constant_identifier_names
   Color WHITE = Color(0xFFFFFFFF);
   // ignore: non_constant_identifier_names
-  // Color LIGHT_GREY = Color(0xFFF7F7FF);
   Color INPUT_GREY_BACKGROUND = Color(0xFFF7F7FF);
+  // ignore: non_constant_identifier_names
   Color LIGHT_GREY = Color(0xFFBEC0C8);
   // ignore: non_constant_identifier_names
-  // Color DARK_GREY = Color(0xFF868A92);
   Color DARK_GREY = Color(0xFF6D6D79);
   // ignore: non_constant_identifier_names
   Color ORANGE = Color(0xFFFC7A30);

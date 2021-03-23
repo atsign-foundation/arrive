@@ -64,7 +64,6 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                     asSingleSelectionScreen: true,
                     context: context,
                     selectedList: (selectedList) {
-                      print(selectedList);
                       if (selectedList.length > 0)
                         setState(() {
                           selectedContact = selectedList[0];

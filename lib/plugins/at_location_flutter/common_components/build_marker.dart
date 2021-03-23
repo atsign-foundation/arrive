@@ -45,10 +45,7 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
                 Positioned(
                   bottom: 25,
                   child: CustomPaint(
-                    size: Size(
-                        40,
-                        (40 * 1.137455469677715)
-                            .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                    size: Size(40, (40 * 1.137455469677715).toDouble()),
                     painter: RPSCustomPainter(),
                   ),
                 ),
@@ -68,50 +65,5 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
                   ),
                 ),
               ],
-            )
-
-      // singleMarker
-      //     ? Stack(
-      //         alignment: Alignment.center,
-      //         children: [
-      //           Icon(
-      //             Icons.circle,
-      //             size: 36,
-      //             color: AllColors().DARK_BLUE,
-      //           ),
-      //           Positioned(
-      //             child: SizedBox(
-      //               width: 40,
-      //               height: 40,
-      //               child: CustomPaint(
-      //                 painter: CircleMarkerPainter(color: AllColors().DARK_BLUE),
-      //               ),
-      //             ),
-      //           ),
-      //         ],
-      //       )
-      //     : Stack(
-      //         alignment: Alignment.center,
-      //         children: [
-      //           CircleAvatar(
-      //             radius: 20,
-      //             child: user.image != null
-      //                 ? CustomCircleAvatar(
-      //                     byteImage: user.image, nonAsset: true, size: 30)
-      //                 : ContactInitial(
-      //                     initials: user.displayName.substring(1, 3),
-      //                     size: 60,
-      //                   ),
-      //           ),
-      //           SizedBox(
-      //             width: 40,
-      //             height: 40,
-      //             child: CustomPaint(
-      //               painter: CircleMarkerPainter(),
-      //             ),
-      //           ),
-      //           // Positioned(top: 50, child: pointedBottom(color: Colors.black)),
-      //         ],
-      //       ),
-      );
+            ));
 }

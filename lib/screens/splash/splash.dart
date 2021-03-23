@@ -1,8 +1,5 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
-import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
-import 'package:atsign_location_app/routes/route_names.dart';
-import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -58,7 +55,7 @@ class _SplashState extends State<Splash> {
           atClientPreference: BackendService.getInstance().atClientPreference,
           domain: MixedConstants.ROOT_DOMAIN,
           onboard: (value, atsign) async {
-            print('_initBackendService onboarded: ${value} , atsign:${atsign}');
+            print('_initBackendService onboarded: $value , atsign:$atsign');
             BackendService.getInstance().atClientServiceMap = value;
             await BackendService.getInstance().onboard();
             BackendService.getInstance().startMonitor();
@@ -70,7 +67,7 @@ class _SplashState extends State<Splash> {
             );
           },
           onError: (error) {
-            print('_initBackendService error in onboarding: ${error}');
+            print('_initBackendService error in onboarding: $error');
           },
         );
       } else {
@@ -79,6 +76,7 @@ class _SplashState extends State<Splash> {
         });
       }
 
+      // ignore: missing_return
       SystemChannels.lifecycle.setMessageHandler((msg) {
         print('set message handler');
         state = msg;
@@ -138,22 +136,6 @@ class _SplashState extends State<Splash> {
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
-                  // Positioned(
-                  //   top: 511.toHeight,
-                  //   left: 16.toWidth,
-                  //   child: Text(
-                  //     'Lorem ipsum dolor sit amet, consectetur',
-                  //     style: CustomTextStyles().darkGrey15,
-                  //   ),
-                  // ),
-                  // Positioned(
-                  //   top: 530.toHeight,
-                  //   left: 16.toWidth,
-                  //   child: Text(
-                  //     'adipiscing elit.',
-                  //     style: CustomTextStyles().darkGrey15,
-                  //   ),
-                  // ),
                   Positioned(
                     bottom: 32.toHeight,
                     left: 16.toWidth,
