@@ -80,11 +80,12 @@ class _SideBarState extends State<SideBar> {
                 children: [
                   (image != null)
                       ? ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(30.toFont)),
                           child: Image.memory(
                             image,
-                            width: 50,
-                            height: 50,
+                            width: 50.toFont,
+                            height: 50.toFont,
                             fit: BoxFit.fill,
                           ),
                         )

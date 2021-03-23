@@ -17,7 +17,7 @@ class Tasks extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 44.toHeight,
+        height: 52.toHeight,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -32,7 +32,9 @@ class Tasks extends StatelessWidget {
             Flexible(
               child: Text(
                 task,
-                style: Theme.of(context).primaryTextTheme.headline3,
+                style: TextStyle(
+                    color: Theme.of(context).primaryTextTheme.headline3.color,
+                    fontSize: 14.toFont),
               ),
             )
           ],

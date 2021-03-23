@@ -91,7 +91,7 @@ class _CreateEventState extends State<CreateEvent> {
                                       style: CustomTextStyles().greyLabel14),
                                   SizedBox(height: 6.toHeight),
                                   CustomInputField(
-                                    width: 350.toWidth,
+                                    width: SizeConfig().screenWidth * 0.95,
                                     height: 50.toHeight,
                                     isReadOnly: true,
                                     hintText: 'Select @sign from contact',
@@ -144,7 +144,7 @@ class _CreateEventState extends State<CreateEvent> {
                                   ),
                                   SizedBox(height: 6.toHeight),
                                   CustomInputField(
-                                    width: 350.toWidth,
+                                    width: SizeConfig().screenWidth * 0.95,
                                     height: 50.toHeight,
                                     hintText: 'Title of the event',
                                     initialValue: eventData.title != null
@@ -163,7 +163,7 @@ class _CreateEventState extends State<CreateEvent> {
                                       style: CustomTextStyles().greyLabel14),
                                   SizedBox(height: 6.toHeight),
                                   CustomInputField(
-                                    width: 350.toWidth,
+                                    width: SizeConfig().screenWidth * 0.95,
                                     height: 50.toHeight,
                                     isReadOnly: true,
                                     hintText: 'Start typing or select from map',

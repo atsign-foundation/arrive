@@ -5,6 +5,7 @@ import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class DisplayTile extends StatefulWidget {
   final String title, semiTitle, subTitle, atsignCreator, invitedBy;
@@ -59,11 +60,12 @@ class _DisplayTileState extends State<DisplayTile> {
             children: [
               (image != null)
                   ? ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      borderRadius:
+                          BorderRadius.all(Radius.circular(30.toFont)),
                       child: Image.memory(
                         image,
-                        width: 50,
-                        height: 50,
+                        width: 50.toFont,
+                        height: 50.toFont,
                         fit: BoxFit.fill,
                       ),
                     )
@@ -102,7 +104,9 @@ class _DisplayTileState extends State<DisplayTile> {
               children: [
                 Text(
                   name ?? widget.title,
-                  style: Theme.of(context).primaryTextTheme.headline3,
+                  style: TextStyle(
+                      color: Theme.of(context).primaryTextTheme.headline3.color,
+                      fontSize: 14.toFont),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

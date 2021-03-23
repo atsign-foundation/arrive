@@ -44,6 +44,9 @@ class CustomInputField extends StatelessWidget {
             Expanded(
               child: TextField(
                 readOnly: isReadOnly,
+                style: TextStyle(
+                  fontSize: 15.toFont,
+                ),
                 decoration: InputDecoration(
                   hintText: hintText,
                   enabledBorder: InputBorder.none,
