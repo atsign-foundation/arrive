@@ -14,6 +14,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/h
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
+import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -566,8 +567,16 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 onTap: () async {
                                   LoadingDialog().show();
                                   try {
-                                    var result = await LocationService()
-                                        .onRemove(widget.userListenerKeyword);
+                                    var result;
+                                    if (widget.userListenerKeyword.key
+                                        .contains("sharelocation")) {
+                                      result = await LocationSharingService()
+                                          .deleteKey(
+                                              widget.userListenerKeyword);
+                                    } else if (widget.userListenerKeyword.key
+                                        .contains("requestlocation")) {
+                                      result = false;
+                                    }
                                     if (result) {
                                       SendLocationNotification()
                                           .sendNull(widget.userListenerKeyword);

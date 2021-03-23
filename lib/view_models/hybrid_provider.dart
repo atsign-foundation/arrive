@@ -87,6 +87,18 @@ class HybridProvider extends RequestLocationProvider {
         .removeWhere((element) => allPastEventNotifications.contains(element));
   }
 
+  // called when a share location key is deleted => to remove from UI
+  removePerson(String key) {
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
+
+    allHybridNotifications
+        .removeWhere((notification) => key.contains(notification.atKey.key));
+
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
+
+    SendLocationNotification().removeMember(key);
+  }
+
   mapUpdatedData(HybridNotificationModel notification, {bool remove = false}) {
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
     String newEventDataKeyId = notification.notificationType ==
@@ -164,7 +176,8 @@ class HybridProvider extends RequestLocationProvider {
           removeLocationSharing(notification.key);
       }
     } else {
-      if (notification.locationNotificationModel.isSharing)
+      if ((notification.locationNotificationModel.isSharing) &&
+          (notification.locationNotificationModel.isAccepted))
         addMemberToSendingLocationList(BackendService.getInstance()
             .convertEventToHybrid(NotificationType.Location,
                 locationNotificationModel:

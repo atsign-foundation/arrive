@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
 import 'package:at_contact/at_contact.dart';
+import 'package:at_contacts_flutter/at_contacts_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
@@ -96,12 +97,13 @@ class LocationNotificationListener {
       // ignore: unrelated_type_equality_checks
       if ((allLocationNotifications[i].locationNotificationModel == 'null') ||
           (allLocationNotifications[i].locationNotificationModel == null) ||
-          (allLocationNotifications[i]
-                  .locationNotificationModel
-                  .to
-                  .difference(DateTime.now())
-                  .inMinutes <
-              0)) tempArray.add(allLocationNotifications[i]);
+          ((allLocationNotifications[i].locationNotificationModel.to != null) &&
+              (allLocationNotifications[i]
+                      .locationNotificationModel
+                      .to
+                      .difference(DateTime.now())
+                      .inMinutes <
+                  0))) tempArray.add(allLocationNotifications[i]);
     }
 
     allLocationNotifications
@@ -110,7 +112,7 @@ class LocationNotificationListener {
 
   createHybridFromKeyLocationModel() {
     allLocationNotifications.forEach((keyLocationModel) async {
-      var _image = await getImageOfAtsignNew(
+      var _image = await getImageOfAtsign(
           keyLocationModel.locationNotificationModel.atsignCreator);
       HybridModel user = HybridModel(
           displayName: keyLocationModel.locationNotificationModel.atsignCreator,
@@ -152,7 +154,7 @@ class LocationNotificationListener {
 
       String atsign = newUser.atsignCreator;
       LatLng _latlng = newUser.getLatLng;
-      var _image = await getImageOfAtsignNew(atsign);
+      var _image = await getImageOfAtsign(atsign);
 
       HybridModel user = HybridModel(
           displayName: newUser.atsignCreator,
@@ -179,34 +181,21 @@ class LocationNotificationListener {
     atHybridUsersSink.add(allUsersList);
   }
 
-  Future<dynamic> getImageOfAtsign(String atsign) async {
-    try {
-      var metadata = Metadata();
-      metadata.isPublic = true;
-      metadata.namespaceAware = false;
-      AtKey key = AtKey();
-      key.sharedBy = atsign;
-      key.metadata = metadata;
-      key.metadata.isBinary = true;
-      key.key = 'image.persona';
-      var result = await atClientInstance.get(key);
-      var _image = result.value;
-      return _image;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  getImageOfAtsignNew(String atsign) async {
+  getImageOfAtsign(String atsign) async {
     try {
       AtContact contact;
       Uint8List image;
-      AtContactsImpl atContact = await AtContactsImpl.getInstance(
-          BackendService.getInstance()
-              .atClientServiceInstance
-              .atClient
-              .currentAtSign);
-      contact = await atContact.get(atsign);
+      contact = await getAtSignDetails(atsign);
+
+      if (contact == null) {
+        AtContactsImpl atContact = await AtContactsImpl.getInstance(
+            BackendService.getInstance()
+                .atClientServiceInstance
+                .atClient
+                .currentAtSign);
+        contact = await atContact.get(atsign);
+      }
+
       if (contact != null) {
         if (contact.tags != null && contact.tags['image'] != null) {
           List<int> intList = contact.tags['image'].cast<int>();

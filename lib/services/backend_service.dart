@@ -131,11 +131,20 @@ class BackendService {
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
     var operation = responseJson['operation'];
-    if ((operation == 'delete') &&
-        atKey.toString().toLowerCase().contains('locationnotify')) {
-      print('$notificationKey deleted');
-      LocationNotificationListener().deleteReceivedData(fromAtSign);
-      return;
+    if (operation == 'delete') {
+      if (atKey.toString().toLowerCase().contains('locationnotify')) {
+        print('$notificationKey deleted');
+        LocationNotificationListener().deleteReceivedData(fromAtSign);
+        return;
+      } else if (atKey.toString().toLowerCase().contains('sharelocation')) {
+        print('$notificationKey containing sharelocation deleted');
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.removePerson(atKey),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+        return;
+      }
     }
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
