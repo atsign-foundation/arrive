@@ -10,6 +10,7 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 class EventLog extends StatefulWidget {
   @override
@@ -124,7 +125,7 @@ Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
     },
     itemBuilder: (context, index) {
       return Padding(
-        padding: const EdgeInsets.only(right: 10.0, left: 10),
+        padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
         child: DisplayTile(
           title: events[index].eventNotificationModel.title,
           atsignCreator: events[index].eventNotificationModel.atsignCreator,
@@ -152,7 +153,7 @@ Widget getPastEvents(List<HybridNotificationModel> allEvents) {
     },
     itemBuilder: (context, index) {
       return Padding(
-        padding: const EdgeInsets.only(right: 10.0, left: 10),
+        padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
         child: DisplayTile(
           title: events[index].eventNotificationModel.title,
           atsignCreator: events[index].eventNotificationModel.atsignCreator,
