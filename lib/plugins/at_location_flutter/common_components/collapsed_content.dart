@@ -491,60 +491,64 @@ class _CollapsedContentState extends State<CollapsedContent> {
                     children: [
                       Divider(),
                       amICreator
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Share my Location',
-                                  style: CustomTextStyles().darkGrey16,
-                                ),
-                                Switch(
-                                    value: isSharing,
-                                    onChanged: (value) async {
-                                      LoadingDialog().show();
-                                      try {
-                                        var result;
-                                        if (widget.userListenerKeyword.key
-                                            .contains("sharelocation")) {
-                                          result = await LocationService()
-                                              .onShareToggle(
-                                                  widget.userListenerKeyword,
-                                                  isSharing: value);
-                                        } else if (widget
-                                            .userListenerKeyword.key
-                                            .contains("requestlocation")) {
-                                          result = await LocationService()
-                                              .onShareToggle(
-                                                  widget.userListenerKeyword,
-                                                  true,
-                                                  isSharing: value);
-                                        }
-                                        if (result) {
-                                          if (!value) {
-                                            SendLocationNotification().sendNull(
-                                                widget.userListenerKeyword);
+                          ? Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Share my Location',
+                                    style: CustomTextStyles().darkGrey16,
+                                  ),
+                                  Switch(
+                                      value: isSharing,
+                                      onChanged: (value) async {
+                                        LoadingDialog().show();
+                                        try {
+                                          var result;
+                                          if (widget.userListenerKeyword.key
+                                              .contains("sharelocation")) {
+                                            result = await LocationService()
+                                                .onShareToggle(
+                                                    widget.userListenerKeyword,
+                                                    isSharing: value);
+                                          } else if (widget
+                                              .userListenerKeyword.key
+                                              .contains("requestlocation")) {
+                                            result = await LocationService()
+                                                .onShareToggle(
+                                                    widget.userListenerKeyword,
+                                                    true,
+                                                    isSharing: value);
                                           }
-                                          setState(() {
-                                            isSharing = value;
-                                          });
-                                        } else {
+                                          if (result) {
+                                            if (!value) {
+                                              SendLocationNotification()
+                                                  .sendNull(widget
+                                                      .userListenerKeyword);
+                                            }
+                                            setState(() {
+                                              isSharing = value;
+                                            });
+                                          } else {
+                                            CustomToast().show(
+                                                'some thing went wrong , try again.',
+                                                context);
+                                          }
+                                          LoadingDialog().hide();
+                                        } catch (e) {
+                                          print(e);
                                           CustomToast().show(
-                                              'some thing went wrong , try again.',
+                                              'something went wrong , please try again.',
                                               context);
+                                          LoadingDialog().hide();
                                         }
-                                        LoadingDialog().hide();
-                                      } catch (e) {
-                                        print(e);
-                                        CustomToast().show(
-                                            'something went wrong , please try again.',
-                                            context);
-                                        LoadingDialog().hide();
-                                      }
-                                    })
-                              ],
+                                      })
+                                ],
+                              ),
                             )
                           : SizedBox(),
-                      amICreator ? Divider() : SizedBox(),
+                      SizedBox(),
                       amICreator
                           ? Expanded(
                               child: InkWell(
@@ -558,7 +562,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                               ),
                             )
                           : SizedBox(),
-                      amICreator ? Divider() : SizedBox(),
+                      SizedBox(),
                       (amICreator &&
                               (widget.userListenerKeyword.key
                                   .contains("sharelocation")))

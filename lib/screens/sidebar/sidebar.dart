@@ -47,6 +47,7 @@ class _SideBarState extends State<SideBar> {
   getEventCreator() async {
     AtContact contact = await getAtSignDetails(
         BackendService.getInstance().atClientInstance.currentAtSign);
+    name = null;
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
