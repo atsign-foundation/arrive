@@ -16,10 +16,14 @@ class EventLog extends StatefulWidget {
   _EventLogState createState() => _EventLogState();
 }
 
-class _EventLogState extends State<EventLog> {
+class _EventLogState extends State<EventLog>
+    with SingleTickerProviderStateMixin {
   List<HybridNotificationModel> allEvents;
+  TabController _controller;
   @override
   void initState() {
+    _controller =
+        _controller = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
     allEvents = [];
     getAllEvents();
@@ -47,51 +51,46 @@ class _EventLogState extends State<EventLog> {
             title: 'Events',
             action: PopButton(label: 'Close'),
           ),
-          body: Column(
-            children: <Widget>[
-              Container(
-                child: DefaultTabController(
-                  length: 2,
-                  child: Column(
-                    children: [
-                      Container(
-                        child: TabBar(
-                          indicatorColor: Theme.of(context).primaryColor,
-                          indicatorWeight: 3.toHeight,
-                          labelColor: Theme.of(context).primaryColor,
-                          unselectedLabelColor: AllColors().DARK_GREY,
-                          tabs: [
-                            Tab(
-                              child: Text(
-                                'Upcoming',
-                                style: TextStyle(
-                                    fontSize: 16.toFont, letterSpacing: 1),
-                              ),
-                            ),
-                            Tab(
-                              child: Text('Past',
-                                  style: TextStyle(
-                                      fontSize: 16.toFont, letterSpacing: 1)),
-                            )
-                          ],
+          body: SingleChildScrollView(
+            child: Container(
+              height: SizeConfig().screenHeight - (80.toHeight),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 40,
+                    child: TabBar(
+                      indicatorColor: Theme.of(context).primaryColor,
+                      indicatorWeight: 3.toHeight,
+                      labelColor: Theme.of(context).primaryColor,
+                      unselectedLabelColor: AllColors().DARK_GREY,
+                      controller: _controller,
+                      tabs: [
+                        Tab(
+                          child: Text(
+                            'Upcoming',
+                            style: TextStyle(
+                                fontSize: 16.toFont, letterSpacing: 1),
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.fromLTRB(
-                            20.toWidth, 20.toHeight, 10.toWidth, 5.toHeight),
-                        height: SizeConfig().screenHeight - 190.toHeight,
-                        child: TabBarView(
-                          children: [
-                            getUpcomingEvents(allEvents),
-                            getPastEvents(allEvents)
-                          ],
-                        ),
-                      ),
-                    ],
+                        Tab(
+                          child: Text('Past',
+                              style: TextStyle(
+                                  fontSize: 16.toFont, letterSpacing: 1)),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              )
-            ],
+                  Expanded(
+                      child: TabBarView(
+                    controller: _controller,
+                    children: [
+                      getUpcomingEvents(allEvents),
+                      getPastEvents(allEvents)
+                    ],
+                  )),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -124,13 +123,16 @@ Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
       return Divider();
     },
     itemBuilder: (context, index) {
-      return DisplayTile(
-        title: events[index].eventNotificationModel.title,
-        atsignCreator: events[index].eventNotificationModel.atsignCreator,
-        subTitle:
-            'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
-        invitedBy:
-            'Invited by ${events[index].eventNotificationModel.atsignCreator}',
+      return Padding(
+        padding: const EdgeInsets.only(right: 10.0, left: 10),
+        child: DisplayTile(
+          title: events[index].eventNotificationModel.title,
+          atsignCreator: events[index].eventNotificationModel.atsignCreator,
+          subTitle:
+              'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
+          invitedBy:
+              'Invited by ${events[index].eventNotificationModel.atsignCreator}',
+        ),
       );
     },
   );
@@ -149,13 +151,16 @@ Widget getPastEvents(List<HybridNotificationModel> allEvents) {
       return Divider();
     },
     itemBuilder: (context, index) {
-      return DisplayTile(
-        title: events[index].eventNotificationModel.title,
-        atsignCreator: events[index].eventNotificationModel.atsignCreator,
-        subTitle:
-            'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
-        invitedBy:
-            'Invited by ${events[index].eventNotificationModel.atsignCreator}',
+      return Padding(
+        padding: const EdgeInsets.only(right: 10.0, left: 10),
+        child: DisplayTile(
+          title: events[index].eventNotificationModel.title,
+          atsignCreator: events[index].eventNotificationModel.atsignCreator,
+          subTitle:
+              'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
+          invitedBy:
+              'Invited by ${events[index].eventNotificationModel.atsignCreator}',
+        ),
       );
     },
   );
