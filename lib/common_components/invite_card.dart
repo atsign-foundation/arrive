@@ -12,12 +12,14 @@ import 'package:at_common_flutter/services/size_config.dart';
 
 class InviteCard extends StatefulWidget {
   final String event, invitedPeopleCount, timeAndDate, atSign, memberCount;
+  final bool isStartTime;
   InviteCard(
       {this.event,
       this.invitedPeopleCount,
       this.timeAndDate,
       this.atSign,
-      this.memberCount});
+      this.memberCount,
+      this.isStartTime = false});
 
   @override
   _InviteCardState createState() => _InviteCardState();
@@ -64,11 +66,11 @@ class _InviteCardState extends State<InviteCard> {
                       right: 0,
                       bottom: 0,
                       child: Container(
-                        width: 25,
-                        height: 25,
+                        width: 25.toFont,
+                        height: 25.toFont,
                         decoration: BoxDecoration(
                           color: AllColors().BLUE,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20.toFont),
                         ),
                         child: Center(
                             child: Text(
@@ -102,7 +104,16 @@ class _InviteCardState extends State<InviteCard> {
               ],
             ),
           ),
-          PopButton(label: 'Decide Later')
+          PopButton(
+            label: 'Decide Later',
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+
+              // when decide later is pressed , we are closing start and end time selection sheet and event dialog.
+              if (!widget.isStartTime) Navigator.of(context).pop();
+            },
+          )
         ],
       ),
     );

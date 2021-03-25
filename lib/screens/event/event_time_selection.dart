@@ -36,6 +36,7 @@ class _EventTimeSelectionState extends State<EventTimeSelection> {
             atSign: widget.eventNotificationModel.atsignCreator,
             memberCount:
                 '+${widget.eventNotificationModel.group.members.length}',
+            isStartTime: widget.isStartTime,
           ),
           SizedBox(height: 10),
           Divider(),

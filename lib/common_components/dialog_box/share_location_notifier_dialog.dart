@@ -161,11 +161,12 @@ class _ShareLocationNotifierDialogState
                               right: 0,
                               bottom: 0,
                               child: Container(
-                                width: 30,
-                                height: 30,
+                                width: 30.toFont,
+                                height: 30.toFont,
                                 decoration: BoxDecoration(
                                   color: AllColors().BLUE,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius:
+                                      BorderRadius.circular(20.toFont),
                                 ),
                                 child: Center(
                                     child: Text(

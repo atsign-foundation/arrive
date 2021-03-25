@@ -52,7 +52,7 @@ class CustomInputField extends StatelessWidget {
                   enabledBorder: InputBorder.none,
                   border: InputBorder.none,
                   hintStyle: TextStyle(
-                      color: ColorConstants.darkGrey, fontSize: 13.toFont),
+                      color: ColorConstants.darkGrey, fontSize: 15.toFont),
                 ),
                 onTap: onTap ?? null,
                 onChanged: (val) {
