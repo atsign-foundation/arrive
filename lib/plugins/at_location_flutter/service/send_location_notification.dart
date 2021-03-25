@@ -61,17 +61,22 @@ class SendLocationNotification {
   }
 
   updateMyLocation() async {
-    positionStream = Geolocator.getPositionStream(distanceFilter: 100)
-        .listen((myLocation) async {
-      bool isMasterSwitchOn =
-          await LocationNotificationListener().getShareLocation();
-      if (isMasterSwitchOn) {
-        receivingAtsigns.forEach((notification) async {
-          await prepareLocationDataAndSend(
-              notification, LatLng(myLocation.latitude, myLocation.longitude));
-        });
-      }
-    });
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (((permission == LocationPermission.always) ||
+        (permission == LocationPermission.whileInUse))) {
+      positionStream = Geolocator.getPositionStream(distanceFilter: 100)
+          .listen((myLocation) async {
+        bool isMasterSwitchOn =
+            await LocationNotificationListener().getShareLocation();
+        if (isMasterSwitchOn) {
+          receivingAtsigns.forEach((notification) async {
+            await prepareLocationDataAndSend(notification,
+                LatLng(myLocation.latitude, myLocation.longitude));
+          });
+        }
+      });
+    }
   }
 
   prepareLocationDataAndSend(

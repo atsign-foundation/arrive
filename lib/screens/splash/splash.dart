@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -38,6 +39,10 @@ class _SplashState extends State<Splash> {
   String state;
   void _initBackendService() async {
     try {
+      /// So that we have the permission status beforehand & later we dont get
+      /// PlatformException(PermissionHandler.PermissionManager) => Multiple Permissions exception
+      await Geolocator.requestPermission();
+
       backendService = BackendService.getInstance();
       backendService.atClientServiceInstance = new AtClientService();
       var isOnBoard = await backendService.onboard();
@@ -88,6 +93,8 @@ class _SplashState extends State<Splash> {
         }
       });
     } catch (e) {
+      print('Error in _initBackendService $e');
+
       if (mounted)
         setState(() {
           authenticating = false;
