@@ -42,10 +42,11 @@ class _DisplayTileState extends State<DisplayTile> {
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
-        setState(() {
-          image = Uint8List.fromList(intList);
-          if (widget.showName) name = contact.tags['name'].toString();
-        });
+        if (mounted)
+          setState(() {
+            image = Uint8List.fromList(intList);
+            if (widget.showName) name = contact.tags['name'].toString();
+          });
       }
     }
   }
@@ -79,10 +80,10 @@ class _DisplayTileState extends State<DisplayTile> {
                       bottom: 0,
                       child: Container(
                         alignment: Alignment.center,
-                        height: 28,
-                        width: 28,
+                        height: 28.toFont,
+                        width: 28.toFont,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
+                            borderRadius: BorderRadius.circular(15.0.toFont),
                             color: AllColors().BLUE),
                         child: Text(
                           '+${widget.number}',
