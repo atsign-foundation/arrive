@@ -195,13 +195,13 @@ class LocationService {
       if (userListenerKeyword != null) {
         hybridUsersList.removeWhere((element) =>
             ((element.displayName == atsign) &&
-                (element.displayName != myData.displayName)));
+                (element.displayName != atClientInstance.currentAtSign)));
 
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
         hybridUsersList.removeWhere((element) =>
             ((element.displayName == atsign) &&
-                (element.displayName != myData.displayName)));
+                (element.displayName != atClientInstance.currentAtSign)));
 
         _atHybridUsersController.add(hybridUsersList);
       }

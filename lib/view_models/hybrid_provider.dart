@@ -19,6 +19,7 @@ class HybridProvider extends RequestLocationProvider {
   HybridProvider();
   AtClientImpl atClientInstance;
   String currentAtSign;
+  bool isSharing = false;
   List<HybridNotificationModel> allHybridNotifications,
       allPastEventNotifications;
   List<LocationNotificationModel> shareLocationData;
@@ -337,11 +338,13 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   initialiseLacationSharing() async {
-    bool isSharing = await LocationNotificationListener().getShareLocation();
-    if (isSharing)
+    isSharing = await LocationNotificationListener().getShareLocation();
+    notifyListeners();
+    if (isSharing) {
       sendLocationSharing();
-    else
+    } else {
       stopLocationSharing();
+    }
   }
 
   sendLocationSharing() {

@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
+import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 
@@ -36,12 +39,25 @@ class SendLocationNotification {
       return;
     }
 
-    // send
-    bool isMasterSwitchOn =
-        await LocationNotificationListener().getShareLocation();
-    if (isMasterSwitchOn) {
-      LatLng myLocation = await getMyLocation();
-      await prepareLocationDataAndSend(notification, myLocation);
+    LatLng myLocation = await getMyLocation();
+
+    if (myLocation != null) {
+      // send
+      bool isMasterSwitchOn =
+          await LocationNotificationListener().getShareLocation();
+
+      if (!isMasterSwitchOn) {
+        await locationPromptDialog();
+        isMasterSwitchOn =
+            await LocationNotificationListener().getShareLocation();
+      }
+
+      if (isMasterSwitchOn) {
+        await prepareLocationDataAndSend(notification, myLocation);
+      }
+    } else {
+      CustomToast().show(
+          'Location permission not granted', NavService.navKey.currentContext);
     }
 
     // add

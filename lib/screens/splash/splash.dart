@@ -39,9 +39,7 @@ class _SplashState extends State<Splash> {
   String state;
   void _initBackendService() async {
     try {
-      /// So that we have the permission status beforehand & later we dont get
-      /// PlatformException(PermissionHandler.PermissionManager) => Multiple Permissions exception
-      await Geolocator.requestPermission();
+      await checkLocationPermission();
 
       backendService = BackendService.getInstance();
       backendService.atClientServiceInstance = new AtClientService();
@@ -99,6 +97,16 @@ class _SplashState extends State<Splash> {
         setState(() {
           authenticating = false;
         });
+    }
+  }
+
+  checkLocationPermission() async {
+    try {
+      /// So that we have the permission status beforehand & later we dont get
+      /// PlatformException(PermissionHandler.PermissionManager) => Multiple Permissions exception
+      await Geolocator.requestPermission();
+    } catch (e) {
+      print('Error in checkLocationPermission $e');
     }
   }
 

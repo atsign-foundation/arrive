@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
@@ -267,9 +268,12 @@ class _ShareLocationNotifierDialogState
                           // ignore: unnecessary_statements
                           : ((!widget.locationData.isRequest)
                               ? {
-                                  LocationSharingService()
+                                  await LocationSharingService()
                                       .shareLocationAcknowledgment(
                                           true, widget.locationData, true),
+                                  CustomToast().show(
+                                      'Request to update data is submitted',
+                                      context),
                                   Navigator.of(context).pop(),
                                 }
                               : {
@@ -313,15 +317,21 @@ class _ShareLocationNotifierDialogState
                           // ignore: unnecessary_statements
                           : ((!widget.locationData.isRequest)
                               ? {
-                                  LocationSharingService()
+                                  await LocationSharingService()
                                       .shareLocationAcknowledgment(
                                           true, widget.locationData, false),
+                                  CustomToast().show(
+                                      'Request to update data is submitted',
+                                      context),
                                   Navigator.of(context).pop(),
                                 }
                               : {
-                                  RequestLocationService()
+                                  await RequestLocationService()
                                       .requestLocationAcknowledgment(
                                           widget.locationData, false),
+                                  CustomToast().show(
+                                      'Request to update data is submitted',
+                                      context),
                                   Navigator.of(context).pop(),
                                 });
                     },
@@ -354,10 +364,11 @@ class _ShareLocationNotifierDialogState
                     : (value == '24 hours' ? (24 * 60) : null)));
           },
         ),
-        350, onSheetCLosed: () {
-      RequestLocationService().requestLocationAcknowledgment(
+        350, onSheetCLosed: () async {
+      await RequestLocationService().requestLocationAcknowledgment(
           widget.locationData, true,
           minutes: result);
+      CustomToast().show('Request to update data is submitted', context);
       return result;
     });
   }
