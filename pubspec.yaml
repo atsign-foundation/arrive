@@ -46,6 +46,7 @@ dependencies:
   meta: ^1.1.0
   geolocator: ^6.2.1
   at_onboarding_flutter: ^1.0.0+1
+  fluttertoast: ^8.0.3
 
   
   at_client_mobile: ^1.0.0+3
@@ -53,11 +54,13 @@ dependencies:
   at_commons: ^1.0.1+3
   at_lookup: ^1.0.0+3
   at_contacts_group_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_group_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_group_flutter
   at_contacts_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_contacts_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_contacts_flutter
+  atsign_authentication_helper :
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
   at_chat_flutter:
-    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_chat_flutter
+    path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_chat_flutter
   # atsign_authentication_helper :
   #   path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
 
