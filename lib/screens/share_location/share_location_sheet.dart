@@ -105,16 +105,36 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               elevation: 0,
               dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
               value: selectedOption,
-              hint: Text("Occurs on"),
+              hint: Text("Occurs on",
+                  style: TextStyle(
+                      color: AllColors().LIGHT_GREY_LABEL,
+                      fontSize: 15.toFont)),
               style:
                   TextStyle(color: AllColors().DARK_GREY, fontSize: 13.toFont),
-              items: ['30 mins', '2 hours', '24 hours', 'Until turned off']
-                  .map((String option) {
+              items: [
+                "Occurs on",
+                '30 mins',
+                '2 hours',
+                '24 hours',
+                'Until turned off'
+              ].map((String option) {
                 return new DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option,
-                      style: TextStyle(
-                          color: AllColors().DARK_GREY, fontSize: 13.toFont)),
+                  value: option == "Occurs on" ? null : option,
+                  child: option == "Occurs on"
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(option,
+                                style: TextStyle(
+                                    color: AllColors().LIGHT_GREY_LABEL,
+                                    fontSize: 15.toFont)),
+                            Icon(Icons.keyboard_arrow_up)
+                          ],
+                        )
+                      : Text(option,
+                          style: TextStyle(
+                              color: AllColors().DARK_GREY,
+                              fontSize: 13.toFont)),
                 );
               }).toList(),
               onChanged: (value) {
