@@ -27,4 +27,7 @@ class MixedConstants {
     'After everyone’s at the venue',
     'At the end of the day'
   ];
+
+  static const String appNamespace = 'rrive';
+  static const String syncRegex = '.$appNamespace@';
 }
