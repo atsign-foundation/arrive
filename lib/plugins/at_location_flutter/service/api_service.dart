@@ -112,7 +112,6 @@ class ConnectivityService {
         await socket?.close();
       } catch (e) {}
     }
-    print("conn $connectivity");
     return connectivity;
   }
 

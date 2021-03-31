@@ -159,36 +159,17 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         ),
                         Divider(),
                         DisplayTile(
-                            title:
-                                '${snapshot.data.atsignCreator} and ${snapshot.data.group.members.length} more' ??
-                                    'Event participants',
-                            atsignCreator: snapshot.data.atsignCreator,
-                            semiTitle: (snapshot.data.group.members.length == 1)
-                                ? '${snapshot.data.group.members.length} person'
-                                : '${snapshot.data.group.members.length} people',
-                            number: snapshot.data.group.members.length,
-                            subTitle:
-                                'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
-                            action: Transform.rotate(
-                              angle: 5.8,
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: AllColors().ORANGE,
-                                ),
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: Icon(
-                                    Icons.send_outlined,
-                                    color: AllColors().WHITE,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            )),
+                          title:
+                              '${snapshot.data.atsignCreator} and ${snapshot.data.group.members.length} more' ??
+                                  'Event participants',
+                          atsignCreator: snapshot.data.atsignCreator,
+                          semiTitle: (snapshot.data.group.members.length == 1)
+                              ? '${snapshot.data.group.members.length} person'
+                              : '${snapshot.data.group.members.length} people',
+                          number: snapshot.data.group.members.length,
+                          subTitle:
+                              'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
+                        ),
                       ],
                     ),
                   );
@@ -198,10 +179,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
               builder: (context, AsyncSnapshot<List<HybridModel>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.hasError) {
-                    return participants(() => null);
+                    return SeeParticipants(() => null);
                   } else {
                     List<HybridModel> data = snapshot.data;
-                    return participants(() => bottomSheet(
+
+                    ParticipantsData().putData(data);
+                    ParticipantsData()
+                        .putAtsign(LocationService().atsignsAtMonitor);
+
+                    return SeeParticipants(() => bottomSheet(
                         context,
                         Participants(
                           true,
@@ -211,7 +197,11 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         422));
                   }
                 } else {
-                  return participants(() => bottomSheet(
+                  ParticipantsData().putData([]);
+                  ParticipantsData()
+                      .putAtsign(LocationService().atsignsAtMonitor);
+
+                  return SeeParticipants(() => bottomSheet(
                       context,
                       Participants(
                         false,
@@ -274,7 +264,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   Switch(
                                       value: isSharingEvent,
                                       onChanged: (value) async {
-                                        LoadingDialog().show();
+                                        LoadingDialog().show(
+                                            text: widget.isAdmin
+                                                ? 'Updating data'
+                                                : 'Sending request to update data');
                                         try {
                                           if (widget.isAdmin) {
                                             LocationService()
@@ -335,7 +328,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                   .elementAt(0)
                                                   .tags['isExited'] ==
                                               false) {
-                                            LoadingDialog().show();
+                                            LoadingDialog().show(
+                                                text: widget.isAdmin
+                                                    ? 'Updating data'
+                                                    : 'Sending request to update data');
                                             try {
                                               await LocationService()
                                                   .onEventExit(
@@ -378,7 +374,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                         onTap: () async {
                                           if (!widget.eventListenerKeyword
                                               .isCancelled) {
-                                            LoadingDialog().show();
+                                            LoadingDialog().show(
+                                                text: widget.isAdmin
+                                                    ? 'Updating data'
+                                                    : 'Sending request to update data');
                                             try {
                                               await LocationService()
                                                   .onEventCancel();
@@ -467,23 +466,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                   ],
                 ),
               ),
-              Transform.rotate(
-                angle: 5.8,
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: AllColors().ORANGE,
-                  ),
-                  child: Icon(
-                    Icons.send_outlined,
-                    color: AllColors().WHITE,
-                    size: 25,
-                  ),
-                ),
-              )
             ],
           ),
           expanded
@@ -506,7 +488,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   Switch(
                                       value: isSharing,
                                       onChanged: (value) async {
-                                        LoadingDialog().show();
+                                        LoadingDialog().show(
+                                            text: amICreator
+                                                ? 'Updating data'
+                                                : 'Sending request to update data');
                                         try {
                                           var result;
                                           if (widget.userListenerKeyword.key
@@ -558,9 +543,12 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 onTap: () async {
                                   await LocationService().onRequest();
                                 },
-                                child: Text(
-                                  'Request Location',
-                                  style: CustomTextStyles().darkGrey16,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Request Location',
+                                    style: CustomTextStyles().darkGrey16,
+                                  ),
                                 ),
                               ),
                             )
@@ -572,7 +560,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {
-                                  LoadingDialog().show();
+                                  LoadingDialog().show(
+                                      text: amICreator
+                                          ? 'Updating data'
+                                          : 'Sending request to update data');
                                   try {
                                     var result;
                                     if (widget.userListenerKeyword.key
@@ -605,9 +596,12 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                     LoadingDialog().hide();
                                   }
                                 },
-                                child: Text(
-                                  'Remove Person',
-                                  style: CustomTextStyles().orange16,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Remove Person',
+                                    style: CustomTextStyles().orange16,
+                                  ),
                                 ),
                               ),
                             )
@@ -620,8 +614,14 @@ class _CollapsedContentState extends State<CollapsedContent> {
                 )
         ]);
   }
+}
 
-  Widget participants(Function() onTap) {
+class SeeParticipants extends StatelessWidget {
+  final Function onTap;
+
+  SeeParticipants(this.onTap);
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 56),
       child: InkWell(

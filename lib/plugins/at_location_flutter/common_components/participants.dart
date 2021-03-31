@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/draggable_symbol.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_heading.dart';
@@ -7,27 +9,101 @@ import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
+class ParticipantsData {
+  ParticipantsData._();
+  static final ParticipantsData _instance = ParticipantsData._();
+  factory ParticipantsData() => _instance;
+
+  // ignore: close_sinks
+  StreamController dataController =
+      StreamController<List<HybridModel>>.broadcast();
+  Stream<List<HybridModel>> get dataStream => dataController.stream;
+  StreamSink<List<HybridModel>> get dataSink => dataController.sink;
+  List<HybridModel> data = [];
+
+  // ignore: close_sinks
+  StreamController atsignController =
+      StreamController<List<String>>.broadcast();
+  Stream<List<String>> get atsignStream => atsignController.stream;
+  StreamSink<List<String>> get atsignSink => atsignController.sink;
+  List<String> atsigns = [];
+
+  updateParticipants() {
+    dataController.add(data);
+  }
+
+  putData(List<HybridModel> data) {
+    this.data = data;
+    dataController.add(data);
+  }
+
+  putAtsign(List<String> atsigns) {
+    this.atsigns = atsigns;
+    atsignController.add(atsigns);
+  }
+}
+
 // ignore: must_be_immutable
-class Participants extends StatelessWidget {
+class Participants extends StatefulWidget {
   bool active;
   List<HybridModel> data;
   List<String> atsign;
 
   Participants(this.active, {this.data, this.atsign});
+
+  @override
+  _ParticipantsState createState() => _ParticipantsState();
+}
+
+class _ParticipantsState extends State<Participants> {
   List<String> untrackedAtsigns = [];
+
   List<String> trackedAtsigns = [];
 
   @override
   Widget build(BuildContext context) {
-    untrackedAtsigns = [];
-    trackedAtsigns =
-        data != null ? data.map((e) => e.displayName).toList() : [];
+    return StreamBuilder(
+        stream: ParticipantsData().dataStream,
+        builder: (context, AsyncSnapshot<List<HybridModel>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error in getting Participants',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 26),
+                ),
+              );
+            } else {
+              untrackedAtsigns = [];
+              trackedAtsigns = snapshot.data != null
+                  ? snapshot.data.map((e) => e.displayName).toList()
+                  : [];
 
-    atsign.forEach((element) {
-      trackedAtsigns.contains(element)
-          ? print('')
-          : untrackedAtsigns.add(element);
-    });
+              ParticipantsData().atsigns.forEach((element) {
+                trackedAtsigns.contains(element)
+                    ? print('')
+                    : untrackedAtsigns.add(element);
+              });
+              return builder();
+            }
+          } else {
+            untrackedAtsigns = [];
+            trackedAtsigns = ParticipantsData().data != null
+                ? ParticipantsData().data.map((e) => e.displayName).toList()
+                : [];
+
+            ParticipantsData().atsigns.forEach((element) {
+              trackedAtsigns.contains(element)
+                  ? print('')
+                  : untrackedAtsigns.add(element);
+            });
+            return builder();
+          }
+        });
+  }
+
+  Widget builder() {
     return Container(
       height: 422.toHeight,
       padding:
@@ -41,26 +117,29 @@ class Participants extends StatelessWidget {
             SizedBox(
               height: 10.toHeight,
             ),
-            active
+            widget.active
                 ? ListView.separated(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: data.length,
+                    itemCount: widget.data.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return data[index] == LocationService().eventData
+                      return widget.data[index] == LocationService().eventData
                           ? SizedBox()
                           : DisplayTile(
-                              title: data[index].displayName ?? '',
-                              atsignCreator: data[index].displayName,
-                              subTitle: data[index].displayName ?? '',
+                              title: widget.data[index].displayName ?? '',
+                              atsignCreator: widget.data[index].displayName,
+                              subTitle: null,
                               action: Text(
-                                '${data[index].eta}' ?? '?',
+                                (widget.data[index].displayName ==
+                                        LocationService().myData?.displayName)
+                                    ? ''
+                                    : '${widget.data[index].eta}',
                                 style: CustomTextStyles().darkGrey14,
                               ),
                             );
                     },
                     separatorBuilder: (BuildContext context, int index) {
-                      return data[index] == LocationService().eventData
+                      return widget.data[index] == LocationService().eventData
                           ? Divider()
                           : SizedBox();
                     },
@@ -68,12 +147,12 @@ class Participants extends StatelessWidget {
                 : ListView.separated(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: atsign.length,
+                    itemCount: widget.atsign.length,
                     itemBuilder: (BuildContext context, int index) {
                       return DisplayTile(
-                        title: atsign[index] ?? '',
-                        atsignCreator: atsign[index],
-                        subTitle: '',
+                        title: widget.atsign[index] ?? '',
+                        atsignCreator: widget.atsign[index],
+                        subTitle: null,
                         action: Text(
                           '',
                           style: CustomTextStyles().orange14,
@@ -84,7 +163,7 @@ class Participants extends StatelessWidget {
                       return Divider();
                     },
                   ),
-            active
+            widget.active
                 ? ListView.separated(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -93,9 +172,13 @@ class Participants extends StatelessWidget {
                       return DisplayTile(
                         title: untrackedAtsigns[index] ?? 'user name',
                         atsignCreator: untrackedAtsigns[index],
-                        subTitle: '@sign',
+                        subTitle: null,
                         action: Text(
-                          'Location not received',
+                          LocationService()
+                                  .exitedAtsigns
+                                  .contains(untrackedAtsigns[index])
+                              ? 'Exited'
+                              : 'Location not received',
                           style: CustomTextStyles().orange14,
                         ),
                       );

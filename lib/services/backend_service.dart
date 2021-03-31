@@ -269,7 +269,9 @@ class BackendService {
   createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
       String fromAtSign) async {
     try {
-      String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
+      String eventId =
+          acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
+
       print(
           'acknowledged notification received:$acknowledgedEvent , key:$atKey , $eventId');
 
