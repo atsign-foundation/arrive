@@ -76,6 +76,8 @@ class _ConcurrentEventRequestState extends State<ConcurrentEventRequest> {
                             if (!result)
                               CustomToast().show(
                                   'Something went wrong , try again.', context);
+                            else
+                              CustomToast().show('Event added', context);
 
                             if (mounted)
                               setState(() {
