@@ -1,5 +1,6 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
+import 'package:atsign_location_app/common_components/triple_dot_loading.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -162,41 +163,55 @@ class _SplashState extends State<Splash> {
                   Positioned(
                     bottom: 130.toHeight,
                     right: 36.toWidth,
-                    child: CustomButton(
-                        height: 40,
-                        width: 120,
-                        radius: 100.toHeight,
-                        child: authenticating
-                            ? Center(
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(),
+                    child: Opacity(
+                      opacity: authenticating ? 0.5 : 1,
+                      child: CustomButton(
+                          height: 40,
+                          width: 150,
+                          radius: 100.toHeight,
+                          child: authenticating
+                              ? Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Authenticating',
+                                        style: CustomTextStyles().white15,
+                                      ),
+                                      TypingIndicator(
+                                        showIndicator: true,
+                                        flashingCircleBrightColor:
+                                            AllColors().ORANGE,
+                                        flashingCircleDarkColor:
+                                            AllColors().DARK_GREY,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Text(
+                                  'Explore',
+                                  style: CustomTextStyles().white15,
                                 ),
-                              )
-                            : Text(
-                                'Explore',
-                                style: CustomTextStyles().white15,
-                              ),
-                        onTap: () async {
-                          if (authenticating) return;
+                          onTap: () async {
+                            if (authenticating) return;
 
-                          Onboarding(
-                            context: context,
-                            atClientPreference:
-                                BackendService.getInstance().atClientPreference,
-                            domain: MixedConstants.ROOT_DOMAIN,
-                            appColor: Color.fromARGB(255, 240, 94, 62),
-                            onboard: onOnboardCompletes,
-                            onError: (error) {
-                              print('error in onboard plugin:$error');
-                              setState(() {
-                                authenticating = false;
-                              });
-                            },
-                          );
-                        },
-                        bgColor: AllColors().Black),
+                            Onboarding(
+                              context: context,
+                              atClientPreference: BackendService.getInstance()
+                                  .atClientPreference,
+                              domain: MixedConstants.ROOT_DOMAIN,
+                              appColor: Color.fromARGB(255, 240, 94, 62),
+                              onboard: onOnboardCompletes,
+                              onError: (error) {
+                                print('error in onboard plugin:$error');
+                                setState(() {
+                                  authenticating = false;
+                                });
+                              },
+                            );
+                          },
+                          bgColor: AllColors().Black),
+                    ),
                   ),
                 ],
               ),
