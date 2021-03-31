@@ -61,8 +61,8 @@ class BackendService {
     atClientPreference.hiveStoragePath = path;
     atClientPreference.downloadPath = downloadDirectory.path;
     atClientPreference.outboundConnectionTimeout = MixedConstants.TIME_OUT;
-    // atClientPreference.namespace = 'ARRIVE';
-    // atClientPreference.syncRegex = 'ARRIVE';
+    atClientPreference.namespace = MixedConstants.appNamespace;
+    atClientPreference.syncRegex = MixedConstants.syncRegex;
     var result = await atClientServiceInstance.onboard(
       atClientPreference: atClientPreference,
       atsign: atsign,
@@ -80,6 +80,8 @@ class BackendService {
       ..commitLogPath = path
       ..syncStrategy = SyncStrategy.IMMEDIATE
       ..rootDomain = MixedConstants.ROOT_DOMAIN
+      ..namespace = MixedConstants.appNamespace
+      ..syncRegex = MixedConstants.syncRegex
       ..hiveStoragePath = path;
     return _atClientPreference;
   }

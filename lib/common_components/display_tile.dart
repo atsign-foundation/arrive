@@ -80,10 +80,10 @@ class _DisplayTileState extends State<DisplayTile> {
                       bottom: 0,
                       child: Container(
                         alignment: Alignment.center,
-                        height: 28,
-                        width: 28,
+                        height: 28.toFont,
+                        width: 28.toFont,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
+                            borderRadius: BorderRadius.circular(15.0.toFont),
                             color: AllColors().BLUE),
                         child: Text(
                           '+${widget.number}',

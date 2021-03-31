@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
@@ -18,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:package_info/package_info.dart';
 
 class SideBar extends StatefulWidget {
   @override
@@ -30,6 +32,12 @@ class _SideBarState extends State<SideBar> {
   AtContact contact;
   AtContactsImpl atContact;
   String name;
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
 
   @override
   void initState() {
@@ -37,6 +45,14 @@ class _SideBarState extends State<SideBar> {
     getEventCreator();
     state = false;
     getLocationSharing();
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   getLocationSharing() async {
@@ -49,6 +65,7 @@ class _SideBarState extends State<SideBar> {
   getEventCreator() async {
     AtContact contact = await getAtSignDetails(
         BackendService.getInstance().atClientInstance.currentAtSign);
+    name = null;
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
@@ -220,10 +237,7 @@ class _SideBarState extends State<SideBar> {
               'When you turn this on, everyone you have given access to can see  your location.',
               style: CustomTextStyles().darkGrey12,
             )),
-            Expanded(
-                child: Container(
-              height: 0,
-            )),
+            Expanded(child: Container(height: 0)),
             iconText('Switch @sign', Icons.logout, () async {
               String currentAtsign =
                   BackendService.getInstance().atClientInstance.currentAtSign;
@@ -239,6 +253,11 @@ class _SideBarState extends State<SideBar> {
                 ),
               );
             }),
+            Expanded(child: Container(height: 0)),
+            Text(
+              'App Version ${_packageInfo.version} (${_packageInfo.buildNumber})',
+              style: CustomTextStyles().darkGrey13,
+            ),
           ],
         ),
       ),

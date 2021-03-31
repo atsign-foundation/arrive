@@ -1,6 +1,10 @@
 import 'dart:math';
+import 'dart:typed_data';
 
+import 'package:at_contact/at_contact.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
@@ -24,6 +28,26 @@ class AtSignBottomSheet extends StatefulWidget {
 }
 
 class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
+  Map<String, AtContact> contactDetails = {};
+  @override
+  void initState() {
+    super.initState();
+    getAtContactDetails();
+  }
+
+  getAtContactDetails() async {
+    contactDetails = {};
+
+    await Future.forEach(widget.atSignList, (element) async {
+      AtContact contactDetail = await getAtSignDetails(
+          BackendService.getInstance().atClientInstance.currentAtSign);
+      contactDetails[
+              '${BackendService.getInstance().atClientInstance.currentAtSign}'] =
+          contactDetail;
+    });
+    setState(() {});
+  }
+
   BackendService backendService = BackendService.getInstance();
   var atClientPrefernce;
   @override
@@ -48,93 +72,111 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                   child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.atSignList.length,
-                itemBuilder: (context, index) => GestureDetector(
-                  onTap: () async {
-                    Onboarding(
-                      atsign: widget.atSignList[index],
-                      context: context,
-                      atClientPreference: atClientPrefernce,
-                      domain: MixedConstants.ROOT_DOMAIN,
-                      appColor: Color.fromARGB(255, 240, 94, 62),
-                      onboard: (value, atsign) async {
-                        backendService.atClientServiceMap = value;
+                itemBuilder: (context, index) {
+                  Uint8List image;
 
-                        String atSign = backendService
-                            .atClientServiceMap[atsign].atClient.currentAtSign;
+                  if (contactDetails['${widget.atSignList[index]}'] != null) {
+                    if (contactDetails['${widget.atSignList[index]}'].tags !=
+                            null &&
+                        contactDetails['${widget.atSignList[index]}']
+                                .tags['image'] !=
+                            null) {
+                      List<int> intList =
+                          contactDetails['${widget.atSignList[index]}']
+                              .tags['image']
+                              .cast<int>();
+                      image = Uint8List.fromList(intList);
+                    }
+                  }
 
-                        await backendService.atClientServiceMap[atsign]
-                            .makeAtSignPrimary(atSign);
-                        BackendService.getInstance().atClientInstance =
-                            backendService.atClientServiceMap[atsign].atClient;
-                        BackendService.getInstance().atClientServiceInstance =
-                            backendService.atClientServiceMap[atsign];
+                  return GestureDetector(
+                    onTap: () async {
+                      Onboarding(
+                        atsign: widget.atSignList[index],
+                        context: context,
+                        atClientPreference: atClientPrefernce,
+                        domain: MixedConstants.ROOT_DOMAIN,
+                        appColor: Color.fromARGB(255, 240, 94, 62),
+                        onboard: (value, atsign) async {
+                          backendService.atClientServiceMap = value;
 
-                        BackendService.getInstance().startMonitor();
+                          String atSign = backendService
+                              .atClientServiceMap[atsign]
+                              .atClient
+                              .currentAtSign;
 
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          Provider.of<EventProvider>(context, listen: false)
-                              .init(BackendService.getInstance()
-                                  .atClientServiceInstance
-                                  .atClient);
-                          Provider.of<ShareLocationProvider>(context,
-                                  listen: false)
-                              .init(BackendService.getInstance()
-                                  .atClientServiceInstance
-                                  .atClient);
-                          Provider.of<RequestLocationProvider>(context,
-                                  listen: false)
-                              .init(BackendService.getInstance()
-                                  .atClientServiceInstance
-                                  .atClient);
-                          Provider.of<HybridProvider>(context, listen: false)
-                              .init(BackendService.getInstance()
-                                  .atClientServiceInstance
-                                  .atClient);
+                          await backendService.atClientServiceMap[atsign]
+                              .makeAtSignPrimary(atSign);
+                          BackendService.getInstance().atClientInstance =
+                              backendService
+                                  .atClientServiceMap[atsign].atClient;
+                          BackendService.getInstance().atClientServiceInstance =
+                              backendService.atClientServiceMap[atsign];
 
-                          Provider.of<HybridProvider>(context, listen: false)
-                              .init(backendService
-                                  .atClientServiceMap[atsign].atClient);
-                        });
+                          BackendService.getInstance().startMonitor();
 
-                        SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
-                      },
-                      onError: (error) {
-                        print('Onboarding throws $error error');
-                      },
-                    );
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            Provider.of<EventProvider>(context, listen: false)
+                                .init(BackendService.getInstance()
+                                    .atClientServiceInstance
+                                    .atClient);
+                            Provider.of<ShareLocationProvider>(context,
+                                    listen: false)
+                                .init(BackendService.getInstance()
+                                    .atClientServiceInstance
+                                    .atClient);
+                            Provider.of<RequestLocationProvider>(context,
+                                    listen: false)
+                                .init(BackendService.getInstance()
+                                    .atClientServiceInstance
+                                    .atClient);
+                            Provider.of<HybridProvider>(context, listen: false)
+                                .init(BackendService.getInstance()
+                                    .atClientServiceInstance
+                                    .atClient);
 
-                    setState(() {});
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10, top: 20),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 40.toFont,
-                          width: 40.toFont,
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, r.nextInt(255),
-                                r.nextInt(255), r.nextInt(255)),
-                            borderRadius: BorderRadius.circular(50.toWidth),
-                          ),
-                          child: Center(
-                            child: Text(
-                              widget.atSignList[index]
-                                  .substring(0, 2)
-                                  .toUpperCase(),
-                              style:
-                                  CustomTextStyles.whiteBold(size: (50 ~/ 3)),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          widget.atSignList[index],
-                          style: TextStyle(fontSize: 15.toFont),
-                        )
-                      ],
+                            Provider.of<HybridProvider>(context, listen: false)
+                                .init(backendService
+                                    .atClientServiceMap[atsign].atClient);
+                          });
+
+                          SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
+                        },
+                        onError: (error) {
+                          print('Onboarding throws $error error');
+                        },
+                      );
+
+                      setState(() {});
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10, right: 10, top: 20),
+                      child: Column(
+                        children: [
+                          (image != null)
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(30.toFont)),
+                                  child: Image.memory(
+                                    image,
+                                    width: 50.toFont,
+                                    height: 50.toFont,
+                                    fit: BoxFit.fill,
+                                  ),
+                                )
+                              : ContactInitial(
+                                  initials:
+                                      widget.atSignList[index].substring(1, 3),
+                                ),
+                          Text(
+                            widget.atSignList[index],
+                            style: TextStyle(fontSize: 15.toFont),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               )),
               SizedBox(
                 width: 20,

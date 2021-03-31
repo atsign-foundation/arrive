@@ -233,7 +233,10 @@ class _CreateEventState extends State<CreateEvent> {
                                                       .endTime !=
                                                   null)
                                           ? Text(
-                                              'Event on ${dateToString(eventData.event.date)} (${timeOfDayToString(eventData.event.startTime)}- ${timeOfDayToString(eventData.event.endTime)})')
+                                              'Event on ${dateToString(eventData.event.date)} (${timeOfDayToString(eventData.event.startTime)}- ${timeOfDayToString(eventData.event.endTime)})',
+                                              style: CustomTextStyles()
+                                                  .greyLabel14,
+                                            )
                                           : SizedBox()
                                       : SizedBox(),
                                   SizedBox(height: 20.toHeight),

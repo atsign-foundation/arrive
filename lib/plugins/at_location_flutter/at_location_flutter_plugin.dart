@@ -23,6 +23,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'common_components/collapsed_content.dart';
 import 'common_components/marker_cluster.dart';
 import 'common_components/popup.dart';
+import 'package:at_common_flutter/services/size_config.dart';
 
 // ignore: must_be_immutable
 class AtLocationFlutterPlugin extends StatefulWidget {
@@ -254,16 +255,22 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
               ),
               SlidingUpPanel(
                 controller: pc,
-                minHeight: widget.userListenerKeyword != null ? 130 : 205,
+                minHeight: widget.userListenerKeyword != null
+                    ? 130.toHeight < 130
+                        ? 130
+                        : 130.toHeight
+                    : 205.toHeight,
                 maxHeight: widget.userListenerKeyword != null
                     ? ((widget.userListenerKeyword.atsignCreator ==
                             LocationService().getAtSign())
                         ? widget.userListenerKeyword.key
                                 .contains("requestlocation")
                             ? 240
-                            : 291
-                        : 130)
-                    : 431,
+                            : 291.toHeight
+                        : 130.toHeight < 130
+                            ? 130
+                            : 130.toHeight)
+                    : 431.toHeight,
                 panel: CollapsedContent(UniqueKey(), true, this.isEventAdmin,
                     widget.atClientInstance,
                     eventListenerKeyword: widget.eventListenerKeyword,
