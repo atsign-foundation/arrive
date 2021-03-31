@@ -329,7 +329,7 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
 
 getTitle(HybridNotificationModel hybridNotificationModel) {
   if (hybridNotificationModel.notificationType == NotificationType.Event) {
-    return hybridNotificationModel.eventNotificationModel.title;
+    return 'Event - ' + hybridNotificationModel.eventNotificationModel.title;
   } else if (hybridNotificationModel.notificationType ==
       NotificationType.Location) {
     return hybridNotificationModel.locationNotificationModel.atsignCreator ==

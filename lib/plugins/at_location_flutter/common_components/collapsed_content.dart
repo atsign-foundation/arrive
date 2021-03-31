@@ -347,6 +347,9 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                               .ACKNOWLEDGEEVENT);
                                               LoadingDialog().hide();
                                               Navigator.of(context).pop();
+                                              CustomToast().show(
+                                                  'Request to update data is submitted',
+                                                  context);
                                             } catch (e) {
                                               print(e);
                                               CustomToast().show(

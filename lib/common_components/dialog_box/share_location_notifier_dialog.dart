@@ -312,6 +312,9 @@ class _ShareLocationNotifierDialogState
                                   taskName: (t) => t.UPDATE_EVENTS,
                                   onSuccess: (t) {
                                     Navigator.of(context).pop();
+                                    CustomToast().show(
+                                        'Request to update data is submitted',
+                                        context);
                                   }),
                             }
                           // ignore: unnecessary_statements
@@ -382,5 +385,7 @@ updateEvent(EventNotificationModel eventData) {
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();
         Navigator.of(NavService.navKey.currentContext).pop();
+        CustomToast().show('Request to update data is submitted',
+            NavService.navKey.currentContext);
       });
 }

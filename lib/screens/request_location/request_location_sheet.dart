@@ -53,7 +53,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
             width: SizeConfig().screenWidth * 0.95,
             height: 50.toHeight,
             isReadOnly: true,
-            hintText: 'Search @sign from contact',
+            hintText: 'Search @sign from contacts',
             icon: Icons.contacts_rounded,
             onTap: () {
               Navigator.push(

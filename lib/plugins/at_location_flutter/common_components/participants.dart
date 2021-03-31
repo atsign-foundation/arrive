@@ -50,11 +50,11 @@ class Participants extends StatelessWidget {
                       return data[index] == LocationService().eventData
                           ? SizedBox()
                           : DisplayTile(
-                              title: data[index].displayName ?? 'user name',
+                              title: data[index].displayName ?? '',
                               atsignCreator: data[index].displayName,
-                              subTitle: data[index].displayName ?? '@sign',
+                              subTitle: data[index].displayName ?? '',
                               action: Text(
-                                '${data[index].eta}' ?? 'At the location',
+                                '${data[index].eta}' ?? '?',
                                 style: CustomTextStyles().darkGrey14,
                               ),
                             );
@@ -71,11 +71,11 @@ class Participants extends StatelessWidget {
                     itemCount: atsign.length,
                     itemBuilder: (BuildContext context, int index) {
                       return DisplayTile(
-                        title: atsign[index] ?? 'user name',
+                        title: atsign[index] ?? '',
                         atsignCreator: atsign[index],
-                        subTitle: '@sign',
+                        subTitle: '',
                         action: Text(
-                          'Location not received',
+                          '',
                           style: CustomTextStyles().orange14,
                         ),
                       );
