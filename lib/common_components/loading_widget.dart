@@ -35,8 +35,7 @@ class LoadingDialog {
                             ),
                             TypingIndicator(
                               showIndicator: true,
-                              // bubbleColor: AllColors().WHITE,
-                              flashingCircleBrightColor: AllColors().ORANGE,
+                              flashingCircleBrightColor: AllColors().LIGHT_GREY,
                               flashingCircleDarkColor: AllColors().DARK_GREY,
                             ),
                           ],

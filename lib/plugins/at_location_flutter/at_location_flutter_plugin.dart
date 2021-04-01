@@ -148,8 +148,15 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           print('point - ${element.point}');
                         });
 
-                        if ((_center == null) && (markers.length > 0)) {
-                          mapController.move(markers[0].point, 4);
+                        try {
+                          if ((widget.userListenerKeyword != null) &&
+                              (_center == null) &&
+                              (markers.length > 0) &&
+                              (mapController != null)) {
+                            mapController.move(markers[0].point, 4);
+                          }
+                        } catch (e) {
+                          print('$e');
                         }
 
                         _center = widget.eventListenerKeyword != null
@@ -252,7 +259,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                     onPressed: () {
                       _popupController.hidePopup();
                       LocationService().hybridUsersList.length > 0
-                          ? mapController.move(
+                          ? mapController?.move(
                               LocationService().hybridUsersList[0].latLng, 4)
                           // ignore: unnecessary_statements
                           : null;
