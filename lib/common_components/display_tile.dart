@@ -98,8 +98,8 @@ class _DisplayTileState extends State<DisplayTile> {
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             child: Column(
-              mainAxisAlignment: widget.semiTitle != null
-                  ? MainAxisAlignment.spaceEvenly
+              mainAxisAlignment: (widget.subTitle == null)
+                  ? MainAxisAlignment.center
                   : MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -129,12 +129,14 @@ class _DisplayTileState extends State<DisplayTile> {
                 SizedBox(
                   height: 3,
                 ),
-                Text(
-                  widget.subTitle,
-                  style: CustomTextStyles().darkGrey12,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                (widget.subTitle != null)
+                    ? Text(
+                        widget.subTitle,
+                        style: CustomTextStyles().darkGrey12,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : SizedBox(),
                 widget.invitedBy != null
                     ? Padding(
                         padding: const EdgeInsets.only(top: 10.0),

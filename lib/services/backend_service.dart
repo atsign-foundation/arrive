@@ -138,7 +138,8 @@ class BackendService {
         print('$notificationKey deleted');
         LocationNotificationListener().deleteReceivedData(fromAtSign);
         return;
-      } else if (atKey.toString().toLowerCase().contains('sharelocation')) {
+      }
+      if (atKey.toString().toLowerCase().contains('sharelocation')) {
         print('$notificationKey containing sharelocation deleted');
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(atKey),
@@ -148,6 +149,7 @@ class BackendService {
         return;
       }
     }
+
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
         // ignore: return_of_invalid_type_from_catch_error
@@ -157,7 +159,10 @@ class BackendService {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       LocationNotificationListener().updateHybridList(msg);
-    } else if (atKey.toString().contains('createevent')) {
+      return;
+    }
+
+    if (atKey.toString().contains('createevent')) {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
@@ -173,16 +178,25 @@ class BackendService {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
       }
-    } else if (atKey.toString().contains('eventacknowledged')) {
+      return;
+    }
+
+    if (atKey.toString().contains('eventacknowledged')) {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       createEventAcknowledge(msg, atKey, fromAtSign);
-    } else if (atKey.toString().contains('requestlocationacknowledged')) {
+      return;
+    }
+
+    if (atKey.toString().contains('requestlocationacknowledged')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       RequestLocationService()
           .updateWithRequestLocationAcknowledge(locationData);
-    } else if (atKey.toString().contains('requestlocation')) {
+      return;
+    }
+
+    if (atKey.toString().contains('requestlocation')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (locationData.isAcknowledgment == true) {
@@ -205,11 +219,17 @@ class BackendService {
 
         showMyDialog(fromAtSign, locationData: locationData);
       }
-    } else if (atKey.toString().contains('sharelocationacknowledged')) {
+      return;
+    }
+
+    if (atKey.toString().contains('sharelocationacknowledged')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       LocationSharingService().updateWithShareLocationAcknowledge(locationData);
-    } else if (atKey.toString().contains('sharelocation')) {
+      return;
+    }
+
+    if (atKey.toString().contains('sharelocation')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (locationData.isAcknowledgment == true) {
@@ -226,6 +246,7 @@ class BackendService {
 
         showMyDialog(fromAtSign, locationData: locationData);
       }
+      return;
     }
   }
 
@@ -248,7 +269,9 @@ class BackendService {
   createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
       String fromAtSign) async {
     try {
-      String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
+      String eventId =
+          acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
+
       print(
           'acknowledged notification received:$acknowledgedEvent , key:$atKey , $eventId');
 

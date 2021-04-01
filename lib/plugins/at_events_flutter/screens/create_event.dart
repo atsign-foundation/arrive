@@ -94,7 +94,7 @@ class _CreateEventState extends State<CreateEvent> {
                                     width: SizeConfig().screenWidth * 0.95,
                                     height: 50.toHeight,
                                     isReadOnly: true,
-                                    hintText: 'Select @sign from contact',
+                                    hintText: 'Select @sign from contacts',
                                     icon: Icons.contacts_rounded,
                                     onTap: () {
                                       Navigator.push(
@@ -187,7 +187,7 @@ class _CreateEventState extends State<CreateEvent> {
                                                 SizeConfig().screenHeight *
                                                     0.9);
                                           },
-                                          child: Text('Select Timings',
+                                          child: Text('Select Times',
                                               style: CustomTextStyles()
                                                   .greyLabel14),
                                         ),

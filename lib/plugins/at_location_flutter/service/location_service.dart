@@ -6,6 +6,7 @@ import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/common_components/build_marker.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/common_components/participants.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
@@ -34,7 +35,7 @@ class LocationService {
   HybridModel eventData;
   HybridModel myData;
 
-  List<String> atsignsAtMonitor;
+  List<String> atsignsAtMonitor, exitedAtsigns = [];
   List<HybridModel> hybridUsersList;
   List<HybridModel> allUsersList;
 
@@ -81,6 +82,12 @@ class LocationService {
           eventListenerKeyword.group.members.map((e) => e.atSign).toList();
       atsignsAtMonitor.add(eventListenerKeyword.atsignCreator);
       atsignsAtMonitor.remove(myData?.displayName);
+
+      eventListenerKeyword.group.members.forEach((element) {
+        if ((element.tags['isExited']) && (!element.tags['isAccepted']))
+          exitedAtsigns.add(element.atSign);
+      });
+
       addEventDetailsToHybridUsersList();
     }
 
@@ -104,6 +111,14 @@ class LocationService {
     if (eventData != null && eventListenerKeyword != null) {
       if (eventData.key == eventListenerKeyword.key) {
         eventListenerKeyword = eventData;
+
+        exitedAtsigns = [];
+        eventListenerKeyword.group.members.forEach((element) {
+          if ((element.tags['isExited']) && (!element.tags['isAccepted']))
+            exitedAtsigns.add(element.atSign);
+        });
+
+        ParticipantsData().updateParticipants();
         eventSink.add(eventListenerKeyword);
       }
     }
@@ -130,6 +145,7 @@ class LocationService {
     hybridUsersList.add(myData);
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ParticipantsData().updateParticipants();
       _atHybridUsersController.add(hybridUsersList);
     });
 
@@ -195,13 +211,13 @@ class LocationService {
       if (userListenerKeyword != null) {
         hybridUsersList.removeWhere((element) =>
             ((element.displayName == atsign) &&
-                (element.displayName != myData.displayName)));
+                (element.displayName != atClientInstance.currentAtSign)));
 
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
         hybridUsersList.removeWhere((element) =>
             ((element.displayName == atsign) &&
-                (element.displayName != myData.displayName)));
+                (element.displayName != atClientInstance.currentAtSign)));
 
         _atHybridUsersController.add(hybridUsersList);
       }

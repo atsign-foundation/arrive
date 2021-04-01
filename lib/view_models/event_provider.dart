@@ -277,8 +277,6 @@ class EventProvider extends BaseModel {
 
                   if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(storedEvent);
-                } else {
-                  print('matched : no changes');
                 }
               }
             }

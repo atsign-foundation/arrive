@@ -21,7 +21,7 @@ class SetupRoutes {
             url: '${MixedConstants.WEBSITE_URL}/faqs',
           ),
       Routes.TERMS_CONDITIONS_SCREEN: (context) => WebsiteScreen(
-            title: 'Terms & Condition',
+            title: 'Terms and Conditions',
             url: '${MixedConstants.WEBSITE_URL}/terms-conditions',
           ),
       Routes.GROUP_LIST: (context) {

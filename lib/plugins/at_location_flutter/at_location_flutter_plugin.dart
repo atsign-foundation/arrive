@@ -63,6 +63,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   bool showMarker;
   GlobalKey<ScaffoldState> scaffoldKey;
   BuildContext globalContext;
+  LatLng _center;
 
   @override
   void initState() {
@@ -147,7 +148,11 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           print('point - ${element.point}');
                         });
 
-                        LatLng _center = widget.eventListenerKeyword != null
+                        if ((_center == null) && (markers.length > 0)) {
+                          mapController.move(markers[0].point, 4);
+                        }
+
+                        _center = widget.eventListenerKeyword != null
                             ? LocationService().eventData.latLng
                             : LocationService().myData?.latLng;
 
