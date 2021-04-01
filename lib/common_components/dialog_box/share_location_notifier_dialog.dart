@@ -310,11 +310,12 @@ class _ShareLocationNotifierDialogState
                                   task: (t) => t.actionOnEvent(widget.eventData,
                                       ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
                                       isAccepted: false, isExited: true),
+                                  text: 'Sending request to reject event',
                                   taskName: (t) => t.UPDATE_EVENTS,
                                   onSuccess: (t) {
                                     Navigator.of(context).pop();
                                     CustomToast().show(
-                                        'Request to update data is submitted',
+                                        'Request to reject event is submitted',
                                         context);
                                   }),
                             }
@@ -383,10 +384,11 @@ updateEvent(EventNotificationModel eventData) {
       task: (t) => t.actionOnEvent(eventData, ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
           isAccepted: true, isSharing: true, isExited: false),
       taskName: (t) => t.UPDATE_EVENTS,
+      text: 'Sending request to accept event',
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();
         Navigator.of(NavService.navKey.currentContext).pop();
-        CustomToast().show('Request to update data is submitted',
+        CustomToast().show('Request to accept event is submitted',
             NavService.navKey.currentContext);
       });
 }
