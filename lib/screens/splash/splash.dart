@@ -133,6 +133,7 @@ class _SplashState extends State<Splash> {
                     left: 16.toWidth,
                     child: Text(
                       'Stay connected!',
+                      textScaleFactor: 1,
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
@@ -141,6 +142,7 @@ class _SplashState extends State<Splash> {
                     left: 15.toWidth,
                     child: Text(
                       'Wherever',
+                      textScaleFactor: 1,
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
@@ -149,6 +151,7 @@ class _SplashState extends State<Splash> {
                     left: 15.toWidth,
                     child: Text(
                       'you go.',
+                      textScaleFactor: 1,
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
@@ -176,6 +179,7 @@ class _SplashState extends State<Splash> {
                                     children: [
                                       Text(
                                         'Authenticating',
+                                        textScaleFactor: 1,
                                         style: CustomTextStyles().white15,
                                       ),
                                       TypingIndicator(
@@ -190,6 +194,7 @@ class _SplashState extends State<Splash> {
                                 )
                               : Text(
                                   'Explore',
+                                  textScaleFactor: 1,
                                   style: CustomTextStyles().white15,
                                 ),
                           onTap: () async {
