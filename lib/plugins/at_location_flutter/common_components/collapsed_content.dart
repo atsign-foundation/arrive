@@ -451,18 +451,48 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         subTitle: amICreator
                             ? '${widget.userListenerKeyword.receiver}'
                             : '${widget.userListenerKeyword.atsignCreator}'),
-                    Text(
-                      amICreator
-                          ? 'This user does not share their location'
-                          : '',
-                      style: CustomTextStyles().grey12,
-                    ),
-                    Text(
-                      amICreator
-                          ? 'Sharing my location $time'
-                          : 'Sharing their location $time',
-                      style: CustomTextStyles().black12,
-                    )
+                    StreamBuilder(
+                        stream: LocationService().atHybridUsersStream,
+                        builder: (context,
+                            AsyncSnapshot<List<HybridModel>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (snapshot.hasError) {
+                              return Text(
+                                'Something went wrong',
+                                style: CustomTextStyles().grey12,
+                              );
+                            } else {
+                              return Text(
+                                amICreator
+                                    ? 'This user does not share their location'
+                                    : ((snapshot.data.indexWhere((e) =>
+                                                (e.displayName ==
+                                                    widget.userListenerKeyword
+                                                        .atsignCreator)) >
+                                            -1)
+                                        ? ("Sharing their location $time")
+                                        : ("This user's location sharing is turned off")),
+                                style: ((amICreator) ||
+                                        ((snapshot.data.indexWhere((e) =>
+                                                (e.displayName ==
+                                                    widget.userListenerKeyword
+                                                        .atsignCreator)) >
+                                            -1)))
+                                    ? CustomTextStyles().grey12
+                                    : CustomTextStyles().red12,
+                              );
+                            }
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                    amICreator
+                        ? Text(
+                            'Sharing my location $time',
+                            style: CustomTextStyles().black12,
+                          )
+                        : SizedBox()
                   ],
                 ),
               ),
