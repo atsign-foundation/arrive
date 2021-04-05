@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
+import 'package:at_contacts_group_flutter/models/group_contacts_model.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/concurrent_event_request_dialog.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
@@ -19,6 +20,7 @@ class EventService {
   EventNotificationModel eventNotificationModel;
   AtClientImpl atClientInstance;
   List<AtContact> selectedContacts;
+  List<String> selectedContactsAtSigns = [];
   List<HybridNotificationModel> createdEvents;
   Function onEventSaved;
 
@@ -68,7 +70,7 @@ class EventService {
       return result;
     } else {
       result = await sendEventNotification();
-      if (result && isEventOverlap) {
+      if (result is bool && result && isEventOverlap) {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
       }
@@ -80,9 +82,17 @@ class EventService {
     try {
       AtKey atKey =
           BackendService.getInstance().getAtKey(eventNotificationModel.key);
+      List<String> allAtsignList = [];
+      EventService().eventNotificationModel.group.members.forEach((element) {
+        allAtsignList.add(element.atSign);
+      });
+
       var eventData = EventNotificationModel.convertEventNotificationToJson(
           EventService().eventNotificationModel);
       var result = await atClientInstance.put(atKey, eventData);
+      atKey.sharedWith = jsonEncode(allAtsignList);
+      var notifyAllResult = await atClientInstance.notifyAll(
+          atKey, eventData, OperationEnum.update);
       if (onEventSaved != null) {
         onEventSaved(eventNotificationModel);
       }
@@ -104,23 +114,29 @@ class EventService {
       var notification = EventNotificationModel.convertEventNotificationToJson(
           EventService().eventNotificationModel);
 
+      print('shared contact atsigns:${selectedContactsAtSigns}');
+
       AtKey atKey = AtKey()
         ..metadata = Metadata()
         ..metadata.ttr = -1
         ..metadata.ccd = true
         ..key = eventNotification.key
-        ..sharedWith = eventNotification.group.members.elementAt(0).atSign
         ..sharedBy = eventNotification.atsignCreator;
 
-      print(
-          'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: ${notification}');
-      var result = await atClientInstance.put(atKey, notification);
+      var putResult = await atClientInstance.put(atKey,
+          notification); // creating a key and saving it for creator without adding any receiver atsign
+
+      atKey.sharedWith = jsonEncode(
+          [...selectedContactsAtSigns]); //adding event members in atkey
+
+      var notifyAllResult = await atClientInstance.notifyAll(
+          atKey, notification, OperationEnum.update);
+
       eventNotificationModel = eventNotification;
       if (onEventSaved != null) {
         onEventSaved(eventNotification);
       }
-      print('send event:$result');
-      return result;
+      return putResult;
     } catch (e) {
       print('error in SendEventNotification $e');
       return false;
@@ -129,13 +145,37 @@ class EventService {
 
   addNewGroupMembers(List<AtContact> selectedContactList) {
     EventService().selectedContacts = [];
+    EventService().selectedContactsAtSigns = [];
     EventService().eventNotificationModel.group.members = {};
 
     for (AtContact selectedContact in selectedContactList) {
       EventService().selectedContacts.add(selectedContact);
       AtContact newContact = getGroupMemberContact(selectedContact);
       EventService().eventNotificationModel.group.members.add(newContact);
+      selectedContactsAtSigns.add(newContact.atSign);
     }
+  }
+
+  addNewContactAndGroupMembers(List<GroupContactsModel> selectedList) {
+    EventService().selectedContacts = [];
+    EventService().selectedContactsAtSigns = [];
+    EventService().eventNotificationModel.group.members = {};
+
+    selectedList.forEach((element) {
+      if (element.contact != null) {
+        AtContact newContact = getGroupMemberContact(element.contact);
+        EventService().eventNotificationModel.group.members.add(newContact);
+        EventService().selectedContacts.add(newContact);
+        selectedContactsAtSigns.add(newContact.atSign);
+      } else if (element.group != null) {
+        element.group.members.forEach((groupMember) {
+          AtContact newContact = getGroupMemberContact(groupMember);
+          EventService().eventNotificationModel.group.members.add(newContact);
+          EventService().selectedContacts.add(newContact);
+          selectedContactsAtSigns.add(newContact.atSign);
+        });
+      }
+    });
   }
 
   createContactListFromGroupMembers() {
@@ -165,6 +205,7 @@ class EventService {
       eventNotificationModel.group.members.removeWhere(
           (element) => element.atSign == selectedContacts[index].atSign);
       selectedContacts.removeAt(index);
+      selectedContactsAtSigns.removeAt(index);
     }
   }
 

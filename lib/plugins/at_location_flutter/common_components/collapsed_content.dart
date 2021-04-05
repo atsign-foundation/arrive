@@ -14,6 +14,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/h
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
+import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:flutter/material.dart';
 
@@ -69,6 +70,18 @@ class _CollapsedContentState extends State<CollapsedContent> {
 
   Widget forEvent(bool expanded, BuildContext context,
       {ValueChanged onLocationOff}) {
+    bool isExited = false;
+
+    widget.eventListenerKeyword.group.members.forEach((groupMember) {
+      if (groupMember.atSign ==
+          BackendService.getInstance()
+              .atClientServiceInstance
+              .atClient
+              .currentAtSign) {
+        isExited = groupMember.tags['isExited'];
+      }
+    });
+
     return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -225,12 +238,17 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             if (snapshot.data.isSharing) isSharingEvent = true;
                           } else {
                             if (snapshot.data != null) {
-                              if (snapshot.data.group.members
-                                      .elementAt(0)
-                                      .tags['isSharing'] ==
-                                  true) {
-                                isSharingEvent = true;
-                              }
+                              snapshot.data.group.members
+                                  .forEach((groupMember) {
+                                if (groupMember.atSign ==
+                                    BackendService.getInstance()
+                                        .atClientServiceInstance
+                                        .atClient
+                                        .currentAtSign) {
+                                  if (groupMember.tags['isSharing'] == true)
+                                    isSharingEvent = true;
+                                }
+                              });
                             }
                           }
                           return Column(
@@ -278,8 +296,16 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                 .eventListenerKeyword
                                                 .group
                                                 .members
-                                                .elementAt(0)
-                                                .tags['isSharing'] = value;
+                                                .forEach((groupMember) {
+                                              if (groupMember.atSign ==
+                                                  BackendService.getInstance()
+                                                      .atClientServiceInstance
+                                                      .atClient
+                                                      .currentAtSign) {
+                                                groupMember.tags['isSharing'] =
+                                                    value;
+                                              }
+                                            });
                                           }
 
                                           var result = await LocationService()
@@ -323,15 +349,23 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   : Expanded(
                                       child: InkWell(
                                         onTap: () async {
-                                          if (widget.eventListenerKeyword.group
-                                                  .members
-                                                  .elementAt(0)
-                                                  .tags['isExited'] ==
-                                              false) {
-                                            LoadingDialog().show(
-                                                text: widget.isAdmin
-                                                    ? 'Updating data'
-                                                    : 'Sending request to update data');
+                                          bool isExited = true;
+                                          widget.eventListenerKeyword.group
+                                              .members
+                                              .forEach((groupMember) {
+                                            if (groupMember.atSign ==
+                                                BackendService.getInstance()
+                                                    .atClientServiceInstance
+                                                    .atClient
+                                                    .currentAtSign) {
+                                              if (groupMember
+                                                      .tags['isExited'] ==
+                                                  false) isExited = false;
+                                            }
+                                          });
+                                          if (!isExited) {
+                                            //if member has not exited then only following code will run.
+                                            LoadingDialog().show();
                                             try {
                                               await LocationService()
                                                   .onEventExit(
@@ -356,13 +390,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                           }
                                         },
                                         child: Text(
-                                          widget.eventListenerKeyword.group
-                                                      .members
-                                                      .elementAt(0)
-                                                      .tags['isExited'] ==
-                                                  true
-                                              ? 'Exited'
-                                              : 'Exit Event',
+                                          isExited ? 'Exited' : 'Exit Event',
                                           style: CustomTextStyles().orange16,
                                         ),
                                       ),

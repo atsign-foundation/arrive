@@ -238,9 +238,16 @@ class _ShareLocationNotifierDialogState
                                       options: MixedConstants.startTimeOptions,
                                       onSelectionChanged: (dynamic startTime) {
                                         widget.eventData.group.members
-                                                .elementAt(0)
-                                                .tags['shareFrom'] =
-                                            startTime.toString();
+                                            .forEach((groupMember) {
+                                          if (groupMember.atSign ==
+                                              BackendService.getInstance()
+                                                  .atClientServiceInstance
+                                                  .atClient
+                                                  .currentAtSign) {
+                                            groupMember.tags['shareFrom'] =
+                                                startTime.toString();
+                                          }
+                                        });
 
                                         bottomSheet(
                                             context,
@@ -254,9 +261,18 @@ class _ShareLocationNotifierDialogState
                                               onSelectionChanged:
                                                   (dynamic endTime) {
                                                 widget.eventData.group.members
-                                                        .elementAt(0)
-                                                        .tags['shareTo'] =
-                                                    endTime.toString();
+                                                    .forEach((groupMember) {
+                                                  if (groupMember.atSign ==
+                                                      BackendService
+                                                              .getInstance()
+                                                          .atClientServiceInstance
+                                                          .atClient
+                                                          .currentAtSign) {
+                                                    groupMember
+                                                            .tags['shareTo'] =
+                                                        endTime.toString();
+                                                  }
+                                                });
                                                 Navigator.of(context).pop();
 
                                                 updateEvent(widget.eventData);

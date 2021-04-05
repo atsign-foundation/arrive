@@ -272,9 +272,6 @@ class BackendService {
       String eventId =
           acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
 
-      print(
-          'acknowledged notification received:$acknowledgedEvent , key:$atKey , $eventId');
-
       EventNotificationModel presentEventData;
       HomeEventService().allEvents.forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
@@ -310,11 +307,21 @@ class BackendService {
         });
       });
       presentEventData.isUpdate = true;
+      List<String> allAtsignList = [];
+      presentEventData.group.members.forEach((element) {
+        allAtsignList.add(element.atSign);
+      });
 
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
 
       var result = await atClientInstance.put(key, notification);
+
+      key.sharedWith = jsonEncode(allAtsignList);
+
+      var notifyAllResult = await atClientInstance.notifyAll(
+          key, notification, OperationEnum.update);
+
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: presentEventData));
