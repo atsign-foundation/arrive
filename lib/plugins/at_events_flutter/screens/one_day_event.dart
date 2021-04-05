@@ -41,7 +41,7 @@ class _OneDayEventState extends State<OneDayEvent> {
                   children: <Widget>[
                     CustomHeading(heading: 'Select Timings', action: 'Cancel'),
                     SizedBox(height: 25),
-                    Text('Select Date', style: CustomTextStyles().greyLabel14),
+                    Text('Date', style: CustomTextStyles().greyLabel14),
                     SizedBox(height: 6.toHeight),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -50,7 +50,7 @@ class _OneDayEventState extends State<OneDayEvent> {
                           width: 155.toWidth,
                           height: 50.toHeight,
                           isReadOnly: true,
-                          hintText: 'Select Start Date',
+                          hintText: 'Start Date',
                           icon: Icons.date_range,
                           initialValue: (eventData.event.date != null)
                               ? dateToString(eventData.event.date)
@@ -86,7 +86,7 @@ class _OneDayEventState extends State<OneDayEvent> {
                           width: 155.toWidth,
                           height: 50.toHeight,
                           isReadOnly: true,
-                          hintText: 'Select End Date',
+                          hintText: 'End Date',
                           icon: Icons.date_range,
                           initialValue: (eventData.event.endDate != null)
                               ? dateToString(eventData.event.endDate)
@@ -118,7 +118,7 @@ class _OneDayEventState extends State<OneDayEvent> {
                       ],
                     ),
                     SizedBox(height: 25),
-                    Text('Select Time', style: CustomTextStyles().greyLabel14),
+                    Text('Time', style: CustomTextStyles().greyLabel14),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
