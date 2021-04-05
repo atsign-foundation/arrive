@@ -184,10 +184,6 @@ class _SplashState extends State<Splash> {
                                       ),
                                       TypingIndicator(
                                         showIndicator: true,
-                                        flashingCircleBrightColor:
-                                            AllColors().ORANGE,
-                                        flashingCircleDarkColor:
-                                            AllColors().DARK_GREY,
                                       ),
                                     ],
                                   ),

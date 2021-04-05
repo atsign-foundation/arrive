@@ -62,17 +62,20 @@ class RequestLocationService {
         locationNotificationModel.receiver,
       );
 
-      locationNotificationModel
-        ..isAccepted = isAccepted
-        ..isExited = !isAccepted
-        ..lat = isAccepted ? 12 : 0
-        ..long = isAccepted ? 12 : 0;
+      LocationNotificationModel ackLocationNotificationModel =
+          LocationNotificationModel()
+            ..atsignCreator = locationNotificationModel.atsignCreator
+            ..key = locationNotificationModel.key
+            ..isRequest = true
+            ..receiver = locationNotificationModel.receiver
+            ..isAccepted = isAccepted
+            ..isExited = !isAccepted;
 
-      if (isSharing != null) locationNotificationModel.isSharing = isSharing;
+      if (isSharing != null) ackLocationNotificationModel.isSharing = isSharing;
 
       if (isAccepted && (minutes != null)) {
-        locationNotificationModel.from = DateTime.now();
-        locationNotificationModel.to =
+        ackLocationNotificationModel.from = DateTime.now();
+        ackLocationNotificationModel.to =
             DateTime.now().add(Duration(minutes: minutes));
       }
 
@@ -82,7 +85,7 @@ class RequestLocationService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  locationNotificationModel));
+                  ackLocationNotificationModel));
       print('requestLocationAcknowledgment $result');
       if (result) {
         //  We have added this here, so that we need not wait for the updated data from the creator
@@ -91,11 +94,11 @@ class RequestLocationService {
                   listen: false)
               .addMemberToSendingLocationList(BackendService.getInstance()
                   .convertEventToHybrid(NotificationType.Location,
-                      locationNotificationModel: locationNotificationModel));
+                      locationNotificationModel: ackLocationNotificationModel));
         else
           Provider.of<HybridProvider>(NavService.navKey.currentContext,
                   listen: false)
-              .removeLocationSharing(locationNotificationModel.key);
+              .removeLocationSharing(ackLocationNotificationModel.key);
       }
       return result;
     } catch (e) {
@@ -120,7 +123,8 @@ class RequestLocationService {
 
       AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
-      if (locationNotificationModel.isAccepted) {
+      if ((locationNotificationModel.isAccepted) &&
+          (locationNotificationModel.to != null)) {
         key.metadata.ttl = locationNotificationModel.to
                 .difference(locationNotificationModel.from)
                 .inMinutes *
@@ -157,6 +161,7 @@ class RequestLocationService {
       print('update result - $result');
       return result;
     } catch (e) {
+      print('error in updateWithRequestLocationAcknowledge $e');
       return false;
     }
   }
@@ -186,7 +191,7 @@ class RequestLocationService {
     AtKey atKey;
     atKey = newAtKey(
       60000,
-      "deleterequestlocation-$atkeyMicrosecondId",
+      "deleterequestacklocation-$atkeyMicrosecondId",
       locationNotificationModel.receiver,
     );
 
@@ -198,6 +203,7 @@ class RequestLocationService {
             LocationNotificationModel.convertLocationNotificationToJson(
                 locationNotificationModel));
     print('requestLocationAcknowledgment $result');
+    return result;
   }
 
   deleteKey(LocationNotificationModel locationNotificationModel) async {
@@ -220,6 +226,15 @@ class RequestLocationService {
         .atClientServiceInstance
         .atClient
         .delete(key);
+    print('$key delete operation $result');
+
+    if (result) {
+      providerCallback<HybridProvider>(NavService.navKey.currentContext,
+          task: (provider) => provider.removePerson(key.key),
+          taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+          showLoader: false,
+          onSuccess: (provider) {});
+    }
     return result;
   }
 

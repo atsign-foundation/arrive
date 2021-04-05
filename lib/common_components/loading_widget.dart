@@ -25,13 +25,16 @@ class LoadingDialog {
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              text,
-                              style: TextStyle(
-                                  color: AllColors().MILD_GREY,
-                                  fontSize: 20.toFont,
-                                  fontWeight: FontWeight.w400,
-                                  decoration: TextDecoration.none),
+                            Flexible(
+                              child: Text(
+                                text,
+                                textScaleFactor: 1,
+                                style: TextStyle(
+                                    color: AllColors().MILD_GREY,
+                                    fontSize: 20.toFont,
+                                    fontWeight: FontWeight.w400,
+                                    decoration: TextDecoration.none),
+                              ),
                             ),
                             TypingIndicator(
                               showIndicator: true,

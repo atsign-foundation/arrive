@@ -15,6 +15,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -584,16 +585,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             )
                           : SizedBox(),
                       SizedBox(),
-                      (amICreator &&
-                              (widget.userListenerKeyword.key
-                                  .contains("sharelocation")))
+                      (amICreator)
                           ? Expanded(
                               child: InkWell(
                                 onTap: () async {
                                   LoadingDialog().show(
-                                      text: amICreator
-                                          ? 'Updating data'
-                                          : 'Sending request to update data');
+                                      text: widget.userListenerKeyword.key
+                                              .contains("sharelocation")
+                                          ? ('Removing person')
+                                          : ('Sending request to remove person'));
                                   try {
                                     var result;
                                     if (widget.userListenerKeyword.key
@@ -603,7 +603,9 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                               widget.userListenerKeyword);
                                     } else if (widget.userListenerKeyword.key
                                         .contains("requestlocation")) {
-                                      result = false;
+                                      result = await RequestLocationService()
+                                          .sendDeleteAck(
+                                              widget.userListenerKeyword);
                                     }
                                     if (result) {
                                       SendLocationNotification()

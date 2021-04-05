@@ -139,8 +139,19 @@ class BackendService {
         LocationNotificationListener().deleteReceivedData(fromAtSign);
         return;
       }
+
       if (atKey.toString().toLowerCase().contains('sharelocation')) {
         print('$notificationKey containing sharelocation deleted');
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.removePerson(atKey),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+        return;
+      }
+
+      if (atKey.toString().toLowerCase().contains('requestlocation')) {
+        print('$notificationKey containing requestlocation deleted');
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(atKey),
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
@@ -154,6 +165,15 @@ class BackendService {
         .decrypt(value, fromAtSign)
         // ignore: return_of_invalid_type_from_catch_error
         .catchError((e) => print("error in decrypting: $e"));
+
+    /// Received when a request location's removed person is called
+    /// Based on this current user will delete the original key
+    if (atKey.toString().toLowerCase().contains('deleterequestacklocation')) {
+      LocationNotificationModel msg =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      RequestLocationService().deleteKey(msg);
+      return;
+    }
 
     if (atKey.toString().toLowerCase().contains('locationnotify')) {
       LocationNotificationModel msg =
@@ -202,9 +222,10 @@ class BackendService {
       if (locationData.isAcknowledgment == true) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.mapUpdatedData(
-                convertEventToHybrid(NotificationType.Location,
-                    locationNotificationModel: locationData),
-                remove: (!locationData.isAccepted)),
+                  convertEventToHybrid(NotificationType.Location,
+                      locationNotificationModel: locationData),
+                  // remove: (!locationData.isAccepted)
+                ),
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
             onSuccess: (provider) {});
@@ -346,6 +367,7 @@ class BackendService {
   getAtKey(String regexKey) {
     AtKey atKey = AtKey.fromString(regexKey);
     atKey.metadata.ttr = -1;
+    atKey.metadata.ccd = true;
     return atKey;
   }
 }

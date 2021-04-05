@@ -91,16 +91,19 @@ class RequestLocationProvider extends ShareLocationProvider {
 
   filterDataRequest() {
     List<HybridNotificationModel> tempNotification = [];
-    allRequestNotifications.forEach((notification) {
-      if ((notification.locationNotificationModel != null)) {
-        if ((notification.locationNotificationModel.isAcknowledgment) &&
-            (notification.locationNotificationModel.isExited) &&
-            (notification.locationNotificationModel.atsignCreator ==
-                currentAtSign)) tempNotification.add(notification);
-      }
-    });
-    allRequestNotifications
-        .removeWhere((element) => tempNotification.contains(element));
+
+    ///Uncomment if rejecting a request location should remove the person
+    ///
+    // allRequestNotifications.forEach((notification) {
+    //   if ((notification.locationNotificationModel != null)) {
+    //     if ((notification.locationNotificationModel.isAcknowledgment) &&
+    //         (notification.locationNotificationModel.isExited) &&
+    //         (notification.locationNotificationModel.atsignCreator ==
+    //             currentAtSign)) tempNotification.add(notification);
+    //   }
+    // });
+    // allRequestNotifications
+    //     .removeWhere((element) => tempNotification.contains(element));
 
     for (int i = 0; i < allRequestNotifications.length; i++) {
       // ignore: unrelated_type_equality_checks
