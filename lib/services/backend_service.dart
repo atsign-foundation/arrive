@@ -31,6 +31,7 @@ class BackendService {
   AtClientService atClientServiceInstance;
   AtClientImpl atClientInstance;
   String _atsign;
+  // ignore: non_constant_identifier_names
   String app_lifecycle_state;
   AtClientPreference atClientPreference;
   bool autoAcceptFiles = false;

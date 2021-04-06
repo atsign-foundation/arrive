@@ -282,7 +282,6 @@ class WMSTileLayerOptions {
   /// tile transperency flag
   final bool transparent;
 
-  // TODO find a way to implicit pass of current map [Crs]
   final Crs crs;
 
   /// other request parameters
@@ -738,7 +737,7 @@ class _TileLayerState extends State<TileLayer> with TickerProviderStateMixin {
     _resetGrid();
 
     if (_tileZoom != null) {
-      //TODO: Modification to disappear marker
+      // Modification to disappear marker
       // widget.options
       //     .fnWhenZoomChanges(_tileZoom);
       // execute the zoomChanges Function
