@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_modal.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:latlong/latlong.dart';
 
 class SearchLocationService {
   SearchLocationService._();
@@ -17,16 +19,20 @@ class SearchLocationService {
   StreamSink<List<LocationModal>> get atLocationSink =>
       _atLocationStreamController.sink;
 
-  void getAddressLatLng(String address) async {
-    var url =
-        "https://nominatim.openstreetmap.org/search?q=${address.replaceAll(RegExp(' '), '+')}&format=json&addressdetails=1";
-    print(url);
+  void getAddressLatLng(String address, LatLng currentLocation) async {
+    var url;
+    if (currentLocation != null) {
+      url =
+          'https://geocode.search.hereapi.com/v1/geocode?q=${address.replaceAll(RegExp(' '), '+')}&apiKey=${MixedConstants.API_KEY}&at=${currentLocation.latitude},${currentLocation.longitude}';
+    } else {
+      url =
+          'https://geocode.search.hereapi.com/v1/geocode?q=${address.replaceAll(RegExp(' '), '+')}&apiKey=${MixedConstants.API_KEY}';
+    }
     var response = await http.get(Uri.parse(url));
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    List addresses = jsonDecode(response.body);
+    var addresses = jsonDecode(response.body);
+    List data = addresses['items'];
     List<LocationModal> share = [];
-    for (Map ad in addresses) {
+    for (Map ad in data ?? []) {
       share.add(LocationModal.fromJson(ad));
     }
 
