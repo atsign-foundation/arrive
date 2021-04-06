@@ -50,7 +50,10 @@ class SendLocationNotification {
       if (!isMasterSwitchOn) {
         /// TODO: Add a message, it is for which user or event
         /// Work for events having mutliple members
-        await locationPromptDialog();
+        await locationPromptDialog(
+          isShareLocationData: false,
+          isRequestLocationData: false,
+        );
         isMasterSwitchOn =
             await LocationNotificationListener().getShareLocation();
       }

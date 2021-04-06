@@ -5,8 +5,6 @@ import 'package:atsign_location_app/common_components/dialog_box/location_prompt
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'backend_service.dart';
@@ -23,16 +21,15 @@ class LocationSharingService {
     return _singleton;
   }
 
-  checkForAlreadyExisting(String atsign) async {
-    int index = Provider.of<ShareLocationProvider>(
-            NavService.navKey.currentContext,
+  checkForAlreadyExisting(String atsign) {
+    int index = Provider.of<HybridProvider>(NavService.navKey.currentContext,
             listen: false)
         .allShareLocationNotifications
         .indexWhere((e) => ((e.locationNotificationModel.receiver == atsign)));
     if (index > -1) {
       return [
         true,
-        Provider.of<ShareLocationProvider>(NavService.navKey.currentContext,
+        Provider.of<HybridProvider>(NavService.navKey.currentContext,
                 listen: false)
             .allShareLocationNotifications[index]
             .locationNotificationModel
@@ -46,24 +43,24 @@ class LocationSharingService {
     try {
       var alreadyExists = checkForAlreadyExisting(atsign);
       var result;
-      if (!alreadyExists[0]) {
+      if (alreadyExists[0]) {
+        LocationNotificationModel newLocationNotificationModel =
+            LocationNotificationModel.fromJson(jsonDecode(
+                LocationNotificationModel.convertLocationNotificationToJson(
+                    alreadyExists[1])));
+
+        newLocationNotificationModel.to =
+            DateTime.now().add(Duration(minutes: minutes));
+
         await locationPromptDialog(
             text:
                 'You already are sharing your location with $atsign. Would you like to update it ?',
-            onYesTap: () async {
-              LocationNotificationModel newLocationNotificationModel =
-                  alreadyExists[1];
-              newLocationNotificationModel.to =
-                  DateTime.now().add(Duration(minutes: minutes));
-              var locationPromptDialogResult =
-                  await updateWithShareLocationAcknowledge(
-                      newLocationNotificationModel);
-              result = locationPromptDialogResult;
-            },
-            onNoTap: () => Navigator.of(NavService.navKey.currentContext).pop(),
+            locationNotificationModel: newLocationNotificationModel,
+            isShareLocationData: true,
+            isRequestLocationData: false,
             yesText: 'Yes! Update',
             noText: 'No');
-        return result;
+        return null;
       }
 
       AtKey atKey;
