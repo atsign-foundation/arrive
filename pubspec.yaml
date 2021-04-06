@@ -46,6 +46,8 @@ dependencies:
   meta: ^1.1.0
   geolocator: ^6.2.1
   fluttertoast: ^8.0.3
+  pedantic: ^1.11.0
+
 
   at_onboarding_flutter: ^1.0.0+2
   at_client_mobile: ^1.0.0+9
@@ -60,8 +62,8 @@ dependencies:
     path: /Users/nitesh/Desktop/new_atsign/at_widgets/atsign_authentication_helper
   at_chat_flutter:
     path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_chat_flutter
-  # atsign_authentication_helper :
-  #   path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
+  # at_onboarding_flutter :
+  #   path: /Users/nitesh/Desktop/new_atsign/at_widgets/at_onboarding_flutter
 
 
 
