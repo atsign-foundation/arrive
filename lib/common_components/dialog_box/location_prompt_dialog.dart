@@ -6,7 +6,13 @@ import 'package:flutter/material.dart';
 
 import '../custom_button.dart';
 
-locationPromptDialog() {
+locationPromptDialog({
+  String text,
+  String yesText,
+  String noText,
+  Function onYesTap,
+  Function onNoTap,
+}) {
   return showDialog<void>(
     context: NavService.navKey.currentContext,
     barrierDismissible: true,
@@ -17,6 +23,11 @@ locationPromptDialog() {
 }
 
 class LocationPrompt extends StatelessWidget {
+  final String text, yesText, noText;
+  final Function onYesTap, onNoTap;
+  LocationPrompt(
+      {this.text, this.yesText, this.noText, this.onNoTap, this.onYesTap});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,19 +39,21 @@ class LocationPrompt extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Text(
-                  'Your main location sharing switch is turned off. Do you want to turn it on?',
+                  text ??
+                      'Your main location sharing switch is turned off. Do you want to turn it on?',
                   style: CustomTextStyles().grey16,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 30),
                 CustomButton(
-                  onTap: () async {
-                    await LocationNotificationListener()
-                        .updateShareLocation(true);
-                    return Navigator.of(context).pop();
-                  },
+                  onTap: onYesTap ??
+                      () async {
+                        await LocationNotificationListener()
+                            .updateShareLocation(true);
+                        return Navigator.of(context).pop();
+                      },
                   child: Text(
-                    'Yes! Turn it on',
+                    yesText ?? 'Yes! Turn it on',
                     style: TextStyle(
                         color: Theme.of(context).scaffoldBackgroundColor),
                   ),
@@ -50,9 +63,9 @@ class LocationPrompt extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 InkWell(
-                  onTap: () => Navigator.of(context).pop(),
+                  onTap: onNoTap ?? () => Navigator.of(context).pop(),
                   child: Text(
-                    'No!',
+                    noText ?? 'No!',
                     style: CustomTextStyles().black14,
                   ),
                 ),

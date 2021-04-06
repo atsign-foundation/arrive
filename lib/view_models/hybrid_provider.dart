@@ -129,12 +129,20 @@ class HybridProvider extends RequestLocationProvider {
               .contains('sharelocation')) {
             allHybridNotifications[i].locationNotificationModel =
                 notification.locationNotificationModel;
+
+            /// TODO: Update the data in respective providers
+            super.mapUpdatedLocationDataToWidget(
+                notification.locationNotificationModel);
           } else {
             if (!remove)
               allHybridNotifications[i].locationNotificationModel =
                   notification.locationNotificationModel;
             else
               allHybridNotifications.remove(allRequestNotifications[i]);
+
+            /// TODO: Update the data in respective providers
+            super.mapUpdatedLocationDataToWidgetRequest(
+                notification.locationNotificationModel);
           }
         }
 

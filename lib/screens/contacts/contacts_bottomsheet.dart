@@ -118,6 +118,14 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
     var result = await LocationSharingService()
         .sendShareLocationEvent(widget.atsign, false, minutes: minutes);
 
+    if (result == null) {
+      CustomToast().show('Update cancelled', context);
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
     if (result[0] == true) {
       CustomToast().show('Share Location Request sent', context);
       setState(() {
