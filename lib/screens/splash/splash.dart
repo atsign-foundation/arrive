@@ -44,7 +44,7 @@ class _SplashState extends State<Splash> {
 
       backendService = BackendService.getInstance();
       backendService.atClientServiceInstance = new AtClientService();
-      var isOnBoard = await backendService.onboard();
+      await backendService.onboard();
       String currentAtSign;
       if (backendService.atClientInstance != null) {
         currentAtSign = backendService.atClientInstance.currentAtSign;

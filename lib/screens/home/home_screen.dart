@@ -266,10 +266,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   if (hybridElement.notificationType == NotificationType.Event)
                     HomeEventService().onEventModelTap(
-                        hybridElement.eventNotificationModel, provider);
+                        hybridElement.eventNotificationModel,
+                        provider,
+                        hybridElement.haveResponded);
                   else
                     HomeEventService().onLocationModelTap(
-                        hybridElement.locationNotificationModel);
+                        hybridElement.locationNotificationModel,
+                        hybridElement.haveResponded);
                 },
                 child: DisplayTile(
                   atsignCreator:
@@ -292,6 +295,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: getTitle(hybridElement),
                   subTitle: getSubTitle(hybridElement),
                   semiTitle: getSemiTitle(hybridElement),
+                  showRetry: calculateShowRetry(hybridElement),
+                  onRetryTapped: () {
+                    if (hybridElement.notificationType ==
+                        NotificationType.Event) {
+                      HomeEventService().onEventModelTap(
+                          hybridElement.eventNotificationModel,
+                          provider,
+                          false);
+                    } else {
+                      HomeEventService().onLocationModelTap(
+                          hybridElement.locationNotificationModel, false);
+                    }
+                  },
                 ),
               ),
               Divider()

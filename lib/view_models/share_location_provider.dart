@@ -70,6 +70,7 @@ class ShareLocationProvider extends EventProvider {
     convertJsonToLocationModel();
 
     filterData();
+    await checkForPendingShareLocations();
     setStatus(GET_ALL_EVENTS, Status.Done);
     checkForAcknowledge();
   }
@@ -114,6 +115,27 @@ class ShareLocationProvider extends EventProvider {
     allShareLocationNotifications
         .removeWhere((element) => tempArray.contains(element));
   }
+
+  checkForPendingShareLocations() async {
+    allShareLocationNotifications.forEach((notification) async {
+      if ((notification.locationNotificationModel.atsignCreator !=
+              currentAtSign) &&
+          (!notification.locationNotificationModel.isAccepted) &&
+          (!notification.locationNotificationModel.isExited)) {
+        String atkeyMicrosecondId =
+            notification.key.split('sharelocation-')[1].split('@')[0];
+        String acknowledgedKeyId =
+            'sharelocationacknowledged-$atkeyMicrosecondId';
+        List<String> allRegexResponses =
+            await atClientInstance.getKeys(regex: acknowledgedKeyId);
+        if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
+          notification.haveResponded = true;
+        }
+      }
+    });
+  }
+
+  updateSharePendingStatus() async {}
 
   checkForAcknowledge() {
     updateEventAccordingToAcknowledgedData();

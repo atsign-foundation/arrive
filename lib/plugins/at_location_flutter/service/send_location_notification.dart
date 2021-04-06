@@ -17,15 +17,16 @@ class SendLocationNotification {
   static SendLocationNotification _instance = SendLocationNotification._();
   factory SendLocationNotification() => _instance;
   Timer timer;
-  List<LocationNotificationModel> receivingAtsigns;
+  List<LocationNotificationModel> atsignsToShareLocationWith;
   AtClientImpl atClient;
   StreamSubscription<Position> positionStream;
   init(List<LocationNotificationModel> atsigns, AtClientImpl newAtClient) {
     if ((timer != null) && (timer.isActive)) timer.cancel();
 
-    receivingAtsigns = [...atsigns];
+    atsignsToShareLocationWith = [...atsigns];
     atClient = newAtClient;
-    print('receivingAtsigns length - ${receivingAtsigns.length}');
+    print(
+        'atsignsToShareLocationWith length - ${atsignsToShareLocationWith.length}');
 
     if (positionStream != null) positionStream.cancel();
     updateMyLocation();
@@ -33,7 +34,7 @@ class SendLocationNotification {
 
   addMember(LocationNotificationModel notification) async {
     // if already added
-    if (receivingAtsigns
+    if (atsignsToShareLocationWith
             .indexWhere((element) => element.key == notification.key) >
         -1) {
       return;
@@ -47,6 +48,8 @@ class SendLocationNotification {
           await LocationNotificationListener().getShareLocation();
 
       if (!isMasterSwitchOn) {
+        /// TODO: Add a message, it is for which user or event
+        /// Work for events having mutliple members
         await locationPromptDialog();
         isMasterSwitchOn =
             await LocationNotificationListener().getShareLocation();
@@ -61,19 +64,21 @@ class SendLocationNotification {
     }
 
     // add
-    receivingAtsigns.add(notification);
-    print('after adding receivingAtsigns length ${receivingAtsigns.length}');
+    atsignsToShareLocationWith.add(notification);
+    print(
+        'after adding atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   removeMember(String key) async {
     LocationNotificationModel locationNotificationModel;
-    receivingAtsigns.removeWhere((element) {
+    atsignsToShareLocationWith.removeWhere((element) {
       if (key.contains(element.key)) locationNotificationModel = element;
       return key.contains(element.key);
     });
     if (locationNotificationModel != null) sendNull(locationNotificationModel);
 
-    print('after deleting receivingAtsigns length ${receivingAtsigns.length}');
+    print(
+        'after deleting atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   updateMyLocation() async {
@@ -86,7 +91,7 @@ class SendLocationNotification {
         bool isMasterSwitchOn =
             await LocationNotificationListener().getShareLocation();
         if (isMasterSwitchOn) {
-          receivingAtsigns.forEach((notification) async {
+          atsignsToShareLocationWith.forEach((notification) async {
             await prepareLocationDataAndSend(notification,
                 LatLng(myLocation.latitude, myLocation.longitude));
           });

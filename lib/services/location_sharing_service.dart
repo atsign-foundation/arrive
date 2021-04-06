@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
@@ -124,18 +125,34 @@ class LocationSharingService {
               ? "sharelocationacknowledged-$atkeyMicrosecondId"
               : "requestlocationacknowledged-$atkeyMicrosecondId",
           locationNotificationModel.atsignCreator);
-      locationNotificationModel.isAccepted = isAccepted;
-      locationNotificationModel.isExited = !isAccepted;
+
+      LocationNotificationModel newLocationNotificationModel =
+          LocationNotificationModel.fromJson(jsonDecode(
+              LocationNotificationModel.convertLocationNotificationToJson(
+                  locationNotificationModel)));
+      newLocationNotificationModel.isAccepted = isAccepted;
+      newLocationNotificationModel.isExited = !isAccepted;
 
       var notification =
           LocationNotificationModel.convertLocationNotificationToJson(
-              locationNotificationModel);
+              newLocationNotificationModel);
 
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .put(atKey, notification);
       print('sendLocationNotificationAcknowledgment:$result');
+
+      if (result) {
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.updatePendingStatus(
+                BackendService.getInstance().convertEventToHybrid(
+                    NotificationType.Location,
+                    locationNotificationModel: newLocationNotificationModel)),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+      }
 
       return result;
     } catch (e) {
