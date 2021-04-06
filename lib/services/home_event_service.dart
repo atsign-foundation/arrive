@@ -28,7 +28,8 @@ class HomeEventService {
 
   get getAllEvents => allEvents;
 
-  onLocationModelTap(LocationNotificationModel locationNotificationModel) {
+  onLocationModelTap(
+      LocationNotificationModel locationNotificationModel, bool haveResponded) {
     String currentAtsign = BackendService.getInstance()
         .atClientServiceInstance
         .atClient
@@ -39,28 +40,35 @@ class HomeEventService {
           // ignore: unnecessary_statements
           ? (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
-              : BackendService.getInstance().showMyDialog(
-                  locationNotificationModel.atsignCreator,
-                  locationData: locationNotificationModel))
+              : (haveResponded
+                  ? null
+                  : BackendService.getInstance().showMyDialog(
+                      locationNotificationModel.atsignCreator,
+                      locationData: locationNotificationModel)))
           : navigatorPushToMap(locationNotificationModel);
     else if (locationNotificationModel.key.contains('requestlocation'))
       locationNotificationModel.atsignCreator == currentAtsign
           // ignore: unnecessary_statements
           ? (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
-              : BackendService.getInstance().showMyDialog(
-                  locationNotificationModel.atsignCreator,
-                  locationData: locationNotificationModel))
+              : (haveResponded
+                  ? null
+                  : BackendService.getInstance().showMyDialog(
+                      locationNotificationModel.atsignCreator,
+                      locationData: locationNotificationModel)))
           // ignore: unnecessary_statements
           : (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
               : null);
   }
 
-  onEventModelTap(
-      EventNotificationModel eventNotificationModel, EventProvider provider) {
+  onEventModelTap(EventNotificationModel eventNotificationModel,
+      EventProvider provider, bool haveResponded) {
     if (isActionRequired(eventNotificationModel) &&
         !eventNotificationModel.isCancelled) {
+      if (haveResponded) {
+        return null;
+      }
       return BackendService.getInstance().showMyDialog(
           eventNotificationModel.atsignCreator,
           eventData: eventNotificationModel);
@@ -230,6 +238,12 @@ String getActionString(EventNotificationModel event) {
         member.tags['isExited'] == true &&
         member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
       label = 'Request declined';
+    } else if (member.tags['isExited'] != null &&
+        member.tags['isExited'] == false &&
+        member.tags['isAccepted'] != null &&
+        member.tags['isAccepted'] == false &&
+        member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
+      label = 'Pending request';
     }
   });
 
@@ -302,7 +316,9 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
               ? null
               : hybridNotificationModel.locationNotificationModel.isExited
                   ? 'Received Share location rejected'
-                  : 'Action required')
+                  : (hybridNotificationModel.haveResponded
+                      ? 'Pending request'
+                      : 'Action required'))
           : (hybridNotificationModel.locationNotificationModel.isAccepted
               ? null
               : hybridNotificationModel.locationNotificationModel.isExited
@@ -317,7 +333,9 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
           ? (!hybridNotificationModel.locationNotificationModel.isExited
               ? (hybridNotificationModel.locationNotificationModel.isAccepted
                   ? null
-                  : 'Action required')
+                  : (hybridNotificationModel.haveResponded
+                      ? 'Pending request'
+                      : 'Action required'))
               : 'Request rejected')
           : (!hybridNotificationModel.locationNotificationModel.isExited
               ? (hybridNotificationModel.locationNotificationModel.isAccepted
@@ -339,5 +357,43 @@ getTitle(HybridNotificationModel hybridNotificationModel) {
                 .currentAtSign
         ? hybridNotificationModel.locationNotificationModel.receiver
         : hybridNotificationModel.locationNotificationModel.atsignCreator;
+  }
+}
+
+bool calculateShowRetry(HybridNotificationModel hybridNotificationModel) {
+  if (hybridNotificationModel.notificationType == NotificationType.Event) {
+    if ((hybridNotificationModel.eventNotificationModel.group != null) &&
+        (isActionRequired(hybridNotificationModel.eventNotificationModel)) &&
+        (hybridNotificationModel.haveResponded)) {
+      if (getActionString(hybridNotificationModel.eventNotificationModel) ==
+          'Pending request') return true;
+      return false;
+    }
+    return false;
+  } else {
+    if (hybridNotificationModel.locationNotificationModel.key
+        .contains('sharelocation')) {
+      if ((hybridNotificationModel.locationNotificationModel.atsignCreator !=
+              BackendService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign) &&
+          (!hybridNotificationModel.locationNotificationModel.isAccepted) &&
+          (!hybridNotificationModel.locationNotificationModel.isExited) &&
+          (hybridNotificationModel.haveResponded)) return true;
+
+      return false;
+    } else {
+      if ((hybridNotificationModel.locationNotificationModel.atsignCreator ==
+              BackendService.getInstance()
+                  .atClientServiceInstance
+                  .atClient
+                  .currentAtSign) &&
+          (!hybridNotificationModel.locationNotificationModel.isAccepted) &&
+          (!hybridNotificationModel.locationNotificationModel.isExited) &&
+          (hybridNotificationModel.haveResponded)) return true;
+
+      return false;
+    }
   }
 }

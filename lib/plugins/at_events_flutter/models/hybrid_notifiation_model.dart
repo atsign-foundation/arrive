@@ -9,12 +9,14 @@ class HybridNotificationModel {
   String key;
   AtKey atKey;
   AtValue atValue;
+  bool haveResponded;
   HybridNotificationModel(this.notificationType,
       {this.eventNotificationModel,
       this.locationNotificationModel,
       this.key,
       this.atKey,
-      this.atValue});
+      this.atValue,
+      this.haveResponded = false});
 }
 
 enum NotificationType { Location, Event }

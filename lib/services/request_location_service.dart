@@ -88,6 +88,17 @@ class RequestLocationService {
                   ackLocationNotificationModel));
       print('requestLocationAcknowledgment $result');
       if (result) {
+        if (result) {
+          providerCallback<HybridProvider>(NavService.navKey.currentContext,
+              task: (provider) => provider.updatePendingStatus(
+                  BackendService.getInstance().convertEventToHybrid(
+                      NotificationType.Location,
+                      locationNotificationModel: ackLocationNotificationModel)),
+              taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+              showLoader: false,
+              onSuccess: (provider) {});
+        }
+
         //  We have added this here, so that we need not wait for the updated data from the creator
         if (isSharing)
           Provider.of<HybridProvider>(NavService.navKey.currentContext,

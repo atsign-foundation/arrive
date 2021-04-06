@@ -71,8 +71,9 @@ class RequestLocationProvider extends ShareLocationProvider {
       }
     }
     convertJsonToLocationModelRequest();
-
     filterDataRequest();
+    await checkForPendingRequestLocations();
+
     setStatus(GET_ALL_REQUEST_EVENTS, Status.Done);
     checkForAcknowledgeRequest();
   }
@@ -122,6 +123,25 @@ class RequestLocationProvider extends ShareLocationProvider {
     }
     allRequestNotifications
         .removeWhere((element) => tempNotification.contains(element));
+  }
+
+  checkForPendingRequestLocations() async {
+    allRequestNotifications.forEach((notification) async {
+      if ((notification.locationNotificationModel.atsignCreator ==
+              currentAtSign) &&
+          (!notification.locationNotificationModel.isAccepted) &&
+          (!notification.locationNotificationModel.isExited)) {
+        String atkeyMicrosecondId =
+            notification.key.split('requestlocation-')[1].split('@')[0];
+        String acknowledgedKeyId =
+            'requestlocationacknowledged-$atkeyMicrosecondId';
+        List<String> allRegexResponses =
+            await atClientInstance.getKeys(regex: acknowledgedKeyId);
+        if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
+          notification.haveResponded = true;
+        }
+      }
+    });
   }
 
   checkForAcknowledgeRequest() {
