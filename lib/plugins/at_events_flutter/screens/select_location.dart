@@ -132,38 +132,46 @@ class _SelectLocationState extends State<SelectLocation> {
                   });
                 },
               ),
-              Column(
-                children: [
-                  Text('Near me', style: CustomTextStyles().greyLabel14),
-                ],
-              ),
-              ((nearMe == null) ||
-                      ((nearMe == false) && (currentLocation == null)))
-                  ? Text('  (Cannot access location permission)',
-                      style: CustomTextStyles().red12)
-                  : SizedBox()
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Near me', style: CustomTextStyles().greyLabel14),
+                    ((nearMe == null) ||
+                            ((nearMe == false) && (currentLocation == null)))
+                        ? Flexible(
+                            child: Text('(Cannot access location permission)',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: CustomTextStyles().red12),
+                          )
+                        : SizedBox()
+                  ],
+                ),
+              )
             ],
           ),
           SizedBox(height: 5.toHeight),
           Divider(),
           SizedBox(height: 18.toHeight),
           InkWell(
-              onTap: () async {
-                if (currentLocation == null) {
-                  CustomToast().show('Unable to access location', context);
-                  return;
-                }
-                onLocationSelect(context, currentLocation);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Current Location',
-                      style: CustomTextStyles().greyLabel14),
-                  SizedBox(height: 5.toHeight),
-                  Text('Using GPS', style: CustomTextStyles().greyLabel12),
-                ],
-              )),
+            onTap: () async {
+              if (currentLocation == null) {
+                CustomToast().show('Unable to access location', context);
+                return;
+              }
+              onLocationSelect(context, currentLocation);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Current Location', style: CustomTextStyles().greyLabel14),
+                SizedBox(height: 5.toHeight),
+                Text('Using GPS', style: CustomTextStyles().greyLabel12),
+              ],
+            ),
+          ),
           SizedBox(height: 20.toHeight),
           Divider(),
           SizedBox(height: 20.toHeight),
