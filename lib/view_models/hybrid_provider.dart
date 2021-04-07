@@ -63,11 +63,18 @@ class HybridProvider extends RequestLocationProvider {
       filterPastEventsFromList();
 
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
+      checkForDeleteRequestAck();
       initialiseLacationSharing();
     } catch (e) {
       print(e);
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Error);
     }
+  }
+
+  /// TODO: Complete this
+  checkForDeleteRequestAck() async {
+    // TODO: Look for keys "deleterequestacklocation" which we need to process
+    // And delete the respective "requestlocation" keys
   }
 
   filterPastEventsFromList() {

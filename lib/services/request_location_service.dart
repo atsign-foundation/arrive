@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
@@ -5,6 +6,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 
 import 'nav_service.dart';
 
@@ -17,8 +19,47 @@ class RequestLocationService {
     return _singleton;
   }
 
+  checkForAlreadyExisting(String atsign) {
+    int index = Provider.of<HybridProvider>(NavService.navKey.currentContext,
+            listen: false)
+        .allRequestNotifications
+        .indexWhere((e) => ((e.locationNotificationModel.receiver == atsign)));
+    if (index > -1) {
+      return [
+        true,
+        Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                listen: false)
+            .allRequestNotifications[index]
+            .locationNotificationModel
+      ];
+    } else
+      return [false];
+  }
+
   sendRequestLocationEvent(String atsign) async {
     try {
+      var alreadyExists = checkForAlreadyExisting(atsign);
+      var result;
+      // if (alreadyExists[0]) {
+      //   LocationNotificationModel newLocationNotificationModel =
+      //       LocationNotificationModel.fromJson(jsonDecode(
+      //           LocationNotificationModel.convertLocationNotificationToJson(
+      //               alreadyExists[1])));
+
+      //   newLocationNotificationModel.to =
+      //       DateTime.now().add(Duration(minutes: minutes));
+
+      //   await locationPromptDialog(
+      //       text:
+      //           'You already are sharing your location with $atsign. Would you like to update it ?',
+      //       locationNotificationModel: newLocationNotificationModel,
+      //       isShareLocationData: true,
+      //       isRequestLocationData: false,
+      //       yesText: 'Yes! Update',
+      //       noText: 'No');
+      //   return null;
+      // }
+
       AtKey atKey = newAtKey(60000,
           "requestlocation-${DateTime.now().microsecondsSinceEpoch}", atsign);
 
@@ -32,7 +73,7 @@ class RequestLocationService {
                 .atClient
                 .currentAtSign;
 
-      var result = await BackendService.getInstance()
+      result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .put(
