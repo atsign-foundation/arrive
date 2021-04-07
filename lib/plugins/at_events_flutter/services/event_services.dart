@@ -113,7 +113,7 @@ class EventService {
         ..sharedBy = eventNotification.atsignCreator;
 
       print(
-          'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: ${notification}');
+          'notification data:${atKey.key}, sharedWith:${eventNotification.group.members.elementAt(0).atSign} ,notify key: $notification');
       var result = await atClientInstance.put(atKey, notification);
       eventNotificationModel = eventNotification;
       if (onEventSaved != null) {

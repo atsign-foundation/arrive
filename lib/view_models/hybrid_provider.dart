@@ -147,6 +147,28 @@ class HybridProvider extends RequestLocationProvider {
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
   }
 
+  updatePendingStatus(HybridNotificationModel notificationModel) async {
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
+
+    for (int i = 0; i < allHybridNotifications.length; i++) {
+      if (NotificationType.Event == notificationModel.notificationType) {
+        if ((allHybridNotifications[i]
+            .key
+            .contains(notificationModel.eventNotificationModel.key))) {
+          allHybridNotifications[i].haveResponded = true;
+        }
+      } else {
+        if ((allHybridNotifications[i]
+            .key
+            .contains(notificationModel.locationNotificationModel.key))) {
+          allHybridNotifications[i].haveResponded = true;
+        }
+      }
+    }
+
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
+  }
+
   checkLocationSharingForMappedData(HybridNotificationModel notification) {
     if (notification.notificationType == NotificationType.Event) {
       if ((notification.eventNotificationModel.atsignCreator.toLowerCase() ==

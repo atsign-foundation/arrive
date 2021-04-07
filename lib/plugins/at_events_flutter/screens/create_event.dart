@@ -233,9 +233,24 @@ class _CreateEventState extends State<CreateEvent> {
                                                       .endTime !=
                                                   null)
                                           ? Text(
-                                              'Event on ${dateToString(eventData.event.date)} (${timeOfDayToString(eventData.event.startTime)}- ${timeOfDayToString(eventData.event.endTime)})',
+                                              ((dateToString(eventData
+                                                              .event.date) ==
+                                                          dateToString(
+                                                              DateTime.now()))
+                                                      ? 'Event today (${timeOfDayToString(eventData.event.startTime)})'
+                                                      : 'Event on ${(dateToString(eventData.event.date) != dateToString(DateTime.now()) ? dateToString(eventData.event.date) : dateToString(DateTime.now()))} (${timeOfDayToString(eventData.event.startTime)})') +
+                                                  ((dateToString(eventData
+                                                              .event.endDate) ==
+                                                          dateToString(eventData
+                                                              .event.date))
+                                                      ? ' to'
+                                                      : ' to ${dateToString(eventData.event.endDate)}') +
+                                                  (' (${timeOfDayToString(eventData.event.endTime)})'),
+
+                                              ///
+                                              // 'Event on ${dateToString(eventData.event.date)} (${timeOfDayToString(eventData.event.startTime)}- ${timeOfDayToString(eventData.event.endTime)})',
                                               style: CustomTextStyles()
-                                                  .greyLabel14,
+                                                  .greyLabel12,
                                             )
                                           : SizedBox()
                                       : SizedBox(),
