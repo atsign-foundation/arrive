@@ -220,7 +220,7 @@ bool isActionRequired(EventNotificationModel event) {
   return isRequired;
 }
 
-String getActionString(EventNotificationModel event) {
+String getActionString(EventNotificationModel event, bool haveResponded) {
   if (event.isCancelled) return 'Cancelled';
   String label = 'Action required';
   String currentAtsign = BackendService.getInstance()
@@ -242,7 +242,8 @@ String getActionString(EventNotificationModel event) {
         member.tags['isExited'] == false &&
         member.tags['isAccepted'] != null &&
         member.tags['isAccepted'] == false &&
-        member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
+        member.atSign.toLowerCase() == currentAtsign.toLowerCase() &&
+        haveResponded) {
       label = 'Pending request';
     }
   });
@@ -300,7 +301,8 @@ getSemiTitle(HybridNotificationModel hybridNotificationModel) {
   if (hybridNotificationModel.notificationType == NotificationType.Event) {
     return hybridNotificationModel.eventNotificationModel.group != null
         ? (isActionRequired(hybridNotificationModel.eventNotificationModel))
-            ? getActionString(hybridNotificationModel.eventNotificationModel)
+            ? getActionString(hybridNotificationModel.eventNotificationModel,
+                hybridNotificationModel.haveResponded)
             : null
         : 'Action required';
   } else if (hybridNotificationModel.notificationType ==
@@ -365,8 +367,11 @@ bool calculateShowRetry(HybridNotificationModel hybridNotificationModel) {
     if ((hybridNotificationModel.eventNotificationModel.group != null) &&
         (isActionRequired(hybridNotificationModel.eventNotificationModel)) &&
         (hybridNotificationModel.haveResponded)) {
-      if (getActionString(hybridNotificationModel.eventNotificationModel) ==
-          'Pending request') return true;
+      if (getActionString(hybridNotificationModel.eventNotificationModel,
+              hybridNotificationModel.haveResponded) ==
+          'Pending request') {
+        return true;
+      }
       return false;
     }
     return false;
