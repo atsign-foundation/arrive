@@ -7,6 +7,7 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
+import 'location_notification_listener.dart';
 
 import 'nav_service.dart';
 
@@ -17,6 +18,17 @@ class RequestLocationService {
 
   factory RequestLocationService() {
     return _singleton;
+  }
+
+  checkForLocationKey(String atsign) {
+    if ((LocationNotificationListener()
+            .allUsersList
+            .indexWhere((e) => ((e.displayName == atsign)))) >
+        -1) {
+      return true;
+    }
+
+    return false;
   }
 
   checkForAlreadyExisting(String atsign) {
@@ -38,27 +50,36 @@ class RequestLocationService {
 
   sendRequestLocationEvent(String atsign) async {
     try {
+      var alreadySharing = checkForLocationKey(atsign);
+      if (alreadySharing) {
+        await locationPromptDialog(
+          text: '$atsign is already sharing their location.',
+          isShareLocationData: false,
+          isRequestLocationData: false,
+          onlyText: true,
+        );
+
+        return null;
+      }
+
       var alreadyExists = checkForAlreadyExisting(atsign);
       var result;
-      // if (alreadyExists[0]) {
-      //   LocationNotificationModel newLocationNotificationModel =
-      //       LocationNotificationModel.fromJson(jsonDecode(
-      //           LocationNotificationModel.convertLocationNotificationToJson(
-      //               alreadyExists[1])));
+      if (alreadyExists[0]) {
+        LocationNotificationModel newLocationNotificationModel =
+            LocationNotificationModel.fromJson(jsonDecode(
+                LocationNotificationModel.convertLocationNotificationToJson(
+                    alreadyExists[1])));
 
-      //   newLocationNotificationModel.to =
-      //       DateTime.now().add(Duration(minutes: minutes));
-
-      //   await locationPromptDialog(
-      //       text:
-      //           'You already are sharing your location with $atsign. Would you like to update it ?',
-      //       locationNotificationModel: newLocationNotificationModel,
-      //       isShareLocationData: true,
-      //       isRequestLocationData: false,
-      //       yesText: 'Yes! Update',
-      //       noText: 'No');
-      //   return null;
-      // }
+        await locationPromptDialog(
+            text:
+                'You already have requested $atsign. Would you like to prompt them again ?',
+            locationNotificationModel: newLocationNotificationModel,
+            isShareLocationData: false,
+            isRequestLocationData: true,
+            yesText: 'Yes! Prompt again',
+            noText: 'No');
+        return null;
+      }
 
       AtKey atKey = newAtKey(60000,
           "requestlocation-${DateTime.now().microsecondsSinceEpoch}", atsign);

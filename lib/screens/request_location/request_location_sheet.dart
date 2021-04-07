@@ -119,6 +119,14 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     var result = await RequestLocationService()
         .sendRequestLocationEvent(selectedContact.atSign);
 
+    if (result == null) {
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.of(context).pop();
+      return;
+    }
+
     if (result[0] == true) {
       CustomToast().show('Location Request sent', context);
       setState(() {
