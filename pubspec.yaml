@@ -47,8 +47,11 @@ dependencies:
   geolocator: ^6.2.1
   fluttertoast: ^8.0.3
 
-  at_onboarding_flutter: ^1.0.0+2
+  # at_onboarding_flutter: ^1.0.0+2
+  at_onboarding_flutter:
+    path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/at_onboarding_flutter
   at_client_mobile: ^1.0.0+9
+  at_client: ^1.0.1+7
   at_contact: ^1.0.0+3
   at_commons: ^1.0.1+6
   at_lookup: ^1.0.0+6

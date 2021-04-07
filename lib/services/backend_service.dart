@@ -18,7 +18,7 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
-
+import 'package:at_client/src/manager/sync_manager.dart';
 import 'location_notification_listener.dart';
 
 class BackendService {
@@ -122,7 +122,7 @@ class BackendService {
 
   fnCallBack(var response) async {
     print('fnCallBack called');
-
+    await syncWithSecondary();
     response = response.replaceFirst('notification:', '');
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
@@ -247,6 +247,15 @@ class BackendService {
         showMyDialog(fromAtSign, locationData: locationData);
       }
       return;
+    }
+  }
+
+  syncWithSecondary() async {
+    SyncManager syncManager = atClientInstance.getSyncManager();
+    var isSynced = await syncManager.isInSync();
+    if (isSynced is bool && isSynced) {
+    } else {
+      await syncManager.sync();
     }
   }
 
