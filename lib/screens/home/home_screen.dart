@@ -1,3 +1,4 @@
+import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    initializeContacts();
+    initializePlugins();
     _getMyLocation();
     LocationNotificationListener()
         .init(BackendService.getInstance().atClientServiceInstance.atClient);
@@ -67,9 +68,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  initializeContacts() async {
+  void initializePlugins() async {
     currentAtSign = await BackendService.getInstance().getAtSign();
     initializeContactsService(
+        BackendService.getInstance().atClientServiceInstance.atClient,
+        currentAtSign,
+        rootDomain: MixedConstants.ROOT_DOMAIN);
+
+    initializeGroupService(
         BackendService.getInstance().atClientServiceInstance.atClient,
         currentAtSign,
         rootDomain: MixedConstants.ROOT_DOMAIN);
