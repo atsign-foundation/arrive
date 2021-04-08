@@ -18,6 +18,28 @@ class SelectLocation extends StatefulWidget {
 class _SelectLocationState extends State<SelectLocation> {
   String inputText = '';
   bool isLoader = false;
+  bool nearMe;
+  LatLng currentLocation;
+  @override
+  void initState() {
+    calculateLocation();
+    super.initState();
+  }
+
+  /// nearMe == null => loading
+  /// nearMe == false => dont search nearme
+  /// nearMe == true => search nearme
+  /// nearMe == false && currentLocation == null =>dont search nearme
+  calculateLocation() async {
+    currentLocation = await getMyLocation();
+    if (currentLocation != null) {
+      nearMe = true;
+    } else {
+      nearMe = false;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,8 +59,15 @@ class _SelectLocationState extends State<SelectLocation> {
                     setState(() {
                       isLoader = true;
                     });
-                    // ignore: await_only_futures
-                    await SearchLocationService().getAddressLatLng(str);
+                    if ((nearMe == null) || (!nearMe)) {
+                      // ignore: await_only_futures
+                      await SearchLocationService().getAddressLatLng(str, null);
+                    } else {
+                      // ignore: await_only_futures
+                      await SearchLocationService()
+                          .getAddressLatLng(str, currentLocation);
+                    }
+
                     setState(() {
                       isLoader = false;
                     });
@@ -51,8 +80,15 @@ class _SelectLocationState extends State<SelectLocation> {
                     setState(() {
                       isLoader = true;
                     });
-                    // ignore: await_only_futures
-                    await SearchLocationService().getAddressLatLng(inputText);
+                    if ((nearMe == null) || (!nearMe)) {
+                      // ignore: await_only_futures
+                      await SearchLocationService()
+                          .getAddressLatLng(inputText, null);
+                    } else {
+                      // ignore: await_only_futures
+                      await SearchLocationService()
+                          .getAddressLatLng(inputText, currentLocation);
+                    }
                     setState(() {
                       isLoader = false;
                     });
@@ -60,32 +96,82 @@ class _SelectLocationState extends State<SelectLocation> {
                 ),
               ),
               SizedBox(width: 10.toWidth),
-              InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: Text('Cancel', style: CustomTextStyles().orange16)),
+              Column(
+                children: [
+                  InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child:
+                          Text('Cancel', style: CustomTextStyles().orange16)),
+                ],
+              ),
             ],
           ),
-          SizedBox(height: 20.toHeight),
+          SizedBox(height: 5.toHeight),
+          Row(
+            children: <Widget>[
+              Checkbox(
+                value: nearMe,
+                tristate: true,
+                onChanged: (value) async {
+                  if (nearMe == null) return;
+
+                  if (!nearMe) {
+                    currentLocation = await getMyLocation();
+                  }
+
+                  if (currentLocation == null) {
+                    CustomToast().show('Unable to access location', context);
+                    setState(() {
+                      nearMe = false;
+                    });
+                    return;
+                  }
+
+                  setState(() {
+                    nearMe = !nearMe;
+                  });
+                },
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('Near me', style: CustomTextStyles().greyLabel14),
+                    ((nearMe == null) ||
+                            ((nearMe == false) && (currentLocation == null)))
+                        ? Flexible(
+                            child: Text('(Cannot access location permission)',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: CustomTextStyles().red12),
+                          )
+                        : SizedBox()
+                  ],
+                ),
+              )
+            ],
+          ),
+          SizedBox(height: 5.toHeight),
           Divider(),
           SizedBox(height: 18.toHeight),
           InkWell(
-              onTap: () async {
-                LatLng point = await getMyLocation();
-                if (point == null) {
-                  CustomToast().show('Unable to access location', context);
-                  return;
-                }
-                onLocationSelect(context, point);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Current Location',
-                      style: CustomTextStyles().greyLabel14),
-                  SizedBox(height: 5.toHeight),
-                  Text('Using GPS', style: CustomTextStyles().greyLabel12),
-                ],
-              )),
+            onTap: () async {
+              if (currentLocation == null) {
+                CustomToast().show('Unable to access location', context);
+                return;
+              }
+              onLocationSelect(context, currentLocation);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Current Location', style: CustomTextStyles().greyLabel14),
+                SizedBox(height: 5.toHeight),
+                Text('Using GPS', style: CustomTextStyles().greyLabel12),
+              ],
+            ),
+          ),
           SizedBox(height: 20.toHeight),
           Divider(),
           SizedBox(height: 20.toHeight),

@@ -10,7 +10,6 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
-import 'package:at_common_flutter/services/size_config.dart';
 
 class EventLog extends StatefulWidget {
   @override

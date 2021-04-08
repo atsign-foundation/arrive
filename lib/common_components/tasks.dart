@@ -32,6 +32,7 @@ class Tasks extends StatelessWidget {
             Flexible(
               child: Text(
                 task,
+                textScaleFactor: 1,
                 style: TextStyle(
                     color: Theme.of(context).primaryTextTheme.headline3.color,
                     fontSize: 14.toFont),

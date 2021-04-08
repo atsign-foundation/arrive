@@ -44,7 +44,7 @@ class _SplashState extends State<Splash> {
 
       backendService = BackendService.getInstance();
       backendService.atClientServiceInstance = new AtClientService();
-      var isOnBoard = await backendService.onboard();
+      await backendService.onboard();
       String currentAtSign;
       if (backendService.atClientInstance != null) {
         currentAtSign = backendService.atClientInstance.currentAtSign;
@@ -133,6 +133,7 @@ class _SplashState extends State<Splash> {
                     left: 16.toWidth,
                     child: Text(
                       'Stay connected!',
+                      textScaleFactor: 1,
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
@@ -141,6 +142,7 @@ class _SplashState extends State<Splash> {
                     left: 15.toWidth,
                     child: Text(
                       'Wherever',
+                      textScaleFactor: 1,
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
@@ -149,6 +151,7 @@ class _SplashState extends State<Splash> {
                     left: 15.toWidth,
                     child: Text(
                       'you go.',
+                      textScaleFactor: 1,
                       style: CustomTextStyles().blackPlayfairDisplay38,
                     ),
                   ),
@@ -176,20 +179,18 @@ class _SplashState extends State<Splash> {
                                     children: [
                                       Text(
                                         'Authenticating',
+                                        textScaleFactor: 1,
                                         style: CustomTextStyles().white15,
                                       ),
                                       TypingIndicator(
                                         showIndicator: true,
-                                        flashingCircleBrightColor:
-                                            AllColors().ORANGE,
-                                        flashingCircleDarkColor:
-                                            AllColors().DARK_GREY,
                                       ),
                                     ],
                                   ),
                                 )
                               : Text(
                                   'Explore',
+                                  textScaleFactor: 1,
                                   style: CustomTextStyles().white15,
                                 ),
                           onTap: () async {

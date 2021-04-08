@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
@@ -10,7 +9,6 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
-import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
@@ -55,7 +53,6 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
     backendService
         .getAtClientPreference()
         .then((value) => atClientPrefernce = value);
-    Random r = Random();
     return BottomSheet(
       onClosing: () {},
       backgroundColor: Colors.transparent,

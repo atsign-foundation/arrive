@@ -17,15 +17,16 @@ class SendLocationNotification {
   static SendLocationNotification _instance = SendLocationNotification._();
   factory SendLocationNotification() => _instance;
   Timer timer;
-  List<LocationNotificationModel> receivingAtsigns;
+  List<LocationNotificationModel> atsignsToShareLocationWith;
   AtClientImpl atClient;
   StreamSubscription<Position> positionStream;
   init(List<LocationNotificationModel> atsigns, AtClientImpl newAtClient) {
     if ((timer != null) && (timer.isActive)) timer.cancel();
 
-    receivingAtsigns = [...atsigns];
+    atsignsToShareLocationWith = [...atsigns];
     atClient = newAtClient;
-    print('receivingAtsigns length - ${receivingAtsigns.length}');
+    print(
+        'atsignsToShareLocationWith length - ${atsignsToShareLocationWith.length}');
 
     if (positionStream != null) positionStream.cancel();
     updateMyLocation();
@@ -36,7 +37,7 @@ class SendLocationNotification {
       List<LocationNotificationModel> notificationList}) async {
     // if already added
     if (notification != null &&
-        receivingAtsigns
+        atsignsToShareLocationWith
                 .indexWhere((element) => element.key == notification.key) >
             -1) {
       return;
@@ -45,7 +46,7 @@ class SendLocationNotification {
     // checking if location key is already present in receiving atsigns length
     if (notificationList != null &&
         notificationList.isNotEmpty &&
-        receivingAtsigns.indexWhere(
+        atsignsToShareLocationWith.indexWhere(
                 (element) => element.key == notificationList[0].key) >
             -1) {
       return;
@@ -59,6 +60,8 @@ class SendLocationNotification {
           await LocationNotificationListener().getShareLocation();
 
       if (!isMasterSwitchOn) {
+        /// TODO: Add a message, it is for which user or event
+        /// Work for events having mutliple members
         await locationPromptDialog();
         isMasterSwitchOn =
             await LocationNotificationListener().getShareLocation();
@@ -80,25 +83,31 @@ class SendLocationNotification {
 
     // add
     if (notificationList == null) {
-      receivingAtsigns.add(notification);
+      atsignsToShareLocationWith.add(notification);
     } else {
-      receivingAtsigns = [...receivingAtsigns, ...notificationList];
+      atsignsToShareLocationWith = [
+        ...atsignsToShareLocationWith,
+        ...notificationList
+      ];
     }
-    print('after adding receivingAtsigns length ${receivingAtsigns.length}');
+    print(
+        'after adding atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   removeMember(String key) async {
     LocationNotificationModel locationNotificationModel;
-    if (receivingAtsigns == null || receivingAtsigns.isEmpty) {
+    if (atsignsToShareLocationWith == null ||
+        atsignsToShareLocationWith.isEmpty) {
       return;
     }
-    receivingAtsigns.removeWhere((element) {
+    atsignsToShareLocationWith.removeWhere((element) {
       if (key.contains(element.key)) locationNotificationModel = element;
       return key.contains(element.key);
     });
     if (locationNotificationModel != null) sendNull(locationNotificationModel);
 
-    print('after deleting receivingAtsigns length ${receivingAtsigns.length}');
+    print(
+        'after deleting atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   updateMyLocation() async {
@@ -111,9 +120,9 @@ class SendLocationNotification {
         bool isMasterSwitchOn =
             await LocationNotificationListener().getShareLocation();
         if (isMasterSwitchOn) {
-          receivingAtsigns.forEach((notification) async {
+          atsignsToShareLocationWith.forEach((notification) async {
             print(
-                'sending to receivingAtsigns: ${notification.atsignCreator}, ${notification.receiver}');
+                'sending to atsignsToShareLocationWith: ${notification.atsignCreator}, ${notification.receiver}');
             await prepareLocationDataAndSend(notification,
                 LatLng(myLocation.latitude, myLocation.longitude));
           });

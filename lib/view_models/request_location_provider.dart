@@ -71,8 +71,9 @@ class RequestLocationProvider extends ShareLocationProvider {
       }
     }
     convertJsonToLocationModelRequest();
-
     filterDataRequest();
+    await checkForPendingRequestLocations();
+
     setStatus(GET_ALL_REQUEST_EVENTS, Status.Done);
     checkForAcknowledgeRequest();
   }
@@ -91,16 +92,19 @@ class RequestLocationProvider extends ShareLocationProvider {
 
   filterDataRequest() {
     List<HybridNotificationModel> tempNotification = [];
-    allRequestNotifications.forEach((notification) {
-      if ((notification.locationNotificationModel != null)) {
-        if ((notification.locationNotificationModel.isAcknowledgment) &&
-            (notification.locationNotificationModel.isExited) &&
-            (notification.locationNotificationModel.atsignCreator ==
-                currentAtSign)) tempNotification.add(notification);
-      }
-    });
-    allRequestNotifications
-        .removeWhere((element) => tempNotification.contains(element));
+
+    ///Uncomment if rejecting a request location should remove the person
+    ///
+    // allRequestNotifications.forEach((notification) {
+    //   if ((notification.locationNotificationModel != null)) {
+    //     if ((notification.locationNotificationModel.isAcknowledgment) &&
+    //         (notification.locationNotificationModel.isExited) &&
+    //         (notification.locationNotificationModel.atsignCreator ==
+    //             currentAtSign)) tempNotification.add(notification);
+    //   }
+    // });
+    // allRequestNotifications
+    //     .removeWhere((element) => tempNotification.contains(element));
 
     for (int i = 0; i < allRequestNotifications.length; i++) {
       // ignore: unrelated_type_equality_checks
@@ -119,6 +123,25 @@ class RequestLocationProvider extends ShareLocationProvider {
     }
     allRequestNotifications
         .removeWhere((element) => tempNotification.contains(element));
+  }
+
+  checkForPendingRequestLocations() async {
+    allRequestNotifications.forEach((notification) async {
+      if ((notification.locationNotificationModel.atsignCreator ==
+              currentAtSign) &&
+          (!notification.locationNotificationModel.isAccepted) &&
+          (!notification.locationNotificationModel.isExited)) {
+        String atkeyMicrosecondId =
+            notification.key.split('requestlocation-')[1].split('@')[0];
+        String acknowledgedKeyId =
+            'requestlocationacknowledged-$atkeyMicrosecondId';
+        List<String> allRegexResponses =
+            await atClientInstance.getKeys(regex: acknowledgedKeyId);
+        if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
+          notification.haveResponded = true;
+        }
+      }
+    });
   }
 
   checkForAcknowledgeRequest() {
