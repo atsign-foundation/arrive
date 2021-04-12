@@ -11,6 +11,7 @@ import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
+import 'package:at_contacts_flutter/services/contact_service.dart';
 
 class RequestLocationProvider extends ShareLocationProvider {
   RequestLocationProvider();
@@ -64,6 +65,8 @@ class RequestLocationProvider extends ShareLocationProvider {
       notification.atKey = atKey;
     });
 
+    filterBlockedContactsforRequested();
+
     for (int i = 0; i < allRequestNotifications.length; i++) {
       AtValue value = await getAtValue(allRequestNotifications[i].atKey);
       if (value != null) {
@@ -76,6 +79,17 @@ class RequestLocationProvider extends ShareLocationProvider {
 
     setStatus(GET_ALL_REQUEST_EVENTS, Status.Done);
     checkForAcknowledgeRequest();
+  }
+
+  filterBlockedContactsforRequested() {
+    List<HybridNotificationModel> tempList = [];
+    for (int i = 0; i < allRequestNotifications.length; i++) {
+      if (ContactService().blockContactList.indexWhere((contact) =>
+              contact.atSign == allRequestNotifications[i].atKey.sharedBy) >=
+          0) tempList.add(allRequestNotifications[i]);
+    }
+    allRequestNotifications
+        .removeWhere((element) => tempList.contains(element));
   }
 
   convertJsonToLocationModelRequest() {

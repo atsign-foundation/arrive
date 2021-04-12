@@ -14,6 +14,7 @@ class Routes {
   static const String REQUEST_LOCATION_EVENT = 'request_location_event';
   static const String PRIVATE_KEY_GEN_SCREEN = 'privateKeyGenScreen';
   static const String CONTACT_SCREEN = 'contactScreen';
+  static const String BLOCKED_CONTACT_SCREEN = 'blockedContactScreen';
   static const String ADD_CONTACT_SCREEN = 'addContactScreen';
   static const String SCAN_QR_SCREEN = 'scanQrScreen';
 }

@@ -9,6 +9,7 @@ import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
+import 'package:at_contacts_flutter/services/contact_service.dart';
 
 class ShareLocationProvider extends EventProvider {
   ShareLocationProvider();
@@ -61,6 +62,8 @@ class ShareLocationProvider extends EventProvider {
       notification.atKey = atKey;
     });
 
+    filterBlockedContactsforShared();
+
     for (int i = 0; i < allShareLocationNotifications.length; i++) {
       AtValue value = await getAtValue(allShareLocationNotifications[i].atKey);
       if (value != null) {
@@ -73,6 +76,22 @@ class ShareLocationProvider extends EventProvider {
     await checkForPendingShareLocations();
     setStatus(GET_ALL_EVENTS, Status.Done);
     checkForAcknowledge();
+  }
+
+  filterBlockedContactsforShared() {
+    List<HybridNotificationModel> tempList = [];
+
+    for (int i = 0; i < allShareLocationNotifications.length; i++) {
+      if (ContactService().blockContactList.indexWhere((contact) => ((contact
+                      .atSign ==
+                  allShareLocationNotifications[i].atKey.sharedBy) ||
+              (contact.atSign ==
+                  '@' + allShareLocationNotifications[i].atKey.sharedBy))) >=
+          0) tempList.add(allShareLocationNotifications[i]);
+    }
+
+    allShareLocationNotifications
+        .removeWhere((element) => tempList.contains(element));
   }
 
   convertJsonToLocationModel() {

@@ -2,6 +2,7 @@ import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
+import 'package:at_contacts_flutter/screens/blocked_screen.dart';
 import 'package:atsign_location_app/screens/event/event_log.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
@@ -27,8 +28,8 @@ class SetupRoutes {
       Routes.GROUP_LIST: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
         return GroupList(
-          currentAtsign: args['currentAtSign'],
-        );
+            // currentAtsign: args['currentAtSign'],
+            );
       },
       Routes.CONTACT_SCREEN: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
@@ -37,6 +38,9 @@ class SetupRoutes {
           context: context,
           onSendIconPressed: args['onSendIconPressed'],
         );
+      },
+      Routes.BLOCKED_CONTACT_SCREEN: (context) {
+        return BlockedScreen();
       },
     };
   }

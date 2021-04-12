@@ -10,7 +10,7 @@ import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'dart:convert';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
-
+import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'hybrid_provider.dart';
 
 class EventProvider extends BaseModel {
@@ -58,17 +58,17 @@ class EventProvider extends BaseModel {
     }
 
     response.forEach((key) {
-      if ('@${key.split(':')[1]}'.contains(currentAtSign)) {
-        HybridNotificationModel tempHyridNotificationModel =
-            HybridNotificationModel(NotificationType.Event, key: key);
-        allNotifications.add(tempHyridNotificationModel);
-      }
+      HybridNotificationModel tempHyridNotificationModel =
+          HybridNotificationModel(NotificationType.Event, key: key);
+      allNotifications.add(tempHyridNotificationModel);
     });
 
     allNotifications.forEach((notification) {
       AtKey atKey = BackendService.getInstance().getAtKey(notification.key);
       notification.atKey = atKey;
     });
+
+    filterBlockedContactsforEvents();
 
     for (int i = 0; i < allNotifications.length; i++) {
       AtValue value = await getAtValue(allNotifications[i].atKey);
@@ -82,6 +82,16 @@ class EventProvider extends BaseModel {
     setStatus(GET_ALL_EVENTS, Status.Done);
 
     updateEventDataAccordingToAcknowledgedData();
+  }
+
+  filterBlockedContactsforEvents() {
+    List<HybridNotificationModel> tempList = [];
+    for (int i = 0; i < allNotifications.length; i++) {
+      if (ContactService().blockContactList.indexWhere((contact) =>
+              contact.atSign == allNotifications[i].atKey.sharedBy) >=
+          0) tempList.add(allNotifications[i]);
+    }
+    allNotifications.removeWhere((element) => tempList.contains(element));
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -247,20 +257,13 @@ class EventProvider extends BaseModel {
   }
 
   updateEventDataAccordingToAcknowledgedData() async {
-    List<String> allEventKey = [];
-    List<String> response = await atClientInstance.getKeys(
+    List<String> allEventKey = await atClientInstance.getKeys(
       regex: 'createevent-',
     );
 
-    if (response.length == 0) {
+    if (allEventKey.length == 0) {
       return;
     }
-
-    response.forEach((element) {
-      if ('@${element.split(':')[1]}'.contains(currentAtSign)) {
-        allEventKey.add(element);
-      }
-    });
 
     List<String> allRegexResponses = [];
     for (int i = 0; i < allNotifications.length; i++) {
@@ -285,6 +288,8 @@ class EventProvider extends BaseModel {
                 .get(acknowledgedAtKey)
                 // ignore: return_of_invalid_type_from_catch_error
                 .catchError((e) => print("error in get $e"));
+
+            if (result == null) continue;
 
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));

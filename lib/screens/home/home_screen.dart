@@ -43,10 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
   HybridProvider hybridProvider = new HybridProvider();
   LatLng myLatLng;
   String currentAtSign;
+  bool contactsLoaded;
 
   @override
   void initState() {
     super.initState();
+    contactsLoaded = false;
     initializeContacts();
     _getMyLocation();
     LocationNotificationListener()
@@ -69,10 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   initializeContacts() async {
     currentAtSign = await BackendService.getInstance().getAtSign();
-    initializeContactsService(
+    // ignore: await_only_futures
+    await initializeContactsService(
         BackendService.getInstance().atClientServiceInstance.atClient,
         currentAtSign,
         rootDomain: MixedConstants.ROOT_DOMAIN);
+    setState(() {
+      contactsLoaded = true;
+    });
   }
 
   _getMyLocation() async {
@@ -110,54 +116,67 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Positioned(bottom: 264.toHeight, child: header()),
-              ProviderHandler<HybridProvider>(
-                key: UniqueKey(),
-                functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
-                showError: false,
-                load: (provider) => provider.getAllHybridEvents(),
-                loaderBuilder: (provider) {
-                  return Container(
-                    child: SlidingUpPanel(
-                        controller: pc,
-                        minHeight: 267.toHeight,
-                        maxHeight: 530.toHeight,
-                        panelBuilder: (scrollController) => collapsedContent(
-                            false,
-                            scrollController,
-                            Center(
-                              child: CircularProgressIndicator(),
-                            ))),
-                  );
-                },
-                errorBuilder: (provider) {
-                  return SlidingUpPanel(
-                      controller: pc,
-                      minHeight: 267.toHeight,
-                      maxHeight: 530.toHeight,
-                      panelBuilder: (scrollController) => collapsedContent(
-                          false,
-                          scrollController,
-                          emptyWidget('Something went wrong!!')));
-                },
-                successBuilder: (provider) {
-                  return SlidingUpPanel(
-                    controller: pc,
-                    minHeight: 267.toHeight,
-                    maxHeight: 530.toHeight,
-                    panelBuilder: (scrollController) {
-                      if (provider.allHybridNotifications.length > 0)
-                        return collapsedContent(
-                            false,
-                            scrollController,
-                            getListView(provider.allHybridNotifications,
-                                provider, scrollController));
-                      else
-                        return collapsedContent(false, scrollController,
-                            emptyWidget('No Data Found!!'));
-                    },
-                  );
-                },
-              ),
+              contactsLoaded
+                  ? ProviderHandler<HybridProvider>(
+                      key: UniqueKey(),
+                      functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
+                      showError: false,
+                      load: (provider) => provider.getAllHybridEvents(),
+                      loaderBuilder: (provider) {
+                        return Container(
+                          child: SlidingUpPanel(
+                              controller: pc,
+                              minHeight: 267.toHeight,
+                              maxHeight: 530.toHeight,
+                              panelBuilder: (scrollController) =>
+                                  collapsedContent(
+                                      false,
+                                      scrollController,
+                                      Center(
+                                        child: CircularProgressIndicator(),
+                                      ))),
+                        );
+                      },
+                      errorBuilder: (provider) {
+                        return SlidingUpPanel(
+                            controller: pc,
+                            minHeight: 267.toHeight,
+                            maxHeight: 530.toHeight,
+                            panelBuilder: (scrollController) =>
+                                collapsedContent(false, scrollController,
+                                    emptyWidget('Something went wrong!!')));
+                      },
+                      successBuilder: (provider) {
+                        return SlidingUpPanel(
+                          controller: pc,
+                          minHeight: 267.toHeight,
+                          maxHeight: 530.toHeight,
+                          panelBuilder: (scrollController) {
+                            if (provider.allHybridNotifications.length > 0)
+                              return collapsedContent(
+                                  false,
+                                  scrollController,
+                                  getListView(provider.allHybridNotifications,
+                                      provider, scrollController));
+                            else
+                              return collapsedContent(false, scrollController,
+                                  emptyWidget('No Data Found!!'));
+                          },
+                        );
+                      },
+                    )
+                  : Container(
+                      child: SlidingUpPanel(
+                          controller: pc,
+                          minHeight: 267.toHeight,
+                          maxHeight: 530.toHeight,
+                          panelBuilder: (scrollController) => collapsedContent(
+                              false,
+                              scrollController,
+                              Center(
+                                child: CircularProgressIndicator(),
+                              ))),
+                    ),
             ],
           )),
     );

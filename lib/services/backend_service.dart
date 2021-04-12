@@ -18,6 +18,7 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:at_contacts_flutter/services/contact_service.dart';
 
 import 'location_notification_listener.dart';
 
@@ -134,6 +135,16 @@ class BackendService {
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
     var operation = responseJson['operation'];
+
+    /// Check for blocked contact
+    if (ContactService()
+            .blockContactList
+            .indexWhere((contact) => contact.atSign == fromAtSign) >=
+        0) {
+      print('Notification received from blocked contact $fromAtSign');
+      return;
+    }
+
     if (operation == 'delete') {
       if (atKey.toString().toLowerCase().contains('locationnotify')) {
         print('$notificationKey deleted');
