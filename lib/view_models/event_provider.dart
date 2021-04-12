@@ -288,6 +288,10 @@ class EventProvider extends BaseModel {
                 // ignore: return_of_invalid_type_from_catch_error
                 .catchError((e) => print("error in get $e"));
 
+            if (result == null) {
+              continue;
+            }
+
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));
             EventNotificationModel storedEvent = new EventNotificationModel();
