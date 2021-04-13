@@ -40,22 +40,30 @@ class HomeEventService {
           // ignore: unnecessary_statements
           ? (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
-              : (haveResponded
-                  ? null
-                  : BackendService.getInstance().showMyDialog(
+              : (locationNotificationModel.isExited
+                  ? BackendService.getInstance().showMyDialog(
                       locationNotificationModel.atsignCreator,
-                      locationData: locationNotificationModel)))
+                      locationData: locationNotificationModel)
+                  : (haveResponded
+                      ? null
+                      : BackendService.getInstance().showMyDialog(
+                          locationNotificationModel.atsignCreator,
+                          locationData: locationNotificationModel))))
           : navigatorPushToMap(locationNotificationModel);
     else if (locationNotificationModel.key.contains('requestlocation'))
       locationNotificationModel.atsignCreator == currentAtsign
           // ignore: unnecessary_statements
           ? (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)
-              : (haveResponded
-                  ? null
-                  : BackendService.getInstance().showMyDialog(
+              : (locationNotificationModel.isExited
+                  ? BackendService.getInstance().showMyDialog(
                       locationNotificationModel.atsignCreator,
-                      locationData: locationNotificationModel)))
+                      locationData: locationNotificationModel)
+                  : (haveResponded
+                      ? null
+                      : BackendService.getInstance().showMyDialog(
+                          locationNotificationModel.atsignCreator,
+                          locationData: locationNotificationModel))))
           // ignore: unnecessary_statements
           : (locationNotificationModel.isAccepted
               ? navigatorPushToMap(locationNotificationModel)

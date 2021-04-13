@@ -99,6 +99,20 @@ class HybridProvider extends RequestLocationProvider {
   removePerson(String key) {
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
 
+    int index = allHybridNotifications
+        .indexWhere((notification) => key.contains(notification.atKey.key));
+
+    if (allHybridNotifications[index]
+        .locationNotificationModel
+        .key
+        .contains('sharelocation')) {
+      allShareLocationNotifications
+          .removeWhere((notification) => key.contains(notification.atKey.key));
+    } else {
+      allRequestNotifications
+          .removeWhere((notification) => key.contains(notification.atKey.key));
+    }
+
     allHybridNotifications
         .removeWhere((notification) => key.contains(notification.atKey.key));
 
@@ -403,8 +417,15 @@ class HybridProvider extends RequestLocationProvider {
     if ((notification.notificationType == NotificationType.Location) &&
         (notification.locationNotificationModel.atsignCreator ==
             currentAtsign)) {
-      SendLocationNotification()
-          .addMember(notification.locationNotificationModel);
+      if (notification.locationNotificationModel.key
+          .contains('sharelocation')) {
+        SendLocationNotification()
+            .addMember(notification.locationNotificationModel);
+      } else if ((notification.locationNotificationModel.isAccepted) &&
+          (!notification.locationNotificationModel.isExited)) {
+        SendLocationNotification()
+            .addMember(notification.locationNotificationModel);
+      }
     } else if ((notification.notificationType == NotificationType.Event)) {
       var _getLocationModelFromEventModel =
           getLocationModelFromEventModel(notification);
