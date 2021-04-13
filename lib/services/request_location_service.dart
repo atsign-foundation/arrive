@@ -35,7 +35,8 @@ class RequestLocationService {
     int index = Provider.of<HybridProvider>(NavService.navKey.currentContext,
             listen: false)
         .allRequestNotifications
-        .indexWhere((e) => ((e.locationNotificationModel.receiver == atsign)));
+        .indexWhere(
+            (e) => ((e.locationNotificationModel.atsignCreator == atsign)));
     if (index > -1) {
       return [
         true,
@@ -50,34 +51,29 @@ class RequestLocationService {
 
   sendRequestLocationEvent(String atsign) async {
     try {
-      var alreadySharing = checkForLocationKey(atsign);
-      if (alreadySharing) {
+      /// TODO: confirm this logic
+      // var alreadySharing = checkForLocationKey(atsign);
+      // if (alreadySharing) {
+      //   await locationPromptDialog(
+      //     text: '$atsign is already sharing their location.',
+      //     isShareLocationData: false,
+      //     isRequestLocationData: false,
+      //     onlyText: true,
+      //   );
+
+      //   return null;
+      // }
+
+      var alreadyExists = checkForAlreadyExisting(atsign);
+      var result;
+      if (alreadyExists[0]) {
         await locationPromptDialog(
-          text: '$atsign is already sharing their location.',
+          text: 'You have already requested $atsign',
           isShareLocationData: false,
           isRequestLocationData: false,
           onlyText: true,
         );
 
-        return null;
-      }
-
-      var alreadyExists = checkForAlreadyExisting(atsign);
-      var result;
-      if (alreadyExists[0]) {
-        LocationNotificationModel newLocationNotificationModel =
-            LocationNotificationModel.fromJson(jsonDecode(
-                LocationNotificationModel.convertLocationNotificationToJson(
-                    alreadyExists[1])));
-
-        await locationPromptDialog(
-            text:
-                'You already have requested $atsign. Would you like to prompt them again ?',
-            locationNotificationModel: newLocationNotificationModel,
-            isShareLocationData: false,
-            isRequestLocationData: true,
-            yesText: 'Yes! Prompt again',
-            noText: 'No');
         return null;
       }
 
@@ -150,19 +146,17 @@ class RequestLocationService {
                   ackLocationNotificationModel));
       print('requestLocationAcknowledgment $result');
       if (result) {
-        if (result) {
-          providerCallback<HybridProvider>(NavService.navKey.currentContext,
-              task: (provider) => provider.updatePendingStatus(
-                  BackendService.getInstance().convertEventToHybrid(
-                      NotificationType.Location,
-                      locationNotificationModel: ackLocationNotificationModel)),
-              taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
-              showLoader: false,
-              onSuccess: (provider) {});
-        }
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.updatePendingStatus(
+                BackendService.getInstance().convertEventToHybrid(
+                    NotificationType.Location,
+                    locationNotificationModel: ackLocationNotificationModel)),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
 
         //  We have added this here, so that we need not wait for the updated data from the creator
-        if (isSharing)
+        if ((isSharing != null) && (isSharing))
           Provider.of<HybridProvider>(NavService.navKey.currentContext,
                   listen: false)
               .addMemberToSendingLocationList(BackendService.getInstance()
@@ -175,6 +169,7 @@ class RequestLocationService {
       }
       return result;
     } catch (e) {
+      print('error in requestLocationAcknowledgment $e');
       return false;
     }
   }

@@ -71,10 +71,26 @@ class _LocationPromptState extends State<LocationPrompt> {
         content: SingleChildScrollView(
           child: Container(
             child: widget.onlyText
-                ? Text(
-                    widget.text ?? '...',
-                    style: CustomTextStyles().grey16,
-                    textAlign: TextAlign.center,
+                ? Column(
+                    children: [
+                      Text(
+                        widget.text ?? '...',
+                        style: CustomTextStyles().grey16,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 30),
+                      CustomButton(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Text(
+                          'Okay!',
+                          style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor),
+                        ),
+                        bgColor: Theme.of(context).primaryColor,
+                        width: 70.toWidth,
+                        height: 48.toHeight,
+                      )
+                    ],
                   )
                 : Column(
                     children: <Widget>[
@@ -124,14 +140,12 @@ class _LocationPromptState extends State<LocationPrompt> {
                       SizedBox(height: 20),
                       InkWell(
                         onTap: () async {
-                          Navigator.of(context).pop();
                           if (widget.isShareLocationData) {
                             CustomToast().show('Update cancelled', context);
                           } else if (widget.isRequestLocationData) {
                             CustomToast().show('Prompt cancelled', context);
-                          } else {
-                            Navigator.of(context).pop();
                           }
+                          Navigator.of(context).pop();
                         },
                         child: Text(
                           widget.noText ?? 'No!',
