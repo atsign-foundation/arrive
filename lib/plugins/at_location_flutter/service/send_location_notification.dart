@@ -94,7 +94,8 @@ class SendLocationNotification {
         bool isMasterSwitchOn =
             await LocationNotificationListener().getShareLocation();
         if (isMasterSwitchOn) {
-          atsignsToShareLocationWith.forEach((notification) async {
+          await Future.forEach(atsignsToShareLocationWith,
+              (notification) async {
             await prepareLocationDataAndSend(notification,
                 LatLng(myLocation.latitude, myLocation.longitude));
           });
