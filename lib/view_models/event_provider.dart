@@ -88,7 +88,9 @@ class EventProvider extends BaseModel {
     List<HybridNotificationModel> tempList = [];
     for (int i = 0; i < allNotifications.length; i++) {
       if (ContactService().blockContactList.indexWhere((contact) =>
-              contact.atSign == allNotifications[i].atKey.sharedBy) >=
+              ((contact.atSign == allNotifications[i].atKey.sharedBy) ||
+                  (contact.atSign ==
+                      '@' + allNotifications[i].atKey.sharedBy))) >=
           0) tempList.add(allNotifications[i]);
     }
     allNotifications.removeWhere((element) => tempList.contains(element));

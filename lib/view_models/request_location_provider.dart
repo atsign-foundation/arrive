@@ -85,7 +85,9 @@ class RequestLocationProvider extends ShareLocationProvider {
     List<HybridNotificationModel> tempList = [];
     for (int i = 0; i < allRequestNotifications.length; i++) {
       if (ContactService().blockContactList.indexWhere((contact) =>
-              contact.atSign == allRequestNotifications[i].atKey.sharedBy) >=
+              ((contact.atSign == allRequestNotifications[i].atKey.sharedBy) ||
+                  (contact.atSign ==
+                      '@' + allRequestNotifications[i].atKey.sharedBy))) >=
           0) tempList.add(allRequestNotifications[i]);
     }
     allRequestNotifications
