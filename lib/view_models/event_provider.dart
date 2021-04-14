@@ -11,6 +11,8 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notif
 import 'dart:convert';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
+import 'hybrid_provider.dart';
+
 class EventProvider extends BaseModel {
   EventProvider();
 
@@ -76,7 +78,7 @@ class EventProvider extends BaseModel {
     }
 
     convertJsonToEventModel();
-
+    await checkForPendingEvents();
     setStatus(GET_ALL_EVENTS, Status.Done);
 
     updateEventDataAccordingToAcknowledgedData();
@@ -166,6 +168,17 @@ class EventProvider extends BaseModel {
       var result = await atClientInstance.put(key, notification);
       setStatus(UPDATE_EVENTS, Status.Done);
 
+      if (result) {
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.updatePendingStatus(
+                BackendService.getInstance().convertEventToHybrid(
+                    NotificationType.Event,
+                    eventNotificationModel: eventData)),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+      }
+
       return result;
     } catch (e) {
       print('error in updating event $e');
@@ -203,6 +216,25 @@ class EventProvider extends BaseModel {
         return key;
         break;
     }
+  }
+
+  checkForPendingEvents() async {
+    allNotifications.forEach((notification) async {
+      notification.eventNotificationModel.group.members.forEach((member) async {
+        if ((member.atSign == currentAtSign) &&
+            (member.tags['isAccepted'] == false) &&
+            (member.tags['isExited'] == false)) {
+          String atkeyMicrosecondId =
+              notification.key.split('createevent-')[1].split('@')[0];
+          String acknowledgedKeyId = 'eventacknowledged-$atkeyMicrosecondId';
+          List<String> allRegexResponses =
+              await atClientInstance.getKeys(regex: acknowledgedKeyId);
+          if ((allRegexResponses != null) && (allRegexResponses.length > 0)) {
+            notification.haveResponded = true;
+          }
+        }
+      });
+    });
   }
 
   checkForAcknowledgeEvents() {
@@ -277,8 +309,6 @@ class EventProvider extends BaseModel {
 
                   if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(storedEvent);
-                } else {
-                  print('matched : no changes');
                 }
               }
             }

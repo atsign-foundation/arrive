@@ -55,7 +55,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
             width: SizeConfig().screenWidth * 0.95,
             height: 50.toFont,
             isReadOnly: true,
-            hintText: 'Search @sign from contact',
+            hintText: 'Search @sign from contacts',
             icon: Icons.contacts_rounded,
             onTap: () {
               Navigator.push(
@@ -105,16 +105,36 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               elevation: 0,
               dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
               value: selectedOption,
-              hint: Text("Occurs on"),
+              hint: Text("Select Duration",
+                  style: TextStyle(
+                      color: AllColors().LIGHT_GREY_LABEL,
+                      fontSize: 15.toFont)),
               style:
                   TextStyle(color: AllColors().DARK_GREY, fontSize: 13.toFont),
-              items: ['30 mins', '2 hours', '24 hours', 'Until turned off']
-                  .map((String option) {
+              items: [
+                "Select Duration",
+                '30 mins',
+                '2 hours',
+                '24 hours',
+                'Until turned off'
+              ].map((String option) {
                 return new DropdownMenuItem<String>(
-                  value: option,
-                  child: Text(option,
-                      style: TextStyle(
-                          color: AllColors().DARK_GREY, fontSize: 13.toFont)),
+                  value: option == "Select Duration" ? null : option,
+                  child: option == "Select Duration"
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(option,
+                                style: TextStyle(
+                                    color: AllColors().LIGHT_GREY_LABEL,
+                                    fontSize: 15.toFont)),
+                            Icon(Icons.keyboard_arrow_up)
+                          ],
+                        )
+                      : Text(option,
+                          style: TextStyle(
+                              color: AllColors().DARK_GREY,
+                              fontSize: 13.toFont)),
                 );
               }).toList(),
               onChanged: (value) {

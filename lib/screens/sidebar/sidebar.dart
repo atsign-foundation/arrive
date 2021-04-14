@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
@@ -14,9 +13,11 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:latlong/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
 class SideBar extends StatefulWidget {
@@ -203,23 +204,28 @@ class _SideBarState extends State<SideBar> {
                   'Location Sharing',
                   style: CustomTextStyles().darkGrey16,
                 ),
-                Switch(
-                  value: state,
-                  onChanged: (value) async {
-                    if (value) {
-                      LatLng latlng = await getMyLocation();
-                      if (latlng == null) {
-                        CustomToast()
-                            .show('Location permission not granted', context);
-                        return;
-                      }
-                    }
-                    LocationNotificationListener().updateShareLocation(value);
-                    setState(() {
-                      state = value;
-                    });
+                Consumer<HybridProvider>(
+                  builder: (context, provider, child) {
+                    return Switch(
+                      value: provider.isSharing,
+                      onChanged: (value) async {
+                        if (value) {
+                          LatLng latlng = await getMyLocation();
+                          if (latlng == null) {
+                            CustomToast().show(
+                                'Location permission not granted', context);
+                            return;
+                          }
+                        }
+                        LocationNotificationListener()
+                            .updateShareLocation(value);
+                        setState(() {
+                          state = value;
+                        });
+                      },
+                    );
                   },
-                )
+                ),
               ],
             ),
             SizedBox(

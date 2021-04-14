@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
+import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 
@@ -14,15 +17,16 @@ class SendLocationNotification {
   static SendLocationNotification _instance = SendLocationNotification._();
   factory SendLocationNotification() => _instance;
   Timer timer;
-  List<LocationNotificationModel> receivingAtsigns;
+  List<LocationNotificationModel> atsignsToShareLocationWith;
   AtClientImpl atClient;
   StreamSubscription<Position> positionStream;
   init(List<LocationNotificationModel> atsigns, AtClientImpl newAtClient) {
     if ((timer != null) && (timer.isActive)) timer.cancel();
 
-    receivingAtsigns = [...atsigns];
+    atsignsToShareLocationWith = [...atsigns];
     atClient = newAtClient;
-    print('receivingAtsigns length - ${receivingAtsigns.length}');
+    print(
+        'atsignsToShareLocationWith length - ${atsignsToShareLocationWith.length}');
 
     if (positionStream != null) positionStream.cancel();
     updateMyLocation();
@@ -30,48 +34,70 @@ class SendLocationNotification {
 
   addMember(LocationNotificationModel notification) async {
     // if already added
-    if (receivingAtsigns
+    if (atsignsToShareLocationWith
             .indexWhere((element) => element.key == notification.key) >
         -1) {
       return;
     }
 
-    // send
-    bool isMasterSwitchOn =
-        await LocationNotificationListener().getShareLocation();
-    if (isMasterSwitchOn) {
-      LatLng myLocation = await getMyLocation();
-      await prepareLocationDataAndSend(notification, myLocation);
+    LatLng myLocation = await getMyLocation();
+
+    if (myLocation != null) {
+      // send
+      bool isMasterSwitchOn =
+          await LocationNotificationListener().getShareLocation();
+
+      if (!isMasterSwitchOn) {
+        /// TODO: Add a message, it is for which user or event
+        /// Work for events having mutliple members
+        await locationPromptDialog();
+        isMasterSwitchOn =
+            await LocationNotificationListener().getShareLocation();
+      }
+
+      if (isMasterSwitchOn) {
+        await prepareLocationDataAndSend(notification, myLocation);
+      }
+    } else {
+      CustomToast().show(
+          'Location permission not granted', NavService.navKey.currentContext);
     }
 
     // add
-    receivingAtsigns.add(notification);
-    print('after adding receivingAtsigns length ${receivingAtsigns.length}');
+    atsignsToShareLocationWith.add(notification);
+    print(
+        'after adding atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   removeMember(String key) async {
     LocationNotificationModel locationNotificationModel;
-    receivingAtsigns.removeWhere((element) {
+    atsignsToShareLocationWith.removeWhere((element) {
       if (key.contains(element.key)) locationNotificationModel = element;
       return key.contains(element.key);
     });
     if (locationNotificationModel != null) sendNull(locationNotificationModel);
 
-    print('after deleting receivingAtsigns length ${receivingAtsigns.length}');
+    print(
+        'after deleting atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   updateMyLocation() async {
-    positionStream = Geolocator.getPositionStream(distanceFilter: 100)
-        .listen((myLocation) async {
-      bool isMasterSwitchOn =
-          await LocationNotificationListener().getShareLocation();
-      if (isMasterSwitchOn) {
-        receivingAtsigns.forEach((notification) async {
-          await prepareLocationDataAndSend(
-              notification, LatLng(myLocation.latitude, myLocation.longitude));
-        });
-      }
-    });
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (((permission == LocationPermission.always) ||
+        (permission == LocationPermission.whileInUse))) {
+      positionStream = Geolocator.getPositionStream(distanceFilter: 100)
+          .listen((myLocation) async {
+        bool isMasterSwitchOn =
+            await LocationNotificationListener().getShareLocation();
+        if (isMasterSwitchOn) {
+          atsignsToShareLocationWith.forEach((notification) async {
+            await prepareLocationDataAndSend(notification,
+                LatLng(myLocation.latitude, myLocation.longitude));
+          });
+        }
+      });
+    }
   }
 
   prepareLocationDataAndSend(

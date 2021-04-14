@@ -11,7 +11,8 @@ class DisplayTile extends StatefulWidget {
   final String title, semiTitle, subTitle, atsignCreator, invitedBy;
   final int number;
   final Widget action;
-  final bool showName;
+  final bool showName, showRetry;
+  final Function onRetryTapped;
   DisplayTile(
       {@required this.title,
       this.atsignCreator,
@@ -20,7 +21,9 @@ class DisplayTile extends StatefulWidget {
       this.invitedBy,
       this.number,
       this.showName = false,
-      this.action});
+      this.action,
+      this.showRetry = false,
+      this.onRetryTapped});
 
   @override
   _DisplayTileState createState() => _DisplayTileState();
@@ -54,7 +57,7 @@ class _DisplayTileState extends State<DisplayTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 10.5),
+      padding: EdgeInsets.fromLTRB(0, 0, 15, 10.5),
       child: Row(
         children: [
           Stack(
@@ -95,57 +98,73 @@ class _DisplayTileState extends State<DisplayTile> {
             ],
           ),
           Expanded(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-            child: Column(
-              mainAxisAlignment: widget.semiTitle != null
-                  ? MainAxisAlignment.spaceEvenly
-                  : MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name ?? widget.title,
-                  style: TextStyle(
-                      color: Theme.of(context).primaryTextTheme.headline3.color,
-                      fontSize: 14.toFont),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(
-                  height: 3,
-                ),
-                widget.semiTitle != null
-                    ? Text(
-                        widget.semiTitle,
-                        style: (widget.semiTitle == 'Action required' ||
-                                    widget.semiTitle == 'Request declined') ||
-                                (widget.semiTitle == 'Cancelled')
-                            ? CustomTextStyles().orange12
-                            : CustomTextStyles().darkGrey12,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : SizedBox(),
-                SizedBox(
-                  height: 3,
-                ),
-                Text(
-                  widget.subTitle,
-                  style: CustomTextStyles().darkGrey12,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                widget.invitedBy != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Text(widget.invitedBy,
-                            style: CustomTextStyles().grey14),
-                      )
-                    : SizedBox()
-              ],
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              child: Column(
+                mainAxisAlignment: (widget.subTitle == null)
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name ?? widget.title,
+                    style: TextStyle(
+                        color:
+                            Theme.of(context).primaryTextTheme.headline3.color,
+                        fontSize: 14.toFont),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  widget.semiTitle != null
+                      ? Text(
+                          widget.semiTitle,
+                          style: (widget.semiTitle == 'Action required' ||
+                                      widget.semiTitle == 'Request declined') ||
+                                  (widget.semiTitle == 'Cancelled')
+                              ? CustomTextStyles().orange12
+                              : CustomTextStyles().darkGrey12,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : SizedBox(),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  (widget.subTitle != null)
+                      ? Text(
+                          widget.subTitle,
+                          style: CustomTextStyles().darkGrey12,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : SizedBox(),
+                  widget.invitedBy != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Text(widget.invitedBy,
+                              style: CustomTextStyles().grey14),
+                        )
+                      : SizedBox()
+                ],
+              ),
             ),
-          )),
-          widget.action ?? SizedBox()
+          ),
+          widget.showRetry
+              ? InkWell(
+                  onTap: widget.onRetryTapped,
+                  child: Text(
+                    'Retry',
+                    style: TextStyle(
+                        color: AllColors().ORANGE, fontSize: 14.toFont),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )
+              : SizedBox(),
+          widget.action ?? SizedBox(),
         ],
       ),
     );

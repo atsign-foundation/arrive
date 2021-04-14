@@ -63,6 +63,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   bool showMarker;
   GlobalKey<ScaffoldState> scaffoldKey;
   BuildContext globalContext;
+  LatLng _center;
 
   @override
   void initState() {
@@ -147,7 +148,18 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                           print('point - ${element.point}');
                         });
 
-                        LatLng _center = widget.eventListenerKeyword != null
+                        try {
+                          if ((widget.userListenerKeyword != null) &&
+                              (_center == null) &&
+                              (markers.length > 0) &&
+                              (mapController != null)) {
+                            mapController.move(markers[0].point, 4);
+                          }
+                        } catch (e) {
+                          print('$e');
+                        }
+
+                        _center = widget.eventListenerKeyword != null
                             ? LocationService().eventData.latLng
                             : LocationService().myData?.latLng;
 
@@ -247,7 +259,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                     onPressed: () {
                       _popupController.hidePopup();
                       LocationService().hybridUsersList.length > 0
-                          ? mapController.move(
+                          ? mapController?.move(
                               LocationService().hybridUsersList[0].latLng, 4)
                           // ignore: unnecessary_statements
                           : null;
@@ -263,10 +275,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                 maxHeight: widget.userListenerKeyword != null
                     ? ((widget.userListenerKeyword.atsignCreator ==
                             LocationService().getAtSign())
-                        ? widget.userListenerKeyword.key
-                                .contains("requestlocation")
-                            ? 240
-                            : 291.toHeight
+                        ? 291.toHeight
                         : 130.toHeight < 130
                             ? 130
                             : 130.toHeight)

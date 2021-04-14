@@ -39,6 +39,15 @@ class MaterialAppClass extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (BuildContext context, Widget child) {
+        final MediaQueryData data = MediaQuery.of(context);
+        return MediaQuery(
+          data: data.copyWith(
+              textScaleFactor:
+                  data.textScaleFactor > 1.2 ? 1.2 : data.textScaleFactor),
+          child: child,
+        );
+      },
       title: 'AtSign Location App',
       debugShowCheckedModeBanner: false,
       initialRoute: SetupRoutes.initialRoute,

@@ -257,44 +257,68 @@ class _HomeScreenState extends State<HomeScreen> {
 
   getListView(List<HybridNotificationModel> allHybridNotifications,
       EventProvider provider, ScrollController slidingScrollController) {
-    return ListView(
-      children: allHybridNotifications.map((hybridElement) {
-        return Column(
-          children: [
-            InkWell(
-              onTap: () {
-                if (hybridElement.notificationType == NotificationType.Event)
-                  HomeEventService().onEventModelTap(
-                      hybridElement.eventNotificationModel, provider);
-                else
-                  HomeEventService().onLocationModelTap(
-                      hybridElement.locationNotificationModel);
-              },
-              child: DisplayTile(
-                atsignCreator: hybridElement.notificationType ==
-                        NotificationType.Event
-                    ? hybridElement.eventNotificationModel.atsignCreator
-                    : (hybridElement.locationNotificationModel.atsignCreator ==
-                            BackendService.getInstance()
-                                .atClientServiceInstance
-                                .atClient
-                                .currentAtSign
-                        ? hybridElement.locationNotificationModel.receiver
-                        : hybridElement
-                            .locationNotificationModel.atsignCreator),
-                number: hybridElement.notificationType == NotificationType.Event
-                    ? hybridElement.eventNotificationModel.group.members.length
-                    : null,
-                title: getTitle(hybridElement),
-                subTitle: getSubTitle(hybridElement),
-                semiTitle: getSemiTitle(hybridElement),
+    try {
+      return ListView(
+        children: allHybridNotifications.map((hybridElement) {
+          return Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  if (hybridElement.notificationType == NotificationType.Event)
+                    HomeEventService().onEventModelTap(
+                        hybridElement.eventNotificationModel,
+                        provider,
+                        hybridElement.haveResponded);
+                  else
+                    HomeEventService().onLocationModelTap(
+                        hybridElement.locationNotificationModel,
+                        hybridElement.haveResponded);
+                },
+                child: DisplayTile(
+                  atsignCreator:
+                      hybridElement.notificationType == NotificationType.Event
+                          ? hybridElement.eventNotificationModel.atsignCreator
+                          : (hybridElement.locationNotificationModel
+                                      .atsignCreator ==
+                                  BackendService.getInstance()
+                                      .atClientServiceInstance
+                                      .atClient
+                                      .currentAtSign
+                              ? hybridElement.locationNotificationModel.receiver
+                              : hybridElement
+                                  .locationNotificationModel.atsignCreator),
+                  number:
+                      hybridElement.notificationType == NotificationType.Event
+                          ? hybridElement
+                              .eventNotificationModel.group.members.length
+                          : null,
+                  title: getTitle(hybridElement),
+                  subTitle: getSubTitle(hybridElement),
+                  semiTitle: getSemiTitle(hybridElement),
+                  showRetry: calculateShowRetry(hybridElement),
+                  onRetryTapped: () {
+                    if (hybridElement.notificationType ==
+                        NotificationType.Event) {
+                      HomeEventService().onEventModelTap(
+                          hybridElement.eventNotificationModel,
+                          provider,
+                          false);
+                    } else {
+                      HomeEventService().onLocationModelTap(
+                          hybridElement.locationNotificationModel, false);
+                    }
+                  },
+                ),
               ),
-            ),
-            Divider()
-          ],
-        );
-      }).toList(),
-    );
+              Divider()
+            ],
+          );
+        }).toList(),
+      );
+    } catch (e) {
+      print('Error in getListView $e');
+      return emptyWidget('Something went wrong!!');
+    }
   }
 
   Widget emptyWidget(String title) {

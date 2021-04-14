@@ -10,12 +10,13 @@ Future providerCallback<T extends BaseModel>(BuildContext context,
     @required Function(T) onSuccess,
     bool showDialog = true,
     bool showLoader = true,
+    String text,
     Function onErrorHandeling,
     Function onError}) async {
   final T _provider = Provider.of<T>(context, listen: false);
   String _taskName = taskName(_provider);
 
-  if (showLoader) LoadingDialog().show();
+  if (showLoader) LoadingDialog().show(text: text);
   await Future.microtask(() => task(_provider));
   if (showLoader) LoadingDialog().hide();
   print(

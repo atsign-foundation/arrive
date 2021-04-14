@@ -21,14 +21,12 @@ class SetupRoutes {
             url: '${MixedConstants.WEBSITE_URL}/faqs',
           ),
       Routes.TERMS_CONDITIONS_SCREEN: (context) => WebsiteScreen(
-            title: 'Terms & Condition',
+            title: 'Terms and Conditions',
             url: '${MixedConstants.WEBSITE_URL}/terms-conditions',
           ),
       Routes.GROUP_LIST: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-        return GroupList(
-          currentAtsign: args['currentAtSign'],
-        );
+        return GroupList();
       },
       Routes.CONTACT_SCREEN: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;

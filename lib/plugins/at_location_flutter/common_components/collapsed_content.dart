@@ -15,6 +15,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -159,36 +160,17 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         ),
                         Divider(),
                         DisplayTile(
-                            title:
-                                '${snapshot.data.atsignCreator} and ${snapshot.data.group.members.length} more' ??
-                                    'Event participants',
-                            atsignCreator: snapshot.data.atsignCreator,
-                            semiTitle: (snapshot.data.group.members.length == 1)
-                                ? '${snapshot.data.group.members.length} person'
-                                : '${snapshot.data.group.members.length} people',
-                            number: snapshot.data.group.members.length,
-                            subTitle:
-                                'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
-                            action: Transform.rotate(
-                              angle: 5.8,
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  color: AllColors().ORANGE,
-                                ),
-                                child: InkWell(
-                                  onTap: () {},
-                                  child: Icon(
-                                    Icons.send_outlined,
-                                    color: AllColors().WHITE,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            )),
+                          title:
+                              '${snapshot.data.atsignCreator} and ${snapshot.data.group.members.length} more' ??
+                                  'Event participants',
+                          atsignCreator: snapshot.data.atsignCreator,
+                          semiTitle: (snapshot.data.group.members.length == 1)
+                              ? '${snapshot.data.group.members.length} person'
+                              : '${snapshot.data.group.members.length} people',
+                          number: snapshot.data.group.members.length,
+                          subTitle:
+                              'Share my location from ${timeOfDayToString(snapshot.data.event.startTime)} on ${dateToString(snapshot.data.event.date)}',
+                        ),
                       ],
                     ),
                   );
@@ -198,10 +180,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
               builder: (context, AsyncSnapshot<List<HybridModel>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
                   if (snapshot.hasError) {
-                    return participants(() => null);
+                    return SeeParticipants(() => null);
                   } else {
                     List<HybridModel> data = snapshot.data;
-                    return participants(() => bottomSheet(
+
+                    ParticipantsData().putData(data);
+                    ParticipantsData()
+                        .putAtsign(LocationService().atsignsAtMonitor);
+
+                    return SeeParticipants(() => bottomSheet(
                         context,
                         Participants(
                           true,
@@ -211,7 +198,11 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         422));
                   }
                 } else {
-                  return participants(() => bottomSheet(
+                  ParticipantsData().putData([]);
+                  ParticipantsData()
+                      .putAtsign(LocationService().atsignsAtMonitor);
+
+                  return SeeParticipants(() => bottomSheet(
                       context,
                       Participants(
                         false,
@@ -274,7 +265,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   Switch(
                                       value: isSharingEvent,
                                       onChanged: (value) async {
-                                        LoadingDialog().show();
+                                        LoadingDialog().show(
+                                            text: widget.isAdmin
+                                                ? 'Updating data'
+                                                : 'Sending request to update data');
                                         try {
                                           if (widget.isAdmin) {
                                             LocationService()
@@ -335,7 +329,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                   .elementAt(0)
                                                   .tags['isExited'] ==
                                               false) {
-                                            LoadingDialog().show();
+                                            LoadingDialog().show(
+                                                text: widget.isAdmin
+                                                    ? 'Updating data'
+                                                    : 'Sending request to update data');
                                             try {
                                               await LocationService()
                                                   .onEventExit(
@@ -347,6 +344,9 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                               .ACKNOWLEDGEEVENT);
                                               LoadingDialog().hide();
                                               Navigator.of(context).pop();
+                                              CustomToast().show(
+                                                  'Request to update data is submitted',
+                                                  context);
                                             } catch (e) {
                                               print(e);
                                               CustomToast().show(
@@ -375,7 +375,10 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                         onTap: () async {
                                           if (!widget.eventListenerKeyword
                                               .isCancelled) {
-                                            LoadingDialog().show();
+                                            LoadingDialog().show(
+                                                text: widget.isAdmin
+                                                    ? 'Updating data'
+                                                    : 'Sending request to update data');
                                             try {
                                               await LocationService()
                                                   .onEventCancel();
@@ -449,38 +452,51 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         subTitle: amICreator
                             ? '${widget.userListenerKeyword.receiver}'
                             : '${widget.userListenerKeyword.atsignCreator}'),
-                    Text(
-                      amICreator
-                          ? 'This user does not share their location'
-                          : '',
-                      style: CustomTextStyles().grey12,
-                    ),
-                    Text(
-                      amICreator
-                          ? 'Sharing my location $time'
-                          : 'Sharing their location $time',
-                      style: CustomTextStyles().black12,
-                    )
+                    StreamBuilder(
+                        stream: LocationService().atHybridUsersStream,
+                        builder: (context,
+                            AsyncSnapshot<List<HybridModel>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (snapshot.hasError) {
+                              return Text(
+                                'Something went wrong',
+                                style: CustomTextStyles().grey12,
+                              );
+                            } else {
+                              return Text(
+                                amICreator
+                                    ? 'This user does not share their location'
+                                    : ((snapshot.data.indexWhere((e) =>
+                                                (e.displayName ==
+                                                    widget.userListenerKeyword
+                                                        .atsignCreator)) >
+                                            -1)
+                                        ? ("Sharing their location $time")
+                                        : ("This user's location sharing is turned off")),
+                                style: ((amICreator) ||
+                                        ((snapshot.data.indexWhere((e) =>
+                                                (e.displayName ==
+                                                    widget.userListenerKeyword
+                                                        .atsignCreator)) >
+                                            -1)))
+                                    ? CustomTextStyles().grey12
+                                    : CustomTextStyles().red12,
+                              );
+                            }
+                          } else {
+                            return SizedBox();
+                          }
+                        }),
+                    amICreator
+                        ? Text(
+                            'Sharing my location $time',
+                            style: CustomTextStyles().black12,
+                          )
+                        : SizedBox()
                   ],
                 ),
               ),
-              Transform.rotate(
-                angle: 5.8,
-                child: Container(
-                  alignment: Alignment.center,
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.0),
-                    color: AllColors().ORANGE,
-                  ),
-                  child: Icon(
-                    Icons.send_outlined,
-                    color: AllColors().WHITE,
-                    size: 25,
-                  ),
-                ),
-              )
             ],
           ),
           expanded
@@ -502,48 +518,60 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                   ),
                                   Switch(
                                       value: isSharing,
-                                      onChanged: (value) async {
-                                        LoadingDialog().show();
-                                        try {
-                                          var result;
-                                          if (widget.userListenerKeyword.key
-                                              .contains("sharelocation")) {
-                                            result = await LocationService()
-                                                .onShareToggle(
-                                                    widget.userListenerKeyword,
-                                                    isSharing: value);
-                                          } else if (widget
-                                              .userListenerKeyword.key
-                                              .contains("requestlocation")) {
-                                            result = await LocationService()
-                                                .onShareToggle(
-                                                    widget.userListenerKeyword,
-                                                    true,
-                                                    isSharing: value);
-                                          }
-                                          if (result) {
-                                            if (!value) {
-                                              SendLocationNotification()
-                                                  .sendNull(widget
-                                                      .userListenerKeyword);
-                                            }
-                                            setState(() {
-                                              isSharing = value;
-                                            });
-                                          } else {
-                                            CustomToast().show(
-                                                'some thing went wrong , try again.',
-                                                context);
-                                          }
-                                          LoadingDialog().hide();
-                                        } catch (e) {
-                                          print(e);
-                                          CustomToast().show(
-                                              'something went wrong , please try again.',
-                                              context);
-                                          LoadingDialog().hide();
-                                        }
-                                      })
+                                      onChanged: (widget
+                                                  .userListenerKeyword.to ==
+                                              null)
+                                          ? (value) async => removePerson()
+                                          : (value) async {
+                                              LoadingDialog().show(
+                                                  text: amICreator
+                                                      ? 'Updating data'
+                                                      : 'Sending request to update data');
+                                              try {
+                                                var result;
+                                                if (widget
+                                                    .userListenerKeyword.key
+                                                    .contains(
+                                                        "sharelocation")) {
+                                                  result = await LocationService()
+                                                      .onShareToggle(
+                                                          widget
+                                                              .userListenerKeyword,
+                                                          isSharing: value);
+                                                } else if (widget
+                                                    .userListenerKeyword.key
+                                                    .contains(
+                                                        "requestlocation")) {
+                                                  result = await LocationService()
+                                                      .onShareToggle(
+                                                          widget
+                                                              .userListenerKeyword,
+                                                          true,
+                                                          isSharing: value);
+                                                }
+                                                if (result) {
+                                                  if (!value) {
+                                                    SendLocationNotification()
+                                                        .sendNull(widget
+                                                            .userListenerKeyword);
+                                                  }
+                                                  setState(() {
+                                                    isSharing = value;
+                                                  });
+                                                } else {
+                                                  CustomToast().show(
+                                                      'some thing went wrong , try again.',
+                                                      context);
+                                                }
+                                                LoadingDialog().hide();
+                                              } catch (e) {
+                                                print(e);
+                                                CustomToast().show(
+                                                    'something went wrong , please try again.',
+                                                    context);
+                                                LoadingDialog().hide();
+                                              }
+                                            })
                                 ],
                               ),
                             )
@@ -555,56 +583,27 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                 onTap: () async {
                                   await LocationService().onRequest();
                                 },
-                                child: Text(
-                                  'Request Location',
-                                  style: CustomTextStyles().darkGrey16,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Request Location',
+                                    style: CustomTextStyles().darkGrey16,
+                                  ),
                                 ),
                               ),
                             )
                           : SizedBox(),
                       SizedBox(),
-                      (amICreator &&
-                              (widget.userListenerKeyword.key
-                                  .contains("sharelocation")))
+                      (amICreator)
                           ? Expanded(
                               child: InkWell(
-                                onTap: () async {
-                                  LoadingDialog().show();
-                                  try {
-                                    var result;
-                                    if (widget.userListenerKeyword.key
-                                        .contains("sharelocation")) {
-                                      result = await LocationSharingService()
-                                          .deleteKey(
-                                              widget.userListenerKeyword);
-                                    } else if (widget.userListenerKeyword.key
-                                        .contains("requestlocation")) {
-                                      result = false;
-                                    }
-                                    if (result) {
-                                      SendLocationNotification()
-                                          .sendNull(widget.userListenerKeyword);
-                                      LoadingDialog().hide();
-
-                                      Navigator.pop(context);
-                                    } else {
-                                      LoadingDialog().hide();
-
-                                      CustomToast().show(
-                                          'Something went wrong, try again.',
-                                          context);
-                                    }
-                                  } catch (e) {
-                                    print(e);
-                                    CustomToast().show(
-                                        'something went wrong , please try again.',
-                                        context);
-                                    LoadingDialog().hide();
-                                  }
-                                },
-                                child: Text(
-                                  'Remove Person',
-                                  style: CustomTextStyles().orange16,
+                                onTap: () async => removePerson(),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Remove Person',
+                                    style: CustomTextStyles().orange16,
+                                  ),
                                 ),
                               ),
                             )
@@ -618,7 +617,44 @@ class _CollapsedContentState extends State<CollapsedContent> {
         ]);
   }
 
-  Widget participants(Function() onTap) {
+  removePerson() async {
+    LoadingDialog().show(
+        text: widget.userListenerKeyword.key.contains("sharelocation")
+            ? ('Removing person')
+            : ('Sending request to remove person'));
+    try {
+      var result;
+      if (widget.userListenerKeyword.key.contains("sharelocation")) {
+        result = await LocationSharingService()
+            .deleteKey(widget.userListenerKeyword);
+      } else if (widget.userListenerKeyword.key.contains("requestlocation")) {
+        result = await RequestLocationService()
+            .sendDeleteAck(widget.userListenerKeyword);
+      }
+      if (result) {
+        SendLocationNotification().sendNull(widget.userListenerKeyword);
+        LoadingDialog().hide();
+
+        Navigator.pop(context);
+      } else {
+        LoadingDialog().hide();
+
+        CustomToast().show('Something went wrong, try again.', context);
+      }
+    } catch (e) {
+      print(e);
+      CustomToast().show('something went wrong , please try again.', context);
+      LoadingDialog().hide();
+    }
+  }
+}
+
+class SeeParticipants extends StatelessWidget {
+  final Function onTap;
+
+  SeeParticipants(this.onTap);
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 56),
       child: InkWell(

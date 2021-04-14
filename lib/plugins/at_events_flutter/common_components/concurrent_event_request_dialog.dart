@@ -5,6 +5,8 @@ import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
+import 'custom_toast.dart';
+
 class ConcurrentEventRequest extends StatefulWidget {
   final String reqEvent,
       reqInvitedPeopleCount,
@@ -68,8 +70,15 @@ class _ConcurrentEventRequestState extends State<ConcurrentEventRequest> {
                             setState(() {
                               isLoader = true;
                             });
-                            await EventService().createEvent(
+                            bool result = await EventService().createEvent(
                                 isEventOverlap: true, context: context);
+
+                            if (!result)
+                              CustomToast().show(
+                                  'Something went wrong , try again.', context);
+                            else
+                              CustomToast().show('Event added', context);
+
                             if (mounted)
                               setState(() {
                                 isLoader = true;

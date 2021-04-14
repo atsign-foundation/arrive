@@ -94,7 +94,7 @@ class _CreateEventState extends State<CreateEvent> {
                                     width: SizeConfig().screenWidth * 0.95,
                                     height: 50.toHeight,
                                     isReadOnly: true,
-                                    hintText: 'Select @sign from contact',
+                                    hintText: 'Select @sign from contacts',
                                     icon: Icons.contacts_rounded,
                                     onTap: () {
                                       Navigator.push(
@@ -187,7 +187,7 @@ class _CreateEventState extends State<CreateEvent> {
                                                 SizeConfig().screenHeight *
                                                     0.9);
                                           },
-                                          child: Text('Select Timings',
+                                          child: Text('Select Times',
                                               style: CustomTextStyles()
                                                   .greyLabel14),
                                         ),
@@ -233,9 +233,24 @@ class _CreateEventState extends State<CreateEvent> {
                                                       .endTime !=
                                                   null)
                                           ? Text(
-                                              'Event on ${dateToString(eventData.event.date)} (${timeOfDayToString(eventData.event.startTime)}- ${timeOfDayToString(eventData.event.endTime)})',
+                                              ((dateToString(eventData
+                                                              .event.date) ==
+                                                          dateToString(
+                                                              DateTime.now()))
+                                                      ? 'Event today (${timeOfDayToString(eventData.event.startTime)})'
+                                                      : 'Event on ${(dateToString(eventData.event.date) != dateToString(DateTime.now()) ? dateToString(eventData.event.date) : dateToString(DateTime.now()))} (${timeOfDayToString(eventData.event.startTime)})') +
+                                                  ((dateToString(eventData
+                                                              .event.endDate) ==
+                                                          dateToString(eventData
+                                                              .event.date))
+                                                      ? ' to'
+                                                      : ' to ${dateToString(eventData.event.endDate)}') +
+                                                  (' (${timeOfDayToString(eventData.event.endTime)})'),
+
+                                              ///
+                                              // 'Event on ${dateToString(eventData.event.date)} (${timeOfDayToString(eventData.event.startTime)}- ${timeOfDayToString(eventData.event.endTime)})',
                                               style: CustomTextStyles()
-                                                  .greyLabel14,
+                                                  .greyLabel12,
                                             )
                                           : SizedBox()
                                       : SizedBox(),

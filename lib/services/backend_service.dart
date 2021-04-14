@@ -31,6 +31,7 @@ class BackendService {
   AtClientService atClientServiceInstance;
   AtClientImpl atClientInstance;
   String _atsign;
+  // ignore: non_constant_identifier_names
   String app_lifecycle_state;
   AtClientPreference atClientPreference;
   bool autoAcceptFiles = false;
@@ -138,7 +139,9 @@ class BackendService {
         print('$notificationKey deleted');
         LocationNotificationListener().deleteReceivedData(fromAtSign);
         return;
-      } else if (atKey.toString().toLowerCase().contains('sharelocation')) {
+      }
+
+      if (atKey.toString().toLowerCase().contains('sharelocation')) {
         print('$notificationKey containing sharelocation deleted');
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(atKey),
@@ -147,17 +150,40 @@ class BackendService {
             onSuccess: (provider) {});
         return;
       }
+
+      if (atKey.toString().toLowerCase().contains('requestlocation')) {
+        print('$notificationKey containing requestlocation deleted');
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.removePerson(atKey),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
+        return;
+      }
     }
+
     var decryptedMessage = await atClientInstance.encryptionService
         .decrypt(value, fromAtSign)
         // ignore: return_of_invalid_type_from_catch_error
         .catchError((e) => print("error in decrypting: $e"));
 
+    /// Received when a request location's removed person is called
+    /// Based on this current user will delete the original key
+    if (atKey.toString().toLowerCase().contains('deleterequestacklocation')) {
+      LocationNotificationModel msg =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      RequestLocationService().deleteKey(msg);
+      return;
+    }
+
     if (atKey.toString().toLowerCase().contains('locationnotify')) {
       LocationNotificationModel msg =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       LocationNotificationListener().updateHybridList(msg);
-    } else if (atKey.toString().contains('createevent')) {
+      return;
+    }
+
+    if (atKey.toString().contains('createevent')) {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
@@ -173,24 +199,34 @@ class BackendService {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
       }
-    } else if (atKey.toString().contains('eventacknowledged')) {
+      return;
+    }
+
+    if (atKey.toString().contains('eventacknowledged')) {
       EventNotificationModel msg =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
       createEventAcknowledge(msg, atKey, fromAtSign);
-    } else if (atKey.toString().contains('requestlocationacknowledged')) {
+      return;
+    }
+
+    if (atKey.toString().contains('requestlocationacknowledged')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       RequestLocationService()
           .updateWithRequestLocationAcknowledge(locationData);
-    } else if (atKey.toString().contains('requestlocation')) {
+      return;
+    }
+
+    if (atKey.toString().contains('requestlocation')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (locationData.isAcknowledgment == true) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.mapUpdatedData(
-                convertEventToHybrid(NotificationType.Location,
-                    locationNotificationModel: locationData),
-                remove: (!locationData.isAccepted)),
+                  convertEventToHybrid(NotificationType.Location,
+                      locationNotificationModel: locationData),
+                  // remove: (!locationData.isAccepted)
+                ),
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
             onSuccess: (provider) {});
@@ -205,11 +241,17 @@ class BackendService {
 
         showMyDialog(fromAtSign, locationData: locationData);
       }
-    } else if (atKey.toString().contains('sharelocationacknowledged')) {
+      return;
+    }
+
+    if (atKey.toString().contains('sharelocationacknowledged')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       LocationSharingService().updateWithShareLocationAcknowledge(locationData);
-    } else if (atKey.toString().contains('sharelocation')) {
+      return;
+    }
+
+    if (atKey.toString().contains('sharelocation')) {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       if (locationData.isAcknowledgment == true) {
@@ -226,6 +268,7 @@ class BackendService {
 
         showMyDialog(fromAtSign, locationData: locationData);
       }
+      return;
     }
   }
 
@@ -248,7 +291,9 @@ class BackendService {
   createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
       String fromAtSign) async {
     try {
-      String eventId = atKey.split('eventacknowledged-')[1].split('@')[0];
+      String eventId =
+          acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
+
       print(
           'acknowledged notification received:$acknowledgedEvent , key:$atKey , $eventId');
 
@@ -323,6 +368,7 @@ class BackendService {
   getAtKey(String regexKey) {
     AtKey atKey = AtKey.fromString(regexKey);
     atKey.metadata.ttr = -1;
+    atKey.metadata.ccd = true;
     return atKey;
   }
 }

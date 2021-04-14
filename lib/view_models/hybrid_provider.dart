@@ -19,6 +19,7 @@ class HybridProvider extends RequestLocationProvider {
   HybridProvider();
   AtClientImpl atClientInstance;
   String currentAtSign;
+  bool isSharing = false;
   List<HybridNotificationModel> allHybridNotifications,
       allPastEventNotifications;
   List<LocationNotificationModel> shareLocationData;
@@ -143,6 +144,28 @@ class HybridProvider extends RequestLocationProvider {
       }
     }
     HomeEventService().setAllEventsList(allHybridNotifications);
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
+  }
+
+  updatePendingStatus(HybridNotificationModel notificationModel) async {
+    setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
+
+    for (int i = 0; i < allHybridNotifications.length; i++) {
+      if (NotificationType.Event == notificationModel.notificationType) {
+        if ((allHybridNotifications[i]
+            .key
+            .contains(notificationModel.eventNotificationModel.key))) {
+          allHybridNotifications[i].haveResponded = true;
+        }
+      } else {
+        if ((allHybridNotifications[i]
+            .key
+            .contains(notificationModel.locationNotificationModel.key))) {
+          allHybridNotifications[i].haveResponded = true;
+        }
+      }
+    }
+
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
   }
 
@@ -337,11 +360,13 @@ class HybridProvider extends RequestLocationProvider {
   }
 
   initialiseLacationSharing() async {
-    bool isSharing = await LocationNotificationListener().getShareLocation();
-    if (isSharing)
+    isSharing = await LocationNotificationListener().getShareLocation();
+    notifyListeners();
+    if (isSharing) {
       sendLocationSharing();
-    else
+    } else {
       stopLocationSharing();
+    }
   }
 
   sendLocationSharing() {
