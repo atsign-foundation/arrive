@@ -58,11 +58,9 @@ class EventProvider extends BaseModel {
     }
 
     response.forEach((key) {
-      if ('@${key.split(':')[1]}'.contains(currentAtSign)) {
-        HybridNotificationModel tempHyridNotificationModel =
-            HybridNotificationModel(NotificationType.Event, key: key);
-        allNotifications.add(tempHyridNotificationModel);
-      }
+      HybridNotificationModel tempHyridNotificationModel =
+          HybridNotificationModel(NotificationType.Event, key: key);
+      allNotifications.add(tempHyridNotificationModel);
     });
 
     allNotifications.forEach((notification) {
@@ -247,20 +245,13 @@ class EventProvider extends BaseModel {
   }
 
   updateEventDataAccordingToAcknowledgedData() async {
-    List<String> allEventKey = [];
-    List<String> response = await atClientInstance.getKeys(
+    List<String> allEventKey = await atClientInstance.getKeys(
       regex: 'createevent-',
     );
 
-    if (response.length == 0) {
+    if (allEventKey.length == 0) {
       return;
     }
-
-    response.forEach((element) {
-      if ('@${element.split(':')[1]}'.contains(currentAtSign)) {
-        allEventKey.add(element);
-      }
-    });
 
     List<String> allRegexResponses = [];
     for (int i = 0; i < allNotifications.length; i++) {
