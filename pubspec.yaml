@@ -13,7 +13,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+11
+version: 1.0.0+12
 environment:
   sdk: ">=2.7.0 <3.0.0"
 dependencies:
@@ -46,20 +46,26 @@ dependencies:
   meta: ^1.1.0
   geolocator: ^6.2.1
 
-  at_onboarding_flutter: ^1.0.0+2
+  at_onboarding_flutter: ^1.0.0+3
   at_client_mobile: ^1.0.0+9
   at_contact: ^1.0.0+3
   at_commons: ^1.0.1+6
   at_lookup: ^1.0.0+6
   at_contacts_group_flutter:
-    path: /Users/sarikagautam/Sites/packages/at_widgets/at_contacts_group_flutter
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_contacts_group_flutter
+      ref: dev_env
   at_contacts_flutter:
-    path: /Users/sarikagautam/Sites/packages/at_widgets/at_contacts_flutter
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_contacts_flutter
+      ref: dev_env
   at_chat_flutter:
-    path: /Users/sarikagautam/Sites/packages/at_widgets/at_chat_flutter
-  # atsign_authentication_helper :
-  #   path: /Users/sachinsingh/Documents/geekyAnts/AtSign/at_widgets/atsign_authentication_helper
-
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_chat_flutter
+      ref: dev_env
 
 
 dev_dependencies:
