@@ -1,10 +1,14 @@
 import 'dart:convert';
 import 'package:at_contact/at_contact.dart';
+import 'package:latlong/latlong.dart';
 
 class EventNotificationModel {
   EventNotificationModel();
   String atsignCreator;
-  // LatLng locationOfCreator;
+  LatLng locationOfCreator;
+  double lat;
+  double long;
+
   bool isCancelled;
   String title;
   Venue venue;
@@ -20,6 +24,12 @@ class EventNotificationModel {
     isCancelled = data['isCancelled'] == 'true' ? true : false;
     isSharing = data['isSharing'] == 'true' ? true : false;
     isUpdate = data['isUpdate'] == 'true' ? true : false;
+    lat = data['lat'] != 'null' && data['lat'] != null
+        ? double.parse(data['lat'])
+        : null;
+    long = data['long'] != 'null' && data['long'] != null
+        ? double.parse(data['long'])
+        : null;
     if (data['venue'] != null) {
       venue = Venue.fromJson(jsonDecode(data['venue']));
     }
@@ -72,6 +82,8 @@ class EventNotificationModel {
       'atsignCreator': eventNotification.atsignCreator.toString(),
       'key': '${eventNotification.key}',
       'group': json.encode(eventNotification.group),
+      'lat': eventNotification.lat.toString(),
+      'long': eventNotification.long.toString(),
       // TODO: Update ['group']['updatedAt'] with DateTime.now()
       'venue': json.encode({
         'latitude': eventNotification.venue.latitude.toString(),

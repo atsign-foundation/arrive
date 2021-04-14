@@ -10,6 +10,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/common_component
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'distance_calculate.dart';
@@ -111,6 +112,8 @@ class LocationService {
     // TODO: Update all the location data from here
     if (eventData != null && eventListenerKeyword != null) {
       if (eventData.key == eventListenerKeyword.key) {
+        updateLocationForEvent(); // TODO: To update data when we receive a new data
+
         eventListenerKeyword = eventData;
 
         exitedAtsigns = [];
@@ -178,12 +181,98 @@ class LocationService {
       });
     } else if (eventListenerKeyword != null) {
       // TODO: For event read the data from the event data
-      await Future.forEach(allUsersList, (user) async {
-        if (atsignsAtMonitor.contains(user.displayName))
-          await updateDetails(user);
-      });
+
+      if (eventListenerKeyword.atsignCreator ==
+          atClientInstance.currentAtSign) {
+        await Future.forEach(eventListenerKeyword.group.members,
+            (member) async {
+          if (atsignsAtMonitor.contains(member.atSign)) {
+            HybridModel user = HybridModel(
+                displayName: member.atSign,
+                latLng: LatLng(member['lat'], member['long']),
+                eta: '?',
+                image: null);
+            user.image =
+                LocationNotificationListener().getImageOfAtsign(member.atSign);
+            user.marker = buildMarker(user, singleMarker: true);
+            await updateDetails(user);
+          }
+        });
+      } else {
+        await Future.forEach(eventListenerKeyword.group.members,
+            (member) async {
+          if (atsignsAtMonitor.contains(member.atSign)) {
+            HybridModel user = HybridModel(
+                displayName: member.atSign,
+                latLng: LatLng(member['lat'], member['long']),
+                eta: '?',
+                image: null);
+            user.image =
+                LocationNotificationListener().getImageOfAtsign(member.atSign);
+            user.marker = buildMarker(user, singleMarker: true);
+            await updateDetails(user);
+          }
+        });
+        // For Creator
+        HybridModel user = HybridModel(
+            displayName: eventListenerKeyword.atsignCreator,
+            latLng: LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
+            eta: '?',
+            image: null);
+        user.image = LocationNotificationListener()
+            .getImageOfAtsign(eventListenerKeyword.atsignCreator);
+        user.marker = buildMarker(user, singleMarker: true);
+        await updateDetails(user);
+      }
+
+      // await Future.forEach(allUsersList, (user) async {
+      //   if (atsignsAtMonitor.contains(user.displayName))
+      //     await updateDetails(user);
+      // });
     }
     _atHybridUsersController.add(hybridUsersList);
+  }
+
+  void updateLocationForEvent() async {
+    if (eventListenerKeyword.atsignCreator == atClientInstance.currentAtSign) {
+      await Future.forEach(eventListenerKeyword.group.members, (member) async {
+        if (atsignsAtMonitor.contains(member.atSign)) {
+          HybridModel user = HybridModel(
+              displayName: member.atSign,
+              latLng: LatLng(member['lat'], member['long']),
+              eta: '?',
+              image: null);
+          user.image =
+              LocationNotificationListener().getImageOfAtsign(member.atSign);
+          user.marker = buildMarker(user, singleMarker: true);
+          await updateDetails(user);
+        }
+      });
+    } else {
+      await Future.forEach(eventListenerKeyword.group.members, (member) async {
+        if (atsignsAtMonitor.contains(member.atSign)) {
+          HybridModel user = HybridModel(
+              displayName: member.atSign,
+              latLng: LatLng(member['lat'], member['long']),
+              eta: '?',
+              image: null);
+          user.image =
+              LocationNotificationListener().getImageOfAtsign(member.atSign);
+          user.marker = buildMarker(user, singleMarker: true);
+          await updateDetails(user);
+        }
+      });
+      // For Creator
+      HybridModel user = HybridModel(
+          displayName: eventListenerKeyword.atsignCreator,
+          latLng: LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
+          eta: '?',
+          image: null);
+      user.image = LocationNotificationListener()
+          .getImageOfAtsign(eventListenerKeyword.atsignCreator);
+      user.marker = buildMarker(user, singleMarker: true);
+      await updateDetails(user);
+    }
   }
 
   // Called when any new/updated data is received in the main app
@@ -237,7 +326,9 @@ class LocationService {
       }
     });
     if (contains) {
-      await addDetails(user, index: index);
+      if (user.latLng !=
+          hybridUsersList[index].latLng) // TODO: This might not work
+        await addDetails(user, index: index);
     } else
       await addDetails(user);
   }

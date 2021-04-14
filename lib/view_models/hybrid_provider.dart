@@ -65,6 +65,8 @@ class HybridProvider extends RequestLocationProvider {
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
       checkForDeleteRequestAck();
       initialiseLacationSharing();
+
+      // TODO: Add the code added in backend service here as well
     } catch (e) {
       print('error in getAllHybridEvents:$e');
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Error);
@@ -280,17 +282,30 @@ class HybridProvider extends RequestLocationProvider {
             if (notification.eventNotificationModel.isSharing) {
               // TODO: edit your own location in the event model
               // And pass the entire event data
-              notification.eventNotificationModel.group.members
-                  .forEach((groupMember) {
-                location = LocationNotificationModel()
-                  ..atsignCreator =
-                      notification.eventNotificationModel.atsignCreator
-                  ..isAcknowledgment = true
-                  ..isAccepted = true
-                  ..receiver =
-                      groupMember.atSign; // TODO: Send it to all the users
-                location = getLocationNotificationData(notification, location);
-              });
+              // notification.eventNotificationModel.group.members
+              //     .forEach((groupMember) {
+              //   location = LocationNotificationModel()
+              //     ..atsignCreator =
+              //         notification.eventNotificationModel.atsignCreator
+              //     ..isAcknowledgment = true
+              //     ..isAccepted = true
+              //     ..receiver =
+              //         groupMember.atSign; // TODO: Send it to all the users
+              //   location = getLocationNotificationData(notification, location,
+              //       isCreator: true);
+              // });
+
+              location = LocationNotificationModel()
+                ..atsignCreator =
+                    notification.eventNotificationModel.atsignCreator
+                ..isAcknowledgment = true
+                ..isAccepted = true
+                ..receiver = notification.eventNotificationModel.group.members
+                    .elementAt(0)
+                    .atSign; // This doent matter
+              // TODO: Send it to all the users
+              location = getLocationNotificationData(notification, location,
+                  isCreator: true);
             }
           } else {
             notification.eventNotificationModel.group.members
@@ -305,28 +320,35 @@ class HybridProvider extends RequestLocationProvider {
                 currentGroupMember.tags['isAccepted'] == true &&
                 currentGroupMember.tags['isSharing'] == true &&
                 currentGroupMember.tags['isExited'] == false) {
-              notification.eventNotificationModel.group.members
-                  .forEach((groupMember) {
-                //sending location to other group members
-                if (groupMember.atSign != currentGroupMember.atSign) {
-                  location = LocationNotificationModel()
-                    ..atsignCreator = currentGroupMember.atSign
-                    ..isAcknowledgment = true
-                    ..isAccepted = true
-                    ..receiver = groupMember.atSign;
-                  location = getLocationNotificationData(notification, location,
-                      groupMember: currentGroupMember);
-                }
-              });
-
-              // sending location to event creator from group member
               location = LocationNotificationModel()
                 ..atsignCreator = currentGroupMember.atSign
                 ..isAcknowledgment = true
                 ..isAccepted = true
                 ..receiver = notification.eventNotificationModel.atsignCreator;
-              location = getLocationNotificationData(notification, location,
-                  groupMember: currentGroupMember);
+              location = getLocationNotificationData(notification, location);
+
+              // notification.eventNotificationModel.group.members
+              //     .forEach((groupMember) {
+              //   //sending location to other group members
+              //   if (groupMember.atSign != currentGroupMember.atSign) {
+              //     location = LocationNotificationModel()
+              //       ..atsignCreator = currentGroupMember.atSign
+              //       ..isAcknowledgment = true
+              //       ..isAccepted = true
+              //       ..receiver = groupMember.atSign;
+              //     location = getLocationNotificationData(notification, location,
+              //         groupMember: currentGroupMember);
+              //   }
+              // });
+
+              // // sending location to event creator from group member
+              // location = LocationNotificationModel()
+              //   ..atsignCreator = currentGroupMember.atSign
+              //   ..isAcknowledgment = true
+              //   ..isAccepted = true
+              //   ..receiver = notification.eventNotificationModel.atsignCreator;
+              // location = getLocationNotificationData(notification, location,
+              //     groupMember: currentGroupMember);
             }
           }
         }
@@ -346,7 +368,7 @@ class HybridProvider extends RequestLocationProvider {
 
   LocationNotificationModel getLocationNotificationData(
       HybridNotificationModel notification, LocationNotificationModel location,
-      {AtContact groupMember}) {
+      {AtContact groupMember, bool isCreator = false}) {
     if (notification.notificationType == NotificationType.Event) {
       if (notification.eventNotificationModel.event.isRecurring) {
       } else {
@@ -375,8 +397,13 @@ class HybridProvider extends RequestLocationProvider {
                   groupMember.tags['shareTo'].toString(), location.to);
             }
 
-            location.key = notification
-                .key; // TODO: add 'locationnotify.' => key = 'locationnotify.event-$id'
+            if (isCreator) {
+              location.key = notification.key;
+            } else {
+              location.key = 'location${notification.key}';
+            }
+            print('location.key ${location.key}');
+            // TODO: add 'locationnotify.' => key = 'locationnotify.event-$id'
             // TODO: If it is creator then key will be exactly the event key => key = 'event-id'
             // TODO: Accepta param, {isCreator}
 
@@ -458,10 +485,12 @@ class HybridProvider extends RequestLocationProvider {
     } else if ((notification.notificationType == NotificationType.Event)) {
       var _getLocationModelFromEventModel =
           getLocationModelFromEventModel(notification);
-      if (_getLocationModelFromEventModel != null &&
-          _getLocationModelFromEventModel.length > 0) {
+      if (_getLocationModelFromEventModel != null
+          // &&
+          //     _getLocationModelFromEventModel.length > 0
+          ) {
         SendLocationNotification()
-            .addMember(notificationList: _getLocationModelFromEventModel);
+            .addMember(notification: _getLocationModelFromEventModel);
       }
     }
   }
@@ -481,19 +510,32 @@ class HybridProvider extends RequestLocationProvider {
         .currentAtSign;
 
     if (!notification.eventNotificationModel.isCancelled) {
-      if ((notification.eventNotificationModel.atsignCreator.toLowerCase() ==
-              currentAtsign.toLowerCase()) &&
-          (notification.eventNotificationModel.isSharing)) {
-        notification.eventNotificationModel.group.members
-            .forEach((groupMember) {
+      if (notification.eventNotificationModel.atsignCreator.toLowerCase() ==
+          currentAtsign.toLowerCase()) {
+        // TODO: Create only one key, with the same event key
+        if (notification.eventNotificationModel.isSharing) {
+          // notification.eventNotificationModel.group.members
+          //     .forEach((groupMember) {
+          //   location = LocationNotificationModel()
+          //     ..atsignCreator =
+          //         notification.eventNotificationModel.atsignCreator
+          //     ..isAcknowledgment = true
+          //     ..isAccepted = true
+          //     ..receiver = groupMember.atSign;
+          //   location = getLocationNotificationData(notification, location);
+          //   notificationList.add(location);
+          // });
+
           location = LocationNotificationModel()
             ..atsignCreator = notification.eventNotificationModel.atsignCreator
             ..isAcknowledgment = true
             ..isAccepted = true
-            ..receiver = groupMember.atSign;
+            ..receiver = notification.eventNotificationModel.group.members
+                .elementAt(0)
+                .atSign; // Doesnt matter
           location = getLocationNotificationData(notification, location);
-          notificationList.add(location);
-        });
+          return location;
+        }
       } else {
         AtContact currentGroupMember = new AtContact();
         notification.eventNotificationModel.group.members
@@ -508,33 +550,43 @@ class HybridProvider extends RequestLocationProvider {
             currentGroupMember.tags['isAccepted'] == true &&
             currentGroupMember.tags['isSharing'] == true &&
             currentGroupMember.tags['isExited'] == false) {
-          notification.eventNotificationModel.group.members
-              .forEach((groupMember) {
-            if (groupMember.atSign != currentGroupMember.atSign) {
-              location = LocationNotificationModel()
-                ..atsignCreator = currentGroupMember.atSign
-                ..isAcknowledgment = true
-                ..isAccepted = true
-                ..receiver = groupMember.atSign;
-              location = getLocationNotificationData(notification, location,
-                  groupMember: currentGroupMember);
-
-              notificationList.add(location);
-            }
-          });
-
+          // TODO: Create only one key, with creator as the receiver
+          //
           location = LocationNotificationModel()
             ..atsignCreator = currentGroupMember.atSign
             ..isAcknowledgment = true
             ..isAccepted = true
             ..receiver = notification.eventNotificationModel.atsignCreator;
-          location = getLocationNotificationData(notification, location,
-              groupMember: currentGroupMember);
+          location = getLocationNotificationData(notification, location);
+          return location;
 
-          notificationList.add(location);
+          // notification.eventNotificationModel.group.members
+          //     .forEach((groupMember) {
+          //   if (groupMember.atSign != currentGroupMember.atSign) {
+          //     location = LocationNotificationModel()
+          //       ..atsignCreator = currentGroupMember.atSign
+          //       ..isAcknowledgment = true
+          //       ..isAccepted = true
+          //       ..receiver = groupMember.atSign;
+          //     location = getLocationNotificationData(notification, location,
+          //         groupMember: currentGroupMember);
+
+          //     notificationList.add(location);
+          //   }
+          // });
+
+          // location = LocationNotificationModel()
+          //   ..atsignCreator = currentGroupMember.atSign
+          //   ..isAcknowledgment = true
+          //   ..isAccepted = true
+          //   ..receiver = notification.eventNotificationModel.atsignCreator;
+          // location = getLocationNotificationData(notification, location,
+          //     groupMember: currentGroupMember);
+
+          // notificationList.add(location);
         }
       }
     }
-    return notificationList;
+    return null;
   }
 }

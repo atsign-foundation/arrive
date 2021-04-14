@@ -174,6 +174,9 @@ class EventProvider extends BaseModel {
       AtKey key = formAtKey(keyType, atkeyMicrosecondId,
           eventData.atsignCreator, currentAtsign, event);
 
+      // TODO : Check whther key is correct
+      print('key $key');
+
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
       var result = await atClientInstance.put(key, notification);

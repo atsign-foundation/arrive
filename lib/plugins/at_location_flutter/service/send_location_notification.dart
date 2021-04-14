@@ -1,16 +1,21 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
+import 'package:provider/provider.dart';
 
 class SendLocationNotification {
   SendLocationNotification._();
@@ -32,9 +37,10 @@ class SendLocationNotification {
     updateMyLocation();
   }
 
-  addMember(
-      {LocationNotificationModel notification,
-      List<LocationNotificationModel> notificationList}) async {
+  addMember({
+    @required LocationNotificationModel notification,
+    // List<LocationNotificationModel> notificationList
+  }) async {
     // if already added
     if (notification != null &&
         atsignsToShareLocationWith
@@ -44,13 +50,13 @@ class SendLocationNotification {
     }
 
     // checking if location key is already present in receiving atsigns length
-    if (notificationList != null &&
-        notificationList.isNotEmpty &&
-        atsignsToShareLocationWith.indexWhere(
-                (element) => element.key == notificationList[0].key) >
-            -1) {
-      return;
-    }
+    // if (notificationList != null &&
+    //     notificationList.isNotEmpty &&
+    //     atsignsToShareLocationWith.indexWhere(
+    //             (element) => element.key == notificationList[0].key) >
+    //         -1) {
+    //   return;
+    // }
 
     LatLng myLocation = await getMyLocation();
 
@@ -71,13 +77,13 @@ class SendLocationNotification {
       }
 
       if (isMasterSwitchOn) {
-        if (notificationList == null) {
-          await prepareLocationDataAndSend(notification, myLocation);
-        } else {
-          await Future.forEach(notificationList, (element) async {
-            await prepareLocationDataAndSend(element, myLocation);
-          });
-        }
+        // if (notificationList == null) {
+        await prepareLocationDataAndSend(notification, myLocation);
+        // } else {
+        //   await Future.forEach(notificationList, (element) async {
+        //     await prepareLocationDataAndSend(element, myLocation);
+        //   });
+        // }
       }
     } else {
       CustomToast().show(
@@ -85,19 +91,20 @@ class SendLocationNotification {
     }
 
     // add
-    if (notificationList == null) {
-      atsignsToShareLocationWith.add(notification);
-    } else {
-      atsignsToShareLocationWith = [
-        ...atsignsToShareLocationWith,
-        ...notificationList
-      ];
-    }
+    // if (notificationList == null) {
+    atsignsToShareLocationWith.add(notification);
+    // } else {
+    //   atsignsToShareLocationWith = [
+    //     ...atsignsToShareLocationWith,
+    //     ...notificationList
+    //   ];
+    // }
     print(
         'after adding atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   removeMember(String key) async {
+    // TODO: For events, make the latlng null & submit
     LocationNotificationModel locationNotificationModel;
     if (atsignsToShareLocationWith == null ||
         atsignsToShareLocationWith.isEmpty) {
@@ -159,17 +166,52 @@ class SendLocationNotification {
       //    the put your values => LatLng & update it
       //    .put(notification.key, data)
       //      send to all the group members
+      //      call actionOnEvent with updated event data and CREATEEVENT ATKEY_TYPE
       //  } else {
       //    only change in creating the key, rest all same
       //
       //    send only to the creator
       //  }
       // }
+      //
+
+      AtKey atKey;
+
+      if (notification.key.contains('createevent')) {
+        atKey = newAtKey(5000, notification.key, notification.receiver);
+
+        // For creator
+        if (!notification.key.contains('location')) {
+          EventNotificationModel event;
+          Provider.of<EventProvider>(NavService.navKey.currentContext,
+                  listen: false)
+              .allNotifications
+              .forEach((element) {
+            if (event.key == notification.key) {
+              event = EventNotificationModel.fromJson(jsonDecode(
+                  EventNotificationModel.convertEventNotificationToJson(
+                      element.eventNotificationModel)));
+            }
+          });
+
+          event.lat = myLocation.latitude;
+          event.long = myLocation.longitude;
+
+          await Provider.of<EventProvider>(NavService.navKey.currentContext,
+                  listen: false)
+              .actionOnEvent(event, ATKEY_TYPE_ENUM.CREATEEVENT);
+
+          return;
+        }
+      } else {
+        String atkeyMicrosecondId =
+            notification.key.split('-')[1].split('@')[0];
+        atKey = newAtKey(
+            5000, "locationnotify-$atkeyMicrosecondId", notification.receiver);
+      }
+
       notification.lat = myLocation.latitude;
       notification.long = myLocation.longitude;
-      String atkeyMicrosecondId = notification.key.split('-')[1].split('@')[0];
-      AtKey atKey = newAtKey(
-          5000, "locationnotify-$atkeyMicrosecondId", notification.receiver);
 
       try {
         await atClient.put(
@@ -183,6 +225,8 @@ class SendLocationNotification {
   }
 
   sendNull(LocationNotificationModel locationNotificationModel) async {
+    // TODO: For events, make the latlng null & submit
+
     String atkeyMicrosecondId =
         locationNotificationModel.key.split('-')[1].split('@')[0];
     AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",

@@ -184,6 +184,10 @@ class BackendService {
       // Update the atGroup.member['latLng'] of the fromAtSign in the event that has this id
       // also add a new param atGroup.member['updatedAt'] with DateTime.now()
       // Send to all the users
+
+      LocationNotificationModel locationData =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      updateLocationData(locationData, atKey, fromAtSign);
     }
 
     /// Received when a request location's removed person is called
@@ -317,6 +321,63 @@ class BackendService {
         );
       },
     );
+  }
+
+  // TODO: Will be called when a group member wants to update his data
+  void updateLocationData(LocationNotificationModel locationData, String atKey,
+      String fromAtSign) async {
+    try {
+      String eventId =
+          locationData.key.split('-')[1].split('@')[0]; // TODO: Might be wrong
+
+      EventNotificationModel presentEventData;
+      HomeEventService().allEvents.forEach((element) {
+        if (element.key.contains('createevent-$eventId')) {
+          presentEventData = EventNotificationModel.fromJson(jsonDecode(
+              EventNotificationModel.convertEventNotificationToJson(
+                  element.eventNotificationModel)));
+        }
+      });
+
+      presentEventData.group.members.forEach((presentGroupMember) {
+        if (presentGroupMember.atSign[0] != '@')
+          presentGroupMember.atSign = '@' + presentGroupMember.atSign;
+
+        if (fromAtSign[0] != '@') fromAtSign = '@' + fromAtSign;
+
+        if (presentGroupMember.atSign.toLowerCase() ==
+            fromAtSign.toLowerCase()) {
+          presentGroupMember.tags['lat'] = locationData.lat;
+          presentGroupMember.tags['long'] = locationData.long;
+        }
+      });
+
+      presentEventData.isUpdate = true;
+
+      List<String> allAtsignList = [];
+      presentEventData.group.members.forEach((element) {
+        allAtsignList.add(element.atSign);
+      });
+
+      var notification = EventNotificationModel.convertEventNotificationToJson(
+          presentEventData);
+
+      AtKey key = BackendService.getInstance().getAtKey(presentEventData.key);
+
+      var result = await atClientInstance.put(key, notification);
+
+      key.sharedWith = jsonEncode(allAtsignList);
+
+      var notifyAllResult = await atClientInstance.notifyAll(
+          key, notification, OperationEnum.update);
+
+      if (result is bool && result) {
+        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
+            eventNotificationModel: presentEventData));
+      }
+    } catch (e) {
+      print('error in event acknowledgement: $e');
+    }
   }
 
   createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
