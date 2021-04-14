@@ -49,6 +49,9 @@ class LocationNotificationListener {
   }
 
   getAllLocationData() async {
+    //
+    // TODO: Read all the latLng from all the events we have and store it
+    //
     List<String> response = await atClientInstance.getKeys(
       regex: '$LOCATION_NOTIFY',
     );
@@ -140,7 +143,12 @@ class LocationNotificationListener {
     return (data['isSharing'] == 'true') ? true : false;
   }
 
+  // TODO: Accept a group param and read all the members's latLng & update it
   updateHybridList(LocationNotificationModel newUser) async {
+    // if(group!=null){
+    //  update all the data with the information
+    // }
+
     bool contains = false;
     int index;
     allUsersList.forEach((user) {

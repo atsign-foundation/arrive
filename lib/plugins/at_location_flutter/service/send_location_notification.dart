@@ -115,11 +115,33 @@ class SendLocationNotification {
         (notification.to.difference(DateTime.now()) > Duration(seconds: 0)))
       isSend = true;
     if (isSend) {
+      // TODO: If notification.key has 'event' then
+      //      Check if it also has 'location' then its a member
+      //      AtKey atKey = newAtKey(
+      //       5000, "event.locationnotify-$atkeyMicrosecondId", notification.receiver);
+      // else  it is the creator of the event
+      //      AtKey atKey = newAtKey(
+      //       5000, "$notification.key", notification.receiver);
+      //
+      // if(event){
+      //  if(creator){
+      //    then search for the data of that key,
+      //    create a new model out it, dont change the orignal data
+      //    the put your values => LatLng & update it
+      //    .put(notification.key, data)
+      //      send to all the group members
+      //  } else {
+      //    only change in creating the key, rest all same
+      //
+      //    send only to the creator
+      //  }
+      // }
       notification.lat = myLocation.latitude;
       notification.long = myLocation.longitude;
       String atkeyMicrosecondId = notification.key.split('-')[1].split('@')[0];
       AtKey atKey = newAtKey(
           5000, "locationnotify-$atkeyMicrosecondId", notification.receiver);
+
       try {
         await atClient.put(
             atKey,

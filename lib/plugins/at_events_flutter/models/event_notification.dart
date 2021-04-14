@@ -4,6 +4,7 @@ import 'package:at_contact/at_contact.dart';
 class EventNotificationModel {
   EventNotificationModel();
   String atsignCreator;
+  // LatLng locationOfCreator;
   bool isCancelled;
   String title;
   Venue venue;
@@ -71,6 +72,7 @@ class EventNotificationModel {
       'atsignCreator': eventNotification.atsignCreator.toString(),
       'key': '${eventNotification.key}',
       'group': json.encode(eventNotification.group),
+      // TODO: Update ['group']['updatedAt'] with DateTime.now()
       'venue': json.encode({
         'latitude': eventNotification.venue.latitude.toString(),
         'longitude': eventNotification.venue.longitude.toString(),

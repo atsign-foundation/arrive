@@ -275,12 +275,15 @@ class HybridProvider extends RequestLocationProvider {
                   .toLowerCase() ==
               currentAtsign.toLowerCase())) {
             if (notification.eventNotificationModel.isSharing) {
+              // TODO: edit your own location in the event model
+              // And pass the entire event data
               location = LocationNotificationModel()
                 ..atsignCreator =
                     notification.eventNotificationModel.atsignCreator
                 ..isAcknowledgment = true
                 ..isAccepted = true
-                ..receiver = notification.eventNotificationModel.group.members
+                ..receiver = notification.eventNotificationModel.group
+                    .members // TODO: Send it to all the users
                     .elementAt(0)
                     .atSign;
               location = getLocationNotificationData(notification, location);
@@ -355,7 +358,10 @@ class HybridProvider extends RequestLocationProvider {
             location.to = endTimeEnumToTimeOfDay(
                 groupMember.tags['shareTo'].toString(), location.to);
 
-            location.key = notification.key;
+            location.key = notification
+                .key; // TODO: add 'locationnotify.' => key = 'locationnotify.event-$id'
+            // TODO: If it is creator then key will be exactly the event key => key = 'event-id'
+            // TODO: Accepta param, {isCreator}
 
             shareLocationData.add(location);
             return location;

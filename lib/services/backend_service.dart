@@ -178,6 +178,13 @@ class BackendService {
         // ignore: return_of_invalid_type_from_catch_error
         .catchError((e) => print("error in decrypting: $e"));
 
+    if (atKey.toString().toLowerCase().contains('event.locationnotify')) {
+      // TODO:
+      // Update the atGroup.member['latLng'] of the fromAtSign in the event that has this id
+      // also add a new param atGroup.member['updatedAt'] with DateTime.now()
+      // Send to all the users
+    }
+
     /// Received when a request location's removed person is called
     /// Based on this current user will delete the original key
     if (atKey.toString().toLowerCase().contains('deleterequestacklocation')) {
@@ -197,6 +204,9 @@ class BackendService {
     if (atKey.toString().contains('createevent')) {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
+
+      // TODO: update all the users location in our LocationNotificationListener
+
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
         showMyDialog(fromAtSign, eventData: eventData);
         providerCallback<HybridProvider>(NavService.navKey.currentContext,

@@ -108,6 +108,7 @@ class LocationService {
   }
 
   updateEventWithNewData(EventNotificationModel eventData) {
+    // TODO: Update all the location data from here
     if (eventData != null && eventListenerKeyword != null) {
       if (eventData.key == eventListenerKeyword.key) {
         eventListenerKeyword = eventData;
@@ -176,6 +177,7 @@ class LocationService {
           await updateDetails(user);
       });
     } else if (eventListenerKeyword != null) {
+      // TODO: For event read the data from the event data
       await Future.forEach(allUsersList, (user) async {
         if (atsignsAtMonitor.contains(user.displayName))
           await updateDetails(user);
