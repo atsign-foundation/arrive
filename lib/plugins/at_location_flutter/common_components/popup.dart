@@ -6,6 +6,15 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/location
 import 'package:flutter/material.dart';
 
 Widget buildPopup(HybridModel user) {
+  String contactInitial;
+  if (user.displayName != null) {
+    if (user.displayName[0] == '@') {
+      contactInitial = user.displayName.substring(1, user.displayName.length);
+    } else {
+      contactInitial = user.displayName;
+    }
+  }
+
   return Stack(
     alignment: Alignment.center,
     children: [
@@ -72,7 +81,8 @@ Widget buildPopup(HybridModel user) {
                                   nonAsset: true,
                                   size: 30)
                               : ContactInitial(
-                                  initials: user.displayName.substring(1, 3),
+                                  initials: contactInitial.substring(
+                                      0, contactInitial.length > 1 ? 2 : 1),
                                   size: 60,
                                 ),
                         ),

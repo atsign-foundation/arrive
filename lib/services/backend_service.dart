@@ -20,6 +20,7 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
 
+import 'package:at_client/src/manager/sync_manager.dart';
 import 'location_notification_listener.dart';
 
 class BackendService {
@@ -124,7 +125,7 @@ class BackendService {
 
   fnCallBack(var response) async {
     print('fnCallBack called');
-
+    await syncWithSecondary();
     response = response.replaceFirst('notification:', '');
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
@@ -293,6 +294,15 @@ class BackendService {
     }
   }
 
+  syncWithSecondary() async {
+    SyncManager syncManager = atClientInstance.getSyncManager();
+    var isSynced = await syncManager.isInSync();
+    if (isSynced is bool && isSynced) {
+    } else {
+      await syncManager.sync();
+    }
+  }
+
   Future<void> showMyDialog(String fromAtSign,
       {EventNotificationModel eventData,
       LocationNotificationModel locationData}) async {
@@ -314,9 +324,6 @@ class BackendService {
     try {
       String eventId =
           acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
-
-      print(
-          'acknowledged notification received:$acknowledgedEvent , key:$atKey , $eventId');
 
       EventNotificationModel presentEventData;
       HomeEventService().allEvents.forEach((element) {
@@ -353,11 +360,21 @@ class BackendService {
         });
       });
       presentEventData.isUpdate = true;
+      List<String> allAtsignList = [];
+      presentEventData.group.members.forEach((element) {
+        allAtsignList.add(element.atSign);
+      });
 
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
 
       var result = await atClientInstance.put(key, notification);
+
+      key.sharedWith = jsonEncode(allAtsignList);
+
+      var notifyAllResult = await atClientInstance.notifyAll(
+          key, notification, OperationEnum.update);
+
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: presentEventData));

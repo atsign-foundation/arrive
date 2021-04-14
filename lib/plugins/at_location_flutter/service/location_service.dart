@@ -81,7 +81,7 @@ class LocationService {
       atsignsAtMonitor =
           eventListenerKeyword.group.members.map((e) => e.atSign).toList();
       atsignsAtMonitor.add(eventListenerKeyword.atsignCreator);
-      atsignsAtMonitor.remove(myData?.displayName);
+      atsignsAtMonitor.remove(atClientInstance.currentAtSign);
 
       eventListenerKeyword.group.members.forEach((element) {
         if ((element.tags['isExited']) && (!element.tags['isAccepted']))

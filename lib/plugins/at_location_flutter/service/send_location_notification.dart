@@ -32,11 +32,23 @@ class SendLocationNotification {
     updateMyLocation();
   }
 
-  addMember(LocationNotificationModel notification) async {
+  addMember(
+      {LocationNotificationModel notification,
+      List<LocationNotificationModel> notificationList}) async {
     // if already added
-    if (atsignsToShareLocationWith
-            .indexWhere((element) => element.key == notification.key) >
-        -1) {
+    if (notification != null &&
+        atsignsToShareLocationWith
+                .indexWhere((element) => element.key == notification.key) >
+            -1) {
+      return;
+    }
+
+    // checking if location key is already present in receiving atsigns length
+    if (notificationList != null &&
+        notificationList.isNotEmpty &&
+        atsignsToShareLocationWith.indexWhere(
+                (element) => element.key == notificationList[0].key) >
+            -1) {
       return;
     }
 
@@ -59,7 +71,13 @@ class SendLocationNotification {
       }
 
       if (isMasterSwitchOn) {
-        await prepareLocationDataAndSend(notification, myLocation);
+        if (notificationList == null) {
+          await prepareLocationDataAndSend(notification, myLocation);
+        } else {
+          await Future.forEach(notificationList, (element) async {
+            await prepareLocationDataAndSend(element, myLocation);
+          });
+        }
       }
     } else {
       CustomToast().show(
@@ -67,13 +85,24 @@ class SendLocationNotification {
     }
 
     // add
-    atsignsToShareLocationWith.add(notification);
+    if (notificationList == null) {
+      atsignsToShareLocationWith.add(notification);
+    } else {
+      atsignsToShareLocationWith = [
+        ...atsignsToShareLocationWith,
+        ...notificationList
+      ];
+    }
     print(
         'after adding atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }
 
   removeMember(String key) async {
     LocationNotificationModel locationNotificationModel;
+    if (atsignsToShareLocationWith == null ||
+        atsignsToShareLocationWith.isEmpty) {
+      return;
+    }
     atsignsToShareLocationWith.removeWhere((element) {
       if (key.contains(element.key)) locationNotificationModel = element;
       return key.contains(element.key);
