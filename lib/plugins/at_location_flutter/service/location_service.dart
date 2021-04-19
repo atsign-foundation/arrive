@@ -12,6 +12,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'distance_calculate.dart';
 
@@ -40,6 +41,8 @@ class LocationService {
   List<HybridModel> hybridUsersList;
   List<HybridModel> allUsersList;
 
+  StreamSubscription<Position> myLocationStream;
+
   StreamController _atHybridUsersController;
   Stream<List<HybridModel>> get atHybridUsersStream =>
       _atHybridUsersController.stream;
@@ -67,6 +70,8 @@ class LocationService {
     _atHybridUsersController = StreamController<List<HybridModel>>.broadcast();
     atClientServiceInstance = AtClientService();
     atClientInstance = _atClientInstance;
+
+    if (myLocationStream != null) myLocationStream.cancel();
 
     addMyDetailsToHybridUsersList();
 
@@ -128,32 +133,60 @@ class LocationService {
     }
   }
 
-  addMyDetailsToHybridUsersList() async {
-    String _atsign = getAtSign();
-    LatLng mylatlng = await getMyLocation();
+  void addMyDetailsToHybridUsersList() async {
+    var permission = await Geolocator.checkPermission();
+    var _atsign = getAtSign();
+    var _image = await getImageOfAtsign(_atsign);
+
+    var mylatlng = await getMyLocation();
     if (mylatlng == null) {
       showToast('Location permission not granted');
       return;
     }
 
-    var _image = await getImageOfAtsign(_atsign);
-
     HybridModel _myData = HybridModel(
         displayName: _atsign, latLng: mylatlng, eta: '?', image: _image);
+
+    updateMyLatLng(_myData);
+
+    if (((permission == LocationPermission.always) ||
+        (permission == LocationPermission.whileInUse))) {
+      myLocationStream = Geolocator.getPositionStream(distanceFilter: 10)
+          .listen((myLocation) async {
+        print('inside stream');
+        var mylatlng = LatLng(myLocation.latitude, myLocation.longitude);
+
+        _myData = HybridModel(
+            displayName: _atsign, latLng: mylatlng, eta: '?', image: _image);
+
+        updateMyLatLng(_myData);
+      });
+    }
+
+    atsignsAtMonitor?.remove(atClientInstance.currentAtSign);
+  }
+
+  void updateMyLatLng(HybridModel _myData) async {
     _myData.marker = buildMarker(_myData, singleMarker: true);
 
     myData = _myData;
-    if ((eventListenerKeyword != null) && (eventData != null))
+    if ((eventListenerKeyword != null) && (eventData != null)) {
       await _calculateEta(myData); //To add eta for the user
+    }
 
-    hybridUsersList.add(myData);
+    var _index = hybridUsersList.indexWhere(
+        (element) => element.displayName == atClientInstance.currentAtSign);
+
+    if (_index < 0) {
+      hybridUsersList.add(myData);
+    } else {
+      hybridUsersList[_index] = myData;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ParticipantsData().updateParticipants();
       _atHybridUsersController.add(hybridUsersList);
     });
-
-    atsignsAtMonitor?.remove(myData.displayName);
   }
 
   addEventDetailsToHybridUsersList() async {
