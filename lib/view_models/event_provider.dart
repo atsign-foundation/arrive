@@ -193,13 +193,13 @@ class EventProvider extends BaseModel {
 
       // if key type is createevent, we have to notify all members
       if (keyType == ATKEY_TYPE_ENUM.CREATEEVENT) {
-        // providerCallback<HybridProvider>(NavService.navKey.currentContext,
-        //     task: (t) => t.mapUpdatedData(BackendService.getInstance()
-        //         .convertEventToHybrid(NotificationType.Event,
-        //             eventNotificationModel: eventData)),
-        //     showLoader: false,
-        //     taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
-        //     onSuccess: (t) {});
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (t) => t.mapUpdatedData(BackendService.getInstance()
+                .convertEventToHybrid(NotificationType.Event,
+                    eventNotificationModel: eventData)),
+            showLoader: false,
+            taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
+            onSuccess: (t) {});
 
         List<String> allAtsignList = [];
         eventData.group.members.forEach((element) {

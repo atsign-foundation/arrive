@@ -112,14 +112,14 @@ class LocationService {
     // TODO: Update all the location data from here
     if (eventData != null && eventListenerKeyword != null) {
       if (eventData.key == eventListenerKeyword.key) {
-        updateLocationForEvent(); // TODO: To update data when we receive a new data
-
         eventListenerKeyword = eventData;
+        updateLocationForEvent();
 
         exitedAtsigns = [];
         eventListenerKeyword.group.members.forEach((element) {
-          if ((element.tags['isExited']) && (!element.tags['isAccepted']))
+          if ((element.tags['isExited']) && (!element.tags['isAccepted'])) {
             exitedAtsigns.add(element.atSign);
+          }
         });
 
         ParticipantsData().updateParticipants();
@@ -195,7 +195,7 @@ class LocationService {
                   image: null);
               user.image = await LocationNotificationListener()
                   .getImageOfAtsign(member.atSign);
-              user.marker = buildMarker(user, singleMarker: true);
+              user.marker = buildMarker(user);
               await updateDetails(user);
             }
           }
@@ -212,7 +212,7 @@ class LocationService {
                   image: null);
               user.image = await LocationNotificationListener()
                   .getImageOfAtsign(member.atSign);
-              user.marker = buildMarker(user, singleMarker: true);
+              user.marker = buildMarker(user);
               await updateDetails(user);
             }
           }
@@ -228,16 +228,12 @@ class LocationService {
               image: null);
           user.image = await LocationNotificationListener()
               .getImageOfAtsign(eventListenerKeyword.atsignCreator);
-          user.marker = buildMarker(user, singleMarker: true);
+          user.marker = buildMarker(user);
           await updateDetails(user);
         }
       }
-
-      // await Future.forEach(allUsersList, (user) async {
-      //   if (atsignsAtMonitor.contains(user.displayName))
-      //     await updateDetails(user);
-      // });
     }
+
     _atHybridUsersController.add(hybridUsersList);
   }
 
@@ -253,7 +249,8 @@ class LocationService {
                 image: null);
             user.image = await LocationNotificationListener()
                 .getImageOfAtsign(member.atSign);
-            user.marker = buildMarker(user, singleMarker: true);
+            user.marker = buildMarker(user);
+
             await updateDetails(user);
           } else {
             removeUser(member.atSign);
@@ -271,7 +268,8 @@ class LocationService {
                 image: null);
             user.image = await LocationNotificationListener()
                 .getImageOfAtsign(member.atSign);
-            user.marker = buildMarker(user, singleMarker: true);
+            user.marker = buildMarker(user);
+
             await updateDetails(user);
           } else {
             removeUser(member.atSign);
@@ -288,12 +286,13 @@ class LocationService {
             image: null);
         user.image = await LocationNotificationListener()
             .getImageOfAtsign(eventListenerKeyword.atsignCreator);
-        user.marker = buildMarker(user, singleMarker: true);
+        user.marker = buildMarker(user);
         await updateDetails(user);
       } else {
         removeUser(eventListenerKeyword.atsignCreator);
       }
     }
+
     _atHybridUsersController.add(hybridUsersList);
   }
 
