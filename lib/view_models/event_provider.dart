@@ -151,25 +151,35 @@ class EventProvider extends BaseModel {
       String currentAtsign =
           BackendService.getInstance().atClientInstance.currentAtSign;
 
+      eventData.isUpdate = true;
       if (eventData.atsignCreator.toLowerCase() ==
           currentAtsign.toLowerCase()) {
         eventData.isSharing =
             isSharing != null ? isSharing : eventData.isSharing;
-      }
-
-      eventData.group.members.forEach((member) {
-        if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
-        if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
-
-        if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
-          member.tags['isAccepted'] =
-              isAccepted != null ? isAccepted : member.tags['isAccepted'];
-          member.tags['isSharing'] =
-              isSharing != null ? isSharing : member.tags['isSharing'];
-          member.tags['isExited'] =
-              isExited != null ? isExited : member.tags['isExited'];
+        if (isSharing == false) {
+          eventData.lat = null;
+          eventData.long = null;
         }
-      });
+      } else {
+        eventData.group.members.forEach((member) {
+          if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
+          if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
+
+          if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
+            member.tags['isAccepted'] =
+                isAccepted != null ? isAccepted : member.tags['isAccepted'];
+            member.tags['isSharing'] =
+                isSharing != null ? isSharing : member.tags['isSharing'];
+            member.tags['isExited'] =
+                isExited != null ? isExited : member.tags['isExited'];
+
+            if (isSharing == false) {
+              member.tags['lat'] = null;
+              member.tags['long'] = null;
+            }
+          }
+        });
+      }
 
       AtKey key = formAtKey(keyType, atkeyMicrosecondId,
           eventData.atsignCreator, currentAtsign, event);
@@ -183,6 +193,14 @@ class EventProvider extends BaseModel {
 
       // if key type is createevent, we have to notify all members
       if (keyType == ATKEY_TYPE_ENUM.CREATEEVENT) {
+        // providerCallback<HybridProvider>(NavService.navKey.currentContext,
+        //     task: (t) => t.mapUpdatedData(BackendService.getInstance()
+        //         .convertEventToHybrid(NotificationType.Event,
+        //             eventNotificationModel: eventData)),
+        //     showLoader: false,
+        //     taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
+        //     onSuccess: (t) {});
+
         List<String> allAtsignList = [];
         eventData.group.members.forEach((element) {
           allAtsignList.add(element.atSign);
@@ -224,8 +242,7 @@ class EventProvider extends BaseModel {
         allEventsNotfication.forEach((event) {
           if (event.notificationType == NotificationType.Event &&
               event.key == eventData.key) {
-            atKey = event.atKey;
-            atKey.metadata.ttr = -1;
+            atKey = BackendService.getInstance().getAtKey(event.key);
           }
         });
         return atKey;
@@ -457,8 +474,6 @@ class EventProvider extends BaseModel {
 
     List<String> allRegexKeys = [];
     String key;
-
-    await Future.delayed(Duration(seconds: 10));
 
     allRegexKeys = await atClientInstance.getKeys(
       regex: 'createevent-',

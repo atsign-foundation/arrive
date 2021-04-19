@@ -60,11 +60,11 @@ class EventNotificationModel {
         newContact.tags['lat'] =
             contact['tags']['lat'] != null && contact['tags']['lat'] != 'null'
                 ? contact['tags']['lat']
-                : 0;
+                : null;
         newContact.tags['long'] =
             contact['tags']['long'] != null && contact['tags']['long'] != 'null'
                 ? contact['tags']['long']
-                : 0;
+                : null;
         group.members.add(newContact);
       });
     }

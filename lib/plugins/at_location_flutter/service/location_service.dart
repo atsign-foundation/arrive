@@ -187,42 +187,50 @@ class LocationService {
         await Future.forEach(eventListenerKeyword.group.members,
             (member) async {
           if (atsignsAtMonitor.contains(member.atSign)) {
-            HybridModel user = HybridModel(
-                displayName: member.atSign,
-                latLng: LatLng(member['lat'], member['long']),
-                eta: '?',
-                image: null);
-            user.image =
-                LocationNotificationListener().getImageOfAtsign(member.atSign);
-            user.marker = buildMarker(user, singleMarker: true);
-            await updateDetails(user);
+            if (member.tags['lat'] != null && member.tags['long'] != null) {
+              HybridModel user = HybridModel(
+                  displayName: member.atSign,
+                  latLng: LatLng(member.tags['lat'], member.tags['long']),
+                  eta: '?',
+                  image: null);
+              user.image = await LocationNotificationListener()
+                  .getImageOfAtsign(member.atSign);
+              user.marker = buildMarker(user, singleMarker: true);
+              await updateDetails(user);
+            }
           }
         });
       } else {
         await Future.forEach(eventListenerKeyword.group.members,
             (member) async {
           if (atsignsAtMonitor.contains(member.atSign)) {
-            HybridModel user = HybridModel(
-                displayName: member.atSign,
-                latLng: LatLng(member['lat'], member['long']),
-                eta: '?',
-                image: null);
-            user.image =
-                LocationNotificationListener().getImageOfAtsign(member.atSign);
-            user.marker = buildMarker(user, singleMarker: true);
-            await updateDetails(user);
+            if (member.tags['lat'] != null && member.tags['long'] != null) {
+              HybridModel user = HybridModel(
+                  displayName: member.atSign,
+                  latLng: LatLng(member['lat'], member['long']),
+                  eta: '?',
+                  image: null);
+              user.image = await LocationNotificationListener()
+                  .getImageOfAtsign(member.atSign);
+              user.marker = buildMarker(user, singleMarker: true);
+              await updateDetails(user);
+            }
           }
         });
         // For Creator
-        HybridModel user = HybridModel(
-            displayName: eventListenerKeyword.atsignCreator,
-            latLng: LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
-            eta: '?',
-            image: null);
-        user.image = LocationNotificationListener()
-            .getImageOfAtsign(eventListenerKeyword.atsignCreator);
-        user.marker = buildMarker(user, singleMarker: true);
-        await updateDetails(user);
+        if (eventListenerKeyword.lat != null &&
+            eventListenerKeyword.long != null) {
+          HybridModel user = HybridModel(
+              displayName: eventListenerKeyword.atsignCreator,
+              latLng:
+                  LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
+              eta: '?',
+              image: null);
+          user.image = await LocationNotificationListener()
+              .getImageOfAtsign(eventListenerKeyword.atsignCreator);
+          user.marker = buildMarker(user, singleMarker: true);
+          await updateDetails(user);
+        }
       }
 
       // await Future.forEach(allUsersList, (user) async {
@@ -237,42 +245,56 @@ class LocationService {
     if (eventListenerKeyword.atsignCreator == atClientInstance.currentAtSign) {
       await Future.forEach(eventListenerKeyword.group.members, (member) async {
         if (atsignsAtMonitor.contains(member.atSign)) {
-          HybridModel user = HybridModel(
-              displayName: member.atSign,
-              latLng: LatLng(member['lat'], member['long']),
-              eta: '?',
-              image: null);
-          user.image =
-              LocationNotificationListener().getImageOfAtsign(member.atSign);
-          user.marker = buildMarker(user, singleMarker: true);
-          await updateDetails(user);
+          if (member.tags['lat'] != null && member.tags['long'] != null) {
+            HybridModel user = HybridModel(
+                displayName: member.atSign,
+                latLng: LatLng(member.tags['lat'], member.tags['long']),
+                eta: '?',
+                image: null);
+            user.image = await LocationNotificationListener()
+                .getImageOfAtsign(member.atSign);
+            user.marker = buildMarker(user, singleMarker: true);
+            await updateDetails(user);
+          } else {
+            removeUser(member.atSign);
+          }
         }
       });
     } else {
       await Future.forEach(eventListenerKeyword.group.members, (member) async {
         if (atsignsAtMonitor.contains(member.atSign)) {
-          HybridModel user = HybridModel(
-              displayName: member.atSign,
-              latLng: LatLng(member['lat'], member['long']),
-              eta: '?',
-              image: null);
-          user.image =
-              LocationNotificationListener().getImageOfAtsign(member.atSign);
-          user.marker = buildMarker(user, singleMarker: true);
-          await updateDetails(user);
+          if (member.tags['lat'] != null && member.tags['long'] != null) {
+            HybridModel user = HybridModel(
+                displayName: member.atSign,
+                latLng: LatLng(member.tags['lat'], member.tags['long']),
+                eta: '?',
+                image: null);
+            user.image = await LocationNotificationListener()
+                .getImageOfAtsign(member.atSign);
+            user.marker = buildMarker(user, singleMarker: true);
+            await updateDetails(user);
+          } else {
+            removeUser(member.atSign);
+          }
         }
       });
       // For Creator
-      HybridModel user = HybridModel(
-          displayName: eventListenerKeyword.atsignCreator,
-          latLng: LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
-          eta: '?',
-          image: null);
-      user.image = LocationNotificationListener()
-          .getImageOfAtsign(eventListenerKeyword.atsignCreator);
-      user.marker = buildMarker(user, singleMarker: true);
-      await updateDetails(user);
+      if (eventListenerKeyword.lat != null &&
+          eventListenerKeyword.long != null) {
+        HybridModel user = HybridModel(
+            displayName: eventListenerKeyword.atsignCreator,
+            latLng: LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
+            eta: '?',
+            image: null);
+        user.image = await LocationNotificationListener()
+            .getImageOfAtsign(eventListenerKeyword.atsignCreator);
+        user.marker = buildMarker(user, singleMarker: true);
+        await updateDetails(user);
+      } else {
+        removeUser(eventListenerKeyword.atsignCreator);
+      }
     }
+    _atHybridUsersController.add(hybridUsersList);
   }
 
   // Called when any new/updated data is received in the main app
@@ -306,9 +328,15 @@ class LocationService {
 
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
-        hybridUsersList.removeWhere((element) =>
-            ((element.displayName == atsign) &&
-                (element.displayName != atClientInstance.currentAtSign)));
+        var index = hybridUsersList
+            .indexWhere((element) => element.displayName == atsign);
+        if (index == -1) {
+          return;
+        }
+        if (hybridUsersList[index].displayName !=
+            atClientInstance.currentAtSign) {
+          hybridUsersList.removeAt(index);
+        }
 
         _atHybridUsersController.add(hybridUsersList);
       }
@@ -326,11 +354,12 @@ class LocationService {
       }
     });
     if (contains) {
-      if (user.latLng !=
-          hybridUsersList[index].latLng) // TODO: This might not work
+      if (user.latLng != hybridUsersList[index].latLng) {
         await addDetails(user, index: index);
-    } else
+      }
+    } else {
       await addDetails(user);
+    }
   }
 
   // Returns new marker and eta

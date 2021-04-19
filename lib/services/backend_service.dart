@@ -21,6 +21,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_noti
 import 'package:at_contacts_flutter/services/contact_service.dart';
 
 import 'package:at_client/src/manager/sync_manager.dart';
+import 'package:provider/provider.dart';
 import 'location_notification_listener.dart';
 
 class BackendService {
@@ -179,7 +180,7 @@ class BackendService {
         // ignore: return_of_invalid_type_from_catch_error
         .catchError((e) => print("error in decrypting: $e"));
 
-    if (atKey.toString().toLowerCase().contains('event.locationnotify')) {
+    if (atKey.toString().toLowerCase().contains('updateeventlocation')) {
       // TODO:
       // Update the atGroup.member['latLng'] of the fromAtSign in the event that has this id
       // also add a new param atGroup.member['updatedAt'] with DateTime.now()
@@ -188,6 +189,7 @@ class BackendService {
       LocationNotificationModel locationData =
           LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
       updateLocationData(locationData, atKey, fromAtSign);
+      return;
     }
 
     /// Received when a request location's removed person is called
@@ -214,7 +216,7 @@ class BackendService {
 
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
         showMyDialog(fromAtSign, eventData: eventData);
-        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+        await providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
                 NotificationType.Event,
                 eventNotificationModel: eventData)),
@@ -331,7 +333,10 @@ class BackendService {
           locationData.key.split('-')[1].split('@')[0]; // TODO: Might be wrong
 
       EventNotificationModel presentEventData;
-      HomeEventService().allEvents.forEach((element) {
+      Provider.of<HybridProvider>(NavService.navKey.currentContext,
+              listen: false)
+          .allNotifications
+          .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(
@@ -339,6 +344,9 @@ class BackendService {
         }
       });
 
+      if (presentEventData == null) {
+        return;
+      }
       presentEventData.group.members.forEach((presentGroupMember) {
         if (presentGroupMember.atSign[0] != '@')
           presentGroupMember.atSign = '@' + presentGroupMember.atSign;
@@ -385,9 +393,13 @@ class BackendService {
     try {
       String eventId =
           acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
+      eventId = eventId.replaceAll('.rrive', '');
 
       EventNotificationModel presentEventData;
-      HomeEventService().allEvents.forEach((element) {
+      Provider.of<HybridProvider>(NavService.navKey.currentContext,
+              listen: false)
+          .allNotifications
+          .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(

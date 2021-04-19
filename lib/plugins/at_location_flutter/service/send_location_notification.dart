@@ -12,6 +12,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
+import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
@@ -25,16 +26,18 @@ class SendLocationNotification {
   List<LocationNotificationModel> atsignsToShareLocationWith;
   AtClientImpl atClient;
   StreamSubscription<Position> positionStream;
-  init(List<LocationNotificationModel> atsigns, AtClientImpl newAtClient) {
+  init(
+      List<LocationNotificationModel> atsigns, AtClientImpl newAtClient) async {
     if ((timer != null) && (timer.isActive)) timer.cancel();
 
     atsignsToShareLocationWith = [...atsigns];
+
     atClient = newAtClient;
     print(
         'atsignsToShareLocationWith length - ${atsignsToShareLocationWith.length}');
 
     if (positionStream != null) positionStream.cancel();
-    updateMyLocation();
+    await updateMyLocation();
   }
 
   addMember({
@@ -114,7 +117,9 @@ class SendLocationNotification {
       if (key.contains(element.key)) locationNotificationModel = element;
       return key.contains(element.key);
     });
-    if (locationNotificationModel != null) sendNull(locationNotificationModel);
+    if (locationNotificationModel != null) {
+      sendNull(locationNotificationModel);
+    }
 
     print(
         'after deleting atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
@@ -151,58 +156,34 @@ class SendLocationNotification {
         (notification.to.difference(DateTime.now()) > Duration(seconds: 0)))
       isSend = true;
     if (isSend) {
-      // TODO: If notification.key has 'event' then
-      //      Check if it also has 'location' then its a member
-      //      AtKey atKey = newAtKey(
-      //       5000, "event.locationnotify-$atkeyMicrosecondId", notification.receiver);
-      // else  it is the creator of the event
-      //      AtKey atKey = newAtKey(
-      //       5000, "$notification.key", notification.receiver);
-      //
-      // if(event){
-      //  if(creator){
-      //    then search for the data of that key,
-      //    create a new model out it, dont change the orignal data
-      //    the put your values => LatLng & update it
-      //    .put(notification.key, data)
-      //      send to all the group members
-      //      call actionOnEvent with updated event data and CREATEEVENT ATKEY_TYPE
-      //  } else {
-      //    only change in creating the key, rest all same
-      //
-      //    send only to the creator
-      //  }
-      // }
-      //
-
       AtKey atKey;
 
-      if (notification.key.contains('createevent')) {
-        atKey = newAtKey(5000, notification.key, notification.receiver);
-
+      if (notification.key.contains('event')) {
         // For creator
         if (!notification.key.contains('location')) {
           EventNotificationModel event;
-          Provider.of<EventProvider>(NavService.navKey.currentContext,
+          Provider.of<HybridProvider>(NavService.navKey.currentContext,
                   listen: false)
               .allNotifications
               .forEach((element) {
-            if (event.key == notification.key) {
+            if (element.key.contains(notification.key)) {
               event = EventNotificationModel.fromJson(jsonDecode(
                   EventNotificationModel.convertEventNotificationToJson(
                       element.eventNotificationModel)));
             }
           });
-
-          event.lat = myLocation.latitude;
-          event.long = myLocation.longitude;
-
-          await Provider.of<EventProvider>(NavService.navKey.currentContext,
-                  listen: false)
-              .actionOnEvent(event, ATKEY_TYPE_ENUM.CREATEEVENT);
+          if (event != null) {
+            event.lat = myLocation.latitude;
+            event.long = myLocation.longitude;
+            await Provider.of<EventProvider>(NavService.navKey.currentContext,
+                    listen: false)
+                .actionOnEvent(event, ATKEY_TYPE_ENUM.CREATEEVENT);
+          }
 
           return;
         }
+
+        atKey = newAtKey(5000, notification.key, notification.receiver);
       } else {
         String atkeyMicrosecondId =
             notification.key.split('-')[1].split('@')[0];
@@ -260,5 +241,3 @@ class SendLocationNotification {
     return atKey;
   }
 }
-
-enum ATSIGNS { COLIN, ASHISH, BOB }
