@@ -206,65 +206,15 @@ class LocationService {
   }
 
   // Called for the first time package is entered from main app
-  updateHybridList() async {
+  void updateHybridList() async {
     if (userListenerKeyword != null) {
       await Future.forEach(allUsersList, (user) async {
-        if (user.displayName == userListenerKeyword.atsignCreator)
-          await updateDetails(user);
-      });
-    } else if (eventListenerKeyword != null) {
-      // TODO: For event read the data from the event data
-
-      if (eventListenerKeyword.atsignCreator ==
-          atClientInstance.currentAtSign) {
-        await Future.forEach(eventListenerKeyword.group.members,
-            (member) async {
-          if (atsignsAtMonitor.contains(member.atSign)) {
-            if (member.tags['lat'] != null && member.tags['long'] != null) {
-              HybridModel user = HybridModel(
-                  displayName: member.atSign,
-                  latLng: LatLng(member.tags['lat'], member.tags['long']),
-                  eta: '?',
-                  image: null);
-              user.image = await LocationNotificationListener()
-                  .getImageOfAtsign(member.atSign);
-              user.marker = buildMarker(user);
-              await updateDetails(user);
-            }
-          }
-        });
-      } else {
-        await Future.forEach(eventListenerKeyword.group.members,
-            (member) async {
-          if (atsignsAtMonitor.contains(member.atSign)) {
-            if (member.tags['lat'] != null && member.tags['long'] != null) {
-              HybridModel user = HybridModel(
-                  displayName: member.atSign,
-                  latLng: LatLng(member['lat'], member['long']),
-                  eta: '?',
-                  image: null);
-              user.image = await LocationNotificationListener()
-                  .getImageOfAtsign(member.atSign);
-              user.marker = buildMarker(user);
-              await updateDetails(user);
-            }
-          }
-        });
-        // For Creator
-        if (eventListenerKeyword.lat != null &&
-            eventListenerKeyword.long != null) {
-          HybridModel user = HybridModel(
-              displayName: eventListenerKeyword.atsignCreator,
-              latLng:
-                  LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
-              eta: '?',
-              image: null);
-          user.image = await LocationNotificationListener()
-              .getImageOfAtsign(eventListenerKeyword.atsignCreator);
-          user.marker = buildMarker(user);
+        if (user.displayName == userListenerKeyword.atsignCreator) {
           await updateDetails(user);
         }
-      }
+      });
+    } else if (eventListenerKeyword != null) {
+      updateLocationForEvent();
     }
 
     _atHybridUsersController.add(hybridUsersList);
