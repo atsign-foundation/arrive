@@ -52,15 +52,6 @@ class SendLocationNotification {
       return;
     }
 
-    // checking if location key is already present in receiving atsigns length
-    // if (notificationList != null &&
-    //     notificationList.isNotEmpty &&
-    //     atsignsToShareLocationWith.indexWhere(
-    //             (element) => element.key == notificationList[0].key) >
-    //         -1) {
-    //   return;
-    // }
-
     LatLng myLocation = await getMyLocation();
 
     if (myLocation != null) {
@@ -80,28 +71,15 @@ class SendLocationNotification {
       }
 
       if (isMasterSwitchOn) {
-        // if (notificationList == null) {
+        atsignsToShareLocationWith.add(notification);
         await prepareLocationDataAndSend(notification, myLocation);
-        // } else {
-        //   await Future.forEach(notificationList, (element) async {
-        //     await prepareLocationDataAndSend(element, myLocation);
-        //   });
-        // }
       }
     } else {
+      atsignsToShareLocationWith.add(notification);
       CustomToast().show(
           'Location permission not granted', NavService.navKey.currentContext);
     }
 
-    // add
-    // if (notificationList == null) {
-    atsignsToShareLocationWith.add(notification);
-    // } else {
-    //   atsignsToShareLocationWith = [
-    //     ...atsignsToShareLocationWith,
-    //     ...notificationList
-    //   ];
-    // }
     print(
         'after adding atsignsToShareLocationWith length ${atsignsToShareLocationWith.length}');
   }

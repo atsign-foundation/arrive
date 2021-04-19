@@ -126,18 +126,12 @@ class HomeEventService {
               Provider.of<HybridProvider>(NavService.navKey.currentContext,
                       listen: false)
                   .removeLocationSharing(locationNotificationModel.key);
-
-              isNullSent = await SendLocationNotification()
-                  .sendNull(locationNotificationModel);
             }
           }
           if ((isExited != null) && (isExited && result)) {
             Provider.of<HybridProvider>(NavService.navKey.currentContext,
                     listen: false)
                 .removeLocationSharing(locationNotificationModel.key);
-
-            isNullSent = await SendLocationNotification()
-                .sendNull(locationNotificationModel);
           }
 
           return result;

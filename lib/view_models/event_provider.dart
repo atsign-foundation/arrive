@@ -173,7 +173,7 @@ class EventProvider extends BaseModel {
             member.tags['isExited'] =
                 isExited != null ? isExited : member.tags['isExited'];
 
-            if (isSharing == false) {
+            if (isSharing == false || isExited == true) {
               member.tags['lat'] = null;
               member.tags['long'] = null;
             }

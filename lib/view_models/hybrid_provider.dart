@@ -208,10 +208,11 @@ class HybridProvider extends RequestLocationProvider {
               .atClient
               .currentAtSign
               .toLowerCase())) {
-        if (notification.eventNotificationModel.isSharing)
+        if (notification.eventNotificationModel.isSharing) {
           addMemberToSendingLocationList(notification);
-        else
+        } else {
           removeLocationSharing(notification.key);
+        }
       } else {
         AtContact currentGroupMember;
         notification.eventNotificationModel.group.members

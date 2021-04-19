@@ -292,21 +292,6 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                             LocationService()
                                                 .eventListenerKeyword
                                                 .isSharing = value;
-                                          } else {
-                                            LocationService()
-                                                .eventListenerKeyword
-                                                .group
-                                                .members
-                                                .forEach((groupMember) {
-                                              if (groupMember.atSign ==
-                                                  BackendService.getInstance()
-                                                      .atClientServiceInstance
-                                                      .atClient
-                                                      .currentAtSign) {
-                                                groupMember.tags['isSharing'] =
-                                                    value;
-                                              }
-                                            });
                                           }
 
                                           var result = await LocationService()
@@ -321,9 +306,9 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                       .eventListenerKeyword);
                                           if (result == true) {
                                             if (widget.isAdmin) {
-                                              LocationService().onEventUpdate(
-                                                  LocationService()
-                                                      .eventListenerKeyword);
+                                              // LocationService().onEventUpdate(
+                                              //     LocationService()
+                                              //         .eventListenerKeyword);
                                             } else {
                                               CustomToast().show(
                                                   'Request to update data is submitted',
