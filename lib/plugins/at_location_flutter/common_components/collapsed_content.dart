@@ -106,14 +106,18 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              snapshot.data.title ?? 'Event Location',
-                              style: TextStyle(
-                                  color: Theme.of(context)
-                                      .primaryTextTheme
-                                      .headline1
-                                      .color,
-                                  fontSize: 18.toFont),
+                            Flexible(
+                              child: Text(
+                                snapshot.data.title,
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .primaryTextTheme
+                                        .headline1
+                                        .color,
+                                    fontSize: 18.toFont),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             widget.isAdmin
                                 ? InkWell(
@@ -155,6 +159,8 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         Text(
                           '${snapshot.data.atsignCreator}',
                           style: CustomTextStyles().black14,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
                           height: 3,
@@ -162,6 +168,8 @@ class _CollapsedContentState extends State<CollapsedContent> {
                         Text(
                           dateToString(snapshot.data.event.date) ?? '',
                           style: CustomTextStyles().darkGrey14,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         SizedBox(
                           height: 3,
@@ -170,6 +178,8 @@ class _CollapsedContentState extends State<CollapsedContent> {
                           '${timeOfDayToString(snapshot.data.event.startTime)} - ${timeOfDayToString(snapshot.data.event.endTime)}' ??
                               'Event timings',
                           style: CustomTextStyles().darkGrey14,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         Divider(),
                         DisplayTile(
@@ -266,8 +276,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                               ),
                               Flexible(
                                 child: Text(
-                                  '${widget.eventListenerKeyword.venue.label}' ??
-                                      'Event location',
+                                  '${widget.eventListenerKeyword.venue.label}',
                                   style: CustomTextStyles().darkGrey14,
                                 ),
                               ),
