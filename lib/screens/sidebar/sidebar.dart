@@ -168,6 +168,19 @@ class _SideBarState extends State<SideBar> {
               height: 25.toHeight,
             ),
             iconText(
+              'Blocked Contacts',
+              Icons.contacts_rounded,
+              () async {
+                return SetupRoutes.push(
+                  context,
+                  Routes.BLOCKED_CONTACT_SCREEN,
+                );
+              },
+            ),
+            SizedBox(
+              height: 25.toHeight,
+            ),
+            iconText(
               'Groups',
               Icons.group,
               () async {

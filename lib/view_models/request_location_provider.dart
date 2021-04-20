@@ -11,6 +11,7 @@ import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'base_model.dart';
+import 'package:at_contacts_flutter/services/contact_service.dart';
 
 class RequestLocationProvider extends ShareLocationProvider {
   RequestLocationProvider();
@@ -64,6 +65,8 @@ class RequestLocationProvider extends ShareLocationProvider {
       notification.atKey = atKey;
     });
 
+    filterBlockedContactsforRequested();
+
     for (int i = 0; i < allRequestNotifications.length; i++) {
       AtValue value = await getAtValue(allRequestNotifications[i].atKey);
       if (value != null) {
@@ -76,6 +79,49 @@ class RequestLocationProvider extends ShareLocationProvider {
 
     setStatus(GET_ALL_REQUEST_EVENTS, Status.Done);
     checkForAcknowledgeRequest();
+    checkForDeleteRequestAck();
+  }
+
+  void checkForDeleteRequestAck() async {
+    // Letting other events complete
+    await Future.delayed(Duration(seconds: 5));
+
+    List<String> dltRequestLocationResponse = await atClientInstance.getKeys(
+      regex: 'deleterequestacklocation',
+    );
+
+    for (var i = 0; i < dltRequestLocationResponse.length; i++) {
+      /// Operate on receied notifications
+      if (dltRequestLocationResponse[i].contains('cached')) {
+        String atkeyMicrosecondId = dltRequestLocationResponse[i]
+            .split('deleterequestacklocation-')[1]
+            .split('@')[0];
+        atkeyMicrosecondId = atkeyMicrosecondId.replaceAll('.rrive', '');
+
+        int _index = allRequestNotifications.indexWhere((element) {
+          return element.locationNotificationModel.key
+              .contains(atkeyMicrosecondId);
+        });
+
+        if (_index == -1) continue;
+
+        await RequestLocationService().deleteKey(
+            allRequestNotifications[_index].locationNotificationModel);
+      }
+    }
+  }
+
+  filterBlockedContactsforRequested() {
+    List<HybridNotificationModel> tempList = [];
+    for (int i = 0; i < allRequestNotifications.length; i++) {
+      if (ContactService().blockContactList.indexWhere((contact) =>
+              ((contact.atSign == allRequestNotifications[i].atKey.sharedBy) ||
+                  (contact.atSign ==
+                      '@' + allRequestNotifications[i].atKey.sharedBy))) >=
+          0) tempList.add(allRequestNotifications[i]);
+    }
+    allRequestNotifications
+        .removeWhere((element) => tempList.contains(element));
   }
 
   convertJsonToLocationModelRequest() {

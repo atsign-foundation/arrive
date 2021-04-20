@@ -89,6 +89,14 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
     var result =
         await RequestLocationService().sendRequestLocationEvent(widget.atsign);
 
+    if (result == null) {
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.of(context).pop();
+      return;
+    }
+
     if (result[0] == true) {
       CustomToast().show('Location Request sent', context);
       setState(() {
@@ -117,6 +125,13 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
 
     var result = await LocationSharingService()
         .sendShareLocationEvent(widget.atsign, false, minutes: minutes);
+
+    if (result == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
 
     if (result[0] == true) {
       CustomToast().show('Share Location Request sent', context);

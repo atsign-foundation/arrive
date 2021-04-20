@@ -8,6 +8,16 @@ import 'circle_marker_painter.dart';
 import 'marker_custom_painter.dart';
 
 Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
+  String contactInitial;
+
+  if (user.displayName != null) {
+    if (user.displayName[0] == '@') {
+      contactInitial = user.displayName.substring(1, user.displayName.length);
+    } else {
+      contactInitial = user.displayName;
+    }
+  }
+
   return Marker(
       anchorPos: AnchorPos.align(AnchorAlign.center),
       height: 75,
@@ -58,7 +68,8 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
                         ? CustomCircleAvatar(
                             byteImage: user.image, nonAsset: true, size: 30)
                         : ContactInitial(
-                            initials: user.displayName.substring(1, 3),
+                            initials: contactInitial.substring(
+                                0, contactInitial.length > 1 ? 2 : 1),
                             size: 30,
                             backgroundColor: AllColors().ORANGE,
                           ),

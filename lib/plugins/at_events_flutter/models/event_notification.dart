@@ -1,9 +1,14 @@
 import 'dart:convert';
 import 'package:at_contact/at_contact.dart';
+import 'package:latlong/latlong.dart';
 
 class EventNotificationModel {
   EventNotificationModel();
   String atsignCreator;
+  LatLng locationOfCreator;
+  double lat;
+  double long;
+
   bool isCancelled;
   String title;
   Venue venue;
@@ -19,6 +24,12 @@ class EventNotificationModel {
     isCancelled = data['isCancelled'] == 'true' ? true : false;
     isSharing = data['isSharing'] == 'true' ? true : false;
     isUpdate = data['isUpdate'] == 'true' ? true : false;
+    lat = data['lat'] != 'null' && data['lat'] != null
+        ? double.parse(data['lat'])
+        : null;
+    long = data['long'] != 'null' && data['long'] != null
+        ? double.parse(data['long'])
+        : null;
     if (data['venue'] != null) {
       venue = Venue.fromJson(jsonDecode(data['venue']));
     }
@@ -48,12 +59,12 @@ class EventNotificationModel {
             : -1;
         newContact.tags['lat'] =
             contact['tags']['lat'] != null && contact['tags']['lat'] != 'null'
-                ? contact['tags']['lat']
-                : 0;
+                ? double.parse(contact['tags']['lat'].toString())
+                : null;
         newContact.tags['long'] =
             contact['tags']['long'] != null && contact['tags']['long'] != 'null'
-                ? contact['tags']['long']
-                : 0;
+                ? double.parse(contact['tags']['long'].toString())
+                : null;
         group.members.add(newContact);
       });
     }
@@ -71,6 +82,9 @@ class EventNotificationModel {
       'atsignCreator': eventNotification.atsignCreator.toString(),
       'key': '${eventNotification.key}',
       'group': json.encode(eventNotification.group),
+      'lat': eventNotification.lat.toString(),
+      'long': eventNotification.long.toString(),
+      // TODO: Update ['group']['updatedAt'] with DateTime.now()
       'venue': json.encode({
         'latitude': eventNotification.venue.latitude.toString(),
         'longitude': eventNotification.venue.longitude.toString(),

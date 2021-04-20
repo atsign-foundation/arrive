@@ -187,6 +187,14 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
         selectedContact.atSign, false,
         minutes: minutes);
 
+    if (result == null) {
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.of(context).pop();
+      return;
+    }
+
     if (result[0] == true) {
       CustomToast().show('Share Location Request sent', context);
       setState(() {

@@ -53,7 +53,7 @@ class _ShareLocationNotifierDialogState
   HybridProvider hybridProvider = HybridProvider();
   int minutes;
   EventNotificationModel concurrentEvent;
-  bool isOverlap = false;
+  bool isOverlap = false, loading = false, result;
   AtContact contact;
   Uint8List image;
   String locationUserImageToShow;
@@ -226,6 +226,8 @@ class _ShareLocationNotifierDialogState
                   SizedBox(height: 10.toHeight),
                   CustomButton(
                     onTap: () => () async {
+                      startLoading();
+
                       (widget.eventData != null)
                           // ignore: unnecessary_statements
                           ? {
@@ -238,9 +240,16 @@ class _ShareLocationNotifierDialogState
                                       options: MixedConstants.startTimeOptions,
                                       onSelectionChanged: (dynamic startTime) {
                                         widget.eventData.group.members
-                                                .elementAt(0)
-                                                .tags['shareFrom'] =
-                                            startTime.toString();
+                                            .forEach((groupMember) {
+                                          if (groupMember.atSign ==
+                                              BackendService.getInstance()
+                                                  .atClientServiceInstance
+                                                  .atClient
+                                                  .currentAtSign) {
+                                            groupMember.tags['shareFrom'] =
+                                                startTime.toString();
+                                          }
+                                        });
 
                                         bottomSheet(
                                             context,
@@ -254,9 +263,18 @@ class _ShareLocationNotifierDialogState
                                               onSelectionChanged:
                                                   (dynamic endTime) {
                                                 widget.eventData.group.members
-                                                        .elementAt(0)
-                                                        .tags['shareTo'] =
-                                                    endTime.toString();
+                                                    .forEach((groupMember) {
+                                                  if (groupMember.atSign ==
+                                                      BackendService
+                                                              .getInstance()
+                                                          .atClientServiceInstance
+                                                          .atClient
+                                                          .currentAtSign) {
+                                                    groupMember
+                                                            .tags['shareTo'] =
+                                                        endTime.toString();
+                                                  }
+                                                });
                                                 Navigator.of(context).pop();
 
                                                 updateEvent(widget.eventData);
@@ -269,13 +287,22 @@ class _ShareLocationNotifierDialogState
                           // ignore: unnecessary_statements
                           : ((!widget.locationData.isRequest)
                               ? {
-                                  await LocationSharingService()
+                                  result = await LocationSharingService()
                                       .shareLocationAcknowledgment(
                                           true, widget.locationData, true),
-                                  CustomToast().show(
-                                      'Request to update data is submitted',
-                                      context),
-                                  Navigator.of(context).pop(),
+                                  if (result == true)
+                                    {
+                                      CustomToast().show(
+                                          'Request to update data is submitted',
+                                          context),
+                                      Navigator.of(context).pop(),
+                                    },
+                                  if (result == false)
+                                    {
+                                      stopLoading(),
+                                      CustomToast().show(
+                                          'Something went wrong', context),
+                                    }
                                 }
                               : {
                                   Navigator.of(context).pop(),
@@ -291,60 +318,93 @@ class _ShareLocationNotifierDialogState
                     height: 48.toHeight,
                   ),
                   SizedBox(height: 10.toHeight),
-                  InkWell(
-                    onTap: () async {
-                      (widget.eventData != null)
-                          // ignore: unnecessary_statements
-                          ? {
-                              widget.eventData.group.members.forEach((element) {
-                                if (element.atSign ==
-                                    BackendService.getInstance()
-                                        .atClientServiceInstance
-                                        .atClient
-                                        .currentAtSign) {
-                                  element.tags['isAccepted'] = false;
-                                  element.tags['isExited'] = true;
-                                }
-                              }),
-                              providerCallback<EventProvider>(context,
-                                  task: (t) => t.actionOnEvent(widget.eventData,
-                                      ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
-                                      isAccepted: false, isExited: true),
-                                  text: 'Sending request to reject event',
-                                  taskName: (t) => t.UPDATE_EVENTS,
-                                  onSuccess: (t) {
-                                    Navigator.of(context).pop();
-                                    CustomToast().show(
-                                        'Request to reject event is submitted',
-                                        context);
-                                  }),
-                            }
-                          // ignore: unnecessary_statements
-                          : ((!widget.locationData.isRequest)
-                              ? {
-                                  await LocationSharingService()
-                                      .shareLocationAcknowledgment(
-                                          true, widget.locationData, false),
-                                  CustomToast().show(
-                                      'Request to update data is submitted',
-                                      context),
-                                  Navigator.of(context).pop(),
-                                }
-                              : {
-                                  await RequestLocationService()
-                                      .requestLocationAcknowledgment(
-                                          widget.locationData, false),
-                                  CustomToast().show(
-                                      'Request to update data is submitted',
-                                      context),
-                                  Navigator.of(context).pop(),
-                                });
-                    },
-                    child: Text(
-                      'No',
-                      style: CustomTextStyles().black14,
-                    ),
-                  ),
+                  loading
+                      ? SizedBox()
+                      : InkWell(
+                          onTap: () async {
+                            startLoading();
+                            (widget.eventData != null)
+                                // ignore: unnecessary_statements
+                                ? {
+                                    widget.eventData.group.members
+                                        .forEach((element) {
+                                      if (element.atSign ==
+                                          BackendService.getInstance()
+                                              .atClientServiceInstance
+                                              .atClient
+                                              .currentAtSign) {
+                                        element.tags['isAccepted'] = false;
+                                        element.tags['isExited'] = true;
+                                      }
+                                    }),
+                                    providerCallback<EventProvider>(context,
+                                        task: (t) => t.actionOnEvent(
+                                            widget.eventData,
+                                            ATKEY_TYPE_ENUM.ACKNOWLEDGEEVENT,
+                                            isAccepted: false,
+                                            isExited: true),
+                                        text: 'Sending request to reject event',
+                                        taskName: (t) => t.UPDATE_EVENTS,
+                                        showDialog: false,
+                                        onError: (t) {
+                                          Navigator.of(context).pop();
+                                          CustomToast().show(
+                                              'Something went wrong!',
+                                              NavService.navKey.currentContext);
+                                        },
+                                        onSuccess: (t) {
+                                          Navigator.of(context).pop();
+                                          CustomToast().show(
+                                              'Request to reject event is submitted',
+                                              context);
+                                        }),
+                                  }
+                                // ignore: unnecessary_statements
+                                : ((!widget.locationData.isRequest)
+                                    ? {
+                                        result = await LocationSharingService()
+                                            .shareLocationAcknowledgment(true,
+                                                widget.locationData, false),
+                                        if (result == true)
+                                          {
+                                            CustomToast().show(
+                                                'Request to update data is submitted',
+                                                context),
+                                            Navigator.of(context).pop(),
+                                          },
+                                        if (result == false)
+                                          {
+                                            stopLoading(),
+                                            CustomToast().show(
+                                                'Something went wrong',
+                                                context),
+                                          }
+                                      }
+                                    : {
+                                        result = await RequestLocationService()
+                                            .requestLocationAcknowledgment(
+                                                widget.locationData, false),
+                                        if (result == true)
+                                          {
+                                            CustomToast().show(
+                                                'Request to update data is submitted',
+                                                context),
+                                            Navigator.of(context).pop(),
+                                          },
+                                        if (result == false)
+                                          {
+                                            stopLoading(),
+                                            CustomToast().show(
+                                                'Something went wrong',
+                                                context),
+                                          }
+                                      });
+                          },
+                          child: Text(
+                            'No',
+                            style: CustomTextStyles().black14,
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -354,15 +414,29 @@ class _ShareLocationNotifierDialogState
     );
   }
 
+  startLoading() {
+    if (mounted)
+      setState(() {
+        loading = true;
+      });
+  }
+
+  stopLoading() {
+    if (mounted)
+      setState(() {
+        loading = false;
+      });
+  }
+
   timeSelect(BuildContext context) {
-    int result;
+    int time;
     bottomSheet(
         context,
         TextTileRepeater(
           title: 'How long do you want to share your location for ?',
           options: ['30 mins', '2 hours', '24 hours', 'Until turned off'],
           onChanged: (value) {
-            result = (value == '30 mins'
+            time = (value == '30 mins'
                 ? 30
                 : (value == '2 hours'
                     ? (2 * 60)
@@ -370,11 +444,13 @@ class _ShareLocationNotifierDialogState
           },
         ),
         350, onSheetCLosed: () async {
-      await RequestLocationService().requestLocationAcknowledgment(
+      result = await RequestLocationService().requestLocationAcknowledgment(
           widget.locationData, true,
-          minutes: result);
-      CustomToast().show('Request to update data is submitted', context);
-      return result;
+          minutes: time);
+      if (result == true)
+        CustomToast().show('Request to update data is submitted', context);
+      if (result == false)
+        CustomToast().show('Something went wrong !', context);
     });
   }
 }
@@ -385,6 +461,11 @@ updateEvent(EventNotificationModel eventData) {
           isAccepted: true, isSharing: true, isExited: false),
       taskName: (t) => t.UPDATE_EVENTS,
       text: 'Sending request to accept event',
+      showDialog: false,
+      onError: (t) {
+        CustomToast()
+            .show('Something went wrong!', NavService.navKey.currentContext);
+      },
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();
         Navigator.of(NavService.navKey.currentContext).pop();

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
@@ -5,6 +6,8 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
+import 'location_notification_listener.dart';
 
 import 'nav_service.dart';
 
@@ -17,8 +20,63 @@ class RequestLocationService {
     return _singleton;
   }
 
+  checkForLocationKey(String atsign) {
+    if ((LocationNotificationListener()
+            .allUsersList
+            .indexWhere((e) => ((e.displayName == atsign)))) >
+        -1) {
+      return true;
+    }
+
+    return false;
+  }
+
+  checkForAlreadyExisting(String atsign) {
+    int index = Provider.of<HybridProvider>(NavService.navKey.currentContext,
+            listen: false)
+        .allRequestNotifications
+        .indexWhere(
+            (e) => ((e.locationNotificationModel.atsignCreator == atsign)));
+    if (index > -1) {
+      return [
+        true,
+        Provider.of<HybridProvider>(NavService.navKey.currentContext,
+                listen: false)
+            .allRequestNotifications[index]
+            .locationNotificationModel
+      ];
+    } else
+      return [false];
+  }
+
   sendRequestLocationEvent(String atsign) async {
     try {
+      /// TODO: confirm this logic
+      // var alreadySharing = checkForLocationKey(atsign);
+      // if (alreadySharing) {
+      //   await locationPromptDialog(
+      //     text: '$atsign is already sharing their location.',
+      //     isShareLocationData: false,
+      //     isRequestLocationData: false,
+      //     onlyText: true,
+      //   );
+
+      //   return null;
+      // }
+
+      var alreadyExists = checkForAlreadyExisting(atsign);
+      var result;
+      if (alreadyExists[0]) {
+        await locationPromptDialog(
+          text: 'You have already requested $atsign',
+          isShareLocationData: false,
+          isRequestLocationData: false,
+          onlyText: true,
+        );
+
+        return null;
+      }
+
       AtKey atKey = newAtKey(60000,
           "requestlocation-${DateTime.now().microsecondsSinceEpoch}", atsign);
 
@@ -32,7 +90,7 @@ class RequestLocationService {
                 .atClient
                 .currentAtSign;
 
-      var result = await BackendService.getInstance()
+      result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
           .put(
@@ -88,19 +146,17 @@ class RequestLocationService {
                   ackLocationNotificationModel));
       print('requestLocationAcknowledgment $result');
       if (result) {
-        if (result) {
-          providerCallback<HybridProvider>(NavService.navKey.currentContext,
-              task: (provider) => provider.updatePendingStatus(
-                  BackendService.getInstance().convertEventToHybrid(
-                      NotificationType.Location,
-                      locationNotificationModel: ackLocationNotificationModel)),
-              taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
-              showLoader: false,
-              onSuccess: (provider) {});
-        }
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (provider) => provider.updatePendingStatus(
+                BackendService.getInstance().convertEventToHybrid(
+                    NotificationType.Location,
+                    locationNotificationModel: ackLocationNotificationModel)),
+            taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
+            showLoader: false,
+            onSuccess: (provider) {});
 
         //  We have added this here, so that we need not wait for the updated data from the creator
-        if (isSharing)
+        if ((isSharing != null) && (isSharing))
           Provider.of<HybridProvider>(NavService.navKey.currentContext,
                   listen: false)
               .addMemberToSendingLocationList(BackendService.getInstance()
@@ -113,6 +169,7 @@ class RequestLocationService {
       }
       return result;
     } catch (e) {
+      print('error in requestLocationAcknowledgment $e');
       return false;
     }
   }

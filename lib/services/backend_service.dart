@@ -18,7 +18,10 @@ import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:at_contacts_flutter/services/contact_service.dart';
 
+import 'package:at_client/src/manager/sync_manager.dart';
+import 'package:provider/provider.dart';
 import 'location_notification_listener.dart';
 
 class BackendService {
@@ -123,7 +126,7 @@ class BackendService {
 
   fnCallBack(var response) async {
     print('fnCallBack called');
-
+    await syncWithSecondary();
     response = response.replaceFirst('notification:', '');
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
@@ -134,6 +137,16 @@ class BackendService {
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
     var operation = responseJson['operation'];
+
+    /// Check for blocked contact
+    if (ContactService()
+            .blockContactList
+            .indexWhere((contact) => contact.atSign == fromAtSign) >=
+        0) {
+      print('Notification received from blocked contact $fromAtSign');
+      return;
+    }
+
     if (operation == 'delete') {
       if (atKey.toString().toLowerCase().contains('locationnotify')) {
         print('$notificationKey deleted');
@@ -167,6 +180,18 @@ class BackendService {
         // ignore: return_of_invalid_type_from_catch_error
         .catchError((e) => print("error in decrypting: $e"));
 
+    if (atKey.toString().toLowerCase().contains('updateeventlocation')) {
+      // TODO:
+      // Update the atGroup.member['latLng'] of the fromAtSign in the event that has this id
+      // also add a new param atGroup.member['updatedAt'] with DateTime.now()
+      // Send to all the users
+
+      LocationNotificationModel locationData =
+          LocationNotificationModel.fromJson(jsonDecode(decryptedMessage));
+      updateLocationData(locationData, atKey, fromAtSign);
+      return;
+    }
+
     /// Received when a request location's removed person is called
     /// Based on this current user will delete the original key
     if (atKey.toString().toLowerCase().contains('deleterequestacklocation')) {
@@ -186,9 +211,12 @@ class BackendService {
     if (atKey.toString().contains('createevent')) {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
+
+      // TODO: update all the users location in our LocationNotificationListener
+
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
         showMyDialog(fromAtSign, eventData: eventData);
-        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+        await providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
                 NotificationType.Event,
                 eventNotificationModel: eventData)),
@@ -272,6 +300,15 @@ class BackendService {
     }
   }
 
+  syncWithSecondary() async {
+    SyncManager syncManager = atClientInstance.getSyncManager();
+    var isSynced = await syncManager.isInSync();
+    if (isSynced is bool && isSynced) {
+    } else {
+      await syncManager.sync();
+    }
+  }
+
   Future<void> showMyDialog(String fromAtSign,
       {EventNotificationModel eventData,
       LocationNotificationModel locationData}) async {
@@ -288,17 +325,81 @@ class BackendService {
     );
   }
 
+  // TODO: Will be called when a group member wants to update his data
+  void updateLocationData(LocationNotificationModel locationData, String atKey,
+      String fromAtSign) async {
+    try {
+      String eventId =
+          locationData.key.split('-')[1].split('@')[0]; // TODO: Might be wrong
+
+      EventNotificationModel presentEventData;
+      Provider.of<HybridProvider>(NavService.navKey.currentContext,
+              listen: false)
+          .allNotifications
+          .forEach((element) {
+        if (element.key.contains('createevent-$eventId')) {
+          presentEventData = EventNotificationModel.fromJson(jsonDecode(
+              EventNotificationModel.convertEventNotificationToJson(
+                  element.eventNotificationModel)));
+        }
+      });
+
+      if (presentEventData == null) {
+        return;
+      }
+      presentEventData.group.members.forEach((presentGroupMember) {
+        if (presentGroupMember.atSign[0] != '@')
+          presentGroupMember.atSign = '@' + presentGroupMember.atSign;
+
+        if (fromAtSign[0] != '@') fromAtSign = '@' + fromAtSign;
+
+        if (presentGroupMember.atSign.toLowerCase() ==
+            fromAtSign.toLowerCase()) {
+          presentGroupMember.tags['lat'] = locationData.lat;
+          presentGroupMember.tags['long'] = locationData.long;
+        }
+      });
+
+      presentEventData.isUpdate = true;
+
+      List<String> allAtsignList = [];
+      presentEventData.group.members.forEach((element) {
+        allAtsignList.add(element.atSign);
+      });
+
+      var notification = EventNotificationModel.convertEventNotificationToJson(
+          presentEventData);
+
+      AtKey key = BackendService.getInstance().getAtKey(presentEventData.key);
+
+      var result = await atClientInstance.put(key, notification);
+
+      key.sharedWith = jsonEncode(allAtsignList);
+
+      var notifyAllResult = await atClientInstance.notifyAll(
+          key, notification, OperationEnum.update);
+
+      if (result is bool && result) {
+        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
+            eventNotificationModel: presentEventData));
+      }
+    } catch (e) {
+      print('error in event acknowledgement: $e');
+    }
+  }
+
   createEventAcknowledge(EventNotificationModel acknowledgedEvent, String atKey,
       String fromAtSign) async {
     try {
       String eventId =
           acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
-
-      print(
-          'acknowledged notification received:$acknowledgedEvent , key:$atKey , $eventId');
+      eventId = eventId.replaceAll('.rrive', '');
 
       EventNotificationModel presentEventData;
-      HomeEventService().allEvents.forEach((element) {
+      Provider.of<HybridProvider>(NavService.navKey.currentContext,
+              listen: false)
+          .allNotifications
+          .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(
@@ -332,11 +433,21 @@ class BackendService {
         });
       });
       presentEventData.isUpdate = true;
+      List<String> allAtsignList = [];
+      presentEventData.group.members.forEach((element) {
+        allAtsignList.add(element.atSign);
+      });
 
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
 
       var result = await atClientInstance.put(key, notification);
+
+      key.sharedWith = jsonEncode(allAtsignList);
+
+      var notifyAllResult = await atClientInstance.notifyAll(
+          key, notification, OperationEnum.update);
+
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: presentEventData));

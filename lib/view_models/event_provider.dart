@@ -10,7 +10,7 @@ import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'dart:convert';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
-
+import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'hybrid_provider.dart';
 
 class EventProvider extends BaseModel {
@@ -68,6 +68,8 @@ class EventProvider extends BaseModel {
       notification.atKey = atKey;
     });
 
+    filterBlockedContactsforEvents();
+
     for (int i = 0; i < allNotifications.length; i++) {
       AtValue value = await getAtValue(allNotifications[i].atKey);
       if (value != null) {
@@ -80,6 +82,18 @@ class EventProvider extends BaseModel {
     setStatus(GET_ALL_EVENTS, Status.Done);
 
     updateEventDataAccordingToAcknowledgedData();
+  }
+
+  filterBlockedContactsforEvents() {
+    List<HybridNotificationModel> tempList = [];
+    for (int i = 0; i < allNotifications.length; i++) {
+      if (ContactService().blockContactList.indexWhere((contact) =>
+              ((contact.atSign == allNotifications[i].atKey.sharedBy) ||
+                  (contact.atSign ==
+                      '@' + allNotifications[i].atKey.sharedBy))) >=
+          0) tempList.add(allNotifications[i]);
+    }
+    allNotifications.removeWhere((element) => tempList.contains(element));
   }
 
   Future<dynamic> getAtValue(AtKey key) async {
@@ -137,35 +151,67 @@ class EventProvider extends BaseModel {
       String currentAtsign =
           BackendService.getInstance().atClientInstance.currentAtSign;
 
+      eventData.isUpdate = true;
       if (eventData.atsignCreator.toLowerCase() ==
           currentAtsign.toLowerCase()) {
         eventData.isSharing =
             isSharing != null ? isSharing : eventData.isSharing;
-      }
-
-      eventData.group.members.forEach((member) {
-        if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
-        if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
-
-        if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
-          member.tags['isAccepted'] =
-              isAccepted != null ? isAccepted : member.tags['isAccepted'];
-          member.tags['isSharing'] =
-              isSharing != null ? isSharing : member.tags['isSharing'];
-          member.tags['isExited'] =
-              isExited != null ? isExited : member.tags['isExited'];
+        if (isSharing == false) {
+          eventData.lat = null;
+          eventData.long = null;
         }
-      });
+      } else {
+        eventData.group.members.forEach((member) {
+          if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
+          if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
+
+          if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
+            member.tags['isAccepted'] =
+                isAccepted != null ? isAccepted : member.tags['isAccepted'];
+            member.tags['isSharing'] =
+                isSharing != null ? isSharing : member.tags['isSharing'];
+            member.tags['isExited'] =
+                isExited != null ? isExited : member.tags['isExited'];
+
+            if (isSharing == false || isExited == true) {
+              member.tags['lat'] = null;
+              member.tags['long'] = null;
+            }
+          }
+        });
+      }
 
       AtKey key = formAtKey(keyType, atkeyMicrosecondId,
           eventData.atsignCreator, currentAtsign, event);
 
+      // TODO : Check whther key is correct
+      print('key $key');
+
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-
       var result = await atClientInstance.put(key, notification);
-      setStatus(UPDATE_EVENTS, Status.Done);
 
+      // if key type is createevent, we have to notify all members
+      if (keyType == ATKEY_TYPE_ENUM.CREATEEVENT) {
+        providerCallback<HybridProvider>(NavService.navKey.currentContext,
+            task: (t) => t.mapUpdatedData(BackendService.getInstance()
+                .convertEventToHybrid(NotificationType.Event,
+                    eventNotificationModel: eventData)),
+            showLoader: false,
+            taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
+            onSuccess: (t) {});
+
+        List<String> allAtsignList = [];
+        eventData.group.members.forEach((element) {
+          allAtsignList.add(element.atSign);
+        });
+
+        key.sharedWith = jsonEncode(allAtsignList);
+        var notifyAllResult = await atClientInstance.notifyAll(
+            key, notification, OperationEnum.update);
+      }
+
+      setStatus(UPDATE_EVENTS, Status.Done);
       if (result) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.updatePendingStatus(
@@ -196,8 +242,7 @@ class EventProvider extends BaseModel {
         allEventsNotfication.forEach((event) {
           if (event.notificationType == NotificationType.Event &&
               event.key == eventData.key) {
-            atKey = event.atKey;
-            atKey.metadata.ttr = -1;
+            atKey = BackendService.getInstance().getAtKey(event.key);
           }
         });
         return atKey;
@@ -277,6 +322,10 @@ class EventProvider extends BaseModel {
                 // ignore: return_of_invalid_type_from_catch_error
                 .catchError((e) => print("error in get $e"));
 
+            if (result == null) {
+              continue;
+            }
+
             EventNotificationModel acknowledgedEvent =
                 EventNotificationModel.fromJson(jsonDecode(result.value));
             EventNotificationModel storedEvent = new EventNotificationModel();
@@ -293,10 +342,32 @@ class EventProvider extends BaseModel {
 
                 if (!compareEvents(storedEvent, acknowledgedEvent)) {
                   storedEvent.isUpdate = true;
-                  storedEvent.group = acknowledgedEvent.group;
 
+                  storedEvent.group.members.forEach((groupMember) {
+                    acknowledgedEvent.group.members.forEach((element) {
+                      if (groupMember.atSign.toLowerCase() ==
+                              element.atSign.toLowerCase() &&
+                          groupMember.atSign
+                              .contains(acknowledgedAtKey.sharedBy)) {
+                        groupMember.tags = element.tags;
+                      }
+                    });
+                  });
+
+                  List<String> allAtsignList = [];
+                  storedEvent.group.members.forEach((element) {
+                    allAtsignList.add(element.atSign);
+                  });
                   var updateResult =
                       await updateEvent(storedEvent, createEventAtKey);
+
+                  createEventAtKey.sharedWith = jsonEncode(allAtsignList);
+
+                  var notifyAllResult = await atClientInstance.notifyAll(
+                      createEventAtKey,
+                      EventNotificationModel.convertEventNotificationToJson(
+                          storedEvent),
+                      OperationEnum.update);
 
                   if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(storedEvent);
@@ -318,22 +389,31 @@ class EventProvider extends BaseModel {
 
   bool compareEvents(
       EventNotificationModel eventOne, EventNotificationModel eventTwo) {
-    if (eventOne.group.members.elementAt(0).tags['isAccepted'] ==
-            eventTwo.group.members.elementAt(0).tags['isAccepted'] &&
-        eventOne.group.members.elementAt(0).tags['isSharing'] ==
-            eventTwo.group.members.elementAt(0).tags['isSharing'] &&
-        eventOne.group.members.elementAt(0).tags['isExited'] ==
-            eventTwo.group.members.elementAt(0).tags['isExited']) {
-      return true;
-    } else
-      return false;
+    bool isDataSame = true;
+
+    eventOne.group.members.forEach((groupOneMember) {
+      eventTwo.group.members.forEach((groupTwoMember) {
+        if (groupOneMember.atSign == groupTwoMember.atSign) {
+          if (groupOneMember.tags['isAccepted'] !=
+                  groupTwoMember.tags['isAccepted'] ||
+              groupOneMember.tags['isSharing'] !=
+                  groupTwoMember.tags['isSharing'] ||
+              groupOneMember.tags['isExited'] !=
+                  groupTwoMember.tags['isExited']) {
+            isDataSame = false;
+          }
+        }
+      });
+    });
+
+    return isDataSame;
   }
 
   cancelEvent(EventNotificationModel event) async {
     EventNotificationModel eventData = EventNotificationModel.fromJson(
         jsonDecode(
             EventNotificationModel.convertEventNotificationToJson(event)));
-    if (eventData.atsignCreator == currentAtSign && !eventData.isCancelled) {
+    if (eventData.atsignCreator == currentAtSign) {
       try {
         eventData.isCancelled = true;
         List<String> response = await atClientInstance.getKeys(
@@ -341,6 +421,20 @@ class EventProvider extends BaseModel {
         );
         AtKey key = BackendService.getInstance().getAtKey(response[0]);
         bool result = await updateEvent(eventData, key);
+
+        // notifying all members
+        List<String> allAtsignList = [];
+        eventData.group.members.forEach((element) {
+          allAtsignList.add(element.atSign);
+        });
+
+        key.sharedWith = jsonEncode(allAtsignList);
+
+        var notifyAllResult = await atClientInstance.notifyAll(
+            key,
+            EventNotificationModel.convertEventNotificationToJson(eventData),
+            OperationEnum.update);
+
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
               BackendService.getInstance().convertEventToHybrid(
@@ -361,7 +455,7 @@ class EventProvider extends BaseModel {
 
       var result = await atClientInstance.put(key, notification);
       if (result is bool) {
-        print('updated:$result');
+        print('event acknowledged:$result');
         return result;
       } else if (result != null) {
         return result.toString();
@@ -374,22 +468,32 @@ class EventProvider extends BaseModel {
   }
 
   addDataToListEvent(EventNotificationModel eventNotificationModel) async {
-    String newLocationDataKeyId, tempKey;
+    String newLocationDataKeyId;
     newLocationDataKeyId =
         eventNotificationModel.key.split('createevent-')[1].split('@')[0];
-    tempKey = 'createevent-$newLocationDataKeyId';
-    List<String> key = [];
 
-    key = await atClientInstance.getKeys(
-      regex: tempKey,
-      sharedBy: eventNotificationModel.atsignCreator,
+    List<String> allRegexKeys = [];
+    String key;
+
+    allRegexKeys = await atClientInstance.getKeys(
+      regex: 'createevent-',
     );
 
+    allRegexKeys.forEach((regex) {
+      if (regex.contains('$newLocationDataKeyId')) {
+        key = regex;
+      }
+    });
+
+    if (key == null) {
+      return;
+    }
+
     HybridNotificationModel tempHyridNotificationModel =
-        HybridNotificationModel(NotificationType.Event, key: key[0]);
-    eventNotificationModel.key = key[0];
+        HybridNotificationModel(NotificationType.Event, key: key);
+    eventNotificationModel.key = key;
     tempHyridNotificationModel.atKey =
-        BackendService.getInstance().getAtKey(key[0]);
+        BackendService.getInstance().getAtKey(key);
     tempHyridNotificationModel.atValue =
         await getAtValue(tempHyridNotificationModel.atKey);
     tempHyridNotificationModel.eventNotificationModel = eventNotificationModel;

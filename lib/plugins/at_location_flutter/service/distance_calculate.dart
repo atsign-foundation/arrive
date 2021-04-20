@@ -23,7 +23,7 @@ class DistanceCalculate {
 
       return _time;
     } catch (e) {
-      print(' error in ETA');
+      print(' error in ETA $e');
       return '?';
     }
   }

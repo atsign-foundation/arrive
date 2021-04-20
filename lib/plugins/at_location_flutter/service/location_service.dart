@@ -10,7 +10,9 @@ import 'package:atsign_location_app/plugins/at_location_flutter/common_component
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
+import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'distance_calculate.dart';
 
@@ -38,6 +40,8 @@ class LocationService {
   List<String> atsignsAtMonitor, exitedAtsigns = [];
   List<HybridModel> hybridUsersList;
   List<HybridModel> allUsersList;
+
+  StreamSubscription<Position> myLocationStream;
 
   StreamController _atHybridUsersController;
   Stream<List<HybridModel>> get atHybridUsersStream =>
@@ -67,6 +71,8 @@ class LocationService {
     atClientServiceInstance = AtClientService();
     atClientInstance = _atClientInstance;
 
+    if (myLocationStream != null) myLocationStream.cancel();
+
     addMyDetailsToHybridUsersList();
 
     if (newUserListenerKeyword != null) {
@@ -81,7 +87,7 @@ class LocationService {
       atsignsAtMonitor =
           eventListenerKeyword.group.members.map((e) => e.atSign).toList();
       atsignsAtMonitor.add(eventListenerKeyword.atsignCreator);
-      atsignsAtMonitor.remove(myData?.displayName);
+      atsignsAtMonitor.remove(atClientInstance.currentAtSign);
 
       eventListenerKeyword.group.members.forEach((element) {
         if ((element.tags['isExited']) && (!element.tags['isAccepted']))
@@ -108,14 +114,17 @@ class LocationService {
   }
 
   updateEventWithNewData(EventNotificationModel eventData) {
+    // TODO: Update all the location data from here
     if (eventData != null && eventListenerKeyword != null) {
       if (eventData.key == eventListenerKeyword.key) {
         eventListenerKeyword = eventData;
+        updateLocationForEvent();
 
         exitedAtsigns = [];
         eventListenerKeyword.group.members.forEach((element) {
-          if ((element.tags['isExited']) && (!element.tags['isAccepted']))
+          if ((element.tags['isExited']) && (!element.tags['isAccepted'])) {
             exitedAtsigns.add(element.atSign);
+          }
         });
 
         ParticipantsData().updateParticipants();
@@ -124,32 +133,60 @@ class LocationService {
     }
   }
 
-  addMyDetailsToHybridUsersList() async {
-    String _atsign = getAtSign();
-    LatLng mylatlng = await getMyLocation();
+  void addMyDetailsToHybridUsersList() async {
+    var permission = await Geolocator.checkPermission();
+    var _atsign = getAtSign();
+    var _image = await getImageOfAtsign(_atsign);
+
+    var mylatlng = await getMyLocation();
     if (mylatlng == null) {
       showToast('Location permission not granted');
       return;
     }
 
-    var _image = await getImageOfAtsign(_atsign);
-
     HybridModel _myData = HybridModel(
         displayName: _atsign, latLng: mylatlng, eta: '?', image: _image);
+
+    updateMyLatLng(_myData);
+
+    if (((permission == LocationPermission.always) ||
+        (permission == LocationPermission.whileInUse))) {
+      myLocationStream = Geolocator.getPositionStream(distanceFilter: 10)
+          .listen((myLocation) async {
+        print('inside stream');
+        var mylatlng = LatLng(myLocation.latitude, myLocation.longitude);
+
+        _myData = HybridModel(
+            displayName: _atsign, latLng: mylatlng, eta: '?', image: _image);
+
+        updateMyLatLng(_myData);
+      });
+    }
+
+    atsignsAtMonitor?.remove(atClientInstance.currentAtSign);
+  }
+
+  void updateMyLatLng(HybridModel _myData) async {
     _myData.marker = buildMarker(_myData, singleMarker: true);
 
     myData = _myData;
-    if ((eventListenerKeyword != null) && (eventData != null))
+    if ((eventListenerKeyword != null) && (eventData != null)) {
       await _calculateEta(myData); //To add eta for the user
+    }
 
-    hybridUsersList.add(myData);
+    var _index = hybridUsersList.indexWhere(
+        (element) => element.displayName == atClientInstance.currentAtSign);
+
+    if (_index < 0) {
+      hybridUsersList.add(myData);
+    } else {
+      hybridUsersList[_index] = myData;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       ParticipantsData().updateParticipants();
       _atHybridUsersController.add(hybridUsersList);
     });
-
-    atsignsAtMonitor?.remove(myData.displayName);
   }
 
   addEventDetailsToHybridUsersList() async {
@@ -169,18 +206,76 @@ class LocationService {
   }
 
   // Called for the first time package is entered from main app
-  updateHybridList() async {
+  void updateHybridList() async {
     if (userListenerKeyword != null) {
       await Future.forEach(allUsersList, (user) async {
-        if (user.displayName == userListenerKeyword.atsignCreator)
+        if (user.displayName == userListenerKeyword.atsignCreator) {
           await updateDetails(user);
+        }
       });
     } else if (eventListenerKeyword != null) {
-      await Future.forEach(allUsersList, (user) async {
-        if (atsignsAtMonitor.contains(user.displayName))
-          await updateDetails(user);
-      });
+      updateLocationForEvent();
     }
+
+    _atHybridUsersController.add(hybridUsersList);
+  }
+
+  void updateLocationForEvent() async {
+    if (eventListenerKeyword.atsignCreator == atClientInstance.currentAtSign) {
+      await Future.forEach(eventListenerKeyword.group.members, (member) async {
+        if (atsignsAtMonitor.contains(member.atSign)) {
+          if (member.tags['lat'] != null && member.tags['long'] != null) {
+            HybridModel user = HybridModel(
+                displayName: member.atSign,
+                latLng: LatLng(member.tags['lat'], member.tags['long']),
+                eta: '?',
+                image: null);
+            user.image = await LocationNotificationListener()
+                .getImageOfAtsign(member.atSign);
+            user.marker = buildMarker(user);
+
+            await updateDetails(user);
+          } else {
+            removeUser(member.atSign);
+          }
+        }
+      });
+    } else {
+      await Future.forEach(eventListenerKeyword.group.members, (member) async {
+        if (atsignsAtMonitor.contains(member.atSign)) {
+          if (member.tags['lat'] != null && member.tags['long'] != null) {
+            HybridModel user = HybridModel(
+                displayName: member.atSign,
+                latLng: LatLng(member.tags['lat'], member.tags['long']),
+                eta: '?',
+                image: null);
+            user.image = await LocationNotificationListener()
+                .getImageOfAtsign(member.atSign);
+            user.marker = buildMarker(user);
+
+            await updateDetails(user);
+          } else {
+            removeUser(member.atSign);
+          }
+        }
+      });
+      // For Creator
+      if (eventListenerKeyword.lat != null &&
+          eventListenerKeyword.long != null) {
+        HybridModel user = HybridModel(
+            displayName: eventListenerKeyword.atsignCreator,
+            latLng: LatLng(eventListenerKeyword.lat, eventListenerKeyword.long),
+            eta: '?',
+            image: null);
+        user.image = await LocationNotificationListener()
+            .getImageOfAtsign(eventListenerKeyword.atsignCreator);
+        user.marker = buildMarker(user);
+        await updateDetails(user);
+      } else {
+        removeUser(eventListenerKeyword.atsignCreator);
+      }
+    }
+
     _atHybridUsersController.add(hybridUsersList);
   }
 
@@ -215,9 +310,15 @@ class LocationService {
 
         _atHybridUsersController.add(hybridUsersList);
       } else if (eventListenerKeyword != null) {
-        hybridUsersList.removeWhere((element) =>
-            ((element.displayName == atsign) &&
-                (element.displayName != atClientInstance.currentAtSign)));
+        var index = hybridUsersList
+            .indexWhere((element) => element.displayName == atsign);
+        if (index == -1) {
+          return;
+        }
+        if (hybridUsersList[index].displayName !=
+            atClientInstance.currentAtSign) {
+          hybridUsersList.removeAt(index);
+        }
 
         _atHybridUsersController.add(hybridUsersList);
       }
@@ -235,9 +336,12 @@ class LocationService {
       }
     });
     if (contains) {
-      await addDetails(user, index: index);
-    } else
+      if (user.latLng != hybridUsersList[index].latLng) {
+        await addDetails(user, index: index);
+      }
+    } else {
       await addDetails(user);
+    }
   }
 
   // Returns new marker and eta
