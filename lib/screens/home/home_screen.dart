@@ -27,6 +27,7 @@ import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -89,10 +90,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   _getMyLocation() async {
     LatLng newMyLatLng = await getMyLocation();
-    if (newMyLatLng != null)
+    if (newMyLatLng != null) {
       setState(() {
         myLatLng = newMyLatLng;
       });
+    }
+
+    var permission = await Geolocator.checkPermission();
+
+    if (((permission == LocationPermission.always) ||
+        (permission == LocationPermission.whileInUse))) {
+      Geolocator.getPositionStream(distanceFilter: 2)
+          .listen((locationStream) async {
+        setState(() {
+          myLatLng = LatLng(locationStream.latitude, locationStream.longitude);
+        });
+      });
+    }
   }
 
   @override
