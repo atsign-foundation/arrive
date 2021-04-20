@@ -27,9 +27,7 @@ class SetupRoutes {
           ),
       Routes.GROUP_LIST: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-        return GroupList(
-            // currentAtsign: args['currentAtSign'],
-            );
+        return GroupList();
       },
       Routes.CONTACT_SCREEN: (context) {
         Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
