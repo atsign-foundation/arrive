@@ -135,7 +135,7 @@ class LocationNotificationListener {
     );
 
     Provider.of<HybridProvider>(NavService.navKey.currentContext, listen: false)
-        .initialiseLacationSharing();
+        .initialiseLocationSharing();
   }
 
   getShareLocation() async {

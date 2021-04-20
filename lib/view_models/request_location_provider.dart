@@ -79,6 +79,36 @@ class RequestLocationProvider extends ShareLocationProvider {
 
     setStatus(GET_ALL_REQUEST_EVENTS, Status.Done);
     checkForAcknowledgeRequest();
+    checkForDeleteRequestAck();
+  }
+
+  void checkForDeleteRequestAck() async {
+    // Letting other events complete
+    await Future.delayed(Duration(seconds: 5));
+
+    List<String> dltRequestLocationResponse = await atClientInstance.getKeys(
+      regex: 'deleterequestacklocation',
+    );
+
+    for (var i = 0; i < dltRequestLocationResponse.length; i++) {
+      /// Operate on receied notifications
+      if (dltRequestLocationResponse[i].contains('cached')) {
+        String atkeyMicrosecondId = dltRequestLocationResponse[i]
+            .split('deleterequestacklocation-')[1]
+            .split('@')[0];
+        atkeyMicrosecondId = atkeyMicrosecondId.replaceAll('.rrive', '');
+
+        int _index = allRequestNotifications.indexWhere((element) {
+          return element.locationNotificationModel.key
+              .contains(atkeyMicrosecondId);
+        });
+
+        if (_index == -1) continue;
+
+        await RequestLocationService().deleteKey(
+            allRequestNotifications[_index].locationNotificationModel);
+      }
+    }
   }
 
   filterBlockedContactsforRequested() {

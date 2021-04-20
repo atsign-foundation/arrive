@@ -63,20 +63,13 @@ class HybridProvider extends RequestLocationProvider {
       filterPastEventsFromList();
 
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
-      checkForDeleteRequestAck();
-      initialiseLacationSharing();
+      initialiseLocationSharing();
 
       // TODO: Add the code added in backend service here as well
     } catch (e) {
       print('error in getAllHybridEvents:$e');
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Error);
     }
-  }
-
-  /// TODO: Complete this
-  checkForDeleteRequestAck() async {
-    // TODO: Look for keys "deleterequestacklocation" which we need to process
-    // And delete the respective "requestlocation" keys
   }
 
   filterPastEventsFromList() {
@@ -104,19 +97,20 @@ class HybridProvider extends RequestLocationProvider {
     int index = allHybridNotifications
         .indexWhere((notification) => key.contains(notification.atKey.key));
 
-    if (allHybridNotifications[index]
-        .locationNotificationModel
-        .key
-        .contains('sharelocation')) {
-      allShareLocationNotifications
-          .removeWhere((notification) => key.contains(notification.atKey.key));
-    } else {
-      allRequestNotifications
-          .removeWhere((notification) => key.contains(notification.atKey.key));
-    }
+    if (index > -1) {
+      if (allHybridNotifications[index]
+          .locationNotificationModel
+          .key
+          .contains('sharelocation')) {
+        allShareLocationNotifications.removeWhere(
+            (notification) => key.contains(notification.atKey.key));
+      } else {
+        allRequestNotifications.removeWhere(
+            (notification) => key.contains(notification.atKey.key));
+      }
 
-    allHybridNotifications
-        .removeWhere((notification) => key.contains(notification.atKey.key));
+      allHybridNotifications.removeAt(index);
+    }
 
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Done);
 
@@ -405,7 +399,7 @@ class HybridProvider extends RequestLocationProvider {
     return isEventToday;
   }
 
-  initialiseLacationSharing() async {
+  initialiseLocationSharing() async {
     isSharing = await LocationNotificationListener().getShareLocation();
     notifyListeners();
     if (isSharing) {
