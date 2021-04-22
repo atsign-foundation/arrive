@@ -196,13 +196,13 @@ class LocationService {
           eventListenerKeyword.venue.longitude),
       eta: '?',
     );
+
     eventHybridModel.marker = buildMarker(eventHybridModel);
     hybridUsersList.add(eventHybridModel);
     eventData = eventHybridModel;
     if (myData != null) await _calculateEta(myData);
-    _atHybridUsersController.add(hybridUsersList);
 
-    print('updateEventLocation called ');
+    _atHybridUsersController.add(hybridUsersList);
   }
 
   // Called for the first time package is entered from main app
@@ -289,18 +289,16 @@ class LocationService {
             await updateDetails(user);
         });
         _atHybridUsersController.add(hybridUsersList);
-      } else if (eventListenerKeyword != null) {
-        await Future.forEach(allUsersFromMainApp, (user) async {
-          if (atsignsAtMonitor.contains(user.displayName))
-            await updateDetails(user);
-        });
-        _atHybridUsersController.add(hybridUsersList);
       }
+
+      /// for event, we dont update from here
+
     }
   }
 
-  // Called when a user stops sharing his location
-  removeUser(String atsign) {
+  /// Called when a user stops sharing his location
+  /// isDirectLocationSharing => Comes from main app, is one-to-one location sharing
+  removeUser(String atsign, {bool isDirectLocationSharing = false}) {
     if (_atHybridUsersController != null &&
         !_atHybridUsersController.isClosed) {
       if (userListenerKeyword != null) {
@@ -309,7 +307,8 @@ class LocationService {
                 (element.displayName != atClientInstance.currentAtSign)));
 
         _atHybridUsersController.add(hybridUsersList);
-      } else if (eventListenerKeyword != null) {
+      } else if ((!isDirectLocationSharing) && (eventListenerKeyword != null)) {
+        /// Only remove event data, when it is not directLocationSharing (comes from main app)
         var index = hybridUsersList
             .indexWhere((element) => element.displayName == atsign);
         if (index == -1) {
@@ -325,7 +324,7 @@ class LocationService {
     }
   }
 
-  // Called to get the new details marker & eta
+  /// Called to get the new details marker & eta
   updateDetails(HybridModel user) async {
     bool contains = false;
     int index;
@@ -349,7 +348,7 @@ class LocationService {
     }
   }
 
-  // Returns new marker and eta
+  /// Returns new marker and eta
   addDetails(HybridModel user, {int index}) async {
     try {
       user.marker = buildMarker(user);
