@@ -259,6 +259,10 @@ class BackendService {
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
             onSuccess: (provider) {});
+
+        if (locationData.rePrompt) {
+          showMyDialog(fromAtSign, locationData: locationData);
+        }
       } else {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(convertEventToHybrid(

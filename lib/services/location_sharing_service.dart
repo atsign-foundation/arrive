@@ -76,7 +76,7 @@ class LocationSharingService {
             locationNotificationModel: newLocationNotificationModel,
             isShareLocationData: true,
             isRequestLocationData: false,
-            yesText: 'Yes! Update',
+            yesText: isRejected ? 'Yes! Re-Prompt' : 'Yes! Update',
             noText: 'No');
         return null;
       }

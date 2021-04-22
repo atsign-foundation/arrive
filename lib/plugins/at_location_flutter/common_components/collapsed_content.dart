@@ -543,10 +543,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                       onChanged: (widget
                                                   .userListenerKeyword.to ==
                                               null)
-                                          ? (value) async => removePerson()
+                                          ? (value) async =>
+                                              await removePerson()
                                           : (value) async {
                                               LoadingDialog().show(
-                                                  text: amICreator
+                                                  text: widget
+                                                          .userListenerKeyword
+                                                          .key
+                                                          .contains(
+                                                              "sharelocation")
                                                       ? 'Updating data'
                                                       : 'Sending request to update data');
                                               try {
