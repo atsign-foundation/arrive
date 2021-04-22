@@ -70,8 +70,9 @@ class SendLocationNotification {
             await LocationNotificationListener().getShareLocation();
       }
 
+      atsignsToShareLocationWith.add(notification);
+
       if (isMasterSwitchOn) {
-        atsignsToShareLocationWith.add(notification);
         await prepareLocationDataAndSend(notification, myLocation);
       }
     } else {

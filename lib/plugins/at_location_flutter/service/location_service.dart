@@ -336,8 +336,13 @@ class LocationService {
       }
     });
     if (contains) {
-      if (user.latLng != hybridUsersList[index].latLng) {
+      /// For single user, we dont compare the values, we do for events
+      if (userListenerKeyword != null) {
         await addDetails(user, index: index);
+      } else {
+        if (user.latLng != hybridUsersList[index].latLng) {
+          await addDetails(user, index: index);
+        }
       }
     } else {
       await addDetails(user);
