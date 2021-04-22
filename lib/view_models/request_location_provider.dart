@@ -222,10 +222,12 @@ class RequestLocationProvider extends ShareLocationProvider {
               // ignore: return_of_invalid_type_from_catch_error
               .catchError((e) => print("error in get $e"));
 
-          LocationNotificationModel acknowledgedEvent =
-              LocationNotificationModel.fromJson(jsonDecode(result.value));
-          RequestLocationService()
-              .updateWithRequestLocationAcknowledge(acknowledgedEvent);
+          if (result != null) {
+            LocationNotificationModel acknowledgedEvent =
+                LocationNotificationModel.fromJson(jsonDecode(result.value));
+            RequestLocationService()
+                .updateWithRequestLocationAcknowledge(acknowledgedEvent);
+          }
         }
       }
     });
