@@ -162,7 +162,8 @@ class _LocationPromptState extends State<LocationPrompt> {
 
   updateShareLocation() async {
     var update = await LocationSharingService()
-        .updateWithShareLocationAcknowledge(widget.locationNotificationModel);
+        .updateWithShareLocationAcknowledge(widget.locationNotificationModel,
+            rePrompt: widget.locationNotificationModel.rePrompt);
 
     if (update) {
       CustomToast().show('Share Location Request sent', context);

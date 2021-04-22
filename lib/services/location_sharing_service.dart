@@ -38,6 +38,15 @@ class LocationSharingService {
       return [false];
   }
 
+  checkIfEventIsRejected(LocationNotificationModel locationNotificationModel) {
+    if ((!locationNotificationModel.isAccepted) &&
+        (locationNotificationModel.isExited)) {
+      return true;
+    }
+
+    return false;
+  }
+
   sendShareLocationEvent(String atsign, bool isAcknowledgment,
       {int minutes}) async {
     try {
@@ -49,12 +58,21 @@ class LocationSharingService {
                 LocationNotificationModel.convertLocationNotificationToJson(
                     alreadyExists[1])));
 
+        var isRejected = checkIfEventIsRejected(newLocationNotificationModel);
+
         newLocationNotificationModel.to =
             DateTime.now().add(Duration(minutes: minutes));
 
+        if (isRejected) {
+          newLocationNotificationModel.rePrompt = true;
+        }
+
+        String msg = isRejected
+            ? 'Your share location request has been rejected by $atsign. Would you like to prompt them again & update your request ?'
+            : 'You already are sharing your location with $atsign. Would you like to update it ?';
+
         await locationPromptDialog(
-            text:
-                'You already are sharing your location with $atsign. Would you like to update it ?',
+            text: msg,
             locationNotificationModel: newLocationNotificationModel,
             isShareLocationData: true,
             isRequestLocationData: false,
@@ -159,7 +177,8 @@ class LocationSharingService {
 
   updateWithShareLocationAcknowledge(
       LocationNotificationModel locationNotificationModel,
-      {bool isSharing}) async {
+      {bool isSharing,
+      bool rePrompt = false}) async {
     try {
       String atkeyMicrosecondId = locationNotificationModel.key
           .split('sharelocation-')[1]
@@ -175,6 +194,8 @@ class LocationSharingService {
       AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
       locationNotificationModel.isAcknowledgment = true;
+      locationNotificationModel.rePrompt =
+          rePrompt; // Dont show dialog box again
 
       if (isSharing != null) locationNotificationModel.isSharing = isSharing;
 
@@ -246,6 +267,7 @@ class LocationSharingService {
       AtKey key = BackendService.getInstance().getAtKey(response[0]);
 
       locationNotificationModel.isAcknowledgment = true;
+      locationNotificationModel.rePrompt = false; // Dont show dialog box again
 
       var result = await BackendService.getInstance()
           .atClientServiceInstance

@@ -215,14 +215,15 @@ class BackendService {
       // TODO: update all the users location in our LocationNotificationListener
 
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
-        showMyDialog(fromAtSign, eventData: eventData);
         await providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
                 NotificationType.Event,
                 eventNotificationModel: eventData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {});
+            onSuccess: (provider) {
+              showMyDialog(fromAtSign, eventData: eventData);
+            });
       } else if (eventData.isUpdate) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
@@ -265,9 +266,9 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {});
-
-        showMyDialog(fromAtSign, locationData: locationData);
+            onSuccess: (provider) {
+              showMyDialog(fromAtSign, locationData: locationData);
+            });
       }
       return;
     }
@@ -285,6 +286,10 @@ class BackendService {
       if (locationData.isAcknowledgment == true) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Location,
             locationNotificationModel: locationData));
+
+        if (locationData.rePrompt) {
+          showMyDialog(fromAtSign, locationData: locationData);
+        }
       } else {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
@@ -292,9 +297,9 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
-            onSuccess: (provider) {});
-
-        showMyDialog(fromAtSign, locationData: locationData);
+            onSuccess: (provider) {
+              showMyDialog(fromAtSign, locationData: locationData);
+            });
       }
       return;
     }
