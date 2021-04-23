@@ -7,7 +7,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
-import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
@@ -312,9 +311,11 @@ class BackendService {
   syncWithSecondary() async {
     SyncManager syncManager = atClientInstance.getSyncManager();
     var isSynced = await syncManager.isInSync();
+    print('already synced: $isSynced');
     if (isSynced is bool && isSynced) {
     } else {
       await syncManager.sync();
+      print('sync done');
     }
   }
 
