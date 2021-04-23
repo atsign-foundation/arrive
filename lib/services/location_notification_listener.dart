@@ -185,7 +185,7 @@ class LocationNotificationListener {
 
   deleteReceivedData(String atsign) {
     allUsersList.removeWhere((element) => element.displayName == atsign);
-    LocationService().removeUser(atsign);
+    LocationService().removeUser(atsign, isDirectLocationSharing: true);
     atHybridUsersSink.add(allUsersList);
   }
 

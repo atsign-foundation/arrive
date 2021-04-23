@@ -5,7 +5,13 @@ import 'package:latlong/latlong.dart';
 class LocationNotificationModel {
   String atsignCreator, receiver, key;
   double lat, long;
-  bool isAccepted, isSharing, isExited, isAcknowledgment, isRequest, updateMap;
+  bool isAccepted,
+      isSharing,
+      isExited,
+      isAcknowledgment,
+      isRequest,
+      updateMap,
+      rePrompt;
   DateTime from, to;
   AtContact atContact;
   LocationNotificationModel({
@@ -21,6 +27,7 @@ class LocationNotificationModel {
     this.isExited = false,
     this.isSharing = true,
     this.updateMap = false,
+    this.rePrompt = false,
   });
 
   getAtContact() {
@@ -49,6 +56,7 @@ class LocationNotificationModel {
         to = ((json['to'] != 'null') && (json['to'] != null))
             ? DateTime.parse(json['to']).toLocal()
             : null,
+        rePrompt = json['rePrompt'] == 'true' ? true : false,
         updateMap = json['updateMap'] == 'true' ? true : false;
   Map<String, dynamic> toJson() => {
         'lat': lat,
@@ -77,6 +85,7 @@ class LocationNotificationModel {
       'isAccepted': locationNotificationModel.isAccepted.toString(),
       'isExited': locationNotificationModel.isExited.toString(),
       'updateMap': locationNotificationModel.updateMap.toString(),
+      'rePrompt': locationNotificationModel.rePrompt.toString(),
       'isSharing': locationNotificationModel.isSharing.toString()
     });
     return notification;

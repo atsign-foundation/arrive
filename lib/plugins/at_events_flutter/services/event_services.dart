@@ -192,8 +192,8 @@ class EventService {
     newContact.tags['isAccepted'] = false;
     newContact.tags['isSharing'] = true;
     newContact.tags['isExited'] = false;
-    newContact.tags['lat'] = 0;
-    newContact.tags['long'] = 0;
+    newContact.tags['lat'] = null;
+    newContact.tags['long'] = null;
     newContact.tags['shareFrom'] = -1;
     newContact.tags['shareTo'] = -1;
     return newContact;

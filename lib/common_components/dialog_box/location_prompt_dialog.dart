@@ -84,6 +84,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                         child: Text(
                           'Okay!',
                           style: TextStyle(
+                              fontSize: 15.toFont,
                               color: Theme.of(context).scaffoldBackgroundColor),
                         ),
                         bgColor: Theme.of(context).primaryColor,
@@ -130,6 +131,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                               child: Text(
                                 widget.yesText ?? 'Yes! Turn it on',
                                 style: TextStyle(
+                                    fontSize: 15.toFont,
                                     color: Theme.of(context)
                                         .scaffoldBackgroundColor),
                               ),
@@ -162,7 +164,8 @@ class _LocationPromptState extends State<LocationPrompt> {
 
   updateShareLocation() async {
     var update = await LocationSharingService()
-        .updateWithShareLocationAcknowledge(widget.locationNotificationModel);
+        .updateWithShareLocationAcknowledge(widget.locationNotificationModel,
+            rePrompt: widget.locationNotificationModel.rePrompt);
 
     if (update) {
       CustomToast().show('Share Location Request sent', context);
@@ -173,7 +176,8 @@ class _LocationPromptState extends State<LocationPrompt> {
 
   updateRequestLocation() async {
     var update = await RequestLocationService()
-        .updateWithRequestLocationAcknowledge(widget.locationNotificationModel);
+        .updateWithRequestLocationAcknowledge(widget.locationNotificationModel,
+            rePrompt: widget.locationNotificationModel.rePrompt);
 
     if (update) {
       CustomToast().show('Prompted again', context);

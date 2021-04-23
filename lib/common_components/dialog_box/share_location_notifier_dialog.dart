@@ -224,99 +224,114 @@ class _ShareLocationNotifierDialogState
                           style: CustomTextStyles().black14)
                       : SizedBox(),
                   SizedBox(height: 10.toHeight),
-                  CustomButton(
-                    onTap: () => () async {
-                      startLoading();
+                  loading
+                      ? CircularProgressIndicator()
+                      : CustomButton(
+                          onTap: () => () async {
+                            startLoading();
 
-                      (widget.eventData != null)
-                          // ignore: unnecessary_statements
-                          ? {
-                              bottomSheet(
-                                  context,
-                                  EventTimeSelection(
-                                      eventNotificationModel: widget.eventData,
-                                      title: AllText().LOC_START_TIME_TITLE,
-                                      isStartTime: true,
-                                      options: MixedConstants.startTimeOptions,
-                                      onSelectionChanged: (dynamic startTime) {
-                                        widget.eventData.group.members
-                                            .forEach((groupMember) {
-                                          if (groupMember.atSign ==
-                                              BackendService.getInstance()
-                                                  .atClientServiceInstance
-                                                  .atClient
-                                                  .currentAtSign) {
-                                            groupMember.tags['shareFrom'] =
-                                                startTime.toString();
+                            (widget.eventData != null)
+                                // ignore: unnecessary_statements
+                                ? {
+                                    bottomSheet(
+                                        context,
+                                        EventTimeSelection(
+                                            eventNotificationModel:
+                                                widget.eventData,
+                                            title:
+                                                AllText().LOC_START_TIME_TITLE,
+                                            isStartTime: true,
+                                            options:
+                                                MixedConstants.startTimeOptions,
+                                            onSelectionChanged:
+                                                (dynamic startTime) {
+                                              widget.eventData.group.members
+                                                  .forEach((groupMember) {
+                                                if (groupMember.atSign ==
+                                                    BackendService.getInstance()
+                                                        .atClientServiceInstance
+                                                        .atClient
+                                                        .currentAtSign) {
+                                                  groupMember
+                                                          .tags['shareFrom'] =
+                                                      startTime.toString();
+                                                }
+                                              });
+
+                                              bottomSheet(
+                                                  context,
+                                                  EventTimeSelection(
+                                                    eventNotificationModel:
+                                                        widget.eventData,
+                                                    title: AllText()
+                                                        .LOC_END_TIME_TITLE,
+                                                    options: MixedConstants
+                                                        .endTimeOptions,
+                                                    onSelectionChanged:
+                                                        (dynamic endTime) {
+                                                      widget.eventData.group
+                                                          .members
+                                                          .forEach(
+                                                              (groupMember) {
+                                                        if (groupMember
+                                                                .atSign ==
+                                                            BackendService
+                                                                    .getInstance()
+                                                                .atClientServiceInstance
+                                                                .atClient
+                                                                .currentAtSign) {
+                                                          groupMember.tags[
+                                                                  'shareTo'] =
+                                                              endTime
+                                                                  .toString();
+                                                        }
+                                                      });
+                                                      Navigator.of(context)
+                                                          .pop();
+
+                                                      updateEvent(
+                                                          widget.eventData);
+                                                    },
+                                                  ),
+                                                  400);
+                                            }),
+                                        400)
+                                  }
+                                // ignore: unnecessary_statements
+                                : ((!widget.locationData.isRequest)
+                                    ? {
+                                        result = await LocationSharingService()
+                                            .shareLocationAcknowledgment(true,
+                                                widget.locationData, true),
+                                        if (result == true)
+                                          {
+                                            CustomToast().show(
+                                                'Request to update data is submitted',
+                                                context),
+                                            Navigator.of(context).pop(),
+                                          },
+                                        if (result == false)
+                                          {
+                                            stopLoading(),
+                                            CustomToast().show(
+                                                'Something went wrong',
+                                                context),
                                           }
-                                        });
-
-                                        bottomSheet(
-                                            context,
-                                            EventTimeSelection(
-                                              eventNotificationModel:
-                                                  widget.eventData,
-                                              title:
-                                                  AllText().LOC_END_TIME_TITLE,
-                                              options:
-                                                  MixedConstants.endTimeOptions,
-                                              onSelectionChanged:
-                                                  (dynamic endTime) {
-                                                widget.eventData.group.members
-                                                    .forEach((groupMember) {
-                                                  if (groupMember.atSign ==
-                                                      BackendService
-                                                              .getInstance()
-                                                          .atClientServiceInstance
-                                                          .atClient
-                                                          .currentAtSign) {
-                                                    groupMember
-                                                            .tags['shareTo'] =
-                                                        endTime.toString();
-                                                  }
-                                                });
-                                                Navigator.of(context).pop();
-
-                                                updateEvent(widget.eventData);
-                                              },
-                                            ),
-                                            400);
-                                      }),
-                                  400)
-                            }
-                          // ignore: unnecessary_statements
-                          : ((!widget.locationData.isRequest)
-                              ? {
-                                  result = await LocationSharingService()
-                                      .shareLocationAcknowledgment(
-                                          true, widget.locationData, true),
-                                  if (result == true)
-                                    {
-                                      CustomToast().show(
-                                          'Request to update data is submitted',
-                                          context),
-                                      Navigator.of(context).pop(),
-                                    },
-                                  if (result == false)
-                                    {
-                                      stopLoading(),
-                                      CustomToast().show(
-                                          'Something went wrong', context),
-                                    }
-                                }
-                              : {
-                                  Navigator.of(context).pop(),
-                                  timeSelect(context),
-                                });
-                    }(),
-                    child: Text('Yes',
-                        style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            fontSize: 15.toFont)),
-                    bgColor: Theme.of(context).primaryColor,
-                    width: 164,
-                    height: 48.toHeight,
-                  ),
+                                      }
+                                    : {
+                                        Navigator.of(context).pop(),
+                                        timeSelect(context),
+                                      });
+                          }(),
+                          child: Text('Yes',
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  fontSize: 15.toFont)),
+                          bgColor: Theme.of(context).primaryColor,
+                          width: 164,
+                          height: 48.toHeight,
+                        ),
                   SizedBox(height: 10.toHeight),
                   loading
                       ? SizedBox()
