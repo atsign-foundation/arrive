@@ -182,11 +182,13 @@ class ShareLocationProvider extends EventProvider {
               .get(acknowledgedAtKey)
               // ignore: return_of_invalid_type_from_catch_error
               .catchError((e) => print("error in get $e"));
-
-          LocationNotificationModel acknowledgedEvent =
+              if(result != null){
+                LocationNotificationModel acknowledgedEvent =
               LocationNotificationModel.fromJson(jsonDecode(result.value));
           LocationSharingService()
               .updateWithShareLocationAcknowledge(acknowledgedEvent);
+              }
+         
         }
       }
     });

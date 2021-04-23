@@ -25,6 +25,7 @@ import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class ShareLocationNotifierDialog extends StatefulWidget {
@@ -97,7 +98,8 @@ class _ShareLocationNotifierDialogState
   checkForEventOverlap() {
     List<HybridNotificationModel> allEventsExcludingCurrentEvent = [];
     List<HybridNotificationModel> allSavedEvents =
-        HomeEventService().getAllEvents;
+        Provider.of<HybridProvider>(context, listen: false)
+            .allHybridNotifications;
     dynamic overlapData = [];
 
     allSavedEvents.forEach((event) {

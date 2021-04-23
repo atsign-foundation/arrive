@@ -7,7 +7,6 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/l
 import 'package:atsign_location_app/common_components/dialog_box/share_location_notifier_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
-import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
@@ -215,7 +214,6 @@ class BackendService {
       // TODO: update all the users location in our LocationNotificationListener
 
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
-        showMyDialog(fromAtSign, eventData: eventData);
         await providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
                 NotificationType.Event,
@@ -223,6 +221,7 @@ class BackendService {
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
             onSuccess: (provider) {});
+        showMyDialog(fromAtSign, eventData: eventData);
       } else if (eventData.isUpdate) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: eventData));
@@ -303,9 +302,11 @@ class BackendService {
   syncWithSecondary() async {
     SyncManager syncManager = atClientInstance.getSyncManager();
     var isSynced = await syncManager.isInSync();
+    print('already synced: $isSynced');
     if (isSynced is bool && isSynced) {
     } else {
       await syncManager.sync();
+      print('sync done');
     }
   }
 
