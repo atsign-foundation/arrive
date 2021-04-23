@@ -543,10 +543,15 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                       onChanged: (widget
                                                   .userListenerKeyword.to ==
                                               null)
-                                          ? (value) async => removePerson()
+                                          ? (value) async =>
+                                              await removePerson()
                                           : (value) async {
                                               LoadingDialog().show(
-                                                  text: amICreator
+                                                  text: widget
+                                                          .userListenerKeyword
+                                                          .key
+                                                          .contains(
+                                                              "sharelocation")
                                                       ? 'Updating data'
                                                       : 'Sending request to update data');
                                               try {
@@ -573,7 +578,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                 }
                                                 if (result) {
                                                   if (!value) {
-                                                    SendLocationNotification()
+                                                    await SendLocationNotification()
                                                         .sendNull(widget
                                                             .userListenerKeyword);
                                                   }
@@ -619,7 +624,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                       (amICreator)
                           ? Expanded(
                               child: InkWell(
-                                onTap: () async => removePerson(),
+                                onTap: () async => await removePerson(),
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -654,7 +659,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
             .sendDeleteAck(widget.userListenerKeyword);
       }
       if (result) {
-        SendLocationNotification().sendNull(widget.userListenerKeyword);
+        await SendLocationNotification().sendNull(widget.userListenerKeyword);
         LoadingDialog().hide();
 
         Navigator.pop(context);

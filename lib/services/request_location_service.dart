@@ -49,24 +49,68 @@ class RequestLocationService {
       return [false];
   }
 
+  checkIfEventIsNotResponded(
+      LocationNotificationModel locationNotificationModel) {
+    if ((!locationNotificationModel.isAccepted) &&
+        (!locationNotificationModel.isExited)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  checkIfEventIsRejected(LocationNotificationModel locationNotificationModel) {
+    if ((!locationNotificationModel.isAccepted) &&
+        (locationNotificationModel.isExited)) {
+      return true;
+    }
+
+    return false;
+  }
+
   sendRequestLocationEvent(String atsign) async {
     try {
-      /// TODO: confirm this logic
-      // var alreadySharing = checkForLocationKey(atsign);
-      // if (alreadySharing) {
-      //   await locationPromptDialog(
-      //     text: '$atsign is already sharing their location.',
-      //     isShareLocationData: false,
-      //     isRequestLocationData: false,
-      //     onlyText: true,
-      //   );
-
-      //   return null;
-      // }
-
       var alreadyExists = checkForAlreadyExisting(atsign);
       var result;
       if (alreadyExists[0]) {
+        LocationNotificationModel newLocationNotificationModel =
+            LocationNotificationModel.fromJson(jsonDecode(
+                LocationNotificationModel.convertLocationNotificationToJson(
+                    alreadyExists[1])));
+
+        var isNotResponded =
+            checkIfEventIsNotResponded(newLocationNotificationModel);
+
+        newLocationNotificationModel.rePrompt = true;
+
+        if (isNotResponded) {
+          await locationPromptDialog(
+              text:
+                  'You have already requested $atsign. But your request has not been responded yet. Would you like to prompt them again?',
+              locationNotificationModel: newLocationNotificationModel,
+              isShareLocationData: false,
+              isRequestLocationData: true,
+              yesText: 'Yes! Re-Prompt',
+              noText: 'No');
+
+          return null;
+        }
+
+        var isRejected = checkIfEventIsRejected(newLocationNotificationModel);
+        if (isRejected) {
+          await locationPromptDialog(
+            text:
+                'You have already requested $atsign. But your request has been rejected. Would you like to prompt them again?',
+            locationNotificationModel: newLocationNotificationModel,
+            isShareLocationData: false,
+            isRequestLocationData: true,
+            yesText: 'Yes! Re-Prompt',
+            noText: 'No',
+          );
+
+          return null;
+        }
+
         await locationPromptDialog(
           text: 'You have already requested $atsign',
           isShareLocationData: false,
@@ -175,8 +219,8 @@ class RequestLocationService {
   }
 
   updateWithRequestLocationAcknowledge(
-    LocationNotificationModel locationNotificationModel,
-  ) async {
+      LocationNotificationModel locationNotificationModel,
+      {bool rePrompt = false}) async {
     try {
       String atkeyMicrosecondId = locationNotificationModel.key
           .split('requestlocation-')[1]
@@ -205,6 +249,7 @@ class RequestLocationService {
       }
 
       locationNotificationModel.isAcknowledgment = true;
+      locationNotificationModel.rePrompt = rePrompt;
 
       var notification =
           LocationNotificationModel.convertLocationNotificationToJson(

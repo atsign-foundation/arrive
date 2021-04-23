@@ -97,7 +97,7 @@ class SendLocationNotification {
       return key.contains(element.key);
     });
     if (locationNotificationModel != null) {
-      sendNull(locationNotificationModel);
+      await sendNull(locationNotificationModel);
     }
 
     print(
