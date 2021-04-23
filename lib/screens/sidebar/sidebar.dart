@@ -169,7 +169,7 @@ class _SideBarState extends State<SideBar> {
             ),
             iconText(
               'Blocked Contacts',
-              Icons.contacts_rounded,
+              Icons.not_interested,
               () async {
                 return SetupRoutes.push(
                   context,
