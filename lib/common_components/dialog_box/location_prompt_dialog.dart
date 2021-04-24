@@ -20,7 +20,7 @@ Future<void> locationPromptDialog(
     LocationNotificationModel locationNotificationModel}) {
   var value = showDialog<void>(
     context: NavService.navKey.currentContext,
-    barrierDismissible: true,
+    barrierDismissible: false,
     builder: (BuildContext context) {
       return LocationPrompt(
           text: text,
@@ -125,8 +125,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                                   setState(() {
                                     loading = false;
                                   });
-                                Navigator.of(NavService.navKey.currentContext)
-                                    .pop();
+                                Navigator.of(context).pop();
                               },
                               child: Text(
                                 widget.yesText ?? 'Yes! Turn it on',
