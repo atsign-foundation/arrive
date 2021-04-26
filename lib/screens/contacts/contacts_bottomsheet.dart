@@ -70,11 +70,11 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
                                         : (value == '24 hours'
                                             ? (24 * 60)
                                             : null)));
-                                onShareLocation();
                               },
                             ),
-                            350,
-                            onSheetCLosed: () {});
+                            350, onSheetCLosed: () async {
+                          await onShareLocation();
+                        });
                       }),
                 )
               ],

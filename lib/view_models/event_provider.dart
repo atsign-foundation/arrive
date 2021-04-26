@@ -30,7 +30,8 @@ class EventProvider extends BaseModel {
 
   AtClientImpl atClientInstance;
   String currentAtSign;
-  List<HybridNotificationModel> allNotifications = [];
+  List<HybridNotificationModel> allNotifications = [],
+      allPastEventNotifications = [];
 
   init(AtClientImpl clientInstance) {
     reset(GET_ALL_EVENTS);
@@ -38,6 +39,8 @@ class EventProvider extends BaseModel {
     reset(CHECK_ACKNOWLEDGED_EVENT);
     reset(MAP_UPDATED_EVENTS);
     reset(GET_SINGLE_USER);
+
+    allPastEventNotifications = [];
 
     atClientInstance = clientInstance;
     currentAtSign = atClientInstance.currentAtSign;
@@ -78,10 +81,27 @@ class EventProvider extends BaseModel {
     }
 
     convertJsonToEventModel();
+    filterPastEventsFromList();
+
     await checkForPendingEvents();
     setStatus(GET_ALL_EVENTS, Status.Done);
 
     updateEventDataAccordingToAcknowledgedData();
+  }
+
+  filterPastEventsFromList() {
+    for (int i = 0; i < allNotifications.length; i++) {
+      if (allNotifications[i]
+              .eventNotificationModel
+              .event
+              .endTime
+              .difference(DateTime.now())
+              .inMinutes <
+          0) allPastEventNotifications.add(allNotifications[i]);
+    }
+
+    allNotifications
+        .removeWhere((element) => allPastEventNotifications.contains(element));
   }
 
   filterBlockedContactsforEvents() {
@@ -322,7 +342,7 @@ class EventProvider extends BaseModel {
                 // ignore: return_of_invalid_type_from_catch_error
                 .catchError((e) => print("error in get $e"));
 
-            if (result == null) {
+            if ((result == null) || (result.value == null)) {
               continue;
             }
 

@@ -20,8 +20,7 @@ class HybridProvider extends RequestLocationProvider {
   AtClientImpl atClientInstance;
   String currentAtSign;
   bool isSharing = false;
-  List<HybridNotificationModel> allHybridNotifications,
-      allPastEventNotifications;
+  List<HybridNotificationModel> allHybridNotifications;
   List<LocationNotificationModel> shareLocationData;
   // ignore: non_constant_identifier_names
   String HYBRID_GET_ALL_EVENTS = 'hybrid_get_all_events';
@@ -36,7 +35,6 @@ class HybridProvider extends RequestLocationProvider {
 
   init(AtClientImpl clientInstance) {
     allHybridNotifications = [];
-    allPastEventNotifications = [];
     shareLocationData = [];
     super.init(clientInstance);
     reset(HYBRID_GET_ALL_EVENTS);
@@ -60,7 +58,6 @@ class HybridProvider extends RequestLocationProvider {
       ];
 
       HomeEventService().setAllEventsList(allHybridNotifications);
-      filterPastEventsFromList();
 
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Done);
       initialiseLocationSharing();
@@ -70,24 +67,6 @@ class HybridProvider extends RequestLocationProvider {
       print('error in getAllHybridEvents:$e');
       setStatus(HYBRID_GET_ALL_EVENTS, Status.Error);
     }
-  }
-
-  filterPastEventsFromList() {
-    for (int i = 0; i < allHybridNotifications.length; i++) {
-      if (allHybridNotifications[i].notificationType ==
-          NotificationType.Event) {
-        if (allHybridNotifications[i]
-                .eventNotificationModel
-                .event
-                .endTime
-                .difference(DateTime.now())
-                .inMinutes <
-            0) allPastEventNotifications.add(allHybridNotifications[i]);
-      }
-    }
-
-    allHybridNotifications
-        .removeWhere((element) => allPastEventNotifications.contains(element));
   }
 
   // called when a share location key is deleted => to remove from UI
