@@ -17,12 +17,12 @@ class ContactInitial extends StatelessWidget {
   Widget build(BuildContext context) {
     Random r = Random();
     return Container(
-      height: size.toFont,
-      width: size.toFont,
+      height: size.toHeight,
+      width: size.toHeight,
       decoration: BoxDecoration(
         color:
             Color.fromARGB(255, r.nextInt(255), r.nextInt(255), r.nextInt(255)),
-        borderRadius: BorderRadius.circular(size.toWidth),
+        borderRadius: BorderRadius.circular(size.toHeight),
       ),
       child: Center(
         child: Text(

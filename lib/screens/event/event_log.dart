@@ -53,7 +53,7 @@ class _EventLogState extends State<EventLog>
           ),
           body: SingleChildScrollView(
             child: Container(
-              height: SizeConfig().screenHeight - (140.toHeight),
+              height: SizeConfig().screenHeight - (80.toHeight),
               child: Column(
                 children: <Widget>[
                   Container(
