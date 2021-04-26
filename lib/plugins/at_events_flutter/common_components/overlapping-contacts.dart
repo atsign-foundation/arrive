@@ -36,7 +36,7 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
             : null;
       },
       child: Container(
-        height: (isExpanded) ? 300.toHeight : 60,
+        height: (isExpanded) ? 300.toHeight : 60.toHeight,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: Color(0xffF7F7FF),
@@ -99,6 +99,7 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                     width: 60.toWidth,
                                     child: Text(
                                       '${widget.selectedList[0].atSign}',
+                                      style: TextStyle(fontSize: 12.toFont),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -109,6 +110,7 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                           : widget.selectedList.length - 1 == 1
                                               ? ' and ${widget.selectedList.length - 1} other'
                                               : ' and ${widget.selectedList.length - 1} others',
+                                      style: TextStyle(fontSize: 12.toFont),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   )
