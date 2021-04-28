@@ -297,20 +297,22 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   }
 
   setAtsignToChatWith() {
-    String chatWith;
     if (LocationService().eventListenerKeyword != null) {
-      if (LocationService().eventListenerKeyword.atsignCreator ==
-          widget.atClientInstance.currentAtSign) {
-        chatWith =
-            widget.eventListenerKeyword.group.members.elementAt(0).atSign;
-      } else
-        chatWith = widget.eventListenerKeyword.atsignCreator;
+      List<String> groupMembers = [];
+      groupMembers.add(LocationService().eventListenerKeyword?.atsignCreator);
+      widget.eventListenerKeyword?.group?.members?.forEach((member) {
+        groupMembers.add(member.atSign);
+      });
+      var groupID = widget.eventListenerKeyword?.key ?? '';
+      groupID = groupID.split(':').last.split('.').first;
+      setChatWithAtSign(null,
+          isGroup: true, groupMembers: groupMembers, groupId: groupID);
     } else if (LocationService().userListenerKeyword != null) {
-      chatWith = LocationService().userListenerKeyword.atsignCreator ==
+      String chatWith = LocationService().userListenerKeyword.atsignCreator ==
               widget.atClientInstance.currentAtSign
           ? LocationService().userListenerKeyword.receiver
           : LocationService().userListenerKeyword.atsignCreator;
+      setChatWithAtSign(chatWith);
     }
-    setChatWithAtSign(chatWith);
   }
 }
