@@ -16,8 +16,8 @@ class ContactInitial extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: size.toFont,
-      width: size.toFont,
+      height: size.toHeight,
+      width: size.toHeight,
       decoration: BoxDecoration(
         color: ContactInitialsColors.getColor(initials),
         borderRadius: BorderRadius.circular(size.toWidth),

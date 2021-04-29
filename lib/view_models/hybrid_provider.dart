@@ -232,10 +232,12 @@ class HybridProvider extends RequestLocationProvider {
       tempNotification =
           await super.addDataToListEvent(notification.eventNotificationModel);
     }
-    allHybridNotifications.add(tempNotification);
-    setStatus(HYBRID_ADD_EVENT, Status.Done);
 
-    addMemberToSendingLocationList(tempNotification);
+    if (tempNotification is HybridNotificationModel) {
+      allHybridNotifications.add(tempNotification);
+      addMemberToSendingLocationList(tempNotification);
+    }
+    setStatus(HYBRID_ADD_EVENT, Status.Done);
   }
 
   findAtSignsToShareLocationWith() {

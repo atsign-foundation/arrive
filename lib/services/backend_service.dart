@@ -374,9 +374,11 @@ class BackendService {
   syncWithSecondary() async {
     SyncManager syncManager = atClientInstance.getSyncManager();
     var isSynced = await syncManager.isInSync();
+    print('already synced: $isSynced');
     if (isSynced is bool && isSynced) {
     } else {
       await syncManager.sync();
+      print('sync done');
     }
   }
 
