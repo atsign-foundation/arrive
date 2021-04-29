@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
-import 'package:at_contacts_flutter/widgets/contacts_initials.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/change_atsign_bottom_sheet.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
