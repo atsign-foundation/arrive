@@ -166,10 +166,11 @@ class _LocationPromptState extends State<LocationPrompt> {
         .updateWithShareLocationAcknowledge(widget.locationNotificationModel,
             rePrompt: widget.locationNotificationModel.rePrompt);
 
-    if (update) {
+    if (update is bool) {
       CustomToast().show('Share Location Request sent', context);
     } else {
-      CustomToast().show('Something went wrong!', context);
+      CustomToast()
+          .show('Something went wrong!  ${update.toString()}', context);
     }
   }
 
@@ -178,10 +179,10 @@ class _LocationPromptState extends State<LocationPrompt> {
         .updateWithRequestLocationAcknowledge(widget.locationNotificationModel,
             rePrompt: widget.locationNotificationModel.rePrompt);
 
-    if (update) {
+    if (update is bool) {
       CustomToast().show('Prompted again', context);
     } else {
-      CustomToast().show('Something went wrong!', context);
+      CustomToast().show('Something went wrong! ${update.toString()}', context);
     }
   }
 }

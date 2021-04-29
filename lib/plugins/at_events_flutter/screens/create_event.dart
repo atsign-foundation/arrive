@@ -386,7 +386,7 @@ class _CreateEventState extends State<CreateEvent> {
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('some thing went wrong , try again.', context);
+      CustomToast().show('Something went wrong ${result.toString()}', context);
       setState(() {
         isLoading = false;
       });

@@ -587,7 +587,7 @@ class _CollapsedContentState extends State<CollapsedContent> {
                                                   });
                                                 } else {
                                                   CustomToast().show(
-                                                      'some thing went wrong , try again.',
+                                                      'Something went wrong , try again.',
                                                       context);
                                                 }
                                                 LoadingDialog().hide();

@@ -70,14 +70,15 @@ class _ConcurrentEventRequestState extends State<ConcurrentEventRequest> {
                             setState(() {
                               isLoader = true;
                             });
-                            bool result = await EventService().createEvent(
+                            var result = await EventService().createEvent(
                                 isEventOverlap: true, context: context);
 
-                            if (!result)
-                              CustomToast().show(
-                                  'Something went wrong , try again.', context);
-                            else
+                            if (result is bool)
                               CustomToast().show('Event added', context);
+                            else
+                              CustomToast().show(
+                                  'Something went wrong ,${result.toString()}',
+                                  context);
 
                             if (mounted)
                               setState(() {

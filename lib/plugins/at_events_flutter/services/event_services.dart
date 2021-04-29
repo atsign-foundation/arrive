@@ -139,7 +139,7 @@ class EventService {
       return putResult;
     } catch (e) {
       print('error in SendEventNotification $e');
-      return false;
+      return e.toString();
     }
   }
 

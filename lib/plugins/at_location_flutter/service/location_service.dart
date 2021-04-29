@@ -371,7 +371,7 @@ class LocationService {
       }
     } catch (e) {
       print(e);
-      showToast('Something went wrong');
+      showToast('Something went wrong ${e.toString()}');
     }
   }
 

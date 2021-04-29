@@ -303,18 +303,18 @@ class _ShareLocationNotifierDialogState
                                         result = await LocationSharingService()
                                             .shareLocationAcknowledgment(true,
                                                 widget.locationData, true),
-                                        if (result == true)
+                                        if (result is bool)
                                           {
                                             CustomToast().show(
                                                 'Request to update data is submitted',
                                                 context),
                                             Navigator.of(context).pop(),
-                                          },
-                                        if (result == false)
+                                          }
+                                        else
                                           {
                                             stopLoading(),
                                             CustomToast().show(
-                                                'Something went wrong',
+                                                'Something went wrong ${result.toString()}',
                                                 context),
                                           }
                                       }
@@ -364,7 +364,7 @@ class _ShareLocationNotifierDialogState
                                         onError: (t) {
                                           Navigator.of(context).pop();
                                           CustomToast().show(
-                                              'Something went wrong!',
+                                              'Something went wrong! ${t.toString()}',
                                               NavService.navKey.currentContext);
                                         },
                                         onSuccess: (t) {
@@ -380,18 +380,18 @@ class _ShareLocationNotifierDialogState
                                         result = await LocationSharingService()
                                             .shareLocationAcknowledgment(true,
                                                 widget.locationData, false),
-                                        if (result == true)
+                                        if (result is bool)
                                           {
                                             CustomToast().show(
                                                 'Request to update data is submitted',
                                                 context),
                                             Navigator.of(context).pop(),
-                                          },
-                                        if (result == false)
+                                          }
+                                        else
                                           {
                                             stopLoading(),
                                             CustomToast().show(
-                                                'Something went wrong',
+                                                'Something went wrong ${result.toString()}',
                                                 context),
                                           }
                                       }
@@ -399,18 +399,18 @@ class _ShareLocationNotifierDialogState
                                         result = await RequestLocationService()
                                             .requestLocationAcknowledgment(
                                                 widget.locationData, false),
-                                        if (result == true)
+                                        if (result is bool)
                                           {
                                             CustomToast().show(
                                                 'Request to update data is submitted',
                                                 context),
                                             Navigator.of(context).pop(),
-                                          },
-                                        if (result == false)
+                                          }
+                                        else
                                           {
                                             stopLoading(),
                                             CustomToast().show(
-                                                'Something went wrong',
+                                                'Something went wrong ${result.toString()}',
                                                 context),
                                           }
                                       });
@@ -462,10 +462,11 @@ class _ShareLocationNotifierDialogState
       result = await RequestLocationService().requestLocationAcknowledgment(
           widget.locationData, true,
           minutes: time);
-      if (result == true)
+      if (result is bool)
         CustomToast().show('Request to update data is submitted', context);
-      if (result == false)
-        CustomToast().show('Something went wrong !', context);
+      else
+        CustomToast()
+            .show('Something went wrong ${result.toString()}', context);
     });
   }
 }
@@ -478,8 +479,8 @@ updateEvent(EventNotificationModel eventData) {
       text: 'Sending request to accept event',
       showDialog: false,
       onError: (t) {
-        CustomToast()
-            .show('Something went wrong!', NavService.navKey.currentContext);
+        CustomToast().show('Something went wrong! ${t.toString()}',
+            NavService.navKey.currentContext);
       },
       onSuccess: (t) {
         Navigator.of(NavService.navKey.currentContext).pop();

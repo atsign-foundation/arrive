@@ -111,7 +111,8 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
           showLoader: false,
           onSuccess: (provider) {});
     } else {
-      CustomToast().show('Something went wrong , try again.', context);
+      CustomToast()
+          .show('Something went wrong ${result[1].toString()}', context);
       setState(() {
         isLoading = false;
       });
@@ -147,7 +148,8 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
           showLoader: false,
           onSuccess: (provider) {});
     } else {
-      CustomToast().show('some thing went wrong , try again.', context);
+      CustomToast()
+          .show('Something went wrong ${result[1].toString()}', context);
       setState(() {
         isLoading = false;
       });

@@ -12,6 +12,13 @@ class CustomTextStyles {
       fontSize: 38.toFont,
       color: AllColors().Black);
 
+  TextStyle primaryBold14 = TextStyle(
+    color: AllColors().FONT_PRIMARY,
+    fontSize: 14.toFont,
+    letterSpacing: 0.1,
+    fontWeight: FontWeight.w700,
+  );
+
   TextStyle greyLabel14 = TextStyle(
     color: AllColors().GREY_LABEL,
     fontSize: 14.toFont,

@@ -145,7 +145,7 @@ class RequestLocationService {
       return [result, locationNotificationModel];
     } catch (e) {
       print(e);
-      return [false];
+      return [false, e.toString()];
     }
   }
 
@@ -214,7 +214,7 @@ class RequestLocationService {
       return result;
     } catch (e) {
       print('error in requestLocationAcknowledgment $e');
-      return false;
+      return e;
     }
   }
 
@@ -275,7 +275,7 @@ class RequestLocationService {
       return result;
     } catch (e) {
       print('error in updateWithRequestLocationAcknowledge $e');
-      return false;
+      return e;
     }
   }
 

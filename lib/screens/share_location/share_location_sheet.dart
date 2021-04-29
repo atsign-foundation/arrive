@@ -209,7 +209,8 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
           showLoader: false,
           onSuccess: (provider) {});
     } else {
-      CustomToast().show('some thing went wrong , try again.', context);
+      CustomToast()
+          .show('Something went wrong ${result[1].toString()}', context);
       setState(() {
         isLoading = false;
       });
