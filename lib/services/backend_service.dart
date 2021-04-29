@@ -18,6 +18,9 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
+import 'package:atsign_location_app/routes/route_names.dart';
+import 'package:at_onboarding_flutter/screens/onboarding_widget.dart';
+import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 
 import 'package:at_client/src/manager/sync_manager.dart';
 import 'package:provider/provider.dart';
@@ -110,6 +113,66 @@ class BackendService {
 
   Future<Map<String, String>> getEncryptedKeys(String atsign) async {
     return await atClientServiceInstance.getEncryptedKeys(atsign);
+  }
+
+  static final KeyChainManager _keyChainManager = KeyChainManager.getInstance();
+  Future<List<String>> getAtsignList() async {
+    var atSignsList = await _keyChainManager.getAtSignListFromKeychain();
+    return atSignsList;
+  }
+
+  deleteAtSignFromKeyChain(String atsign) async {
+    List<String> atSignList = await getAtsignList();
+
+    await atClientServiceMap[atsign].deleteAtSignFromKeychain(atsign);
+
+    if (atSignList != null) {
+      atSignList
+          .removeWhere((element) => element == atClientInstance.currentAtSign);
+    }
+
+    var atClientPrefernce;
+    await getAtClientPreference().then((value) => atClientPrefernce = value);
+    var tempAtsign;
+    if (atSignList == null || atSignList.isEmpty) {
+      tempAtsign = '';
+    } else {
+      tempAtsign = atSignList.first;
+    }
+
+    if (tempAtsign == '') {
+      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
+          Routes.HOME, (Route<dynamic> route) => false);
+    } else {
+      await Onboarding(
+        atsign: tempAtsign,
+        context: NavService.navKey.currentContext,
+        atClientPreference: atClientPrefernce,
+        domain: MixedConstants.ROOT_DOMAIN,
+        appColor: Color.fromARGB(255, 240, 94, 62),
+        onboard: (value, atsign) async {
+          atClientServiceMap = value;
+
+          String atSign = atClientServiceMap[atsign].atClient.currentAtSign;
+
+          await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
+          await initializeContactsService(
+              atClientInstance, atClientInstance.currentAtSign);
+          // await onboard(atsign: atsign, atClientPreference: atClientPreference, atClientServiceInstance: );
+          await Navigator.pushNamedAndRemoveUntil(
+              NavService.navKey.currentContext,
+              Routes.HOME,
+              (Route<dynamic> route) => false);
+        },
+        onError: (error) {
+          print('Onboarding throws $error error');
+        },
+        // nextScreen: WelcomeScreen(),
+      );
+    }
+    // if (atClientInstance != null) {
+    //   await startMonitor();
+    // }
   }
 
   // startMonitor needs to be called at the beginning of session

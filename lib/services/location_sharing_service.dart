@@ -122,7 +122,7 @@ class LocationSharingService {
       return [result, locationNotificationModel];
     } catch (e) {
       print("error in sendShareLocationEvent $e");
-      return [false];
+      return [false, e.toString()];
     }
   }
 
@@ -171,7 +171,7 @@ class LocationSharingService {
 
       return result;
     } catch (e) {
-      return false;
+      return e;
     }
   }
 
@@ -229,7 +229,7 @@ class LocationSharingService {
       print('update result - $result');
       return result;
     } catch (e) {
-      return false;
+      return e;
     }
   }
 

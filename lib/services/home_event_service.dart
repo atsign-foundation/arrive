@@ -163,6 +163,11 @@ class HomeEventService {
                     var result = await RequestLocationService()
                         .sendRequestLocationEvent(
                             locationNotificationModel.receiver);
+
+                    if (result == null) {
+                      return;
+                    }
+
                     if (result[0] == true) {
                       CustomToast().show('Request Location sent', context);
                       providerCallback<HybridProvider>(
@@ -175,8 +180,9 @@ class HomeEventService {
                           showLoader: false,
                           onSuccess: (provider) {});
                     } else {
-                      CustomToast()
-                          .show('Something went wrong ,try again !', context);
+                      CustomToast().show(
+                          'Something went wrong ${result[1].toString()}',
+                          context);
                     }
                   }
                 : null,

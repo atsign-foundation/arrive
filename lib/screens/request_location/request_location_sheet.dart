@@ -141,7 +141,8 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
           showLoader: false,
           onSuccess: (provider) {});
     } else {
-      CustomToast().show('Something went wrong , try again.', context);
+      CustomToast()
+          .show('Something went wrong ${result[1].toString()}', context);
       setState(() {
         isLoading = false;
       });

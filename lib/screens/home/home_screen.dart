@@ -356,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } catch (e) {
       print('Error in getListView $e');
-      return emptyWidget('Something went wrong!!');
+      return emptyWidget('Something went wrong!! ${e.toString()}');
     }
   }
 
