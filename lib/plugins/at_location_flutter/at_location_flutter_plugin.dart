@@ -60,7 +60,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   PopupController _popupController = PopupController();
   MapController mapController = MapController();
   bool isEventAdmin = false;
-  bool showMarker;
+  bool showMarker, mapAdjustedOnce;
   GlobalKey<ScaffoldState> scaffoldKey;
   BuildContext globalContext;
   LatLng _center;
@@ -69,6 +69,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
   void initState() {
     super.initState();
     showMarker = true;
+    mapAdjustedOnce = false;
     LocationService().init(widget.atClientInstance, widget.allUsersList,
         newUserListenerKeyword: widget.userListenerKeyword ?? null,
         newEventListenerKeyword: widget.eventListenerKeyword ?? null,
@@ -150,10 +151,28 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
 
                         try {
                           if ((widget.userListenerKeyword != null) &&
-                              (_center == null) &&
+                              // (_center == null) &&
+                              (!mapAdjustedOnce) &&
                               (markers.length > 0) &&
                               (mapController != null)) {
-                            mapController.move(markers[0].point, 4);
+                            int indexOfUser = users.indexWhere((element) =>
+                                element.displayName ==
+                                widget.userListenerKeyword.atsignCreator);
+
+                            if (indexOfUser > -1) {
+                              mapController.move(
+                                  markers[indexOfUser].point, 10);
+
+                              /// If we want the map to only update once
+                              /// And not keep the focus on user sharing his location
+                              /// then uncomment
+                              //
+                              // mapAdjustedOnce = true;
+                            } else {
+                              /// It moves the focus to logged in user,
+                              /// when other user is not sharing location
+                              mapController.move(markers[0].point, 10);
+                            }
                           }
                         } catch (e) {
                           print('$e');
@@ -174,7 +193,7 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                               widget.bottom ?? 20,
                             )),
                             center: _center,
-                            zoom: 8,
+                            zoom: 10,
                             plugins: [MarkerClusterPlugin(UniqueKey())],
                             onTap: (_) => _popupController
                                 .hidePopup(), // Hide popup when the map is tapped.
@@ -258,11 +277,36 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                     iconColor: AllColors().Black,
                     onPressed: () {
                       _popupController.hidePopup();
-                      LocationService().hybridUsersList.length > 0
-                          ? mapController?.move(
-                              LocationService().hybridUsersList[0].latLng, 4)
-                          // ignore: unnecessary_statements
-                          : null;
+
+                      if (widget.userListenerKeyword != null) {
+                        int indexOfUser = LocationService()
+                            .hybridUsersList
+                            .indexWhere((element) =>
+                                element.displayName ==
+                                widget.userListenerKeyword.atsignCreator);
+
+                        if (indexOfUser > -1) {
+                          /// Keeps the focus on user sharing location
+                          mapController?.move(
+                              LocationService()
+                                  .hybridUsersList[indexOfUser]
+                                  .latLng,
+                              10);
+                        } else if (LocationService().hybridUsersList.length >
+                            0) {
+                          /// It moves the focus to logged in user,
+                          /// when other user is not sharing location
+
+                          mapController?.move(
+                              LocationService().hybridUsersList[0].latLng, 10);
+                        }
+                      } else {
+                        LocationService().hybridUsersList.length > 0
+                            ? mapController?.move(
+                                LocationService().eventData.latLng, 10)
+                            // ignore: unnecessary_statements
+                            : null;
+                      }
                     }),
               ),
               SlidingUpPanel(
