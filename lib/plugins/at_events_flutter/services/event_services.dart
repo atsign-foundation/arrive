@@ -89,10 +89,11 @@ class EventService {
 
       var eventData = EventNotificationModel.convertEventNotificationToJson(
           EventService().eventNotificationModel);
-      var result = await atClientInstance.put(atKey, eventData);
+      var result =
+          await atClientInstance.put(atKey, eventData, isDedicated: true);
       atKey.sharedWith = jsonEncode(allAtsignList);
-      var notifyAllResult = await atClientInstance.notifyAll(
-          atKey, eventData, OperationEnum.update);
+      var notifyAllResult = await atClientInstance
+          .notifyAll(atKey, eventData, OperationEnum.update, isDedicated: true);
       if (onEventSaved != null) {
         onEventSaved(eventNotificationModel);
       }
@@ -123,14 +124,16 @@ class EventService {
         ..key = eventNotification.key
         ..sharedBy = eventNotification.atsignCreator;
 
-      var putResult = await atClientInstance.put(atKey,
-          notification); // creating a key and saving it for creator without adding any receiver atsign
+      var putResult = await atClientInstance.put(atKey, notification,
+          isDedicated:
+              true); // creating a key and saving it for creator without adding any receiver atsign
 
       atKey.sharedWith = jsonEncode(
           [...selectedContactsAtSigns]); //adding event members in atkey
 
       var notifyAllResult = await atClientInstance.notifyAll(
-          atKey, notification, OperationEnum.update);
+          atKey, notification, OperationEnum.update,
+          isDedicated: true);
 
       eventNotificationModel = eventNotification;
       if (onEventSaved != null) {

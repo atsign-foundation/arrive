@@ -106,9 +106,23 @@ class SendLocationNotification {
 
   updateMyLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
-
     if (((permission == LocationPermission.always) ||
         (permission == LocationPermission.whileInUse))) {
+      /// The stream doesnt run until 100m is covered
+      /// So, we send data once
+      var mylatlngOneTime = await getMyLocation();
+
+      bool isMasterSwitchOnOneTime =
+          await LocationNotificationListener().getShareLocation();
+      if (isMasterSwitchOnOneTime) {
+        await Future.forEach(atsignsToShareLocationWith, (notification) async {
+          await prepareLocationDataAndSend(notification,
+              LatLng(mylatlngOneTime.latitude, mylatlngOneTime.longitude));
+        });
+      }
+
+      ///
+
       positionStream = Geolocator.getPositionStream(distanceFilter: 100)
           .listen((myLocation) async {
         bool isMasterSwitchOn =
@@ -177,7 +191,9 @@ class SendLocationNotification {
         await atClient.put(
             atKey,
             LocationNotificationModel.convertLocationNotificationToJson(
-                notification));
+              notification,
+            ),
+            isDedicated: true);
       } catch (e) {
         print('error in sending location: $e');
       }
@@ -191,7 +207,7 @@ class SendLocationNotification {
         locationNotificationModel.key.split('-')[1].split('@')[0];
     AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
         locationNotificationModel.receiver);
-    var result = await atClient.delete(atKey);
+    var result = await atClient.delete(atKey, isDedicated: true);
     print('$atKey delete operation $result');
   }
 
@@ -203,7 +219,7 @@ class SendLocationNotification {
       if (!'@$key'.contains('cached')) {
         // the keys i have created
         AtKey atKey = BackendService.getInstance().getAtKey(key);
-        var result = await atClient.delete(atKey);
+        var result = await atClient.delete(atKey, isDedicated: true);
         print('$key is deleted ? $result');
       }
     });

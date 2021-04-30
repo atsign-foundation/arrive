@@ -209,7 +209,10 @@ class EventProvider extends BaseModel {
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-      var result = await atClientInstance.put(key, notification);
+      var result =
+          await atClientInstance.put(key, notification, isDedicated: true);
+
+      print('actionOnEvent put = $result');
 
       // if key type is createevent, we have to notify all members
       if (keyType == ATKEY_TYPE_ENUM.CREATEEVENT) {
@@ -228,7 +231,8 @@ class EventProvider extends BaseModel {
 
         key.sharedWith = jsonEncode(allAtsignList);
         var notifyAllResult = await atClientInstance.notifyAll(
-            key, notification, OperationEnum.update);
+            key, notification, OperationEnum.update,
+            isDedicated: true);
       }
 
       setStatus(UPDATE_EVENTS, Status.Done);
@@ -387,7 +391,8 @@ class EventProvider extends BaseModel {
                       createEventAtKey,
                       EventNotificationModel.convertEventNotificationToJson(
                           storedEvent),
-                      OperationEnum.update);
+                      OperationEnum.update,
+                      isDedicated: true);
 
                   if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(storedEvent);
@@ -453,7 +458,8 @@ class EventProvider extends BaseModel {
         var notifyAllResult = await atClientInstance.notifyAll(
             key,
             EventNotificationModel.convertEventNotificationToJson(eventData),
-            OperationEnum.update);
+            OperationEnum.update,
+            isDedicated: true);
 
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
@@ -473,7 +479,8 @@ class EventProvider extends BaseModel {
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
 
-      var result = await atClientInstance.put(key, notification);
+      var result =
+          await atClientInstance.put(key, notification, isDedicated: true);
       if (result is bool) {
         print('event acknowledged:$result');
         return result;

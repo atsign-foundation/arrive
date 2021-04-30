@@ -140,7 +140,8 @@ class RequestLocationService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  locationNotificationModel));
+                  locationNotificationModel),
+              isDedicated: true);
       print('requestLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
@@ -187,7 +188,8 @@ class RequestLocationService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  ackLocationNotificationModel));
+                  ackLocationNotificationModel),
+              isDedicated: true);
       print('requestLocationAcknowledgment $result');
       if (result) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
@@ -258,7 +260,7 @@ class RequestLocationService {
       result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(key, notification);
+          .put(key, notification, isDedicated: true);
 
       if (result)
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
@@ -314,7 +316,8 @@ class RequestLocationService {
         .put(
             atKey,
             LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
+                locationNotificationModel),
+            isDedicated: true);
     print('requestLocationAcknowledgment $result');
     return result;
   }
@@ -338,7 +341,7 @@ class RequestLocationService {
     var result = await BackendService.getInstance()
         .atClientServiceInstance
         .atClient
-        .delete(key);
+        .delete(key, isDedicated: true);
     print('$key delete operation $result');
 
     if (result) {

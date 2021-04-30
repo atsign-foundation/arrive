@@ -274,8 +274,6 @@ class BackendService {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
 
-      // TODO: update all the users location in our LocationNotificationListener
-
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
         await providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
@@ -445,12 +443,14 @@ class BackendService {
 
       AtKey key = BackendService.getInstance().getAtKey(presentEventData.key);
 
-      var result = await atClientInstance.put(key, notification);
+      var result =
+          await atClientInstance.put(key, notification, isDedicated: true);
 
       key.sharedWith = jsonEncode(allAtsignList);
 
       var notifyAllResult = await atClientInstance.notifyAll(
-          key, notification, OperationEnum.update);
+          key, notification, OperationEnum.update,
+          isDedicated: true);
 
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
@@ -514,12 +514,14 @@ class BackendService {
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
 
-      var result = await atClientInstance.put(key, notification);
+      var result =
+          await atClientInstance.put(key, notification, isDedicated: true);
 
       key.sharedWith = jsonEncode(allAtsignList);
 
       var notifyAllResult = await atClientInstance.notifyAll(
-          key, notification, OperationEnum.update);
+          key, notification, OperationEnum.update,
+          isDedicated: true);
 
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,

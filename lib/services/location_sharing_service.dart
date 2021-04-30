@@ -116,7 +116,8 @@ class LocationSharingService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  locationNotificationModel));
+                  locationNotificationModel),
+              isDedicated: true);
 
       print('sendLocationNotification:$result');
       return [result, locationNotificationModel];
@@ -155,7 +156,7 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(atKey, notification);
+          .put(atKey, notification, isDedicated: true);
       print('sendLocationNotificationAcknowledgment:$result');
 
       if (result) {
@@ -218,7 +219,7 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(key, notification);
+          .put(key, notification, isDedicated: true);
       if (result) {
         BackendService.getInstance().mapUpdatedDataToWidget(
             BackendService.getInstance().convertEventToHybrid(
@@ -272,7 +273,7 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .delete(key);
+          .delete(key, isDedicated: true);
       if (result) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(key.key),
