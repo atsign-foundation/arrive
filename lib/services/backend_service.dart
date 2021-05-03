@@ -406,12 +406,15 @@ class BackendService {
       EventNotificationModel presentEventData;
       Provider.of<HybridProvider>(NavService.navKey.currentContext,
               listen: false)
-          .allNotifications
+          .allHybridNotifications
           .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(
                   element.eventNotificationModel)));
+
+          // print(
+          //     'presentEventData ${EventNotificationModel.convertEventNotificationToJson(presentEventData)}');
         }
       });
 
@@ -429,6 +432,8 @@ class BackendService {
           presentGroupMember.tags['lat'] = locationData.lat;
           presentGroupMember.tags['long'] = locationData.long;
         }
+
+        // print('presentGroupMember ${presentGroupMember.tags}');
       });
 
       presentEventData.isUpdate = true;
@@ -471,12 +476,15 @@ class BackendService {
       EventNotificationModel presentEventData;
       Provider.of<HybridProvider>(NavService.navKey.currentContext,
               listen: false)
-          .allNotifications
+          .allHybridNotifications
           .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(
                   element.eventNotificationModel)));
+
+          // print(
+          //     'presentEventData ${EventNotificationModel.convertEventNotificationToJson(presentEventData)}');
         }
       });
 
@@ -501,10 +509,14 @@ class BackendService {
                   presentGroupMember.atSign.toLowerCase() &&
               acknowledgedGroupMember.atSign.toLowerCase() ==
                   fromAtSign.toLowerCase()) {
+            // print(
+            //     'acknowledgedGroupMember.tags ${acknowledgedGroupMember.tags}');
             presentGroupMember.tags = acknowledgedGroupMember.tags;
           }
         });
+        // print('presentGroupMember.tags ${presentGroupMember.tags}');
       });
+
       presentEventData.isUpdate = true;
       List<String> allAtsignList = [];
       presentEventData.group.members.forEach((element) {
@@ -513,6 +525,8 @@ class BackendService {
 
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
+
+      // print('notification $notification');
 
       var result = await atClientInstance.put(key, notification,
           isDedicated: MixedConstants.isDedicated);
@@ -526,6 +540,7 @@ class BackendService {
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: presentEventData));
+        // print('acknowledgement for $fromAtSign completed');
       }
     } catch (e) {
       print('error in event acknowledgement: $e');

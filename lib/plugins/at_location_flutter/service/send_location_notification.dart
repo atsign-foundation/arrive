@@ -158,7 +158,7 @@ class SendLocationNotification {
           EventNotificationModel event;
           Provider.of<HybridProvider>(NavService.navKey.currentContext,
                   listen: false)
-              .allNotifications
+              .allHybridNotifications
               .forEach((element) {
             if (element.key.contains(notification.key)) {
               event = EventNotificationModel.fromJson(jsonDecode(
