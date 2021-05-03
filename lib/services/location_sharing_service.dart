@@ -6,6 +6,7 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 import 'backend_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
@@ -117,7 +118,7 @@ class LocationSharingService {
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel),
-              isDedicated: true);
+              isDedicated: MixedConstants.isDedicated);
 
       print('sendLocationNotification:$result');
       return [result, locationNotificationModel];
@@ -156,7 +157,7 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(atKey, notification, isDedicated: true);
+          .put(atKey, notification, isDedicated: MixedConstants.isDedicated);
       print('sendLocationNotificationAcknowledgment:$result');
 
       if (result) {
@@ -219,7 +220,7 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(key, notification, isDedicated: true);
+          .put(key, notification, isDedicated: MixedConstants.isDedicated);
       if (result) {
         BackendService.getInstance().mapUpdatedDataToWidget(
             BackendService.getInstance().convertEventToHybrid(
@@ -273,7 +274,7 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .delete(key, isDedicated: true);
+          .delete(key, isDedicated: MixedConstants.isDedicated);
       if (result) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(key.key),

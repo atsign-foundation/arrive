@@ -10,6 +10,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_noti
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:flutter/material.dart';
 import 'package:at_contact/at_contact.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 class EventService {
   EventService._();
@@ -89,11 +90,12 @@ class EventService {
 
       var eventData = EventNotificationModel.convertEventNotificationToJson(
           EventService().eventNotificationModel);
-      var result =
-          await atClientInstance.put(atKey, eventData, isDedicated: true);
+      var result = await atClientInstance.put(atKey, eventData,
+          isDedicated: MixedConstants.isDedicated);
       atKey.sharedWith = jsonEncode(allAtsignList);
-      var notifyAllResult = await atClientInstance
-          .notifyAll(atKey, eventData, OperationEnum.update, isDedicated: true);
+      var notifyAllResult = await atClientInstance.notifyAll(
+          atKey, eventData, OperationEnum.update,
+          isDedicated: MixedConstants.isDedicated);
       if (onEventSaved != null) {
         onEventSaved(eventNotificationModel);
       }
@@ -133,7 +135,7 @@ class EventService {
 
       var notifyAllResult = await atClientInstance.notifyAll(
           atKey, notification, OperationEnum.update,
-          isDedicated: true);
+          isDedicated: MixedConstants.isDedicated);
 
       eventNotificationModel = eventNotification;
       if (onEventSaved != null) {

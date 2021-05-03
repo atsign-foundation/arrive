@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 class SendLocationNotification {
   SendLocationNotification._();
@@ -182,6 +183,7 @@ class SendLocationNotification {
             notification.key.split('-')[1].split('@')[0];
         atKey = newAtKey(
             5000, "locationnotify-$atkeyMicrosecondId", notification.receiver);
+        // TODO: Put notification.to as ttl
       }
 
       notification.lat = myLocation.latitude;
@@ -193,7 +195,7 @@ class SendLocationNotification {
             LocationNotificationModel.convertLocationNotificationToJson(
               notification,
             ),
-            isDedicated: true);
+            isDedicated: MixedConstants.isDedicated);
       } catch (e) {
         print('error in sending location: $e');
       }
@@ -207,7 +209,8 @@ class SendLocationNotification {
         locationNotificationModel.key.split('-')[1].split('@')[0];
     AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
         locationNotificationModel.receiver);
-    var result = await atClient.delete(atKey, isDedicated: true);
+    var result =
+        await atClient.delete(atKey, isDedicated: MixedConstants.isDedicated);
     print('$atKey delete operation $result');
   }
 
@@ -219,7 +222,8 @@ class SendLocationNotification {
       if (!'@$key'.contains('cached')) {
         // the keys i have created
         AtKey atKey = BackendService.getInstance().getAtKey(key);
-        var result = await atClient.delete(atKey, isDedicated: true);
+        var result = await atClient.delete(atKey,
+            isDedicated: MixedConstants.isDedicated);
         print('$key is deleted ? $result');
       }
     });
@@ -229,6 +233,7 @@ class SendLocationNotification {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = ttr
+      // ..metadata.ttl = MixedConstants.maxTTL
       ..metadata.ccd = true
       ..key = key
       ..sharedWith = sharedWith

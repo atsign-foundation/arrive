@@ -443,14 +443,14 @@ class BackendService {
 
       AtKey key = BackendService.getInstance().getAtKey(presentEventData.key);
 
-      var result =
-          await atClientInstance.put(key, notification, isDedicated: true);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
 
       key.sharedWith = jsonEncode(allAtsignList);
 
       var notifyAllResult = await atClientInstance.notifyAll(
           key, notification, OperationEnum.update,
-          isDedicated: true);
+          isDedicated: MixedConstants.isDedicated);
 
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
@@ -514,14 +514,14 @@ class BackendService {
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
 
-      var result =
-          await atClientInstance.put(key, notification, isDedicated: true);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
 
       key.sharedWith = jsonEncode(allAtsignList);
 
       var notifyAllResult = await atClientInstance.notifyAll(
           key, notification, OperationEnum.update,
-          isDedicated: true);
+          isDedicated: MixedConstants.isDedicated);
 
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
@@ -554,6 +554,7 @@ class BackendService {
   getAtKey(String regexKey) {
     AtKey atKey = AtKey.fromString(regexKey);
     atKey.metadata.ttr = -1;
+    // atKey.metadata.ttl = MixedConstants.maxTTL; // 7 days
     atKey.metadata.ccd = true;
     return atKey;
   }

@@ -36,6 +36,7 @@ class HybridProvider extends RequestLocationProvider {
   init(AtClientImpl clientInstance) {
     allHybridNotifications = [];
     shareLocationData = [];
+    atClientInstance = clientInstance;
     super.init(clientInstance);
     reset(HYBRID_GET_ALL_EVENTS);
     reset(HYBRID_CHECK_ACKNOWLEDGED_EVENT);

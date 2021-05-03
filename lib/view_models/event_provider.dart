@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'hybrid_provider.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 class EventProvider extends BaseModel {
   EventProvider();
@@ -184,7 +185,6 @@ class EventProvider extends BaseModel {
         eventData.group.members.forEach((member) {
           if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
           if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
-
           if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
             member.tags['isAccepted'] =
                 isAccepted != null ? isAccepted : member.tags['isAccepted'];
@@ -209,8 +209,8 @@ class EventProvider extends BaseModel {
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-      var result =
-          await atClientInstance.put(key, notification, isDedicated: true);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
 
       print('actionOnEvent put = $result');
 
@@ -232,7 +232,7 @@ class EventProvider extends BaseModel {
         key.sharedWith = jsonEncode(allAtsignList);
         var notifyAllResult = await atClientInstance.notifyAll(
             key, notification, OperationEnum.update,
-            isDedicated: true);
+            isDedicated: MixedConstants.isDedicated);
       }
 
       setStatus(UPDATE_EVENTS, Status.Done);
@@ -392,7 +392,7 @@ class EventProvider extends BaseModel {
                       EventNotificationModel.convertEventNotificationToJson(
                           storedEvent),
                       OperationEnum.update,
-                      isDedicated: true);
+                      isDedicated: MixedConstants.isDedicated);
 
                   if (updateResult is bool && updateResult == true)
                     mapUpdatedEventDataToWidget(storedEvent);
@@ -459,7 +459,7 @@ class EventProvider extends BaseModel {
             key,
             EventNotificationModel.convertEventNotificationToJson(eventData),
             OperationEnum.update,
-            isDedicated: true);
+            isDedicated: MixedConstants.isDedicated);
 
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
@@ -479,8 +479,8 @@ class EventProvider extends BaseModel {
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
 
-      var result =
-          await atClientInstance.put(key, notification, isDedicated: true);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
       if (result is bool) {
         print('event acknowledged:$result');
         return result;

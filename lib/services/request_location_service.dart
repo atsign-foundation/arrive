@@ -8,6 +8,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_noti
 import 'package:provider/provider.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'location_notification_listener.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 import 'nav_service.dart';
 
@@ -141,7 +142,7 @@ class RequestLocationService {
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel),
-              isDedicated: true);
+              isDedicated: MixedConstants.isDedicated);
       print('requestLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
@@ -189,7 +190,7 @@ class RequestLocationService {
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
                   ackLocationNotificationModel),
-              isDedicated: true);
+              isDedicated: MixedConstants.isDedicated);
       print('requestLocationAcknowledgment $result');
       if (result) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
@@ -260,7 +261,7 @@ class RequestLocationService {
       result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(key, notification, isDedicated: true);
+          .put(key, notification, isDedicated: MixedConstants.isDedicated);
 
       if (result)
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
@@ -317,7 +318,7 @@ class RequestLocationService {
             atKey,
             LocationNotificationModel.convertLocationNotificationToJson(
                 locationNotificationModel),
-            isDedicated: true);
+            isDedicated: MixedConstants.isDedicated);
     print('requestLocationAcknowledgment $result');
     return result;
   }
@@ -341,7 +342,7 @@ class RequestLocationService {
     var result = await BackendService.getInstance()
         .atClientServiceInstance
         .atClient
-        .delete(key, isDedicated: true);
+        .delete(key, isDedicated: MixedConstants.isDedicated);
     print('$key delete operation $result');
 
     if (result) {
