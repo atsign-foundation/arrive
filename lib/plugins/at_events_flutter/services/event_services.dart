@@ -96,6 +96,8 @@ class EventService {
       var notifyAllResult = await atClientInstance.notifyAll(
           atKey, eventData, OperationEnum.update,
           isDedicated: MixedConstants.isDedicated);
+
+      /// Dont need to sync here as notifyAll is called
       if (onEventSaved != null) {
         onEventSaved(eventNotificationModel);
       }
@@ -136,6 +138,8 @@ class EventService {
       var notifyAllResult = await atClientInstance.notifyAll(
           atKey, notification, OperationEnum.update,
           isDedicated: MixedConstants.isDedicated);
+
+      /// Dont need to sync as notifyAll is called
 
       eventNotificationModel = eventNotification;
       if (onEventSaved != null) {

@@ -190,11 +190,13 @@ class BackendService {
     print('fnCallBack called');
     await syncWithSecondary();
     response = response.replaceFirst('notification:', '');
+    print('response $response');
+
     var responseJson = jsonDecode(response);
     var value = responseJson['value'];
     var notificationKey = responseJson['key'];
 
-    print('fn call back:$response , notification key: $notificationKey');
+    // print('fn call back:$response , notification key: $notificationKey');
 
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
@@ -457,6 +459,8 @@ class BackendService {
           key, notification, OperationEnum.update,
           isDedicated: MixedConstants.isDedicated);
 
+      /// Dont sync as notifyAll is called
+
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
             eventNotificationModel: presentEventData));
@@ -536,6 +540,8 @@ class BackendService {
       var notifyAllResult = await atClientInstance.notifyAll(
           key, notification, OperationEnum.update,
           isDedicated: MixedConstants.isDedicated);
+
+      /// Dont sync as notifyAll is called
 
       if (result is bool && result) {
         mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,

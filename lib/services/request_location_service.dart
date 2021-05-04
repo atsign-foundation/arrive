@@ -143,6 +143,12 @@ class RequestLocationService {
               LocationNotificationModel.convertLocationNotificationToJson(
                   locationNotificationModel),
               isDedicated: MixedConstants.isDedicated);
+
+      if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
+      }
       print('requestLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
@@ -193,6 +199,9 @@ class RequestLocationService {
               isDedicated: MixedConstants.isDedicated);
       print('requestLocationAcknowledgment $result');
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.updatePendingStatus(
                 BackendService.getInstance().convertEventToHybrid(
@@ -263,7 +272,10 @@ class RequestLocationService {
           .atClient
           .put(key, notification, isDedicated: MixedConstants.isDedicated);
 
-      if (result)
+      if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.mapUpdatedData(
                 BackendService.getInstance().convertEventToHybrid(
@@ -273,6 +285,7 @@ class RequestLocationService {
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
             onSuccess: (provider) {});
+      }
 
       print('update result - $result');
       return result;
@@ -319,6 +332,13 @@ class RequestLocationService {
             LocationNotificationModel.convertLocationNotificationToJson(
                 locationNotificationModel),
             isDedicated: MixedConstants.isDedicated);
+
+    if (result) {
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
+    }
+
     print('requestLocationAcknowledgment $result');
     return result;
   }
@@ -346,6 +366,9 @@ class RequestLocationService {
     print('$key delete operation $result');
 
     if (result) {
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
       providerCallback<HybridProvider>(NavService.navKey.currentContext,
           task: (provider) => provider.removePerson(key.key),
           taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,

@@ -75,6 +75,9 @@ class SendLocationNotification {
 
       if (isMasterSwitchOn) {
         await prepareLocationDataAndSend(notification, myLocation);
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
       }
     } else {
       atsignsToShareLocationWith.add(notification);
@@ -120,6 +123,9 @@ class SendLocationNotification {
           await prepareLocationDataAndSend(notification,
               LatLng(mylatlngOneTime.latitude, mylatlngOneTime.longitude));
         });
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
       }
 
       ///
@@ -134,6 +140,11 @@ class SendLocationNotification {
             await prepareLocationDataAndSend(notification,
                 LatLng(myLocation.latitude, myLocation.longitude));
           });
+
+          /// sync once for all
+          if (MixedConstants.isDedicated) {
+            await BackendService.getInstance().syncWithSecondary();
+          }
         }
       });
     }
@@ -211,6 +222,13 @@ class SendLocationNotification {
         locationNotificationModel.receiver);
     var result =
         await atClient.delete(atKey, isDedicated: MixedConstants.isDedicated);
+
+    if (result) {
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
+    }
+
     print('$atKey delete operation $result');
   }
 
@@ -224,6 +242,13 @@ class SendLocationNotification {
         AtKey atKey = BackendService.getInstance().getAtKey(key);
         var result = await atClient.delete(atKey,
             isDedicated: MixedConstants.isDedicated);
+
+        if (result) {
+          if (MixedConstants.isDedicated) {
+            await BackendService.getInstance().syncWithSecondary();
+          }
+        }
+
         print('$key is deleted ? $result');
       }
     });

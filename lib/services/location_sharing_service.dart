@@ -120,6 +120,12 @@ class LocationSharingService {
                   locationNotificationModel),
               isDedicated: MixedConstants.isDedicated);
 
+      if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
+      }
+
       print('sendLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
@@ -161,6 +167,9 @@ class LocationSharingService {
       print('sendLocationNotificationAcknowledgment:$result');
 
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.updatePendingStatus(
                 BackendService.getInstance().convertEventToHybrid(
@@ -222,6 +231,9 @@ class LocationSharingService {
           .atClient
           .put(key, notification, isDedicated: MixedConstants.isDedicated);
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         BackendService.getInstance().mapUpdatedDataToWidget(
             BackendService.getInstance().convertEventToHybrid(
                 NotificationType.Location,
@@ -276,6 +288,9 @@ class LocationSharingService {
           .atClient
           .delete(key, isDedicated: MixedConstants.isDedicated);
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(key.key),
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
