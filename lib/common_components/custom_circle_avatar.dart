@@ -37,7 +37,7 @@ class CustomCircleAvatar extends StatelessWidget {
                     fit: BoxFit.fill,
                   ),
                 )
-              : ContactInitial(initials: contactInitial.substring(1, 3))
+              : ContactInitial(initials: contactInitial)
           : CircleAvatar(
               radius: (size - 5).toFont,
               backgroundColor: Colors.transparent,

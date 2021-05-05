@@ -111,8 +111,7 @@ class _SideBarState extends State<SideBar> {
                           initials: BackendService.getInstance()
                               .atClientServiceInstance
                               .atClient
-                              .currentAtSign
-                              .substring(1, 3)),
+                              .currentAtSign),
                   Flexible(
                       child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
