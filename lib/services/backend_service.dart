@@ -8,6 +8,8 @@ import 'package:atsign_location_app/common_components/dialog_box/share_location_
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/sync_secondary.dart';
+
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -372,14 +374,7 @@ class BackendService {
   }
 
   syncWithSecondary() async {
-    SyncManager syncManager = atClientInstance.getSyncManager();
-    var isSynced = await syncManager.isInSync();
-    print('already synced: $isSynced');
-    if (isSynced is bool && isSynced) {
-    } else {
-      await syncManager.sync();
-      print('sync done');
-    }
+    SyncSecondary().callSyncSecondary();
   }
 
   Future<void> showMyDialog(String fromAtSign,
