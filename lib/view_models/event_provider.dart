@@ -15,7 +15,7 @@ import 'hybrid_provider.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:latlong/latlong.dart';
-import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/services/sync_secondary.dart';
 
 class EventProvider extends BaseModel {
   EventProvider();
@@ -236,7 +236,7 @@ class EventProvider extends BaseModel {
         });
 
         key.sharedWith = jsonEncode(allAtsignList);
-        var notifyAllResult = await atClientInstance.notifyAll(
+        var notifyAllResult = await SyncSecondary().notifyAllInSync(
             key, notification, OperationEnum.update,
             isDedicated: MixedConstants.isDedicated);
       }
@@ -441,7 +441,7 @@ class EventProvider extends BaseModel {
 
               createEventAtKey.sharedWith = jsonEncode(allAtsignList);
 
-              var notifyAllResult = await atClientInstance.notifyAll(
+              var notifyAllResult = await SyncSecondary().notifyAllInSync(
                   createEventAtKey,
                   EventNotificationModel.convertEventNotificationToJson(
                       storedEvent),
@@ -511,7 +511,7 @@ class EventProvider extends BaseModel {
 
         key.sharedWith = jsonEncode(allAtsignList);
 
-        var notifyAllResult = await atClientInstance.notifyAll(
+        var notifyAllResult = await SyncSecondary().notifyAllInSync(
             key,
             EventNotificationModel.convertEventNotificationToJson(eventData),
             OperationEnum.update,

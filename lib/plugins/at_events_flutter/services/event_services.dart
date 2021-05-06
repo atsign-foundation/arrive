@@ -11,6 +11,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:flutter/material.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/services/sync_secondary.dart';
 
 class EventService {
   EventService._();
@@ -93,7 +94,7 @@ class EventService {
       var result = await atClientInstance.put(atKey, eventData,
           isDedicated: MixedConstants.isDedicated);
       atKey.sharedWith = jsonEncode(allAtsignList);
-      var notifyAllResult = await atClientInstance.notifyAll(
+      var notifyAllResult = await SyncSecondary().notifyAllInSync(
           atKey, eventData, OperationEnum.update,
           isDedicated: MixedConstants.isDedicated);
 
@@ -135,7 +136,7 @@ class EventService {
       atKey.sharedWith = jsonEncode(
           [...selectedContactsAtSigns]); //adding event members in atkey
 
-      var notifyAllResult = await atClientInstance.notifyAll(
+      var notifyAllResult = await SyncSecondary().notifyAllInSync(
           atKey, notification, OperationEnum.update,
           isDedicated: MixedConstants.isDedicated);
 

@@ -48,6 +48,8 @@ class HybridProvider extends RequestLocationProvider {
   getAllHybridEvents() async {
     setStatus(HYBRID_GET_ALL_EVENTS, Status.Loading);
     try {
+      await BackendService.getInstance().syncWithSecondary();
+
       await super.getSingleUserLocationSharing();
       await super.getSingleUserLocationRequest();
       await super.getAllEvents();
@@ -97,7 +99,11 @@ class HybridProvider extends RequestLocationProvider {
     SendLocationNotification().removeMember(key);
   }
 
-  mapUpdatedData(HybridNotificationModel notification, {bool remove = false}) {
+  mapUpdatedData(HybridNotificationModel notification,
+      {bool remove = false,
+      Map<dynamic, dynamic> tags,
+      String tagOfAtsign,
+      bool updateLatLng = false}) {
     setStatus(HYBRID_MAP_UPDATED_EVENT_DATA, Status.Loading);
     String newEventDataKeyId = notification.notificationType ==
             NotificationType.Event
@@ -115,8 +121,27 @@ class HybridProvider extends RequestLocationProvider {
     for (int i = 0; i < allHybridNotifications.length; i++) {
       if ((allHybridNotifications[i].key.contains(newEventDataKeyId))) {
         if (NotificationType.Event == notification.notificationType) {
-          allHybridNotifications[i].eventNotificationModel =
-              notification.eventNotificationModel;
+          /// For events send tags of group members if we have and update only them
+
+          if ((tags != null) && (tagOfAtsign != null)) {
+            allHybridNotifications[i]
+                .eventNotificationModel
+                .group
+                .members
+                .where((element) => element.atSign == tagOfAtsign)
+                .forEach((element) {
+              if (updateLatLng) {
+                element.tags['lat'] = tags['lat'];
+                element.tags['long'] = tags['long'];
+              } else {
+                element.tags = tags;
+              }
+            });
+          } else {
+            allHybridNotifications[i].eventNotificationModel =
+                notification.eventNotificationModel;
+          }
+
           allHybridNotifications[i].eventNotificationModel.key =
               allHybridNotifications[i].key;
           LocationService().updateEventWithNewData(
