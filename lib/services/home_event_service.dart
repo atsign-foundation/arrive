@@ -178,6 +178,7 @@ class HomeEventService {
                                   locationNotificationModel: result[1])),
                           taskName: (provider) => provider.HYBRID_ADD_EVENT,
                           showLoader: false,
+                          showDialog: false,
                           onSuccess: (provider) {});
                     } else {
                       CustomToast().show(

@@ -350,6 +350,7 @@ class BackendService {
                 eventNotificationModel: eventData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
+            showDialog: false,
             onSuccess: (provider) {
               showMyDialog(fromAtSign, eventData: eventData);
             });
@@ -399,6 +400,7 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
+            showDialog: false,
             onSuccess: (provider) {
               showMyDialog(fromAtSign, locationData: locationData);
             });
@@ -430,6 +432,7 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
+            showDialog: false,
             onSuccess: (provider) {
               showMyDialog(fromAtSign, locationData: locationData);
             });

@@ -271,6 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   eventNotificationModel: event)),
                           taskName: (provider) => provider.HYBRID_ADD_EVENT,
                           showLoader: false,
+                          showDialog: false,
                           onSuccess: (provider) {});
                     }, createdEvents: allEvents),
                     SizeConfig().screenHeight * 0.9,
