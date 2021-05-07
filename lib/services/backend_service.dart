@@ -27,6 +27,7 @@ import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_client/src/manager/sync_manager.dart';
 import 'package:provider/provider.dart';
 import 'location_notification_listener.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 
 class BackendService {
   static final BackendService _singleton = BackendService._internal();
@@ -144,7 +145,7 @@ class BackendService {
 
     if (tempAtsign == '') {
       await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
-          Routes.HOME, (Route<dynamic> route) => false);
+          Routes.SPLASH, (Route<dynamic> route) => false);
     } else {
       await Onboarding(
         atsign: tempAtsign,
@@ -158,13 +159,19 @@ class BackendService {
           String atSign = atClientServiceMap[atsign].atClient.currentAtSign;
 
           await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
-          await initializeContactsService(
-              atClientInstance, atClientInstance.currentAtSign);
+          atClientInstance = atClientServiceMap[atsign].atClient;
+          atClientServiceInstance = atClientServiceMap[atsign];
+
+          BackendService.getInstance().startMonitor();
+          // await initializeContactsService(
+          //     atClientInstance, atClientInstance.currentAtSign);
           // await onboard(atsign: atsign, atClientPreference: atClientPreference, atClientServiceInstance: );
-          await Navigator.pushNamedAndRemoveUntil(
-              NavService.navKey.currentContext,
-              Routes.HOME,
-              (Route<dynamic> route) => false);
+          // await Navigator.pushNamedAndRemoveUntil(
+          //     NavService.navKey.currentContext,
+          //     Routes.SPLASH,
+          //     (Route<dynamic> route) => false);
+          SetupRoutes.pushAndRemoveAll(
+              NavService.navKey.currentContext, Routes.HOME);
         },
         onError: (error) {
           print('Onboarding throws $error error');

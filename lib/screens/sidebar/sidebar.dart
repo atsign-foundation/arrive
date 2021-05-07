@@ -371,8 +371,8 @@ class _SideBarState extends State<SideBar> {
                           if (_formKey.currentState.validate()) {
                             await BackendService.getInstance()
                                 .deleteAtSignFromKeyChain(atsign);
-                            await Navigator.pushNamedAndRemoveUntil(
-                                context, Routes.HOME, (route) => false);
+                            // await Navigator.pushNamedAndRemoveUntil(
+                            //     context, Routes.SPLASH, (route) => false);
                           }
                         }),
                     Spacer(),
