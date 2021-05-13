@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 class SendLocationNotification {
   SendLocationNotification._();
@@ -74,6 +75,9 @@ class SendLocationNotification {
 
       if (isMasterSwitchOn) {
         await prepareLocationDataAndSend(notification, myLocation);
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
       }
     } else {
       atsignsToShareLocationWith.add(notification);
@@ -106,9 +110,26 @@ class SendLocationNotification {
 
   updateMyLocation() async {
     LocationPermission permission = await Geolocator.checkPermission();
-
     if (((permission == LocationPermission.always) ||
         (permission == LocationPermission.whileInUse))) {
+      /// The stream doesnt run until 100m is covered
+      /// So, we send data once
+      var mylatlngOneTime = await getMyLocation();
+
+      bool isMasterSwitchOnOneTime =
+          await LocationNotificationListener().getShareLocation();
+      if (isMasterSwitchOnOneTime) {
+        await Future.forEach(atsignsToShareLocationWith, (notification) async {
+          await prepareLocationDataAndSend(notification,
+              LatLng(mylatlngOneTime.latitude, mylatlngOneTime.longitude));
+        });
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
+      }
+
+      ///
+
       positionStream = Geolocator.getPositionStream(distanceFilter: 100)
           .listen((myLocation) async {
         bool isMasterSwitchOn =
@@ -119,6 +140,11 @@ class SendLocationNotification {
             await prepareLocationDataAndSend(notification,
                 LatLng(myLocation.latitude, myLocation.longitude));
           });
+
+          /// sync once for all
+          if (MixedConstants.isDedicated) {
+            await BackendService.getInstance().syncWithSecondary();
+          }
         }
       });
     }
@@ -143,7 +169,7 @@ class SendLocationNotification {
           EventNotificationModel event;
           Provider.of<HybridProvider>(NavService.navKey.currentContext,
                   listen: false)
-              .allNotifications
+              .allHybridNotifications
               .forEach((element) {
             if (element.key.contains(notification.key)) {
               event = EventNotificationModel.fromJson(jsonDecode(
@@ -168,6 +194,7 @@ class SendLocationNotification {
             notification.key.split('-')[1].split('@')[0];
         atKey = newAtKey(
             5000, "locationnotify-$atkeyMicrosecondId", notification.receiver);
+        // TODO: Put notification.to as ttl
       }
 
       notification.lat = myLocation.latitude;
@@ -177,7 +204,9 @@ class SendLocationNotification {
         await atClient.put(
             atKey,
             LocationNotificationModel.convertLocationNotificationToJson(
-                notification));
+              notification,
+            ),
+            isDedicated: MixedConstants.isDedicated);
       } catch (e) {
         print('error in sending location: $e');
       }
@@ -191,7 +220,15 @@ class SendLocationNotification {
         locationNotificationModel.key.split('-')[1].split('@')[0];
     AtKey atKey = newAtKey(5000, "locationnotify-$atkeyMicrosecondId",
         locationNotificationModel.receiver);
-    var result = await atClient.delete(atKey);
+    var result =
+        await atClient.delete(atKey, isDedicated: MixedConstants.isDedicated);
+
+    if (result) {
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
+    }
+
     print('$atKey delete operation $result');
   }
 
@@ -203,7 +240,15 @@ class SendLocationNotification {
       if (!'@$key'.contains('cached')) {
         // the keys i have created
         AtKey atKey = BackendService.getInstance().getAtKey(key);
-        var result = await atClient.delete(atKey);
+        var result = await atClient.delete(atKey,
+            isDedicated: MixedConstants.isDedicated);
+
+        if (result) {
+          if (MixedConstants.isDedicated) {
+            await BackendService.getInstance().syncWithSecondary();
+          }
+        }
+
         print('$key is deleted ? $result');
       }
     });
@@ -213,6 +258,7 @@ class SendLocationNotification {
     AtKey atKey = AtKey()
       ..metadata = Metadata()
       ..metadata.ttr = ttr
+      // ..metadata.ttl = MixedConstants.maxTTL
       ..metadata.ccd = true
       ..key = key
       ..sharedWith = sharedWith

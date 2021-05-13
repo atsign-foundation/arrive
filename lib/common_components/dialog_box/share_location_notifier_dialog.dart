@@ -155,8 +155,7 @@ class _ShareLocationNotifierDialogState
                           : ContactInitial(
                               initials: widget.eventData != null
                                   ? widget.eventData.atsignCreator
-                                      .substring(1, 3)
-                                  : locationUserImageToShow.substring(1, 3),
+                                  : locationUserImageToShow,
                               size: 60,
                             ),
                       widget.showMembersCount

@@ -162,8 +162,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                   ),
                                 )
                               : ContactInitial(
-                                  initials:
-                                      widget.atSignList[index].substring(1, 3),
+                                  initials: widget.atSignList[index],
                                 ),
                           Text(
                             widget.atSignList[index],

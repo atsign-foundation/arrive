@@ -6,6 +6,7 @@ import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 import 'backend_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
@@ -116,7 +117,14 @@ class LocationSharingService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  locationNotificationModel));
+                  locationNotificationModel),
+              isDedicated: MixedConstants.isDedicated);
+
+      if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
+      }
 
       print('sendLocationNotification:$result');
       return [result, locationNotificationModel];
@@ -155,10 +163,13 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(atKey, notification);
+          .put(atKey, notification, isDedicated: MixedConstants.isDedicated);
       print('sendLocationNotificationAcknowledgment:$result');
 
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.updatePendingStatus(
                 BackendService.getInstance().convertEventToHybrid(
@@ -218,8 +229,11 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(key, notification);
+          .put(key, notification, isDedicated: MixedConstants.isDedicated);
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         BackendService.getInstance().mapUpdatedDataToWidget(
             BackendService.getInstance().convertEventToHybrid(
                 NotificationType.Location,
@@ -272,8 +286,11 @@ class LocationSharingService {
       var result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .delete(key);
+          .delete(key, isDedicated: MixedConstants.isDedicated);
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.removePerson(key.key),
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,

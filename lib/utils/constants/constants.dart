@@ -30,4 +30,7 @@ class MixedConstants {
 
   static const String appNamespace = 'rrive';
   static const String syncRegex = '.$appNamespace@';
+
+  static const int maxTTL = 10080 * 60;
+  static const bool isDedicated = true;
 }

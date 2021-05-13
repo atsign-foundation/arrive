@@ -109,6 +109,7 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
                   locationNotificationModel: result[1])),
           taskName: (provider) => provider.HYBRID_ADD_EVENT,
           showLoader: false,
+          showDialog: false,
           onSuccess: (provider) {});
     } else {
       CustomToast()
@@ -146,6 +147,7 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
               locationNotificationModel: result[1])),
           taskName: (provider) => provider.HYBRID_ADD_EVENT,
           showLoader: false,
+          showDialog: false,
           onSuccess: (provider) {});
     } else {
       CustomToast()

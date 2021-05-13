@@ -1,4 +1,4 @@
-import 'package:at_chat_flutter/widgets/contacts_initials.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:at_chat_flutter/widgets/custom_circle_avatar.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/common_components/pointed_bottom.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
@@ -81,8 +81,7 @@ Widget buildPopup(HybridModel user) {
                                   nonAsset: true,
                                   size: 30)
                               : ContactInitial(
-                                  initials: contactInitial.substring(
-                                      0, contactInitial.length > 1 ? 2 : 1),
+                                  initials: contactInitial,
                                   size: 60,
                                 ),
                         ),

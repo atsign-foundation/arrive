@@ -1,11 +1,11 @@
-import 'package:at_chat_flutter/widgets/contacts_initials.dart';
-import 'package:at_chat_flutter/widgets/custom_circle_avatar.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/src/layer/marker_layer.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'circle_marker_painter.dart';
 import 'marker_custom_painter.dart';
+import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
+import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
 
 Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
   String contactInitial;
@@ -66,10 +66,11 @@ Marker buildMarker(HybridModel user, {bool singleMarker = false}) {
                     backgroundColor: AllColors().ORANGE,
                     child: user.image != null
                         ? CustomCircleAvatar(
-                            byteImage: user.image, nonAsset: true, size: 30)
+                            memoryImage: user.image,
+                            isMemoryImage: true,
+                            size: 30)
                         : ContactInitial(
-                            initials: contactInitial.substring(
-                                0, contactInitial.length > 1 ? 2 : 1),
+                            initials: contactInitial,
                             size: 30,
                             backgroundColor: AllColors().ORANGE,
                           ),

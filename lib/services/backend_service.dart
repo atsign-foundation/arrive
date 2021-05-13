@@ -8,6 +8,8 @@ import 'package:atsign_location_app/common_components/dialog_box/share_location_
 import 'package:atsign_location_app/common_components/provider_callback.dart';
 
 import 'package:atsign_location_app/services/location_sharing_service.dart';
+import 'package:atsign_location_app/services/sync_secondary.dart';
+
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -25,6 +27,7 @@ import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_client/src/manager/sync_manager.dart';
 import 'package:provider/provider.dart';
 import 'location_notification_listener.dart';
+import 'package:atsign_location_app/routes/routes.dart';
 
 class BackendService {
   static final BackendService _singleton = BackendService._internal();
@@ -142,7 +145,7 @@ class BackendService {
 
     if (tempAtsign == '') {
       await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
-          Routes.HOME, (Route<dynamic> route) => false);
+          Routes.SPLASH, (Route<dynamic> route) => false);
     } else {
       await Onboarding(
         atsign: tempAtsign,
@@ -156,13 +159,19 @@ class BackendService {
           String atSign = atClientServiceMap[atsign].atClient.currentAtSign;
 
           await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
-          await initializeContactsService(
-              atClientInstance, atClientInstance.currentAtSign);
+          atClientInstance = atClientServiceMap[atsign].atClient;
+          atClientServiceInstance = atClientServiceMap[atsign];
+
+          BackendService.getInstance().startMonitor();
+          // await initializeContactsService(
+          //     atClientInstance, atClientInstance.currentAtSign);
           // await onboard(atsign: atsign, atClientPreference: atClientPreference, atClientServiceInstance: );
-          await Navigator.pushNamedAndRemoveUntil(
-              NavService.navKey.currentContext,
-              Routes.HOME,
-              (Route<dynamic> route) => false);
+          // await Navigator.pushNamedAndRemoveUntil(
+          //     NavService.navKey.currentContext,
+          //     Routes.SPLASH,
+          //     (Route<dynamic> route) => false);
+          SetupRoutes.pushAndRemoveAll(
+              NavService.navKey.currentContext, Routes.HOME);
         },
         onError: (error) {
           print('Onboarding throws $error error');
@@ -186,15 +195,82 @@ class BackendService {
     return true;
   }
 
+  decodeJSON(String response) async {
+    try {
+      var result = jsonDecode(response);
+      print('length without error ${response.length}');
+      return result;
+    } catch (e) {
+      print('length with error ${response.length}');
+
+      print('error in decodeJSON $e');
+
+      if (e is FormatException) {
+        print('${e.offset} length');
+        List<String> splitOnComma = response.split(',');
+
+        print('splitOnComma length ${splitOnComma.length}');
+
+        await Future.forEach(splitOnComma, (element) async {
+          print('before element $element');
+
+          element.toString().replaceAll('/"', '');
+          print('element $element');
+          var list = element.split(':');
+          print('list length ${list.length}');
+
+          print('list[0] ${list[0]}');
+
+          if ((list.length != 0) && (list[0].contains('key'))) {
+            print('key = ${list[1]}');
+            print(
+                'atkey ${list[2].toString().substring(0, list[2].toString().length - 1)}');
+            AtKey key = BackendService.getInstance().getAtKey(
+                list[2].toString().substring(0, list[2].toString().length - 1));
+            print('atkey = $key');
+
+            AtValue atvalue = await atClientInstance
+                .get(key)
+                // ignore: return_of_invalid_type_from_catch_error
+                .catchError((e) => print("error in get decodeJSON $e"));
+
+            if (atvalue != null) {
+              var notification = json.encode({
+                "value": atvalue.value,
+                "key": key.key,
+                "from": key.sharedBy,
+                "operation": "update",
+              });
+              print('notification $notification');
+
+              return jsonDecode(notification);
+            } else {
+              return null;
+            }
+          }
+        });
+      }
+    }
+  }
+
   fnCallBack(var response) async {
     print('fnCallBack called');
     await syncWithSecondary();
     response = response.replaceFirst('notification:', '');
+    print('length ${response.length} response $response');
+
     var responseJson = jsonDecode(response);
+    // var responseJson = await decodeJSON(response);
+
+    if (responseJson == null) {
+      print('decodeJSON returned null');
+      return;
+    }
+
     var value = responseJson['value'];
     var notificationKey = responseJson['key'];
 
-    print('fn call back:$response , notification key: $notificationKey');
+    // print('fn call back:$response , notification key: $notificationKey');
 
     var fromAtSign = responseJson['from'];
     var atKey = notificationKey.split(':')[1];
@@ -274,8 +350,6 @@ class BackendService {
       EventNotificationModel eventData =
           EventNotificationModel.fromJson(jsonDecode(decryptedMessage));
 
-      // TODO: update all the users location in our LocationNotificationListener
-
       if (eventData.isUpdate != null && eventData.isUpdate == false) {
         await providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.addNewEvent(HybridNotificationModel(
@@ -283,6 +357,7 @@ class BackendService {
                 eventNotificationModel: eventData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
+            showDialog: false,
             onSuccess: (provider) {
               showMyDialog(fromAtSign, eventData: eventData);
             });
@@ -332,6 +407,7 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
+            showDialog: false,
             onSuccess: (provider) {
               showMyDialog(fromAtSign, locationData: locationData);
             });
@@ -363,6 +439,7 @@ class BackendService {
                 locationNotificationModel: locationData)),
             taskName: (provider) => provider.HYBRID_ADD_EVENT,
             showLoader: false,
+            showDialog: false,
             onSuccess: (provider) {
               showMyDialog(fromAtSign, locationData: locationData);
             });
@@ -372,14 +449,7 @@ class BackendService {
   }
 
   syncWithSecondary() async {
-    SyncManager syncManager = atClientInstance.getSyncManager();
-    var isSynced = await syncManager.isInSync();
-    print('already synced: $isSynced');
-    if (isSynced is bool && isSynced) {
-    } else {
-      await syncManager.sync();
-      print('sync done');
-    }
+    await SyncSecondary().callSyncSecondary();
   }
 
   Future<void> showMyDialog(String fromAtSign,
@@ -408,18 +478,24 @@ class BackendService {
       EventNotificationModel presentEventData;
       Provider.of<HybridProvider>(NavService.navKey.currentContext,
               listen: false)
-          .allNotifications
+          .allHybridNotifications
           .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(
                   element.eventNotificationModel)));
+
+          // print(
+          //     'presentEventData ${EventNotificationModel.convertEventNotificationToJson(presentEventData)}');
         }
       });
 
       if (presentEventData == null) {
         return;
       }
+
+      Map<dynamic, dynamic> tags;
+
       presentEventData.group.members.forEach((presentGroupMember) {
         if (presentGroupMember.atSign[0] != '@')
           presentGroupMember.atSign = '@' + presentGroupMember.atSign;
@@ -430,7 +506,11 @@ class BackendService {
             fromAtSign.toLowerCase()) {
           presentGroupMember.tags['lat'] = locationData.lat;
           presentGroupMember.tags['long'] = locationData.long;
+
+          tags = presentGroupMember.tags;
         }
+
+        // print('presentGroupMember ${presentGroupMember.tags}');
       });
 
       presentEventData.isUpdate = true;
@@ -445,16 +525,24 @@ class BackendService {
 
       AtKey key = BackendService.getInstance().getAtKey(presentEventData.key);
 
-      var result = await atClientInstance.put(key, notification);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
 
       key.sharedWith = jsonEncode(allAtsignList);
 
-      var notifyAllResult = await atClientInstance.notifyAll(
-          key, notification, OperationEnum.update);
+      var notifyAllResult = await SyncSecondary().notifyAllInSync(
+          key, notification, OperationEnum.update,
+          isDedicated: MixedConstants.isDedicated);
+
+      /// Dont sync as notifyAll is called
 
       if (result is bool && result) {
-        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
-            eventNotificationModel: presentEventData));
+        mapUpdatedDataToWidget(
+            convertEventToHybrid(NotificationType.Event,
+                eventNotificationModel: presentEventData),
+            tags: tags,
+            tagOfAtsign: fromAtSign,
+            updateLatLng: true);
       }
     } catch (e) {
       print('error in event acknowledgement: $e');
@@ -471,12 +559,15 @@ class BackendService {
       EventNotificationModel presentEventData;
       Provider.of<HybridProvider>(NavService.navKey.currentContext,
               listen: false)
-          .allNotifications
+          .allHybridNotifications
           .forEach((element) {
         if (element.key.contains('createevent-$eventId')) {
           presentEventData = EventNotificationModel.fromJson(jsonDecode(
               EventNotificationModel.convertEventNotificationToJson(
                   element.eventNotificationModel)));
+
+          // print(
+          //     'presentEventData ${EventNotificationModel.convertEventNotificationToJson(presentEventData)}');
         }
       });
 
@@ -485,6 +576,8 @@ class BackendService {
       );
 
       AtKey key = BackendService.getInstance().getAtKey(response[0]);
+
+      Map<dynamic, dynamic> tags;
 
       presentEventData.group.members.forEach((presentGroupMember) {
         acknowledgedEvent.group.members.forEach((acknowledgedGroupMember) {
@@ -501,10 +594,15 @@ class BackendService {
                   presentGroupMember.atSign.toLowerCase() &&
               acknowledgedGroupMember.atSign.toLowerCase() ==
                   fromAtSign.toLowerCase()) {
+            // print(
+            //     'acknowledgedGroupMember.tags ${acknowledgedGroupMember.tags}');
             presentGroupMember.tags = acknowledgedGroupMember.tags;
+            tags = presentGroupMember.tags;
           }
         });
+        // print('presentGroupMember.tags ${presentGroupMember.tags}');
       });
+
       presentEventData.isUpdate = true;
       List<String> allAtsignList = [];
       presentEventData.group.members.forEach((element) {
@@ -514,25 +612,44 @@ class BackendService {
       var notification = EventNotificationModel.convertEventNotificationToJson(
           presentEventData);
 
-      var result = await atClientInstance.put(key, notification);
+      // print('notification $notification');
+
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
 
       key.sharedWith = jsonEncode(allAtsignList);
 
-      var notifyAllResult = await atClientInstance.notifyAll(
-          key, notification, OperationEnum.update);
+      var notifyAllResult = await SyncSecondary().notifyAllInSync(
+          key, notification, OperationEnum.update,
+          isDedicated: MixedConstants.isDedicated);
+
+      /// Dont sync as notifyAll is called
 
       if (result is bool && result) {
-        mapUpdatedDataToWidget(convertEventToHybrid(NotificationType.Event,
-            eventNotificationModel: presentEventData));
+        mapUpdatedDataToWidget(
+            convertEventToHybrid(NotificationType.Event,
+                eventNotificationModel: presentEventData),
+            tags: tags,
+            tagOfAtsign: fromAtSign);
+        // print('acknowledgement for $fromAtSign completed');
       }
     } catch (e) {
       print('error in event acknowledgement: $e');
     }
   }
 
-  mapUpdatedDataToWidget(HybridNotificationModel notification) {
+  mapUpdatedDataToWidget(HybridNotificationModel notification,
+      {bool remove = false,
+      Map<dynamic, dynamic> tags,
+      String tagOfAtsign,
+      bool updateLatLng = false}) {
     providerCallback<HybridProvider>(NavService.navKey.currentContext,
-        task: (t) => t.mapUpdatedData(notification),
+        task: (t) => t.mapUpdatedData(
+              notification,
+              tags: tags,
+              tagOfAtsign: tagOfAtsign,
+              updateLatLng: updateLatLng,
+            ),
         showLoader: false,
         taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
         onSuccess: (t) {});
@@ -552,6 +669,7 @@ class BackendService {
   getAtKey(String regexKey) {
     AtKey atKey = AtKey.fromString(regexKey);
     atKey.metadata.ttr = -1;
+    // atKey.metadata.ttl = MixedConstants.maxTTL; // 7 days
     atKey.metadata.ccd = true;
     return atKey;
   }

@@ -111,8 +111,7 @@ class _SideBarState extends State<SideBar> {
                           initials: BackendService.getInstance()
                               .atClientServiceInstance
                               .atClient
-                              .currentAtSign
-                              .substring(1, 3)),
+                              .currentAtSign),
                   Flexible(
                       child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -372,8 +371,8 @@ class _SideBarState extends State<SideBar> {
                           if (_formKey.currentState.validate()) {
                             await BackendService.getInstance()
                                 .deleteAtSignFromKeyChain(atsign);
-                            await Navigator.pushNamedAndRemoveUntil(
-                                context, Routes.HOME, (route) => false);
+                            // await Navigator.pushNamedAndRemoveUntil(
+                            //     context, Routes.SPLASH, (route) => false);
                           }
                         }),
                     Spacer(),

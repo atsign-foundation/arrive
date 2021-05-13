@@ -73,17 +73,17 @@ class _ConcurrentEventRequestState extends State<ConcurrentEventRequest> {
                             var result = await EventService().createEvent(
                                 isEventOverlap: true, context: context);
 
+                            if (mounted)
+                              setState(() {
+                                isLoader = false;
+                              });
+
                             if (result is bool)
                               CustomToast().show('Event added', context);
                             else
                               CustomToast().show(
                                   'Something went wrong ,${result.toString()}',
                                   context);
-
-                            if (mounted)
-                              setState(() {
-                                isLoader = true;
-                              });
                           },
                           buttonText: 'Yes! Create another',
                           width: 278,
@@ -93,15 +93,17 @@ class _ConcurrentEventRequestState extends State<ConcurrentEventRequest> {
                         )
                       : CircularProgressIndicator(),
                   SizedBox(height: 10),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      'No! Cancel this',
-                      style: CustomTextStyles().black14,
-                    ),
-                  ),
+                  !isLoader
+                      ? InkWell(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            'No! Cancel this',
+                            style: CustomTextStyles().black14,
+                          ),
+                        )
+                      : SizedBox(),
                 ],
               ),
             ),

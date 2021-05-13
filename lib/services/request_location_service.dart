@@ -8,6 +8,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_noti
 import 'package:provider/provider.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'location_notification_listener.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 
 import 'nav_service.dart';
 
@@ -140,7 +141,14 @@ class RequestLocationService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  locationNotificationModel));
+                  locationNotificationModel),
+              isDedicated: MixedConstants.isDedicated);
+
+      if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
+      }
       print('requestLocationNotification:$result');
       return [result, locationNotificationModel];
     } catch (e) {
@@ -187,9 +195,13 @@ class RequestLocationService {
           .put(
               atKey,
               LocationNotificationModel.convertLocationNotificationToJson(
-                  ackLocationNotificationModel));
+                  ackLocationNotificationModel),
+              isDedicated: MixedConstants.isDedicated);
       print('requestLocationAcknowledgment $result');
       if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.updatePendingStatus(
                 BackendService.getInstance().convertEventToHybrid(
@@ -258,9 +270,12 @@ class RequestLocationService {
       result = await BackendService.getInstance()
           .atClientServiceInstance
           .atClient
-          .put(key, notification);
+          .put(key, notification, isDedicated: MixedConstants.isDedicated);
 
-      if (result)
+      if (result) {
+        if (MixedConstants.isDedicated) {
+          await BackendService.getInstance().syncWithSecondary();
+        }
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
             task: (provider) => provider.mapUpdatedData(
                 BackendService.getInstance().convertEventToHybrid(
@@ -270,6 +285,7 @@ class RequestLocationService {
             taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,
             showLoader: false,
             onSuccess: (provider) {});
+      }
 
       print('update result - $result');
       return result;
@@ -314,7 +330,15 @@ class RequestLocationService {
         .put(
             atKey,
             LocationNotificationModel.convertLocationNotificationToJson(
-                locationNotificationModel));
+                locationNotificationModel),
+            isDedicated: MixedConstants.isDedicated);
+
+    if (result) {
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
+    }
+
     print('requestLocationAcknowledgment $result');
     return result;
   }
@@ -338,10 +362,13 @@ class RequestLocationService {
     var result = await BackendService.getInstance()
         .atClientServiceInstance
         .atClient
-        .delete(key);
+        .delete(key, isDedicated: MixedConstants.isDedicated);
     print('$key delete operation $result');
 
     if (result) {
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
       providerCallback<HybridProvider>(NavService.navKey.currentContext,
           task: (provider) => provider.removePerson(key.key),
           taskName: (provider) => provider.HYBRID_MAP_UPDATED_EVENT_DATA,

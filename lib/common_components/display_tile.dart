@@ -74,8 +74,7 @@ class _DisplayTileState extends State<DisplayTile> {
                       ),
                     )
                   : widget.atsignCreator != null
-                      ? ContactInitial(
-                          initials: widget.atsignCreator.substring(1, 3))
+                      ? ContactInitial(initials: widget.atsignCreator)
                       : SizedBox(),
               widget.number != null
                   ? Positioned(

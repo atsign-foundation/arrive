@@ -12,6 +12,10 @@ import 'dart:convert';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'hybrid_provider.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:latlong/latlong.dart';
+import 'package:atsign_location_app/services/sync_secondary.dart';
 
 class EventProvider extends BaseModel {
   EventProvider();
@@ -184,7 +188,6 @@ class EventProvider extends BaseModel {
         eventData.group.members.forEach((member) {
           if (member.atSign[0] != '@') member.atSign = '@' + member.atSign;
           if (currentAtsign[0] != '@') currentAtsign = '@' + currentAtsign;
-
           if (member.atSign.toLowerCase() == currentAtsign.toLowerCase()) {
             member.tags['isAccepted'] =
                 isAccepted != null ? isAccepted : member.tags['isAccepted'];
@@ -209,14 +212,23 @@ class EventProvider extends BaseModel {
 
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
-      var result = await atClientInstance.put(key, notification);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
 
+      print('actionOnEvent put = $result');
+
+      if (MixedConstants.isDedicated) {
+        await BackendService.getInstance().syncWithSecondary();
+      }
       // if key type is createevent, we have to notify all members
       if (keyType == ATKEY_TYPE_ENUM.CREATEEVENT) {
         providerCallback<HybridProvider>(NavService.navKey.currentContext,
-            task: (t) => t.mapUpdatedData(BackendService.getInstance()
-                .convertEventToHybrid(NotificationType.Event,
-                    eventNotificationModel: eventData)),
+            task: (t) => t.mapUpdatedData(
+                  BackendService.getInstance().convertEventToHybrid(
+                      NotificationType.Event,
+                      eventNotificationModel: eventData),
+                  updateOnlyCreator: true,
+                ),
             showLoader: false,
             taskName: (t) => t.HYBRID_MAP_UPDATED_EVENT_DATA,
             onSuccess: (t) {});
@@ -227,8 +239,9 @@ class EventProvider extends BaseModel {
         });
 
         key.sharedWith = jsonEncode(allAtsignList);
-        var notifyAllResult = await atClientInstance.notifyAll(
-            key, notification, OperationEnum.update);
+        var notifyAllResult = await SyncSecondary().notifyAllInSync(
+            key, notification, OperationEnum.update,
+            isDedicated: MixedConstants.isDedicated);
       }
 
       setStatus(UPDATE_EVENTS, Status.Done);
@@ -318,13 +331,38 @@ class EventProvider extends BaseModel {
       return;
     }
 
-    List<String> allRegexResponses = [];
+    List<String> allRegexResponses = [], allEventUserLocationResponses = [];
     for (int i = 0; i < allNotifications.length; i++) {
       allRegexResponses = [];
+      allEventUserLocationResponses = [];
+      List<EventUserLocation> eventUserLocation = [];
       String atkeyMicrosecondId =
           allNotifications[i].key.split('createevent-')[1].split('@')[0];
-      String acknowledgedKeyId = 'eventacknowledged-$atkeyMicrosecondId';
 
+      /// For location update
+      String updateEventLocationKeyId =
+          'updateeventlocation-$atkeyMicrosecondId';
+
+      allEventUserLocationResponses =
+          await atClientInstance.getKeys(regex: updateEventLocationKeyId);
+
+      if (allEventUserLocationResponses.length > 0) {
+        for (int j = 0; j < allEventUserLocationResponses.length; j++) {
+          if (allEventUserLocationResponses[j] != null &&
+              !allNotifications[i].key.contains('cached')) {
+            var locationData =
+                await getLocationData(allEventUserLocationResponses[j]);
+
+            if (locationData != null) {
+              eventUserLocation.add(locationData);
+            }
+          }
+        }
+      }
+
+      ///
+
+      String acknowledgedKeyId = 'eventacknowledged-$atkeyMicrosecondId';
       allRegexResponses =
           await atClientInstance.getKeys(regex: acknowledgedKeyId);
 
@@ -350,50 +388,74 @@ class EventProvider extends BaseModel {
                 EventNotificationModel.fromJson(jsonDecode(result.value));
             EventNotificationModel storedEvent = new EventNotificationModel();
 
-            String acknowledgedEventKeyId =
-                acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
+            // String acknowledgedEventKeyId =
+            //     acknowledgedEvent.key.split('createevent-')[1].split('@')[0];
 
-            for (int k = 0; k < allNotifications.length; k++) {
-              if (allNotifications[k]
-                  .eventNotificationModel
-                  .key
-                  .contains(acknowledgedEventKeyId)) {
-                storedEvent = allNotifications[k].eventNotificationModel;
+            // for (int k = 0; k < allNotifications.length; k++) {
+            // if (allNotifications[k]
+            //     .eventNotificationModel
+            //     .key
+            //     .contains(acknowledgedEventKeyId)) {
+            storedEvent = allNotifications[i].eventNotificationModel;
 
-                if (!compareEvents(storedEvent, acknowledgedEvent)) {
-                  storedEvent.isUpdate = true;
+            /// Update acknowledgedEvent location with updated latlng
 
-                  storedEvent.group.members.forEach((groupMember) {
-                    acknowledgedEvent.group.members.forEach((element) {
-                      if (groupMember.atSign.toLowerCase() ==
-                              element.atSign.toLowerCase() &&
-                          groupMember.atSign
-                              .contains(acknowledgedAtKey.sharedBy)) {
-                        groupMember.tags = element.tags;
-                      }
-                    });
-                  });
+            acknowledgedEvent.group.members.forEach((member) {
+              int indexWhere = eventUserLocation
+                  .indexWhere((e) => e.atsign == member.atSign);
 
-                  List<String> allAtsignList = [];
-                  storedEvent.group.members.forEach((element) {
-                    allAtsignList.add(element.atSign);
-                  });
-                  var updateResult =
-                      await updateEvent(storedEvent, createEventAtKey);
+              if (acknowledgedAtKey.sharedBy[0] != '@')
+                acknowledgedAtKey.sharedBy = '@' + acknowledgedAtKey.sharedBy;
 
-                  createEventAtKey.sharedWith = jsonEncode(allAtsignList);
-
-                  var notifyAllResult = await atClientInstance.notifyAll(
-                      createEventAtKey,
-                      EventNotificationModel.convertEventNotificationToJson(
-                          storedEvent),
-                      OperationEnum.update);
-
-                  if (updateResult is bool && updateResult == true)
-                    mapUpdatedEventDataToWidget(storedEvent);
-                }
+              if (indexWhere > -1 &&
+                  eventUserLocation[indexWhere].atsign ==
+                      acknowledgedAtKey.sharedBy) {
+                member.tags['lat'] =
+                    eventUserLocation[indexWhere].latLng.latitude;
+                member.tags['long'] =
+                    eventUserLocation[indexWhere].latLng.longitude;
               }
+            });
+
+            ///
+
+            if (!compareEvents(storedEvent, acknowledgedEvent)) {
+              storedEvent.isUpdate = true;
+
+              storedEvent.group.members.forEach((groupMember) {
+                acknowledgedEvent.group.members.forEach((element) {
+                  if (groupMember.atSign.toLowerCase() ==
+                          element.atSign.toLowerCase() &&
+                      groupMember.atSign.contains(acknowledgedAtKey.sharedBy)) {
+                    groupMember.tags = element.tags;
+                  }
+                });
+              });
+
+              List<String> allAtsignList = [];
+              storedEvent.group.members.forEach((element) {
+                allAtsignList.add(element.atSign);
+              });
+
+              /// To let other puts complete
+              // await Future.delayed(Duration(seconds: 5));
+              var updateResult =
+                  await updateEvent(storedEvent, createEventAtKey);
+
+              createEventAtKey.sharedWith = jsonEncode(allAtsignList);
+
+              var notifyAllResult = await SyncSecondary().notifyAllInSync(
+                  createEventAtKey,
+                  EventNotificationModel.convertEventNotificationToJson(
+                      storedEvent),
+                  OperationEnum.update,
+                  isDedicated: MixedConstants.isDedicated);
+
+              if (updateResult is bool && updateResult == true)
+                mapUpdatedEventDataToWidget(storedEvent);
             }
+            // }
+            // }
           }
         }
       }
@@ -419,7 +481,9 @@ class EventProvider extends BaseModel {
               groupOneMember.tags['isSharing'] !=
                   groupTwoMember.tags['isSharing'] ||
               groupOneMember.tags['isExited'] !=
-                  groupTwoMember.tags['isExited']) {
+                  groupTwoMember.tags['isExited'] ||
+              groupOneMember.tags['lat'] != groupTwoMember.tags['lat'] ||
+              groupOneMember.tags['long'] != groupTwoMember.tags['long']) {
             isDataSame = false;
           }
         }
@@ -450,10 +514,11 @@ class EventProvider extends BaseModel {
 
         key.sharedWith = jsonEncode(allAtsignList);
 
-        var notifyAllResult = await atClientInstance.notifyAll(
+        var notifyAllResult = await SyncSecondary().notifyAllInSync(
             key,
             EventNotificationModel.convertEventNotificationToJson(eventData),
-            OperationEnum.update);
+            OperationEnum.update,
+            isDedicated: MixedConstants.isDedicated);
 
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
@@ -473,8 +538,14 @@ class EventProvider extends BaseModel {
       var notification =
           EventNotificationModel.convertEventNotificationToJson(eventData);
 
-      var result = await atClientInstance.put(key, notification);
+      var result = await atClientInstance.put(key, notification,
+          isDedicated: MixedConstants.isDedicated);
       if (result is bool) {
+        if (result) {
+          if (MixedConstants.isDedicated) {
+            await BackendService.getInstance().syncWithSecondary();
+          }
+        }
         print('event acknowledged:$result');
         return result;
       } else if (result != null) {
@@ -521,4 +592,31 @@ class EventProvider extends BaseModel {
 
     return tempHyridNotificationModel;
   }
+
+  getLocationData(String regex) async {
+    AtKey acknowledgedAtKey = BackendService.getInstance().getAtKey(regex);
+
+    AtValue result = await atClientInstance
+        .get(acknowledgedAtKey)
+        // ignore: return_of_invalid_type_from_catch_error
+        .catchError((e) => print("error in get $e"));
+
+    if ((result == null) || (result.value == null)) {
+      return;
+    }
+
+    LocationNotificationModel locationData =
+        LocationNotificationModel.fromJson(jsonDecode(result.value));
+    var obj =
+        EventUserLocation(locationData.atsignCreator, locationData.getLatLng);
+
+    return obj;
+  }
+}
+
+class EventUserLocation {
+  String atsign;
+  LatLng latLng;
+
+  EventUserLocation(this.atsign, this.latLng);
 }
