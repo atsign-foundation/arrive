@@ -42,9 +42,10 @@ class MaterialAppClass extends StatelessWidget {
       builder: (BuildContext context, Widget child) {
         final MediaQueryData data = MediaQuery.of(context);
         return MediaQuery(
-          data: data.copyWith(
-              textScaleFactor:
-                  data.textScaleFactor > 1.2 ? 1.2 : data.textScaleFactor),
+          // data: data.copyWith(
+          //     textScaleFactor:
+          //         data.textScaleFactor > 1.2 ? 1.2 : data.textScaleFactor),
+          data: data.copyWith(textScaleFactor: 1),
           child: child,
         );
       },
