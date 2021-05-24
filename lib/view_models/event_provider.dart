@@ -239,9 +239,13 @@ class EventProvider extends BaseModel {
         });
 
         key.sharedWith = jsonEncode(allAtsignList);
-        var notifyAllResult = await SyncSecondary().notifyAllInSync(
-            key, notification, OperationEnum.update,
-            isDedicated: MixedConstants.isDedicated);
+        var notifyAllResult = await SyncSecondary().callSyncSecondary(
+          SyncOperation.notifyAll,
+          atKey: key,
+          notification: notification,
+          operation: OperationEnum.update,
+          isDedicated: MixedConstants.isDedicated,
+        );
       }
 
       setStatus(UPDATE_EVENTS, Status.Done);
@@ -444,11 +448,13 @@ class EventProvider extends BaseModel {
 
               createEventAtKey.sharedWith = jsonEncode(allAtsignList);
 
-              var notifyAllResult = await SyncSecondary().notifyAllInSync(
-                  createEventAtKey,
-                  EventNotificationModel.convertEventNotificationToJson(
-                      storedEvent),
-                  OperationEnum.update,
+              var notifyAllResult = await SyncSecondary().callSyncSecondary(
+                  SyncOperation.notifyAll,
+                  atKey: createEventAtKey,
+                  notification:
+                      EventNotificationModel.convertEventNotificationToJson(
+                          storedEvent),
+                  operation: OperationEnum.update,
                   isDedicated: MixedConstants.isDedicated);
 
               if (updateResult is bool && updateResult == true)
@@ -514,11 +520,14 @@ class EventProvider extends BaseModel {
 
         key.sharedWith = jsonEncode(allAtsignList);
 
-        var notifyAllResult = await SyncSecondary().notifyAllInSync(
-            key,
-            EventNotificationModel.convertEventNotificationToJson(eventData),
-            OperationEnum.update,
-            isDedicated: MixedConstants.isDedicated);
+        var notifyAllResult = await SyncSecondary().callSyncSecondary(
+          SyncOperation.notifyAll,
+          atKey: key,
+          notification:
+              EventNotificationModel.convertEventNotificationToJson(eventData),
+          operation: OperationEnum.update,
+          isDedicated: MixedConstants.isDedicated,
+        );
 
         if (result) {
           BackendService.getInstance().mapUpdatedDataToWidget(
