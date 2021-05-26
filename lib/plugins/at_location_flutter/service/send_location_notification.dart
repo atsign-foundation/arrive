@@ -24,7 +24,7 @@ class SendLocationNotification {
   static SendLocationNotification _instance = SendLocationNotification._();
   factory SendLocationNotification() => _instance;
   Timer timer;
-  List<LocationNotificationModel> atsignsToShareLocationWith;
+  List<LocationNotificationModel> atsignsToShareLocationWith = [];
   AtClientImpl atClient;
   StreamSubscription<Position> positionStream;
   init(
