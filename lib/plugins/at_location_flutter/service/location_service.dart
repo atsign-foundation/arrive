@@ -64,6 +64,7 @@ class LocationService {
       Function newOnRequest,
       Function showToast,
       Function newOnShareToggle}) {
+    exitedAtsigns = [];
     hybridUsersList = [];
     atsignsAtMonitor = [];
     allUsersList = _allUsersList;
@@ -87,6 +88,7 @@ class LocationService {
       atsignsAtMonitor =
           eventListenerKeyword.group.members.map((e) => e.atSign).toList();
       atsignsAtMonitor.add(eventListenerKeyword.atsignCreator);
+
       atsignsAtMonitor.remove(atClientInstance.currentAtSign);
 
       eventListenerKeyword.group.members.forEach((element) {
