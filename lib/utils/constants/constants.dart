@@ -28,6 +28,8 @@ class MixedConstants {
     'At the end of the day'
   ];
 
+  static const String MAP_KEY = 'B3Wus46C2WZFhwZKQkEx';
+
   static const String appNamespace = 'rrive';
   static const String syncRegex = '.$appNamespace@';
 

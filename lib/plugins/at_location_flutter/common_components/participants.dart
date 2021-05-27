@@ -198,15 +198,16 @@ class _ParticipantsState extends State<Participants> {
   }
 
   bool isActionRequired(String _atsign) {
-    AtContact _atcontact = LocationService()
+    Iterable<AtContact> _atcontact = LocationService()
         .eventListenerKeyword
         .group
         .members
-        .where((element) => element.atSign == _atsign)
-        .first;
-    if ((_atcontact.tags['isAccepted'] == false) &&
-        (_atcontact.tags['isExited'] == false)) {
-      return true;
+        .where((element) => element.atSign == _atsign);
+    if ((_atcontact != null) && (_atcontact.length > 0)) {
+      if ((_atcontact.first.tags['isAccepted'] == false) &&
+          (_atcontact.first.tags['isExited'] == false)) {
+        return true;
+      }
     }
 
     return false;

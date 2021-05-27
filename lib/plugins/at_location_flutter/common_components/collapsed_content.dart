@@ -267,19 +267,21 @@ class _CollapsedContentState extends State<CollapsedContent> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Divider(),
-                              Text(
-                                'Address',
-                                style: CustomTextStyles().darkGrey14,
-                              ),
-                              SizedBox(
-                                height: 3,
-                              ),
                               Flexible(
-                                child: Text(
-                                  '${widget.eventListenerKeyword.venue.label}',
-                                  style: CustomTextStyles().darkGrey14,
+                                  child: RichText(
+                                text: TextSpan(
+                                  text: 'Address: ',
+                                  style: CustomTextStyles().darkGrey16,
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          ' ${widget.eventListenerKeyword.venue.label}' ??
+                                              ' ',
+                                      style: CustomTextStyles().darkGrey14,
+                                    )
+                                  ],
                                 ),
-                              ),
+                              )),
                               Divider(),
                               Row(
                                 mainAxisAlignment:

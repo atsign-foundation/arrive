@@ -8,58 +8,37 @@ import 'map_content/flutter_map/flutter_map.dart';
 import 'map_content/flutter_map_marker_cluster/src/marker_cluster_plugin.dart';
 
 // ignore: must_be_immutable
-class ShowLocation extends StatefulWidget {
-  Key key;
-  final LatLng location;
-  ShowLocation(this.key, {this.location});
 
-  @override
-  _ShowLocationState createState() => _ShowLocationState();
-}
-
-class _ShowLocationState extends State<ShowLocation> {
-  final MapController mapController = MapController();
-  bool showMarker, noPointReceived;
+Widget showLocation(Key key, {LatLng location, MapController mapController}) {
+  bool showMarker = true;
   Marker marker;
-  @override
-  void initState() {
-    super.initState();
-    showMarker = true;
-    noPointReceived = false;
-    print('widget.location ${widget.location}');
-    if (widget.location != null)
-      marker = buildMarker(new HybridModel(latLng: widget.location),
-          singleMarker: true);
-    else {
-      noPointReceived = true;
-      marker = buildMarker(new HybridModel(latLng: LatLng(45, 45)),
-          singleMarker: true);
-      showMarker = false;
-    }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          body: FlutterMap(
-        mapController: mapController,
-        options: MapOptions(
-          center: (widget.location != null) ? widget.location : LatLng(45, 45),
-          zoom: (widget.location != null) ? 8 : 2,
-          plugins: [MarkerClusterPlugin(UniqueKey())],
-        ),
-        layers: [
-          TileLayerOptions(
-            minNativeZoom: 2,
-            maxNativeZoom: 18,
-            minZoom: 1,
-            urlTemplate:
-                "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MixedConstants.MAP_KEY}",
-          ),
-          MarkerLayerOptions(markers: showMarker ? [marker] : []),
-        ],
-      )),
-    );
+  if (location != null) {
+    marker = buildMarker(new HybridModel(latLng: location), singleMarker: true);
+    if (mapController != null) {
+      mapController.move(location, 8);
+    }
+  } else {
+    marker = buildMarker(new HybridModel(latLng: LatLng(45, 45)),
+        singleMarker: true);
+    showMarker = false;
   }
+  return FlutterMap(
+    mapController: mapController,
+    options: MapOptions(
+      center: (location != null) ? location : LatLng(45, 45),
+      zoom: (location != null) ? 8 : 2,
+      plugins: [MarkerClusterPlugin(UniqueKey())],
+    ),
+    layers: [
+      TileLayerOptions(
+        minNativeZoom: 2,
+        maxNativeZoom: 18,
+        minZoom: 1,
+        urlTemplate:
+            "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MixedConstants.MAP_KEY}",
+      ),
+      MarkerLayerOptions(markers: showMarker ? [marker] : []),
+    ],
+  );
 }

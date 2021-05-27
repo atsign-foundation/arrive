@@ -200,6 +200,11 @@ class EventProvider extends BaseModel {
               member.tags['lat'] = null;
               member.tags['long'] = null;
             }
+
+            if (isExited == true) {
+              member.tags['isAccepted'] = false;
+              member.tags['isSharing'] = false;
+            }
           }
         });
       }
