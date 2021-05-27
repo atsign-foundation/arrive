@@ -33,6 +33,7 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/flutter_map.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -109,6 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  MapController mapController = MapController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -120,9 +123,11 @@ class _HomeScreenState extends State<HomeScreen> {
           body: Stack(
             children: [
               (myLatLng != null)
-                  ? ShowLocation(UniqueKey(), location: myLatLng)
-                  : ShowLocation(
+                  ? showLocation(UniqueKey(),
+                      location: myLatLng, mapController: mapController)
+                  : showLocation(
                       UniqueKey(),
+                      mapController: mapController,
                     ),
               Positioned(
                 top: 0,
