@@ -94,9 +94,13 @@ class EventService {
       var result = await atClientInstance.put(atKey, eventData,
           isDedicated: MixedConstants.isDedicated);
       atKey.sharedWith = jsonEncode(allAtsignList);
-      var notifyAllResult = await SyncSecondary().notifyAllInSync(
-          atKey, eventData, OperationEnum.update,
-          isDedicated: MixedConstants.isDedicated);
+      var notifyAllResult = await SyncSecondary().callSyncSecondary(
+        SyncOperation.notifyAll,
+        atKey: atKey,
+        notification: eventData,
+        operation: OperationEnum.update,
+        isDedicated: MixedConstants.isDedicated,
+      );
 
       /// Dont need to sync here as notifyAll is called
       if (onEventSaved != null) {
@@ -136,9 +140,13 @@ class EventService {
       atKey.sharedWith = jsonEncode(
           [...selectedContactsAtSigns]); //adding event members in atkey
 
-      var notifyAllResult = await SyncSecondary().notifyAllInSync(
-          atKey, notification, OperationEnum.update,
-          isDedicated: MixedConstants.isDedicated);
+      var notifyAllResult = await SyncSecondary().callSyncSecondary(
+        SyncOperation.notifyAll,
+        atKey: atKey,
+        notification: notification,
+        operation: OperationEnum.update,
+        isDedicated: MixedConstants.isDedicated,
+      );
 
       /// Dont need to sync as notifyAll is called
 

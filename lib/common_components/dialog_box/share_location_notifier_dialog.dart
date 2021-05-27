@@ -342,17 +342,17 @@ class _ShareLocationNotifierDialogState
                             (widget.eventData != null)
                                 // ignore: unnecessary_statements
                                 ? {
-                                    widget.eventData.group.members
-                                        .forEach((element) {
-                                      if (element.atSign ==
-                                          BackendService.getInstance()
-                                              .atClientServiceInstance
-                                              .atClient
-                                              .currentAtSign) {
-                                        element.tags['isAccepted'] = false;
-                                        element.tags['isExited'] = true;
-                                      }
-                                    }),
+                                    // widget.eventData.group.members
+                                    //     .forEach((element) {
+                                    //   if (element.atSign ==
+                                    //       BackendService.getInstance()
+                                    //           .atClientServiceInstance
+                                    //           .atClient
+                                    //           .currentAtSign) {
+                                    //     element.tags['isAccepted'] = false;
+                                    //     element.tags['isExited'] = true;
+                                    //   }
+                                    // }),
                                     providerCallback<EventProvider>(context,
                                         task: (t) => t.actionOnEvent(
                                             widget.eventData,

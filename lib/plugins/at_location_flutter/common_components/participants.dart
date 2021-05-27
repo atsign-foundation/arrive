@@ -8,6 +8,7 @@ import 'package:atsign_location_app/plugins/at_location_flutter/service/location
 import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:at_contact/at_contact.dart';
 
 class ParticipantsData {
   ParticipantsData._();
@@ -178,7 +179,9 @@ class _ParticipantsState extends State<Participants> {
                                   .exitedAtsigns
                                   .contains(untrackedAtsigns[index])
                               ? 'Exited'
-                              : 'Location not received',
+                              : isActionRequired(untrackedAtsigns[index])
+                                  ? 'Action Required'
+                                  : 'Location not received',
                           style: CustomTextStyles().orange14,
                         ),
                       );
@@ -192,5 +195,20 @@ class _ParticipantsState extends State<Participants> {
         ),
       ),
     );
+  }
+
+  bool isActionRequired(String _atsign) {
+    AtContact _atcontact = LocationService()
+        .eventListenerKeyword
+        .group
+        .members
+        .where((element) => element.atSign == _atsign)
+        .first;
+    if ((_atcontact.tags['isAccepted'] == false) &&
+        (_atcontact.tags['isExited'] == false)) {
+      return true;
+    }
+
+    return false;
   }
 }

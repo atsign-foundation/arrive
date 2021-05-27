@@ -255,7 +255,10 @@ class BackendService {
 
   fnCallBack(var response) async {
     print('fnCallBack called');
-    await syncWithSecondary();
+    SyncSecondary().completePrioritySync(response);
+  }
+
+  afterSynced(var response) async {
     response = response.replaceFirst('notification:', '');
     print('length ${response.length} response $response');
 
@@ -449,7 +452,7 @@ class BackendService {
   }
 
   syncWithSecondary() async {
-    await SyncSecondary().callSyncSecondary();
+    await SyncSecondary().callSyncSecondary(SyncOperation.syncSecondary);
   }
 
   Future<void> showMyDialog(String fromAtSign,
@@ -530,9 +533,13 @@ class BackendService {
 
       key.sharedWith = jsonEncode(allAtsignList);
 
-      var notifyAllResult = await SyncSecondary().notifyAllInSync(
-          key, notification, OperationEnum.update,
-          isDedicated: MixedConstants.isDedicated);
+      var notifyAllResult = await SyncSecondary().callSyncSecondary(
+        SyncOperation.notifyAll,
+        atKey: key,
+        notification: notification,
+        operation: OperationEnum.update,
+        isDedicated: MixedConstants.isDedicated,
+      );
 
       /// Dont sync as notifyAll is called
 
@@ -619,9 +626,13 @@ class BackendService {
 
       key.sharedWith = jsonEncode(allAtsignList);
 
-      var notifyAllResult = await SyncSecondary().notifyAllInSync(
-          key, notification, OperationEnum.update,
-          isDedicated: MixedConstants.isDedicated);
+      var notifyAllResult = await SyncSecondary().callSyncSecondary(
+        SyncOperation.notifyAll,
+        atKey: key,
+        notification: notification,
+        operation: OperationEnum.update,
+        isDedicated: MixedConstants.isDedicated,
+      );
 
       /// Dont sync as notifyAll is called
 
