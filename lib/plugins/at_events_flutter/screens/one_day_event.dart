@@ -23,6 +23,19 @@ class _OneDayEventState extends State<OneDayEvent> {
     eventData = EventNotificationModel.fromJson(jsonDecode(
         EventNotificationModel.convertEventNotificationToJson(
             EventService().eventNotificationModel)));
+
+    if (eventData.event.date == null) {
+      eventData.event.date = DateTime.now();
+    }
+    if (eventData.event.endDate == null) {
+      eventData.event.endDate = DateTime.now();
+    }
+    if (eventData.event.startTime == null) {
+      eventData.event.startTime = DateTime.now();
+    }
+    if (eventData.event.endTime == null) {
+      eventData.event.endTime = DateTime.now().add(Duration(hours: 2));
+    }
   }
 
   @override
