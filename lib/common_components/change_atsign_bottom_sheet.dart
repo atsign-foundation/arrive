@@ -193,7 +193,6 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       await backendService.atClientServiceMap[atsign]
                           .makeAtSignPrimary(atSign);
 
-                      await BackendService.getInstance().onboard();
                       BackendService.getInstance().startMonitor();
 
                       Navigator.pushReplacement(

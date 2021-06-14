@@ -48,38 +48,6 @@ class BackendService {
   Directory downloadDirectory;
   Map<String, AtClientService> atClientServiceMap = {};
 
-  Future<bool> onboard({String atsign}) async {
-    atClientServiceInstance = AtClientService();
-    if (Platform.isIOS) {
-      downloadDirectory =
-          await path_provider.getApplicationDocumentsDirectory();
-    } else {
-      downloadDirectory = await path_provider.getExternalStorageDirectory();
-    }
-
-    final appSupportDirectory =
-        await path_provider.getApplicationSupportDirectory();
-    print("paths => $downloadDirectory $appSupportDirectory");
-    String path = appSupportDirectory.path;
-    atClientPreference = AtClientPreference();
-
-    atClientPreference.isLocalStoreRequired = true;
-    atClientPreference.commitLogPath = path;
-    atClientPreference.syncStrategy = SyncStrategy.IMMEDIATE;
-    atClientPreference.rootDomain = MixedConstants.ROOT_DOMAIN;
-    atClientPreference.hiveStoragePath = path;
-    atClientPreference.downloadPath = downloadDirectory.path;
-    atClientPreference.outboundConnectionTimeout = MixedConstants.TIME_OUT;
-    atClientPreference.namespace = MixedConstants.appNamespace;
-    atClientPreference.syncRegex = MixedConstants.syncRegex;
-    var result = await atClientServiceInstance.onboard(
-      atClientPreference: atClientPreference,
-      atsign: atsign,
-    );
-    atClientInstance = atClientServiceInstance.atClient;
-    return result;
-  }
-
   Future<AtClientPreference> getAtClientPreference() async {
     final appDocumentDirectory =
         await path_provider.getApplicationSupportDirectory();
