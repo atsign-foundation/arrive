@@ -11,7 +11,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/utils/colors.dart'
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/common_components/participants.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/services/backend_service.dart';

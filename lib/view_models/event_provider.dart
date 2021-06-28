@@ -13,7 +13,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_noti
 import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'hybrid_provider.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:latlong/latlong.dart';
 import 'package:atsign_location_app/services/sync_secondary.dart';
 

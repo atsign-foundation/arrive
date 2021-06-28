@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_commons/at_commons.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 
 import 'package:atsign_location_app/services/location_sharing_service.dart';
@@ -182,13 +182,12 @@ class ShareLocationProvider extends EventProvider {
               .get(acknowledgedAtKey)
               // ignore: return_of_invalid_type_from_catch_error
               .catchError((e) => print("error in get $e"));
-              if(result != null){
-                LocationNotificationModel acknowledgedEvent =
-              LocationNotificationModel.fromJson(jsonDecode(result.value));
-          LocationSharingService()
-              .updateWithShareLocationAcknowledge(acknowledgedEvent);
-              }
-         
+          if (result != null) {
+            LocationNotificationModel acknowledgedEvent =
+                LocationNotificationModel.fromJson(jsonDecode(result.value));
+            LocationSharingService()
+                .updateWithShareLocationAcknowledge(acknowledgedEvent);
+          }
         }
       }
     });

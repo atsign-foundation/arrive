@@ -1,6 +1,7 @@
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
 import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
+import 'package:at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/common_components/overlapping-contacts.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
@@ -183,9 +184,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       isLoading = true;
     });
 
-    var result = await LocationSharingService().sendShareLocationEvent(
-        selectedContact.atSign, false,
-        minutes: minutes);
+    var result =
+        await sendShareLocationNotification(selectedContact.atSign, minutes);
+    // LocationSharingService().sendShareLocationEvent(
+    //     selectedContact.atSign, false,
+    //     minutes: minutes);
 
     if (result == null) {
       setState(() {
@@ -195,23 +198,24 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       return;
     }
 
-    if (result[0] == true) {
+    if (result == true) {
       CustomToast().show('Share Location Request sent', context);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
-      providerCallback<HybridProvider>(NavService.navKey.currentContext,
-          task: (provider) => provider.addNewEvent(HybridNotificationModel(
-              NotificationType.Location,
-              locationNotificationModel: result[1])),
-          taskName: (provider) => provider.HYBRID_ADD_EVENT,
-          showLoader: false,
-          showDialog: false,
-          onSuccess: (provider) {});
+      // providerCallback<HybridProvider>(NavService.navKey.currentContext,
+      //     task: (provider) => provider.addNewEvent(HybridNotificationModel(
+      //         NotificationType.Location,
+      //         locationNotificationModel: result[1])),
+      //     taskName: (provider) => provider.HYBRID_ADD_EVENT,
+      //     showLoader: false,
+      //     showDialog: false,
+      //     onSuccess: (provider) {});
     } else {
-      CustomToast()
-          .show('Something went wrong ${result[1].toString()}', context);
+      CustomToast().show('Something went wrong', context);
+      // CustomToast()
+      //     .show('Something went wrong ${result[1].toString()}', context);
       setState(() {
         isLoading = false;
       });

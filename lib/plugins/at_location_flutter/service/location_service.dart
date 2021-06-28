@@ -8,7 +8,7 @@ import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notif
 import 'package:atsign_location_app/plugins/at_location_flutter/common_components/build_marker.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/common_components/participants.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/hybrid_model.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:flutter/material.dart';

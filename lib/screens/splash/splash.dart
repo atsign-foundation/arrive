@@ -29,7 +29,7 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    authenticating = true;
+    // authenticating = true;
 
     BackendService.getInstance().getAtClientPreference().then(
         (value) => BackendService.getInstance().atClientPreference = value);
@@ -43,25 +43,30 @@ class _SplashState extends State<Splash> {
       await checkLocationPermission();
 
       backendService = BackendService.getInstance();
-      backendService.atClientServiceInstance = new AtClientService();
-      await backendService.onboard();
-      String currentAtSign;
-      if (backendService.atClientInstance != null) {
-        currentAtSign = backendService.atClientInstance.currentAtSign;
-      } else {
-        currentAtSign = '';
-      }
+      // backendService.atClientServiceInstance = new AtClientService();
+      // await backendService.onboard();
+      // String currentAtSign;
+      // if (backendService.atClientInstance != null) {
+      //   currentAtSign = backendService.atClientInstance.currentAtSign;
+      // } else {
+      //   currentAtSign = '';
+      // }
 
       if (BackendService.getInstance().atClientPreference != null) {
         Onboarding(
-          atsign: currentAtSign,
+          // atsign: currentAtSign,
           context: context,
           atClientPreference: BackendService.getInstance().atClientPreference,
           domain: MixedConstants.ROOT_DOMAIN,
           onboard: (value, atsign) async {
             print('_initBackendService onboarded: $value , atsign:$atsign');
             BackendService.getInstance().atClientServiceMap = value;
-            await BackendService.getInstance().onboard();
+            // await BackendService.getInstance().onboard();
+            BackendService.getInstance().atClientInstance =
+                value[atsign].atClient;
+            BackendService.getInstance().atClientServiceInstance =
+                value[atsign];
+
             BackendService.getInstance().startMonitor();
             Navigator.pushReplacement(
               context,
@@ -227,7 +232,7 @@ class _SplashState extends State<Splash> {
     });
 
     BackendService.getInstance().atClientServiceMap = value;
-    await BackendService.getInstance().onboard();
+    // await BackendService.getInstance().onboard();
     BackendService.getInstance().startMonitor();
 
     Navigator.pushReplacement(

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:at_commons/at_commons.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/location_notification.dart';
+import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';

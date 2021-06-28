@@ -3,6 +3,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/themes/theme.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +32,8 @@ class _MyAppState extends State<MyApp> {
           create: (context) => RequestLocationProvider()),
       ChangeNotifierProvider<HybridProvider>(
           create: (context) => HybridProvider()),
+      ChangeNotifierProvider<LocationProvider>(
+          create: (context) => LocationProvider()),
     ], child: MaterialAppClass());
   }
 }

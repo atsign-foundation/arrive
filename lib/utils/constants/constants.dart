@@ -29,6 +29,7 @@ class MixedConstants {
   ];
 
   static const String MAP_KEY = 'B3Wus46C2WZFhwZKQkEx';
+  static const String API_KEY = 'yRCeKfJDPQDTp11YI1db67J_fww80QP6R3Llckg-REw';
 
   static const String appNamespace = 'rrive';
   static const String syncRegex = '.$appNamespace@';

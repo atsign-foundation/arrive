@@ -23,6 +23,7 @@ import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:atsign_location_app/view_models/request_location_provider.dart';
 import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
-  EventProvider eventProvider = new EventProvider();
-  HybridProvider hybridProvider = new HybridProvider();
+  EventProvider eventProvider = EventProvider();
+  HybridProvider hybridProvider = HybridProvider();
+  LocationProvider locationProvider = LocationProvider();
   LatLng myLatLng;
   String currentAtSign;
   bool contactsLoaded;
@@ -60,15 +62,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
     hybridProvider = context.read<HybridProvider>();
 
+    locationProvider = context.read<LocationProvider>();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<EventProvider>(context, listen: false)
-          .init(BackendService.getInstance().atClientServiceInstance.atClient);
-      Provider.of<ShareLocationProvider>(context, listen: false)
-          .init(BackendService.getInstance().atClientServiceInstance.atClient);
-      Provider.of<RequestLocationProvider>(context, listen: false)
-          .init(BackendService.getInstance().atClientServiceInstance.atClient);
-      Provider.of<HybridProvider>(context, listen: false)
-          .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      var atClient =
+          BackendService.getInstance().atClientServiceInstance.atClient;
+      Provider.of<LocationProvider>(context, listen: false)
+          .init(atClient, atClient.currentAtSign, NavService.navKey);
+      // Provider.of<EventProvider>(context, listen: false)
+      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      // Provider.of<ShareLocationProvider>(context, listen: false)
+      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      // Provider.of<RequestLocationProvider>(context, listen: false)
+      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
+      // Provider.of<HybridProvider>(context, listen: false)
+      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
     });
   }
 
@@ -89,8 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
         rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
-  _getMyLocation() async {
-    LatLng newMyLatLng = await getMyLocation();
+  void _getMyLocation() async {
+    var newMyLatLng = await getMyLocation();
     if (newMyLatLng != null) {
       setState(() {
         myLatLng = newMyLatLng;
@@ -142,11 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Positioned(bottom: 264.toHeight, child: header()),
               contactsLoaded
-                  ? ProviderHandler<HybridProvider>(
+                  ? ProviderHandler<LocationProvider>(
                       key: UniqueKey(),
-                      functionName: HybridProvider().HYBRID_GET_ALL_EVENTS,
+                      functionName: locationProvider.GET_ALL_NOTIFICATIONS,
                       showError: false,
-                      load: (provider) => provider.getAllHybridEvents(),
+                      load: (provider) => {},
                       loaderBuilder: (provider) {
                         return Container(
                           child: SlidingUpPanel(
@@ -177,15 +185,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           minHeight: 267.toHeight,
                           maxHeight: 530.toHeight,
                           panelBuilder: (scrollController) {
-                            if (provider.allHybridNotifications.length > 0)
+                            if (provider.allLocationNotifications.isNotEmpty) {
                               return collapsedContent(
                                   false,
                                   scrollController,
-                                  getListView(provider.allHybridNotifications,
-                                      provider, scrollController));
-                            else
+                                  getListView(provider.allLocationNotifications,
+                                      EventProvider(), scrollController));
+                            } else {
                               return collapsedContent(false, scrollController,
                                   emptyWidget('No Data Found!!'));
+                            }
                           },
                         );
                       },
@@ -250,38 +259,38 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Tasks(
-              task: 'Create Event',
-              icon: Icons.event,
-              onTap: () {
-                List<HybridNotificationModel> allEvents = [];
+          // Tasks(
+          //     task: 'Create Event',
+          //     icon: Icons.event,
+          //     onTap: () {
+          //       List<HybridNotificationModel> allEvents = [];
 
-                hybridProvider.allHybridNotifications.forEach((event) {
-                  if (event.notificationType == NotificationType.Event) {
-                    allEvents.add(event);
-                  }
-                });
-                bottomSheet(
-                    context,
-                    CreateEvent(
-                        BackendService.getInstance()
-                            .atClientServiceInstance
-                            .atClient,
-                        onEventSaved: (EventNotificationModel event) {
-                      providerCallback<HybridProvider>(
-                          NavService.navKey.currentContext,
-                          task: (provider) => provider.addNewEvent(
-                              BackendService.getInstance().convertEventToHybrid(
-                                  NotificationType.Event,
-                                  eventNotificationModel: event)),
-                          taskName: (provider) => provider.HYBRID_ADD_EVENT,
-                          showLoader: false,
-                          showDialog: false,
-                          onSuccess: (provider) {});
-                    }, createdEvents: allEvents),
-                    SizeConfig().screenHeight * 0.9,
-                    onSheetCLosed: () {});
-              }),
+          //       hybridProvider.allHybridNotifications.forEach((event) {
+          //         if (event.notificationType == NotificationType.Event) {
+          //           allEvents.add(event);
+          //         }
+          //       });
+          //       bottomSheet(
+          //           context,
+          //           CreateEvent(
+          //               BackendService.getInstance()
+          //                   .atClientServiceInstance
+          //                   .atClient,
+          //               onEventSaved: (EventNotificationModel event) {
+          //             providerCallback<HybridProvider>(
+          //                 NavService.navKey.currentContext,
+          //                 task: (provider) => provider.addNewEvent(
+          //                     BackendService.getInstance().convertEventToHybrid(
+          //                         NotificationType.Event,
+          //                         eventNotificationModel: event)),
+          //                 taskName: (provider) => provider.HYBRID_ADD_EVENT,
+          //                 showLoader: false,
+          //                 showDialog: false,
+          //                 onSuccess: (provider) {});
+          //           }, createdEvents: allEvents),
+          //           SizeConfig().screenHeight * 0.9,
+          //           onSheetCLosed: () {});
+          //     }),
           Tasks(
               task: 'Request Location',
               icon: Icons.sync,
@@ -300,7 +309,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  getListView(List<HybridNotificationModel> allHybridNotifications,
+  Widget getListView(List<HybridNotificationModel> allHybridNotifications,
       EventProvider provider, ScrollController slidingScrollController) {
     try {
       return ListView(
@@ -309,15 +318,17 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               InkWell(
                 onTap: () {
-                  if (hybridElement.notificationType == NotificationType.Event)
+                  if (hybridElement.notificationType ==
+                      NotificationType.Event) {
                     HomeEventService().onEventModelTap(
                         hybridElement.eventNotificationModel,
                         provider,
                         hybridElement.haveResponded);
-                  else
+                  } else {
                     HomeEventService().onLocationModelTap(
                         hybridElement.locationNotificationModel,
                         hybridElement.haveResponded);
+                  }
                 },
                 child: DisplayTile(
                   atsignCreator:

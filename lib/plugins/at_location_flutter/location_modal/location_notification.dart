@@ -2,9 +2,20 @@ import 'dart:convert';
 import 'package:at_contact/at_contact.dart';
 import 'package:latlong/latlong.dart';
 
+/// Model containing all the information needed for location sharing.
 class LocationNotificationModel {
+  /// [atsignCreator] who shares their location, [receiver] who receives the location.
   String atsignCreator, receiver, key;
+
+  /// [lat],[long] co-ordinates being shared.
   double lat, long;
+
+  /// [isAccepted] if this notification is accepted,
+  /// [isSharing] if currently sharing for this notification,
+  /// [isExited] if this notification is exited,
+  /// [isAcknowledgment] if this is an acknowledgment for any notification,
+  /// [isRequest] if this notification is a request location notification.
+  /// [rePrompt] if this notification need to prompt the receiver again
   bool isAccepted,
       isSharing,
       isExited,
@@ -12,6 +23,9 @@ class LocationNotificationModel {
       isRequest,
       updateMap,
       rePrompt;
+
+  /// start sharing location [from],
+  /// stop sharing location [to].
   DateTime from, to;
   AtContact atContact;
   LocationNotificationModel({
