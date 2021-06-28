@@ -66,10 +66,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                     asSingleSelectionScreen: true,
                     context: context,
                     selectedList: (selectedList) {
-                      if (selectedList.length > 0)
+                      if (selectedList.isNotEmpty) {
                         setState(() {
                           selectedContact = selectedList[0];
                         });
+                      }
                     },
                   ),
                 ),
@@ -105,33 +106,35 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               elevation: 0,
               dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
               value: selectedOption,
-              hint: Text("Select Duration",
+              hint: Text('Select Duration',
                   style: TextStyle(
                       color: AllColors().LIGHT_GREY_LABEL,
                       fontSize: 15.toFont)),
               style:
                   TextStyle(color: AllColors().DARK_GREY, fontSize: 13.toFont),
               items: [
-                "Select Duration",
+                'Select Duration',
                 '30 mins',
                 '2 hours',
                 '24 hours',
                 'Until turned off'
               ].map((String option) {
-                return new DropdownMenuItem<String>(
-                  value: option == "Select Duration" ? null : option,
-                  child: option == "Select Duration"
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(option,
-                                style: TextStyle(
-                                    color: AllColors().LIGHT_GREY_LABEL,
-                                    fontSize: 15.toFont)),
-                            Icon(Icons.keyboard_arrow_up)
-                          ],
-                        )
-                      : Text(option,
+                return DropdownMenuItem<String>(
+                  value: option == 'Select Duration' ? null : option,
+                  child:
+                      // option == 'Select Duration'
+                      //     ? Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         children: [
+                      //           Text(option,
+                      //               style: TextStyle(
+                      //                   color: AllColors().LIGHT_GREY_LABEL,
+                      //                   fontSize: 15.toFont)),
+                      //           Icon(Icons.keyboard_arrow_up)
+                      //         ],
+                      //       )
+                      //     :
+                      Text(option,
                           style: TextStyle(
                               color: AllColors().DARK_GREY,
                               fontSize: 13.toFont)),
@@ -149,14 +152,14 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
             child: isLoading
                 ? CircularProgressIndicator()
                 : CustomButton(
-                    child: Text('Share',
-                        style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            fontSize: 16.toFont)),
                     onTap: onShareTap,
                     bgColor: Theme.of(context).primaryColor,
                     width: 164,
                     height: 48,
+                    child: Text('Share',
+                        style: TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            fontSize: 16.toFont)),
                   ),
           ),
         ],
@@ -164,7 +167,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
     );
   }
 
-  onShareTap() async {
+  void onShareTap() async {
     if (selectedContact == null) {
       CustomToast().show('Select a contact', context);
       return;
@@ -174,7 +177,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       return;
     }
 
-    int minutes = (selectedOption == '30 mins'
+    var minutes = (selectedOption == '30 mins'
         ? 30
         : (selectedOption == '2 hours'
             ? (2 * 60)
@@ -201,6 +204,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
         isLoading = false;
       });
       Navigator.of(context).pop();
+      // ignore: unawaited_futures
       providerCallback<HybridProvider>(NavService.navKey.currentContext,
           task: (provider) => provider.addNewEvent(HybridNotificationModel(
               NotificationType.Location,
