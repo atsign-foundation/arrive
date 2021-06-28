@@ -160,8 +160,10 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                                 widget.userListenerKeyword.atsignCreator);
 
                             if (indexOfUser > -1) {
-                              mapController.move(
-                                  markers[indexOfUser].point, 10);
+                              _center = markers[indexOfUser].point;
+
+                              // mapController.move(
+                              //     markers[indexOfUser].point, 10);
 
                               /// If we want the map to only update once
                               /// And not keep the focus on user sharing his location
@@ -169,20 +171,27 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                               //
                               // mapAdjustedOnce = true;
                             } else {
+                              _center = markers[0].point;
+
                               /// It moves the focus to logged in user,
                               /// when other user is not sharing location
-                              mapController.move(markers[0].point, 10);
+                              // mapController.move(markers[0].point, 10);
                             }
                           }
                         } catch (e) {
                           print('$e');
                         }
 
-                        _center = widget.eventListenerKeyword != null
-                            ? LocationService().eventData.latLng
-                            : LocationService().myData?.latLng;
+                        // _center = widget.eventListenerKeyword != null
+                        //     ? LocationService().eventData.latLng
+                        //     : LocationService().myData?.latLng;
+
+                        if (widget.eventListenerKeyword != null) {
+                          _center = LocationService().eventData.latLng;
+                        }
 
                         return FlutterMap(
+                          key: UniqueKey(),
                           mapController: mapController,
                           options: MapOptions(
                             boundsOptions: FitBoundsOptions(
@@ -291,19 +300,19 @@ class _AtLocationFlutterPluginState extends State<AtLocationFlutterPlugin> {
                               LocationService()
                                   .hybridUsersList[indexOfUser]
                                   .latLng,
-                              10);
+                              6);
                         } else if (LocationService().hybridUsersList.length >
                             0) {
                           /// It moves the focus to logged in user,
                           /// when other user is not sharing location
 
                           mapController?.move(
-                              LocationService().hybridUsersList[0].latLng, 10);
+                              LocationService().hybridUsersList[0].latLng, 6);
                         }
                       } else {
                         LocationService().hybridUsersList.length > 0
                             ? mapController?.move(
-                                LocationService().eventData.latLng, 10)
+                                LocationService().eventData.latLng, 6)
                             // ignore: unnecessary_statements
                             : null;
                       }
