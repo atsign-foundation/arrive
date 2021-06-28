@@ -96,10 +96,20 @@ class SendLocationNotification {
         atsignsToShareLocationWith.isEmpty) {
       return;
     }
-    atsignsToShareLocationWith.removeWhere((element) {
-      if (key.contains(element.key)) locationNotificationModel = element;
-      return key.contains(element.key);
-    });
+
+    if (key.contains('createevent')) {
+      atsignsToShareLocationWith.removeWhere((element) {
+        var _microSecondId = element.key.split('-')[1].split('@')[0];
+        if (key.contains(_microSecondId)) locationNotificationModel = element;
+        return key.contains(_microSecondId);
+      });
+    } else {
+      atsignsToShareLocationWith.removeWhere((element) {
+        if (key.contains(element.key)) locationNotificationModel = element;
+        return key.contains(element.key);
+      });
+    }
+
     if (locationNotificationModel != null) {
       await sendNull(locationNotificationModel);
     }
