@@ -10,10 +10,13 @@ import 'package:atsign_location_app/plugins/at_location_flutter/location_modal/h
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/location_service.dart';
 import 'package:atsign_location_app/data_services/hive/hive_db.dart';
+import 'package:atsign_location_app/plugins/at_location_flutter/service/send_location_notification.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
+import 'package:at_location_flutter/service/send_location_notification.dart'
+    as PackageSendLocationNotification;
 
 import 'backend_service.dart';
 
@@ -133,6 +136,9 @@ class LocationNotificationListener {
       "Sharing",
       {"isSharing": value.toString()},
     );
+
+    // PackageSendLocationNotification.SendLocationNotification()
+    //     .setMasterSwitchState(value);
 
     Provider.of<HybridProvider>(NavService.navKey.currentContext, listen: false)
         .initialiseLocationSharing();

@@ -188,10 +188,10 @@ class BackendService {
   // called again if outbound connection is dropped
   Future<bool> startMonitor() async {
     _atsign = await getAtSign();
-    String privateKey = await getPrivateKey(_atsign);
-    // ignore: await_only_futures
-    await atClientInstance.startMonitor(privateKey, fnCallBack);
-    print("Monitor started");
+    // String privateKey = await getPrivateKey(_atsign);
+    // // ignore: await_only_futures
+    // await atClientInstance.startMonitor(privateKey, fnCallBack);
+    // print("Monitor started");
     return true;
   }
 

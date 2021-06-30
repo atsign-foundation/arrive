@@ -35,6 +35,8 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/flutter_map.dart';
+import 'package:at_location_flutter/service/home_screen_service.dart'
+    as packageHomeScreenService;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -325,9 +327,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         provider,
                         hybridElement.haveResponded);
                   } else {
-                    HomeEventService().onLocationModelTap(
-                        hybridElement.locationNotificationModel,
-                        hybridElement.haveResponded);
+                    packageHomeScreenService.HomeScreenService()
+                        .onLocationModelTap(
+                            hybridElement.locationNotificationModel);
                   }
                 },
                 child: DisplayTile(
