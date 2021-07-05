@@ -1,6 +1,10 @@
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
+import 'package:at_events_flutter/screens/create_event.dart';
+import 'package:at_events_flutter/services/home_event_service.dart';
+import 'package:at_location_flutter/service/home_screen_service.dart';
+import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
+// import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
@@ -15,7 +19,7 @@ import 'package:atsign_location_app/screens/request_location/request_location_sh
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/home_event_service.dart';
+// import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -187,11 +191,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           minHeight: 267.toHeight,
                           maxHeight: 530.toHeight,
                           panelBuilder: (scrollController) {
-                            if (provider.allLocationNotifications.isNotEmpty) {
+                            if (provider.allNotifications.isNotEmpty) {
                               return collapsedContent(
                                   false,
                                   scrollController,
-                                  getListView(provider.allLocationNotifications,
+                                  getListView(provider.allNotifications,
                                       EventProvider(), scrollController));
                             } else {
                               return collapsedContent(false, scrollController,
@@ -261,38 +265,27 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // Tasks(
-          //     task: 'Create Event',
-          //     icon: Icons.event,
-          //     onTap: () {
-          //       List<HybridNotificationModel> allEvents = [];
+          Tasks(
+              task: 'Create Event',
+              icon: Icons.event,
+              onTap: () {
+                // List<HybridNotificationModel> allEvents = [];
 
-          //       hybridProvider.allHybridNotifications.forEach((event) {
-          //         if (event.notificationType == NotificationType.Event) {
-          //           allEvents.add(event);
-          //         }
-          //       });
-          //       bottomSheet(
-          //           context,
-          //           CreateEvent(
-          //               BackendService.getInstance()
-          //                   .atClientServiceInstance
-          //                   .atClient,
-          //               onEventSaved: (EventNotificationModel event) {
-          //             providerCallback<HybridProvider>(
-          //                 NavService.navKey.currentContext,
-          //                 task: (provider) => provider.addNewEvent(
-          //                     BackendService.getInstance().convertEventToHybrid(
-          //                         NotificationType.Event,
-          //                         eventNotificationModel: event)),
-          //                 taskName: (provider) => provider.HYBRID_ADD_EVENT,
-          //                 showLoader: false,
-          //                 showDialog: false,
-          //                 onSuccess: (provider) {});
-          //           }, createdEvents: allEvents),
-          //           SizeConfig().screenHeight * 0.9,
-          //           onSheetCLosed: () {});
-          //     }),
+                // hybridProvider.allHybridNotifications.forEach((event) {
+                //   if (event.notificationType == NotificationType.Event) {
+                //     allEvents.add(event);
+                //   }
+                // });
+                bottomSheet(
+                    context,
+                    CreateEvent(
+                      BackendService.getInstance()
+                          .atClientServiceInstance
+                          .atClient,
+                    ),
+                    SizeConfig().screenHeight * 0.9,
+                    onSheetCLosed: () {});
+              }),
           Tasks(
               task: 'Request Location',
               icon: Icons.sync,
@@ -311,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget getListView(List<HybridNotificationModel> allHybridNotifications,
+  Widget getListView(List<EventAndLocationHybrid> allHybridNotifications,
       EventProvider provider, ScrollController slidingScrollController) {
     try {
       return ListView(
@@ -320,50 +313,72 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               InkWell(
                 onTap: () {
-                  if (hybridElement.notificationType ==
-                      NotificationType.Event) {
+                  if (hybridElement.type == NotificationModelType.EventModel) {
                     HomeEventService().onEventModelTap(
-                        hybridElement.eventNotificationModel,
-                        provider,
-                        hybridElement.haveResponded);
+                        hybridElement.eventKeyModel.eventNotificationModel,
+                        hybridElement.eventKeyModel.haveResponded);
                   } else {
                     packageHomeScreenService.HomeScreenService()
-                        .onLocationModelTap(
-                            hybridElement.locationNotificationModel);
+                        .onLocationModelTap(hybridElement
+                            .locationKeyModel.locationNotificationModel);
                   }
                 },
                 child: DisplayTile(
                   atsignCreator:
-                      hybridElement.notificationType == NotificationType.Event
-                          ? hybridElement.eventNotificationModel.atsignCreator
-                          : (hybridElement.locationNotificationModel
+                      hybridElement.type == NotificationModelType.EventModel
+                          ? hybridElement.eventKeyModel.eventNotificationModel
+                              .atsignCreator
+                          : (hybridElement
+                                      .locationKeyModel
+                                      .locationNotificationModel
                                       .atsignCreator ==
                                   BackendService.getInstance()
                                       .atClientServiceInstance
                                       .atClient
                                       .currentAtSign
-                              ? hybridElement.locationNotificationModel.receiver
-                              : hybridElement
+                              ? hybridElement.locationKeyModel
+                                  .locationNotificationModel.receiver
+                              : hybridElement.locationKeyModel
                                   .locationNotificationModel.atsignCreator),
-                  number:
-                      hybridElement.notificationType == NotificationType.Event
-                          ? hybridElement
-                              .eventNotificationModel.group.members.length
-                          : null,
-                  title: getTitle(hybridElement),
-                  subTitle: getSubTitle(hybridElement),
-                  semiTitle: getSemiTitle(hybridElement),
-                  showRetry: calculateShowRetry(hybridElement),
+                  number: hybridElement.type == NotificationModelType.EventModel
+                      ? hybridElement.eventKeyModel.eventNotificationModel.group
+                          .members.length
+                      : null,
+                  title: hybridElement.type == NotificationModelType.EventModel
+                      ? 'Event - ' +
+                          hybridElement
+                              .eventKeyModel.eventNotificationModel.title
+                      : getTitle(hybridElement
+                          .locationKeyModel.locationNotificationModel),
+                  subTitle: hybridElement.type ==
+                          NotificationModelType.EventModel
+                      ? HomeEventService().getSubTitle(
+                          hybridElement.eventKeyModel.eventNotificationModel)
+                      : getSubTitle(hybridElement
+                          .locationKeyModel.locationNotificationModel),
+                  semiTitle: hybridElement.type ==
+                          NotificationModelType.EventModel
+                      ? HomeEventService().getSemiTitle(
+                          hybridElement.eventKeyModel.eventNotificationModel,
+                          hybridElement.eventKeyModel.haveResponded)
+                      : getSemiTitle(hybridElement
+                          .locationKeyModel.locationNotificationModel),
+
+                  /// TODO: Change for location
+                  showRetry:
+                      hybridElement.type == NotificationModelType.EventModel
+                          ? HomeEventService()
+                              .calculateShowRetry(hybridElement.eventKeyModel)
+                          : false,
                   onRetryTapped: () {
-                    if (hybridElement.notificationType ==
-                        NotificationType.Event) {
+                    if (hybridElement.type ==
+                        NotificationModelType.EventModel) {
                       HomeEventService().onEventModelTap(
-                          hybridElement.eventNotificationModel,
-                          provider,
+                          hybridElement.eventKeyModel.eventNotificationModel,
                           false);
                     } else {
-                      HomeEventService().onLocationModelTap(
-                          hybridElement.locationNotificationModel, false);
+                      // HomeEventService().onLocationModelTap(
+                      //     hybridElement.locationNotificationModel, false);
                     }
                   },
                 ),
