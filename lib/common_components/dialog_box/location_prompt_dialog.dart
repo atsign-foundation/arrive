@@ -6,6 +6,7 @@ import 'package:atsign_location_app/services/location_sharing_service.dart';
 import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 
 import '../custom_button.dart';
@@ -117,7 +118,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                                 } else if (widget.isRequestLocationData) {
                                   await updateRequestLocation();
                                 } else {
-                                  LocationNotificationListener()
+                                  await LocationProvider()
                                       .updateShareLocation(true);
                                 }
 

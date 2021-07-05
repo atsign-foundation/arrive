@@ -14,6 +14,7 @@ import 'package:atsign_location_app/services/location_notification_listener.dart
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:latlong/latlong.dart';
@@ -55,7 +56,7 @@ class _SideBarState extends State<SideBar> {
   }
 
   getLocationSharing() async {
-    bool newState = await LocationNotificationListener().getShareLocation();
+    var newState = await LocationProvider().getShareLocation();
     setState(() {
       state = newState;
     });
@@ -224,21 +225,21 @@ class _SideBarState extends State<SideBar> {
                   'Location Sharing',
                   style: CustomTextStyles().darkGrey16,
                 ),
-                Consumer<HybridProvider>(
+                Consumer<LocationProvider>(
                   builder: (context, provider, child) {
                     return Switch(
                       value: provider.isSharing,
                       onChanged: (value) async {
                         if (value) {
-                          LatLng latlng = await getMyLocation();
+                          var latlng = await getMyLocation();
                           if (latlng == null) {
                             CustomToast().show(
                                 'Location permission not granted', context);
                             return;
                           }
                         }
-                        LocationNotificationListener()
-                            .updateShareLocation(value);
+                        // ignore: unawaited_futures
+                        provider.updateShareLocation(value);
                         setState(() {
                           state = value;
                         });
