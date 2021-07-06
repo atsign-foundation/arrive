@@ -319,8 +319,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         hybridElement.eventKeyModel.haveResponded);
                   } else {
                     packageHomeScreenService.HomeScreenService()
-                        .onLocationModelTap(hybridElement
-                            .locationKeyModel.locationNotificationModel);
+                        .onLocationModelTap(
+                            hybridElement
+                                .locationKeyModel.locationNotificationModel,
+                            hybridElement.locationKeyModel.haveResponded);
                   }
                 },
                 child: DisplayTile(
@@ -356,20 +358,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           hybridElement.eventKeyModel.eventNotificationModel)
                       : getSubTitle(hybridElement
                           .locationKeyModel.locationNotificationModel),
-                  semiTitle: hybridElement.type ==
-                          NotificationModelType.EventModel
-                      ? HomeEventService().getSemiTitle(
-                          hybridElement.eventKeyModel.eventNotificationModel,
-                          hybridElement.eventKeyModel.haveResponded)
-                      : getSemiTitle(hybridElement
-                          .locationKeyModel.locationNotificationModel),
+                  semiTitle:
+                      hybridElement.type == NotificationModelType.EventModel
+                          ? HomeEventService().getSemiTitle(
+                              hybridElement
+                                  .eventKeyModel.eventNotificationModel,
+                              hybridElement.eventKeyModel.haveResponded)
+                          : getSemiTitle(
+                              hybridElement
+                                  .locationKeyModel.locationNotificationModel,
+                              hybridElement.locationKeyModel.haveResponded),
 
                   /// TODO: Change for location
                   showRetry:
                       hybridElement.type == NotificationModelType.EventModel
                           ? HomeEventService()
                               .calculateShowRetry(hybridElement.eventKeyModel)
-                          : false,
+                          : calculateShowRetry(hybridElement.locationKeyModel),
                   onRetryTapped: () {
                     if (hybridElement.type ==
                         NotificationModelType.EventModel) {
@@ -377,8 +382,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           hybridElement.eventKeyModel.eventNotificationModel,
                           false);
                     } else {
-                      // HomeEventService().onLocationModelTap(
-                      //     hybridElement.locationNotificationModel, false);
+                      packageHomeScreenService.HomeScreenService()
+                          .onLocationModelTap(
+                              hybridElement
+                                  .locationKeyModel.locationNotificationModel,
+                              false);
                     }
                   },
                 ),
