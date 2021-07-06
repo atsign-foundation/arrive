@@ -1,12 +1,11 @@
+import 'package:at_events_flutter/services/event_key_stream_service.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
-import 'package:atsign_location_app/services/home_event_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
@@ -18,26 +17,13 @@ class EventLog extends StatefulWidget {
 
 class _EventLogState extends State<EventLog>
     with SingleTickerProviderStateMixin {
-  List<HybridNotificationModel> allEvents;
   TabController _controller;
+
   @override
   void initState() {
     _controller =
         _controller = TabController(length: 2, vsync: this, initialIndex: 0);
     super.initState();
-    allEvents = [];
-    getAllEvents();
-  }
-
-  getAllEvents() {
-    List<HybridNotificationModel> allEventsNotfication =
-        HomeEventService().getAllEvents;
-    allEventsNotfication.forEach((event) {
-      if (event.notificationType == NotificationType.Event &&
-          !event.eventNotificationModel.event.isRecurring) {
-        allEvents.add(event);
-      }
-    });
   }
 
   @override
@@ -83,10 +69,7 @@ class _EventLogState extends State<EventLog>
                   Expanded(
                       child: TabBarView(
                     controller: _controller,
-                    children: [
-                      getUpcomingEvents(allEvents),
-                      getPastEvents(allEvents)
-                    ],
+                    children: [getUpcomingEvents(), getPastEvents()],
                   )),
                 ],
               ),
@@ -98,27 +81,16 @@ class _EventLogState extends State<EventLog>
   }
 }
 
-Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
-  List<HybridNotificationModel> events = [];
-  Provider.of<HybridProvider>(NavService.navKey.currentContext, listen: false)
-      .allHybridNotifications
-      .map((notification) {
-    if (notification.notificationType == NotificationType.Event)
-      events.add(notification);
-  });
-  DateTime todaysDate = DateTime.now();
-  allEvents.forEach((event) {
-    DateTime eventDate = event.eventNotificationModel.event.date;
-
-    if (event.eventNotificationModel.event.date.year == todaysDate.year &&
-        event.eventNotificationModel.event.date.month == todaysDate.month &&
-        event.eventNotificationModel.event.date.day == todaysDate.day) {
-      events.add(event);
-    } else if (todaysDate.compareTo(eventDate) == -1) events.add(event);
-  });
+Widget getUpcomingEvents() {
+  var upcomingEvents = Provider.of<LocationProvider>(
+          NavService.navKey.currentContext,
+          listen: false)
+      .allEventNotifications
+      .map((e) => e.eventNotificationModel)
+      .toList();
   return ListView.separated(
     scrollDirection: Axis.vertical,
-    itemCount: events.length,
+    itemCount: upcomingEvents.length,
     separatorBuilder: (context, index) {
       return Divider();
     },
@@ -126,27 +98,25 @@ Widget getUpcomingEvents(List<HybridNotificationModel> allEvents) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
         child: DisplayTile(
-          title: events[index].eventNotificationModel.title,
-          atsignCreator: events[index].eventNotificationModel.atsignCreator,
+          title: upcomingEvents[index].title,
+          atsignCreator: upcomingEvents[index].atsignCreator,
           subTitle:
-              'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
-          invitedBy:
-              'Invited by ${events[index].eventNotificationModel.atsignCreator}',
+              'Event on ${dateToString(upcomingEvents[index].event.date)}',
+          invitedBy: 'Invited by ${upcomingEvents[index].atsignCreator}',
         ),
       );
     },
   );
 }
 
-Widget getPastEvents(List<HybridNotificationModel> allEvents) {
-  List<HybridNotificationModel> events = Provider.of<HybridProvider>(
-          NavService.navKey.currentContext,
-          listen: false)
-      .allPastEventNotifications;
-
+Widget getPastEvents() {
+  var pastEvents = EventKeyStreamService()
+      .allPastEventNotifications
+      .map((e) => e.eventNotificationModel)
+      .toList();
   return ListView.separated(
     scrollDirection: Axis.vertical,
-    itemCount: events.length,
+    itemCount: pastEvents.length,
     separatorBuilder: (context, index) {
       return Divider();
     },
@@ -154,12 +124,10 @@ Widget getPastEvents(List<HybridNotificationModel> allEvents) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
         child: DisplayTile(
-          title: events[index].eventNotificationModel.title,
-          atsignCreator: events[index].eventNotificationModel.atsignCreator,
-          subTitle:
-              'Event on ${dateToString(events[index].eventNotificationModel.event.date)}',
-          invitedBy:
-              'Invited by ${events[index].eventNotificationModel.atsignCreator}',
+          title: pastEvents[index].title,
+          atsignCreator: pastEvents[index].atsignCreator,
+          subTitle: 'Event on ${dateToString(pastEvents[index].event.date)}',
+          invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
         ),
       );
     },
