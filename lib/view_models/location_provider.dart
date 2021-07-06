@@ -33,6 +33,8 @@ class LocationProvider extends BaseModel {
       GlobalKey<NavigatorState> navKey) {
     initialiseLocationSharing();
     initialiseEventService(atClient, navKey,
+        mapKey: MixedConstants.MAP_KEY,
+        apiKey: MixedConstants.API_KEY,
         rootDomain: MixedConstants.ROOT_DOMAIN,
         streamAlternative: updateEvents,
         initLocation: false);

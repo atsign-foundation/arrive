@@ -1,3 +1,4 @@
+import 'package:at_commons/at_commons.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
@@ -70,6 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     locationProvider = context.read<LocationProvider>();
 
+    // deleteAllPreviousKeys();
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var atClient =
           BackendService.getInstance().atClientServiceInstance.atClient;
@@ -120,6 +123,44 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           myLatLng = LatLng(locationStream.latitude, locationStream.longitude);
         });
+      });
+    }
+  }
+
+  void deleteAllPreviousKeys() async {
+    var atClient = BackendService.getInstance().atClientInstance;
+
+    var keys = [
+      'locationnotify',
+      'sharelocation',
+      'sharelocationacknowledged',
+      'requestlocation',
+      'requestlocationacknowledged',
+      'deleterequestacklocation',
+      'createevent',
+      'eventacknowledged',
+      'updateeventlocation',
+    ];
+
+    for (var i = 0; i < keys.length; i++) {
+      var response = await atClient.getKeys(
+        regex: keys[i],
+      );
+      response.forEach((key) async {
+        if (!'@$key'.contains('cached')) {
+          // the keys i have created
+          AtKey atKey = BackendService.getInstance().getAtKey(key);
+          var result = await atClient.delete(atKey,
+              isDedicated: MixedConstants.isDedicated);
+
+          if (result) {
+            if (MixedConstants.isDedicated) {
+              await BackendService.getInstance().syncWithSecondary();
+            }
+          }
+
+          print('$key is deleted ? $result');
+        }
       });
     }
   }
