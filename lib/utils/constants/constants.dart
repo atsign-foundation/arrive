@@ -12,21 +12,9 @@ class MixedConstants {
   static const String TERMS_CONDITIONS = 'https://atsign.com/terms-conditions/';
   // static const String PRIVACY_POLICY = 'https://atsign.com/privacy-policy/';
   static const String PRIVACY_POLICY =
-      "https://atsign.com/apps/atmosphere/atmosphere-privacy/";
+      'https://atsign.com/apps/atmosphere/atmosphere-privacy/';
 
   static const int TIME_OUT = 60000;
-
-  static List<String> startTimeOptions = [
-    '2 hours before the event',
-    '60 minutes before the event',
-    '30 minutes before the event'
-  ];
-
-  static List<String> endTimeOptions = [
-    '10 mins after I reach the venue',
-    'After everyone’s at the venue',
-    'At the end of the day'
-  ];
 
   static const String MAP_KEY = 'B3Wus46C2WZFhwZKQkEx';
   static const String API_KEY = 'yRCeKfJDPQDTp11YI1db67J_fww80QP6R3Llckg-REw';

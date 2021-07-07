@@ -1,5 +1,5 @@
+import 'package:at_events_flutter/models/event_notification.dart';
 import 'package:at_events_flutter/services/event_key_stream_service.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';

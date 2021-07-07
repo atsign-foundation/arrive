@@ -2,20 +2,15 @@ import 'dart:typed_data';
 
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
-import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_location_app/view_models/request_location_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:provider/provider.dart';
 
 class AtSignBottomSheet extends StatefulWidget {
   final List<String> atSignList;
@@ -33,11 +28,12 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
     getAtContactDetails();
   }
 
+  // ignore: always_declare_return_types
   getAtContactDetails() async {
     contactDetails = {};
 
     await Future.forEach(widget.atSignList, (element) async {
-      AtContact contactDetail = await getAtSignDetails(
+      var contactDetail = await getAtSignDetails(
           BackendService.getInstance().atClientInstance.currentAtSign);
       contactDetails[
               '${BackendService.getInstance().atClientInstance.currentAtSign}'] =
@@ -97,10 +93,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                         onboard: (value, atsign) async {
                           backendService.atClientServiceMap = value;
 
-                          String atSign = backendService
-                              .atClientServiceMap[atsign]
-                              .atClient
-                              .currentAtSign;
+                          var atSign = backendService.atClientServiceMap[atsign]
+                              .atClient.currentAtSign;
 
                           await backendService.atClientServiceMap[atsign]
                               .makeAtSignPrimary(atSign);
@@ -110,31 +104,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           BackendService.getInstance().atClientServiceInstance =
                               backendService.atClientServiceMap[atsign];
 
-                          BackendService.getInstance().startMonitor();
-
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            Provider.of<EventProvider>(context, listen: false)
-                                .init(BackendService.getInstance()
-                                    .atClientServiceInstance
-                                    .atClient);
-                            Provider.of<ShareLocationProvider>(context,
-                                    listen: false)
-                                .init(BackendService.getInstance()
-                                    .atClientServiceInstance
-                                    .atClient);
-                            Provider.of<RequestLocationProvider>(context,
-                                    listen: false)
-                                .init(BackendService.getInstance()
-                                    .atClientServiceInstance
-                                    .atClient);
-                            Provider.of<HybridProvider>(context, listen: false)
-                                .init(BackendService.getInstance()
-                                    .atClientServiceInstance
-                                    .atClient);
-
-                            Provider.of<HybridProvider>(context, listen: false)
-                                .init(backendService
-                                    .atClientServiceMap[atsign].atClient);
+                            // TODO: Add LocationProvider init here if any issue
                           });
 
                           SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
@@ -180,7 +151,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
               GestureDetector(
                 onTap: () {
                   Onboarding(
-                    atsign: "",
+                    atsign: '',
                     context: context,
                     atClientPreference: atClientPrefernce,
                     domain: MixedConstants.ROOT_DOMAIN,
@@ -188,14 +159,14 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                     onboard: (value, atsign) async {
                       backendService.atClientServiceMap = value;
 
-                      String atSign = backendService
+                      var atSign = backendService
                           .atClientServiceMap[atsign].atClient.currentAtSign;
                       await backendService.atClientServiceMap[atsign]
                           .makeAtSignPrimary(atSign);
 
                       await BackendService.getInstance().onboard();
-                      BackendService.getInstance().startMonitor();
 
+                      // ignore: unawaited_futures
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(

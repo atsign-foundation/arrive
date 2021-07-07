@@ -80,7 +80,7 @@ class _SplashState extends State<Splash> {
         backendService.app_lifecycle_state = msg;
         if (backendService.monitorConnection != null &&
             backendService.monitorConnection.isInValid()) {
-          backendService.startMonitor();
+          // backendService.startMonitor();
         }
       });
     } catch (e) {

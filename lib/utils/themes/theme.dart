@@ -117,10 +117,11 @@ class Themes {
     );
   }
 
-  static getThemeData(ThemeColor _themeColor) {
-    if (_themeColor == ThemeColor.Dark)
+  static ThemeData getThemeData(ThemeColor _themeColor) {
+    if (_themeColor == ThemeColor.Dark) {
       return Themes.darkTheme;
-    else
+    } else {
       return Themes.lightTheme;
+    }
   }
 }

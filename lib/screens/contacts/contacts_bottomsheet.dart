@@ -1,16 +1,9 @@
 import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
+import 'package:at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
-import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/location_sharing_service.dart';
-import 'package:atsign_location_app/services/nav_service.dart';
-import 'package:atsign_location_app/services/request_location_service.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-
 import 'package:flutter/material.dart';
 
 class ContactsBottomSheet extends StatefulWidget {
@@ -82,12 +75,12 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
     );
   }
 
+  // ignore: always_declare_return_types
   onRequestLocation() async {
     setState(() {
       isLoading = true;
     });
-    var result =
-        await RequestLocationService().sendRequestLocationEvent(widget.atsign);
+    var result = await sendRequestLocationNotification(widget.atsign);
 
     if (result == null) {
       setState(() {
@@ -97,61 +90,44 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
       return;
     }
 
-    if (result[0] == true) {
+    if (result == true) {
       CustomToast().show('Location Request sent', context);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
-      providerCallback<HybridProvider>(NavService.navKey.currentContext,
-          task: (provider) => provider.addNewEvent(BackendService.getInstance()
-              .convertEventToHybrid(NotificationType.Location,
-                  locationNotificationModel: result[1])),
-          taskName: (provider) => provider.HYBRID_ADD_EVENT,
-          showLoader: false,
-          showDialog: false,
-          onSuccess: (provider) {});
     } else {
-      CustomToast()
-          .show('Something went wrong ${result[1].toString()}', context);
+      CustomToast().show('Something went wrong ${result.toString()}', context);
       setState(() {
         isLoading = false;
       });
     }
   }
 
+  // ignore: always_declare_return_types
   onShareLocation() async {
     setState(() {
       isLoading = true;
     });
 
-    var result = await LocationSharingService()
-        .sendShareLocationEvent(widget.atsign, false, minutes: minutes);
+    var result = await sendShareLocationNotification(widget.atsign, minutes);
 
     if (result == null) {
       setState(() {
         isLoading = false;
       });
+      Navigator.of(context).pop();
       return;
     }
 
-    if (result[0] == true) {
+    if (result == true) {
       CustomToast().show('Share Location Request sent', context);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
-      providerCallback<HybridProvider>(NavService.navKey.currentContext,
-          task: (provider) => provider.addNewEvent(HybridNotificationModel(
-              NotificationType.Location,
-              locationNotificationModel: result[1])),
-          taskName: (provider) => provider.HYBRID_ADD_EVENT,
-          showLoader: false,
-          showDialog: false,
-          onSuccess: (provider) {});
     } else {
-      CustomToast()
-          .show('Something went wrong ${result[1].toString()}', context);
+      CustomToast().show('Something went wrong', context);
       setState(() {
         isLoading = false;
       });

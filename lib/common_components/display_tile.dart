@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
+import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -40,16 +40,18 @@ class _DisplayTileState extends State<DisplayTile> {
     getEventCreator();
   }
 
+  // ignore: always_declare_return_types
   getEventCreator() async {
-    AtContact contact = await getAtSignDetails(widget.atsignCreator);
+    var contact = await getAtSignDetails(widget.atsignCreator);
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
         List<int> intList = contact.tags['image'].cast<int>();
-        if (mounted)
+        if (mounted) {
           setState(() {
             image = Uint8List.fromList(intList);
             if (widget.showName) name = contact.tags['name'].toString();
           });
+        }
       }
     }
   }

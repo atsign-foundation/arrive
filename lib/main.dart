@@ -7,10 +7,11 @@ import 'package:flutter/services.dart';
 import 'view_models/theme_view_model.dart';
 
 void main() {
-  ThemeProvider themeProvider = ThemeProvider();
+  var themeProvider = ThemeProvider();
   WidgetsFlutterBinding.ensureInitialized();
   runZoned<Future<void>>(() async {
     ThemeColor _themeColor = await themeProvider.checkTheme();
+    // ignore: unawaited_futures
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]).then((_) {

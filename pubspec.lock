@@ -70,14 +70,14 @@ packages:
       name: at_client_mobile
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.1"
   at_common_flutter:
     dependency: transitive
     description:
       name: at_common_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1"
+    version: "2.0.0"
   at_commons:
     dependency: "direct main"
     description:
@@ -98,7 +98,7 @@ packages:
       path: "/Users/apple/Desktop/client_projects/at_widgets/at_contacts_flutter"
       relative: false
     source: path
-    version: "1.0.2"
+    version: "2.0.0"
   at_contacts_group_flutter:
     dependency: "direct main"
     description:
@@ -106,6 +106,13 @@ packages:
       relative: false
     source: path
     version: "1.0.1"
+  at_events_flutter:
+    dependency: "direct main"
+    description:
+      path: "/Users/apple/Desktop/client_projects/at_widgets/at_events_flutter"
+      relative: false
+    source: path
+    version: "1.0.2"
   at_location_flutter:
     dependency: "direct main"
     description:
@@ -238,7 +245,7 @@ packages:
       name: crypton
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -372,14 +379,14 @@ packages:
       name: geolocator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.2.0"
+    version: "7.2.0+1"
   geolocator_platform_interface:
     dependency: transitive
     description:
       name: geolocator_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.3.0"
   geolocator_web:
     dependency: "direct main"
     description:
@@ -449,7 +456,7 @@ packages:
       name: lists
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   logging:
     dependency: "direct overridden"
     description:
@@ -706,7 +713,7 @@ packages:
       name: sliding_up_panel
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "2.0.0+1"
   source_span:
     dependency: transitive
     description:
@@ -804,14 +811,14 @@ packages:
       name: unicode
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.0"
+    version: "0.3.1"
   url_launcher:
     dependency: transitive
     description:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.7"
+    version: "6.0.9"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -832,7 +839,7 @@ packages:
       name: url_launcher_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.4"
   url_launcher_web:
     dependency: transitive
     description:
@@ -881,7 +888,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.4"
+    version: "2.2.5"
   wkt_parser:
     dependency: transitive
     description:

@@ -1,4 +1,4 @@
-import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
+import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
@@ -49,7 +49,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: CustomTextStyles().black18,
               )
             : SizedBox(),
-        actions: [Center(child: action ?? null)],
+        actions: [Center(child: action)],
       ),
     );
   }

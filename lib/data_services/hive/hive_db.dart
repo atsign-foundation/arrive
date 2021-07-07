@@ -21,10 +21,11 @@ class HiveDataProvider implements LocalDataProviderContract {
   Future<Box> _getBox(String boxName) async {
     if (!_initialized) await _databaseInit();
     Box box;
-    if (!Hive.isBoxOpen(boxName))
+    if (!Hive.isBoxOpen(boxName)) {
       box = await Hive.openBox(boxName);
-    else
+    } else {
       box = Hive.box(boxName);
+    }
     return box;
   }
 
@@ -35,9 +36,9 @@ class HiveDataProvider implements LocalDataProviderContract {
     List whereClauseArgs,
     List<String> keys,
   }) async {
-    Box box = await _getBox(table);
+    var box = await _getBox(table);
     // empty box
-    if (keys == null || keys.length == 0) {
+    if (keys == null || keys.isEmpty) {
       await box.clear();
       return;
     }
@@ -49,9 +50,10 @@ class HiveDataProvider implements LocalDataProviderContract {
 
   @override
   Future<void> insertData(String table, Map<dynamic, dynamic> values) async {
-    Box box = await _getBox(table);
-    if (values != null && values.length != 0)
+    var box = await _getBox(table);
+    if (values != null && values.isNotEmpty) {
       values.forEach((k, v) => box.put(k, v));
+    }
   }
 
   @override
@@ -67,11 +69,11 @@ class HiveDataProvider implements LocalDataProviderContract {
     String orderBy,
     int limit,
   }) async {
-    Box box = await _getBox(table);
-    if (keys == null || keys.length == 0) {
+    var box = await _getBox(table);
+    if (keys == null || keys.isEmpty) {
       return Map<String, dynamic>.from(box.toMap());
     }
-    Map<String, dynamic> data = {};
+    var data = <String, dynamic>{};
     keys.forEach((k) => data[k] = box.get(k));
     return data;
   }
@@ -83,9 +85,10 @@ class HiveDataProvider implements LocalDataProviderContract {
     String whereClauseValue,
     List whereClauseArgs,
   }) async {
-    Box box = await _getBox(table);
-    if (values != null && values.length != 0)
+    var box = await _getBox(table);
+    if (values != null && values.isNotEmpty) {
       values.forEach((k, v) => box.put(k, v));
+    }
     return null;
   }
 

@@ -1,12 +1,11 @@
-import 'package:at_commons/at_commons.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
+import 'package:at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart';
+import 'package:at_location_flutter/service/my_location.dart';
+import 'package:at_location_flutter/show_location.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
@@ -20,8 +19,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
-import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -30,9 +28,6 @@ import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/flutter_map.dart';
-import 'package:at_location_flutter/service/home_screen_service.dart'
-    as packageHomeScreenService;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -41,8 +36,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
-  EventProvider eventProvider = EventProvider();
-  HybridProvider hybridProvider = HybridProvider();
   LocationProvider locationProvider = LocationProvider();
   LatLng myLatLng;
   String currentAtSign;
@@ -105,41 +98,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void deleteAllPreviousKeys() async {
-    var atClient = BackendService.getInstance().atClientInstance;
+    // var atClient = BackendService.getInstance().atClientInstance;
 
-    var keys = [
-      'locationnotify',
-      'sharelocation',
-      'sharelocationacknowledged',
-      'requestlocation',
-      'requestlocationacknowledged',
-      'deleterequestacklocation',
-      'createevent',
-      'eventacknowledged',
-      'updateeventlocation',
-    ];
+    // var keys = [
+    //   'locationnotify',
+    //   'sharelocation',
+    //   'sharelocationacknowledged',
+    //   'requestlocation',
+    //   'requestlocationacknowledged',
+    //   'deleterequestacklocation',
+    //   'createevent',
+    //   'eventacknowledged',
+    //   'updateeventlocation',
+    // ];
 
-    for (var i = 0; i < keys.length; i++) {
-      var response = await atClient.getKeys(
-        regex: keys[i],
-      );
-      response.forEach((key) async {
-        if (!'@$key'.contains('cached')) {
-          // the keys i have created
-          AtKey atKey = BackendService.getInstance().getAtKey(key);
-          var result = await atClient.delete(atKey,
-              isDedicated: MixedConstants.isDedicated);
+    // for (var i = 0; i < keys.length; i++) {
+    //   var response = await atClient.getKeys(
+    //     regex: keys[i],
+    //   );
+    //   response.forEach((key) async {
+    //     if (!'@$key'.contains('cached')) {
+    //       // the keys i have created
+    //       AtKey atKey = BackendService.getInstance().getAtKey(key);
+    //       var result = await atClient.delete(atKey,
+    //           isDedicated: MixedConstants.isDedicated);
 
-          if (result) {
-            if (MixedConstants.isDedicated) {
-              await BackendService.getInstance().syncWithSecondary();
-            }
-          }
+    //       if (result) {
+    //         if (MixedConstants.isDedicated) {
+    //           await BackendService.getInstance().syncWithSecondary();
+    //         }
+    //       }
 
-          print('$key is deleted ? $result');
-        }
-      });
-    }
+    //       print('$key is deleted ? $result');
+    //     }
+    //   });
+    // }
   }
 
   MapController mapController = MapController();
@@ -155,11 +148,14 @@ class _HomeScreenState extends State<HomeScreen> {
           body: Stack(
             children: [
               (myLatLng != null)
-                  ? showLocation(UniqueKey(),
-                      location: myLatLng, mapController: mapController)
+                  ? showLocation(
+                      UniqueKey(),
+                      mapController,
+                      location: myLatLng,
+                    )
                   : showLocation(
                       UniqueKey(),
-                      mapController: mapController,
+                      mapController,
                     ),
               Positioned(
                 top: 0,
@@ -214,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   false,
                                   scrollController,
                                   getListView(provider.allNotifications,
-                                      EventProvider(), scrollController));
+                                      scrollController));
                             } else {
                               return collapsedContent(false, scrollController,
                                   emptyWidget('No Data Found!!'));
@@ -316,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget getListView(List<EventAndLocationHybrid> allHybridNotifications,
-      EventProvider provider, ScrollController slidingScrollController) {
+      ScrollController slidingScrollController) {
     try {
       return ListView(
         children: allHybridNotifications.map((hybridElement) {
@@ -329,11 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         hybridElement.eventKeyModel.eventNotificationModel,
                         hybridElement.eventKeyModel.haveResponded);
                   } else {
-                    packageHomeScreenService.HomeScreenService()
-                        .onLocationModelTap(
-                            hybridElement
-                                .locationKeyModel.locationNotificationModel,
-                            hybridElement.locationKeyModel.haveResponded);
+                    HomeScreenService().onLocationModelTap(
+                        hybridElement
+                            .locationKeyModel.locationNotificationModel,
+                        hybridElement.locationKeyModel.haveResponded);
                   }
                 },
                 child: DisplayTile(
@@ -391,11 +386,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           hybridElement.eventKeyModel.eventNotificationModel,
                           false);
                     } else {
-                      packageHomeScreenService.HomeScreenService()
-                          .onLocationModelTap(
-                              hybridElement
-                                  .locationKeyModel.locationNotificationModel,
-                              false);
+                      HomeScreenService().onLocationModelTap(
+                          hybridElement
+                              .locationKeyModel.locationNotificationModel,
+                          false);
                     }
                   },
                 ),

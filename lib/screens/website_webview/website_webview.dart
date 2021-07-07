@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:atsign_location_app/plugins/at_events_flutter/utils/colors.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
+import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -46,7 +46,7 @@ class _WebsiteScreenState extends State<WebsiteScreen> {
           initialUrl: widget.url,
           javascriptMode: JavascriptMode.unrestricted,
           onPageFinished: (test1) {
-            this.setState(() {
+            setState(() {
               loading = false;
             });
           },

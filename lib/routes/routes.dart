@@ -1,5 +1,4 @@
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/utils/constants/constants.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
 import 'package:at_contacts_flutter/screens/blocked_screen.dart';
@@ -7,6 +6,7 @@ import 'package:atsign_location_app/screens/event/event_log.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/screens/splash/splash.dart';
 import 'package:atsign_location_app/screens/website_webview/website_webview.dart';
+import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:flutter/material.dart';
 
 class SetupRoutes {
@@ -26,7 +26,6 @@ class SetupRoutes {
             url: '${MixedConstants.WEBSITE_URL}/terms-conditions',
           ),
       Routes.GROUP_LIST: (context) {
-        Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
         return GroupList();
       },
       Routes.CONTACT_SCREEN: (context) {

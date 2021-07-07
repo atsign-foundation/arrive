@@ -13,6 +13,7 @@ class ThemeProvider extends BaseModel {
     checkTheme();
   }
 
+  // ignore: always_declare_return_types
   checkTheme() async {
     ThemeColor _currentTheme;
     var res = await _hiveDataProvider.readData('theme');
@@ -28,6 +29,7 @@ class ThemeProvider extends BaseModel {
     return _currentTheme;
   }
 
+  // ignore: always_declare_return_types
   setTheme(ThemeColor themeColor) async {
     await Hive.initFlutter();
     await _hiveDataProvider
