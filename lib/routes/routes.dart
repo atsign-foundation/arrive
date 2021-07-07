@@ -54,6 +54,7 @@ class SetupRoutes {
     });
   }
 
+  // ignore: always_declare_return_types
   static replace(BuildContext context, String value,
       {dynamic arguments, Function callbackAfterNavigation}) {
     Navigator.of(context)
@@ -65,6 +66,7 @@ class SetupRoutes {
     });
   }
 
+  // ignore: always_declare_return_types
   static pushAndRemoveAll(BuildContext context, String value,
       {dynamic arguments, Function callbackAfterNavigation}) {
     Navigator.of(context)

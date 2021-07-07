@@ -4,24 +4,18 @@ import 'package:at_events_flutter/screens/create_event.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/event_notification.dart';
-// import 'package:atsign_location_app/plugins/at_events_flutter/screens/create_event.dart';
 import 'package:atsign_location_app/plugins/at_events_flutter/utils/text_styles.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/floating_icon.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
 import 'package:atsign_location_app/common_components/provider_handler.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
-
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
-// import 'package:atsign_location_app/services/home_event_service.dart';
-import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -29,8 +23,6 @@ import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/view_models/event_provider.dart';
 import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
-import 'package:atsign_location_app/view_models/request_location_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:geolocator/geolocator.dart';
@@ -38,7 +30,6 @@ import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 import 'package:atsign_location_app/plugins/at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart'
     as packageHomeScreenService;
@@ -63,29 +54,15 @@ class _HomeScreenState extends State<HomeScreen> {
     contactsLoaded = false;
     initializePlugins();
     _getMyLocation();
-    LocationNotificationListener()
-        .init(BackendService.getInstance().atClientServiceInstance.atClient);
-    eventProvider = context.read<EventProvider>();
-
-    hybridProvider = context.read<HybridProvider>();
+    // deleteAllPreviousKeys();
 
     locationProvider = context.read<LocationProvider>();
-
-    // deleteAllPreviousKeys();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var atClient =
           BackendService.getInstance().atClientServiceInstance.atClient;
       Provider.of<LocationProvider>(context, listen: false)
           .init(atClient, atClient.currentAtSign, NavService.navKey);
-      // Provider.of<EventProvider>(context, listen: false)
-      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
-      // Provider.of<ShareLocationProvider>(context, listen: false)
-      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
-      // Provider.of<RequestLocationProvider>(context, listen: false)
-      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
-      // Provider.of<HybridProvider>(context, listen: false)
-      //     .init(BackendService.getInstance().atClientServiceInstance.atClient);
     });
   }
 
@@ -310,13 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
               task: 'Create Event',
               icon: Icons.event,
               onTap: () {
-                // List<HybridNotificationModel> allEvents = [];
-
-                // hybridProvider.allHybridNotifications.forEach((event) {
-                //   if (event.notificationType == NotificationType.Event) {
-                //     allEvents.add(event);
-                //   }
-                // });
                 bottomSheet(
                     context,
                     CreateEvent(
@@ -409,8 +379,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               hybridElement
                                   .locationKeyModel.locationNotificationModel,
                               hybridElement.locationKeyModel.haveResponded),
-
-                  /// TODO: Change for location
                   showRetry:
                       hybridElement.type == NotificationModelType.EventModel
                           ? HomeEventService()

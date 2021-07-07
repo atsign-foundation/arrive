@@ -7,15 +7,9 @@ import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/nav_service.dart';
-import 'package:atsign_location_app/services/request_location_service.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class RequestLocationSheet extends StatefulWidget {
   @override
@@ -65,10 +59,11 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                     asSingleSelectionScreen: true,
                     context: context,
                     selectedList: (selectedList) {
-                      if (selectedList.length > 0)
+                      if (selectedList.isNotEmpty) {
                         setState(() {
                           selectedContact = selectedList[0];
                         });
+                      }
                     },
                   ),
                 ),
@@ -91,16 +86,16 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
             child: isLoading
                 ? CircularProgressIndicator()
                 : CustomButton(
+                    onTap: onRequestTap,
+                    bgColor: Theme.of(context).primaryColor,
+                    width: 164,
+                    height: 48,
                     child: Text(
                       'Request',
                       style: TextStyle(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           fontSize: 16.toFont),
                     ),
-                    onTap: onRequestTap,
-                    bgColor: Theme.of(context).primaryColor,
-                    width: 164,
-                    height: 48,
                   ),
           )
         ],
@@ -108,6 +103,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     );
   }
 
+  // ignore: always_declare_return_types
   onRequestTap() async {
     if (selectedContact == null) {
       CustomToast().show('Select a contact', context);
@@ -118,9 +114,6 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     });
 
     var result = await sendRequestLocationNotification(selectedContact.atSign);
-
-    // RequestLocationService()
-    //     .sendRequestLocationEvent(selectedContact.atSign);
 
     if (result == null) {
       setState(() {
@@ -136,14 +129,6 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
         isLoading = false;
       });
       Navigator.of(context).pop();
-      // providerCallback<HybridProvider>(NavService.navKey.currentContext,
-      //     task: (provider) => provider.addNewEvent(BackendService.getInstance()
-      //         .convertEventToHybrid(NotificationType.Location,
-      //             locationNotificationModel: result[1])),
-      //     taskName: (provider) => provider.HYBRID_ADD_EVENT,
-      //     showLoader: false,
-      //     showDialog: false,
-      //     onSuccess: (provider) {});
     } else {
       CustomToast().show('Something went wrong ${result.toString()}', context);
       setState(() {

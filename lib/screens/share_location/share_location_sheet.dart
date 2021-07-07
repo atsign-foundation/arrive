@@ -7,15 +7,10 @@ import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
-import 'package:atsign_location_app/common_components/provider_callback.dart';
-import 'package:atsign_location_app/services/location_sharing_service.dart';
-import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/models/hybrid_notifiation_model.dart';
 
 class ShareLocationSheet extends StatefulWidget {
   @override
@@ -67,10 +62,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                     asSingleSelectionScreen: true,
                     context: context,
                     selectedList: (selectedList) {
-                      if (selectedList.length > 0)
+                      if (selectedList.isNotEmpty) {
                         setState(() {
                           selectedContact = selectedList[0];
                         });
+                      }
                     },
                   ),
                 ),
@@ -106,22 +102,22 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               elevation: 0,
               dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
               value: selectedOption,
-              hint: Text("Select Duration",
+              hint: Text('Select Duration',
                   style: TextStyle(
                       color: AllColors().LIGHT_GREY_LABEL,
                       fontSize: 15.toFont)),
               style:
                   TextStyle(color: AllColors().DARK_GREY, fontSize: 13.toFont),
               items: [
-                "Select Duration",
+                'Select Duration',
                 '30 mins',
                 '2 hours',
                 '24 hours',
                 'Until turned off'
               ].map((String option) {
-                return new DropdownMenuItem<String>(
-                  value: option == "Select Duration" ? null : option,
-                  child: option == "Select Duration"
+                return DropdownMenuItem<String>(
+                  value: option == 'Select Duration' ? null : option,
+                  child: option == 'Select Duration'
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -150,14 +146,14 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
             child: isLoading
                 ? CircularProgressIndicator()
                 : CustomButton(
-                    child: Text('Share',
-                        style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor,
-                            fontSize: 16.toFont)),
                     onTap: onShareTap,
                     bgColor: Theme.of(context).primaryColor,
                     width: 164,
                     height: 48,
+                    child: Text('Share',
+                        style: TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            fontSize: 16.toFont)),
                   ),
           ),
         ],
@@ -165,6 +161,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
     );
   }
 
+  // ignore: always_declare_return_types
   onShareTap() async {
     if (selectedContact == null) {
       CustomToast().show('Select a contact', context);
@@ -175,7 +172,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       return;
     }
 
-    int minutes = (selectedOption == '30 mins'
+    var minutes = (selectedOption == '30 mins'
         ? 30
         : (selectedOption == '2 hours'
             ? (2 * 60)
@@ -186,9 +183,6 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
     var result =
         await sendShareLocationNotification(selectedContact.atSign, minutes);
-    // LocationSharingService().sendShareLocationEvent(
-    //     selectedContact.atSign, false,
-    //     minutes: minutes);
 
     if (result == null) {
       setState(() {
@@ -204,18 +198,8 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
         isLoading = false;
       });
       Navigator.of(context).pop();
-      // providerCallback<HybridProvider>(NavService.navKey.currentContext,
-      //     task: (provider) => provider.addNewEvent(HybridNotificationModel(
-      //         NotificationType.Location,
-      //         locationNotificationModel: result[1])),
-      //     taskName: (provider) => provider.HYBRID_ADD_EVENT,
-      //     showLoader: false,
-      //     showDialog: false,
-      //     onSuccess: (provider) {});
     } else {
       CustomToast().show('Something went wrong', context);
-      // CustomToast()
-      //     .show('Something went wrong ${result[1].toString()}', context);
       setState(() {
         isLoading = false;
       });

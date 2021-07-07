@@ -29,11 +29,8 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    // authenticating = true;
-
     BackendService.getInstance().getAtClientPreference().then(
         (value) => BackendService.getInstance().atClientPreference = value);
-
     _initBackendService();
   }
 
@@ -43,18 +40,8 @@ class _SplashState extends State<Splash> {
       await checkLocationPermission();
 
       backendService = BackendService.getInstance();
-      // backendService.atClientServiceInstance = new AtClientService();
-      // await backendService.onboard();
-      // String currentAtSign;
-      // if (backendService.atClientInstance != null) {
-      //   currentAtSign = backendService.atClientInstance.currentAtSign;
-      // } else {
-      //   currentAtSign = '';
-      // }
-
       if (BackendService.getInstance().atClientPreference != null) {
         Onboarding(
-          // atsign: currentAtSign,
           context: context,
           atClientPreference: BackendService.getInstance().atClientPreference,
           domain: MixedConstants.ROOT_DOMAIN,
@@ -67,7 +54,7 @@ class _SplashState extends State<Splash> {
             BackendService.getInstance().atClientServiceInstance =
                 value[atsign];
 
-            BackendService.getInstance().startMonitor();
+            // ignore: unawaited_futures
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -99,13 +86,15 @@ class _SplashState extends State<Splash> {
     } catch (e) {
       print('Error in _initBackendService $e');
 
-      if (mounted)
+      if (mounted) {
         setState(() {
           authenticating = false;
         });
+      }
     }
   }
 
+  // ignore: always_declare_return_types
   checkLocationPermission() async {
     try {
       /// So that we have the permission status beforehand & later we dont get
@@ -128,7 +117,7 @@ class _SplashState extends State<Splash> {
             : Stack(
                 children: [
                   Image.asset(
-                    "assets/images/splash_bg.png",
+                    'assets/images/splash_bg.png',
                     fit: BoxFit.fill,
                     height: SizeConfig().screenHeight,
                     width: SizeConfig().screenWidth,
@@ -177,6 +166,25 @@ class _SplashState extends State<Splash> {
                           height: 40,
                           width: 150,
                           radius: 100.toHeight,
+                          onTap: () async {
+                            if (authenticating) return;
+
+                            Onboarding(
+                              context: context,
+                              atClientPreference: BackendService.getInstance()
+                                  .atClientPreference,
+                              domain: MixedConstants.ROOT_DOMAIN,
+                              appColor: Color.fromARGB(255, 240, 94, 62),
+                              onboard: onOnboardCompletes,
+                              onError: (error) {
+                                print('error in onboard plugin:$error');
+                                setState(() {
+                                  authenticating = false;
+                                });
+                              },
+                            );
+                          },
+                          bgColor: AllColors().Black,
                           child: authenticating
                               ? Center(
                                   child: Row(
@@ -197,26 +205,7 @@ class _SplashState extends State<Splash> {
                                   'Explore',
                                   textScaleFactor: 1,
                                   style: CustomTextStyles().white15,
-                                ),
-                          onTap: () async {
-                            if (authenticating) return;
-
-                            Onboarding(
-                              context: context,
-                              atClientPreference: BackendService.getInstance()
-                                  .atClientPreference,
-                              domain: MixedConstants.ROOT_DOMAIN,
-                              appColor: Color.fromARGB(255, 240, 94, 62),
-                              onboard: onOnboardCompletes,
-                              onError: (error) {
-                                print('error in onboard plugin:$error');
-                                setState(() {
-                                  authenticating = false;
-                                });
-                              },
-                            );
-                          },
-                          bgColor: AllColors().Black),
+                                )),
                     ),
                   ),
                 ],
@@ -225,6 +214,7 @@ class _SplashState extends State<Splash> {
     );
   }
 
+  // ignore: always_declare_return_types
   onOnboardCompletes(Map<String, AtClientService> value, String atsign) async {
     setState(() {
       authenticating = true;
@@ -232,9 +222,8 @@ class _SplashState extends State<Splash> {
     });
 
     BackendService.getInstance().atClientServiceMap = value;
-    // await BackendService.getInstance().onboard();
-    BackendService.getInstance().startMonitor();
 
+    // ignore: unawaited_futures
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
