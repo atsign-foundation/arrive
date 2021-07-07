@@ -24,11 +24,13 @@ class LocationProvider extends BaseModel {
 
   void init(AtClientImpl atClient, String activeAtSign,
       GlobalKey<NavigatorState> navKey) {
+    setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
     allNotifications = [];
     allLocationNotifications = [];
     allEventNotifications = [];
 
     initialiseLocationSharing();
+
     initialiseEventService(atClient, navKey,
         mapKey: MixedConstants.MAP_KEY,
         apiKey: MixedConstants.API_KEY,
@@ -36,7 +38,6 @@ class LocationProvider extends BaseModel {
         streamAlternative: updateEvents,
         initLocation: false);
 
-    /// If we initialise location before events then it will take values from events location package
     initializeLocationService(
       atClient, activeAtSign, navKey,
       mapKey: MixedConstants.MAP_KEY,
@@ -59,33 +60,29 @@ class LocationProvider extends BaseModel {
       );
     });
 
-    setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
+    // setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   // ignore: always_declare_return_types
   notificationUpdate(List<KeyLocationModel> list) {
-    print('notificationUpdate');
+    print('location package notificationUpdate');
 
     allLocationNotifications = list;
     updateAllNotification(locationsList: allLocationNotifications);
-
-    // setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   // ignore: always_declare_return_types
   updateEvents(List<EventKeyLocationModel> list) {
-    print('notificationUpdate');
+    print('events package notificationUpdate');
 
     allEventNotifications = list;
     updateAllNotification(eventsList: allEventNotifications);
-
-    // setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   // ignore: always_declare_return_types
   updateAllNotification(
       {List<KeyLocationModel> locationsList,
-      List<EventKeyLocationModel> eventsList}) {
+      List<EventKeyLocationModel> eventsList}) async {
     allNotifications = [];
 
     if (locationsList != null) {
