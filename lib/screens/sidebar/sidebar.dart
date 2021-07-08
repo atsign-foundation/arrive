@@ -1,22 +1,20 @@
 import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
+import 'package:at_location_flutter/common_components/contacts_initial.dart';
+import 'package:at_location_flutter/common_components/custom_toast.dart';
+import 'package:at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/change_atsign_bottom_sheet.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_toast.dart';
-import 'package:atsign_location_app/plugins/at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/contacts/contacts_bottomsheet.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
-import 'package:atsign_location_app/services/location_notification_listener.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:latlong/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
@@ -48,21 +46,23 @@ class _SideBarState extends State<SideBar> {
   }
 
   Future<void> _initPackageInfo() async {
-    final PackageInfo info = await PackageInfo.fromPlatform();
+    final info = await PackageInfo.fromPlatform();
     setState(() {
       _packageInfo = info;
     });
   }
 
+  // ignore: always_declare_return_types
   getLocationSharing() async {
-    bool newState = await LocationNotificationListener().getShareLocation();
+    var newState = await LocationProvider().getShareLocation();
     setState(() {
       state = newState;
     });
   }
 
+  // ignore: always_declare_return_types
   getEventCreator() async {
-    AtContact contact = await getAtSignDetails(
+    var contact = await getAtSignDetails(
         BackendService.getInstance().atClientInstance.currentAtSign);
     name = null;
     if (contact != null) {
@@ -73,7 +73,7 @@ class _SideBarState extends State<SideBar> {
         });
       }
       if (contact.tags != null && contact.tags['name'] != null) {
-        String newName = contact.tags['name'].toString();
+        var newName = contact.tags['name'].toString();
         setState(() {
           name = newName;
         });
@@ -151,8 +151,8 @@ class _SideBarState extends State<SideBar> {
               'Contacts',
               Icons.contacts_rounded,
               () async {
-                BackendService backendService = BackendService.getInstance();
-                String currentAtSign = await backendService.getAtSign();
+                var backendService = BackendService.getInstance();
+                var currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
                     arguments: {
                       'currentAtSign': currentAtSign,
@@ -183,8 +183,8 @@ class _SideBarState extends State<SideBar> {
               'Groups',
               Icons.group,
               () async {
-                BackendService backendService = BackendService.getInstance();
-                String currentAtSign = await backendService.getAtSign();
+                var backendService = BackendService.getInstance();
+                var currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
                   'currentAtSign': currentAtSign,
                 });
@@ -210,7 +210,9 @@ class _SideBarState extends State<SideBar> {
               'Delete @sign',
               Icons.delete,
               () async {
-                _deleteAtSign(BackendService.getInstance().currentAtsign);
+                _deleteAtSign(BackendService.getInstance()
+                    .atClientInstance
+                    .currentAtSign);
                 setState(() {});
               },
             ),
@@ -224,24 +226,21 @@ class _SideBarState extends State<SideBar> {
                   'Location Sharing',
                   style: CustomTextStyles().darkGrey16,
                 ),
-                Consumer<HybridProvider>(
+                Consumer<LocationProvider>(
                   builder: (context, provider, child) {
                     return Switch(
                       value: provider.isSharing,
                       onChanged: (value) async {
                         if (value) {
-                          LatLng latlng = await getMyLocation();
+                          var latlng = await getMyLocation();
                           if (latlng == null) {
                             CustomToast().show(
                                 'Location permission not granted', context);
                             return;
                           }
                         }
-                        LocationNotificationListener()
-                            .updateShareLocation(value);
-                        setState(() {
-                          state = value;
-                        });
+                        // ignore: unawaited_futures
+                        provider.updateShareLocation(value);
                       },
                     );
                   },
@@ -258,7 +257,7 @@ class _SideBarState extends State<SideBar> {
             )),
             Expanded(child: Container(height: 0)),
             iconText('Switch @sign', Icons.logout, () async {
-              String currentAtsign =
+              var currentAtsign =
                   BackendService.getInstance().atClientInstance.currentAtSign;
               var atSignList = await BackendService.getInstance()
                   .atClientServiceMap[currentAtsign]
@@ -283,6 +282,7 @@ class _SideBarState extends State<SideBar> {
     );
   }
 
+  // ignore: always_declare_return_types
   _deleteAtSign(String atsign) async {
     final _formKey = GlobalKey<FormState>();
     await showDialog(

@@ -13,8 +13,8 @@ Future providerCallback<T extends BaseModel>(BuildContext context,
     String text,
     Function onErrorHandeling,
     Function onError}) async {
-  final T _provider = Provider.of<T>(context, listen: false);
-  String _taskName = taskName(_provider);
+  final _provider = Provider.of<T>(context, listen: false);
+  var _taskName = taskName(_provider);
 
   if (showLoader) LoadingDialog().show(text: text);
   await Future.microtask(() => task(_provider));

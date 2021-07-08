@@ -4,7 +4,7 @@ import 'package:at_common_flutter/services/size_config.dart';
 
 class CustomTextStyles {
   CustomTextStyles._();
-  static CustomTextStyles _instance = CustomTextStyles._();
+  static final CustomTextStyles _instance = CustomTextStyles._();
   factory CustomTextStyles() => _instance;
 
   TextStyle blackPlayfairDisplay38 = TextStyle(

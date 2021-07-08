@@ -2,7 +2,6 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_popup_route.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
-import 'package:atsign_location_app/utils/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
@@ -38,7 +37,7 @@ class ErrorDialogWidget extends StatelessWidget {
             children: <Widget>[
               SizedBox(height: 20.toHeight),
               Text(
-                TextStrings().errorOccured,
+                'Some Error occured',
                 style: CustomTextStyles().black18,
               ),
               SizedBox(height: 10.toHeight),
@@ -52,16 +51,16 @@ class ErrorDialogWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     CustomButton(
-                      child: Text(
-                        'OK',
-                        style: TextStyle(
-                            color: Theme.of(context).scaffoldBackgroundColor),
-                      ),
                       bgColor: Theme.of(context).primaryColor,
                       onTap: () {
                         Navigator.of(context).pop();
                         if (onButtonPress != null) onButtonPress();
                       },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                            color: Theme.of(context).scaffoldBackgroundColor),
+                      ),
                     ),
                   ]),
             ],
@@ -75,12 +74,13 @@ class ErrorDialogWidget extends StatelessWidget {
 class ErrorDialog {
   ErrorDialog._();
 
-  static ErrorDialog _instance = ErrorDialog._();
+  static final ErrorDialog _instance = ErrorDialog._();
 
   factory ErrorDialog() => _instance;
   bool _showing = false;
   var appLocal;
 
+  // ignore: always_declare_return_types
   show(String text,
       {String buttonText,
       Function onButtonPressed,
@@ -101,13 +101,14 @@ class ErrorDialog {
               barrierDismissible: true),
         )
             .then((_) {
-          print("hidden error");
+          print('hidden error');
           _showing = false;
         });
       });
     }
   }
 
+  // ignore: always_declare_return_types
   hide() {
     if (_showing) NavService.navKey.currentState.pop();
   }

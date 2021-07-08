@@ -3,10 +3,10 @@ import 'dart:typed_data';
 /// This is a custom widget to display the selected contacts
 /// in a row with overlapping profile pictures
 import 'package:at_contact/at_contact.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contact_list_tile.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/custom_circle_avatar.dart';
-import 'package:atsign_location_app/plugins/at_events_flutter/services/event_services.dart';
+import 'package:at_events_flutter/at_events_flutter.dart';
+import 'package:at_events_flutter/common_components/contact_list_tile.dart';
+import 'package:at_location_flutter/common_components/contacts_initial.dart';
+import 'package:at_location_flutter/common_components/custom_circle_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 

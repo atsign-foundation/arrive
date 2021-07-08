@@ -1,6 +1,5 @@
 import 'dart:typed_data';
-
-import 'package:atsign_location_app/plugins/at_events_flutter/common_components/contacts_initials.dart';
+import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 

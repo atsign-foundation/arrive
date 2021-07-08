@@ -35,14 +35,14 @@ class ConcurrentEventDialog extends StatelessWidget {
                 SizedBox(height: 10),
                 CustomButton(
                   onTap: () => null,
+                  bgColor: Theme.of(context).primaryColor,
+                  width: 164.toWidth,
+                  height: 48.toHeight,
                   child: Text(
                     'Yes! Create another',
                     style: TextStyle(
                         color: Theme.of(context).scaffoldBackgroundColor),
                   ),
-                  bgColor: Theme.of(context).primaryColor,
-                  width: 164.toWidth,
-                  height: 48.toHeight,
                 ),
                 SizedBox(height: 5),
                 InkWell(

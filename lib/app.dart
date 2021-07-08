@@ -1,10 +1,7 @@
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/themes/theme.dart';
-import 'package:atsign_location_app/view_models/event_provider.dart';
-import 'package:atsign_location_app/view_models/hybrid_provider.dart';
-import 'package:atsign_location_app/view_models/request_location_provider.dart';
-import 'package:atsign_location_app/view_models/share_location_provider.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -23,14 +20,8 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(providers: [
       ChangeNotifierProvider<ThemeProvider>(
           create: (context) => ThemeProvider(themeColor: widget.currentTheme)),
-      ChangeNotifierProvider<EventProvider>(
-          create: (context) => EventProvider()),
-      ChangeNotifierProvider<ShareLocationProvider>(
-          create: (context) => ShareLocationProvider()),
-      ChangeNotifierProvider<RequestLocationProvider>(
-          create: (context) => RequestLocationProvider()),
-      ChangeNotifierProvider<HybridProvider>(
-          create: (context) => HybridProvider()),
+      ChangeNotifierProvider<LocationProvider>(
+          create: (context) => LocationProvider()),
     ], child: MaterialAppClass());
   }
 }
@@ -40,7 +31,7 @@ class MaterialAppClass extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: (BuildContext context, Widget child) {
-        final MediaQueryData data = MediaQuery.of(context);
+        final data = MediaQuery.of(context);
         return MediaQuery(
           // data: data.copyWith(
           //     textScaleFactor:

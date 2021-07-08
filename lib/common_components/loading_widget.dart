@@ -8,18 +8,19 @@ import 'package:flutter/material.dart';
 class LoadingDialog {
   LoadingDialog._();
 
-  static LoadingDialog _instance = LoadingDialog._();
+  static final LoadingDialog _instance = LoadingDialog._();
 
   factory LoadingDialog() => _instance;
   bool _showing = false;
 
+  // ignore: always_declare_return_types
   show({String text}) {
     if (!_showing) {
       _showing = true;
       NavService.navKey.currentState
           .push(CustomPopupRoutes(
               pageBuilder: (_, __, ___) {
-                print("building loader");
+                print('building loader');
                 return Center(
                   child: (text != null)
                       ? Row(
@@ -51,8 +52,9 @@ class LoadingDialog {
     }
   }
 
+  // ignore: always_declare_return_types
   hide() {
-    print("hide called");
+    print('hide called');
     if (_showing) {
       NavService.navKey.currentState.pop();
       _showing = false;

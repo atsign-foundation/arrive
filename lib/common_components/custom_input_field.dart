@@ -30,7 +30,7 @@ class CustomInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     textController.text = initialValue;
     return InkWell(
-      onTap: onTap ?? null,
+      onTap: onTap,
       child: Container(
         width: width,
         height: height,
@@ -54,7 +54,7 @@ class CustomInputField extends StatelessWidget {
                   hintStyle: TextStyle(
                       color: ColorConstants.darkGrey, fontSize: 15.toFont),
                 ),
-                onTap: onTap ?? null,
+                onTap: onTap,
                 onChanged: (val) {
                   value(val);
                 },
