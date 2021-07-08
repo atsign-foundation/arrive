@@ -1,3 +1,4 @@
+import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     initializePlugins();
     _getMyLocation();
     // deleteAllPreviousKeys();
+    // cleanKeychain();
 
     locationProvider = context.read<LocationProvider>();
 
@@ -97,6 +99,15 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       });
     }
+  }
+
+  // ignore: always_declare_return_types
+  cleanKeychain() async {
+    var _keyChainManager = KeyChainManager.getInstance();
+    var _atSignsList = await _keyChainManager.getAtSignListFromKeychain();
+    _atSignsList?.forEach((element) {
+      _keyChainManager.deleteAtSignFromKeychain(element);
+    });
   }
 
   void deleteAllPreviousKeys() async {
