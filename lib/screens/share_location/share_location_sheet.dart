@@ -117,18 +117,20 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               ].map((String option) {
                 return DropdownMenuItem<String>(
                   value: option == 'Select Duration' ? null : option,
-                  child: option == 'Select Duration'
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(option,
-                                style: TextStyle(
-                                    color: AllColors().LIGHT_GREY_LABEL,
-                                    fontSize: 15.toFont)),
-                            Icon(Icons.keyboard_arrow_up)
-                          ],
-                        )
-                      : Text(option,
+                  child:
+                      // option == 'Select Duration'
+                      //     ? Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         children: [
+                      //           Text(option,
+                      //               style: TextStyle(
+                      //                   color: AllColors().LIGHT_GREY_LABEL,
+                      //                   fontSize: 15.toFont)),
+                      //           Icon(Icons.keyboard_arrow_up)
+                      //         ],
+                      //       )
+                      //     :
+                      Text(option,
                           style: TextStyle(
                               color: AllColors().DARK_GREY,
                               fontSize: 13.toFont)),
