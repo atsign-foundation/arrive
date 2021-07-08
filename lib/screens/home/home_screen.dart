@@ -151,45 +151,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   MapController mapController = MapController();
 
-  /// Should be called to delete all arrive keys associated with an atsign
-  void deleteAllPreviousKeys() async {
-    var atClient = BackendService.getInstance().atClientInstance;
-
-    var keys = [
-      'locationnotify',
-      'sharelocation',
-      'sharelocationacknowledged',
-      'requestlocation',
-      'requestlocationacknowledged',
-      'deleterequestacklocation',
-      'createevent',
-      'eventacknowledged',
-      'updateeventlocation',
-    ];
-
-    for (var i = 0; i < keys.length; i++) {
-      var response = await atClient.getKeys(
-        regex: keys[i],
-      );
-      response.forEach((key) async {
-        if (!'@$key'.contains('cached')) {
-          // the keys i have created
-          AtKey atKey = BackendService.getInstance().getAtKey(key);
-          var result = await atClient.delete(atKey,
-              isDedicated: MixedConstants.isDedicated);
-
-          if (result) {
-            if (MixedConstants.isDedicated) {
-              await BackendService.getInstance().syncWithSecondary();
-            }
-          }
-
-          print('$key is deleted ? $result');
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
