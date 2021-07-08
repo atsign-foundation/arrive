@@ -4,7 +4,9 @@ import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart';
 import 'package:at_location_flutter/service/my_location.dart';
+import 'package:at_location_flutter/service/sync_secondary.dart';
 import 'package:at_location_flutter/show_location.dart';
+import 'package:at_location_flutter/utils/constants/init_location_service.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
@@ -98,41 +100,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void deleteAllPreviousKeys() async {
-    // var atClient = BackendService.getInstance().atClientInstance;
+    var atClient = BackendService.getInstance().atClientInstance;
 
-    // var keys = [
-    //   'locationnotify',
-    //   'sharelocation',
-    //   'sharelocationacknowledged',
-    //   'requestlocation',
-    //   'requestlocationacknowledged',
-    //   'deleterequestacklocation',
-    //   'createevent',
-    //   'eventacknowledged',
-    //   'updateeventlocation',
-    // ];
+    var keys = [
+      'locationnotify',
+      'sharelocation',
+      'sharelocationacknowledged',
+      'requestlocation',
+      'requestlocationacknowledged',
+      'deleterequestacklocation',
+      'createevent',
+      'eventacknowledged',
+      'updateeventlocation',
+    ];
 
-    // for (var i = 0; i < keys.length; i++) {
-    //   var response = await atClient.getKeys(
-    //     regex: keys[i],
-    //   );
-    //   response.forEach((key) async {
-    //     if (!'@$key'.contains('cached')) {
-    //       // the keys i have created
-    //       AtKey atKey = BackendService.getInstance().getAtKey(key);
-    //       var result = await atClient.delete(atKey,
-    //           isDedicated: MixedConstants.isDedicated);
+    for (var i = 0; i < keys.length; i++) {
+      var response = await atClient.getKeys(
+        regex: keys[i],
+      );
+      response.forEach((key) async {
+        if (!'@$key'.contains('cached')) {
+          // the keys i have created
+          var atKey = getAtKey(key);
+          var result = await atClient.delete(atKey,
+              isDedicated: MixedConstants.isDedicated);
 
-    //       if (result) {
-    //         if (MixedConstants.isDedicated) {
-    //           await BackendService.getInstance().syncWithSecondary();
-    //         }
-    //       }
+          if (result) {
+            if (MixedConstants.isDedicated) {
+              await SyncSecondary()
+                  .callSyncSecondary(SyncOperation.syncSecondary);
+            }
+          }
 
-    //       print('$key is deleted ? $result');
-    //     }
-    //   });
-    // }
+          print('$key is deleted ? $result');
+        }
+      });
+    }
   }
 
   MapController mapController = MapController();
