@@ -38,14 +38,8 @@ dependencies:
   at_contacts_group_flutter: ^2.0.0
   at_contacts_flutter: ^2.0.0
   at_onboarding_flutter: ^2.0.0
-  at_location_flutter:
-    path: /Users/apple/Desktop/client_projects/at_widgets/at_location_flutter
-  at_events_flutter:
-    path: /Users/apple/Desktop/client_projects/at_widgets/at_events_flutter
-
-dependency_overrides:
-  at_chat_flutter: 
-    path: /Users/apple/Desktop/client_projects/at_widgets/at_chat_flutter
+  at_location_flutter: ^2.0.2
+  at_events_flutter: ^2.0.1
 
 dev_dependencies:
   flutter_test:
