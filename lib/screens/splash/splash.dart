@@ -12,6 +12,8 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:at_location_flutter/utils/constants/constants.dart'
+    as location_package_constants;
 
 class Splash extends StatefulWidget {
   @override
@@ -38,6 +40,7 @@ class _SplashState extends State<Splash> {
   void _initBackendService() async {
     try {
       await checkLocationPermission();
+      setMapKey();
 
       backendService = BackendService.getInstance();
       if (BackendService.getInstance().atClientPreference != null) {
@@ -103,6 +106,10 @@ class _SplashState extends State<Splash> {
     } catch (e) {
       print('Error in checkLocationPermission $e');
     }
+  }
+
+  void setMapKey() {
+    location_package_constants.MixedConstants.setMapKey(MixedConstants.MAP_KEY);
   }
 
   @override
