@@ -130,27 +130,27 @@ class BackendService {
           Routes.SPLASH, (Route<dynamic> route) => false);
     } else {
       Onboarding(
-        atsign: tempAtsign,
-        context: NavService.navKey.currentContext,
-        atClientPreference: atClientPrefernce,
-        domain: MixedConstants.ROOT_DOMAIN,
-        appColor: Color.fromARGB(255, 240, 94, 62),
-        onboard: (value, atsign) async {
-          atClientServiceMap = value;
+          atsign: tempAtsign,
+          context: NavService.navKey.currentContext,
+          atClientPreference: atClientPrefernce,
+          domain: MixedConstants.ROOT_DOMAIN,
+          appColor: Color.fromARGB(255, 240, 94, 62),
+          onboard: (value, atsign) async {
+            atClientServiceMap = value;
 
-          var atSign = atClientServiceMap[atsign].atClient.currentAtSign;
+            var atSign = atClientServiceMap[atsign].atClient.currentAtSign;
 
-          await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
-          atClientInstance = atClientServiceMap[atsign].atClient;
-          atClientServiceInstance = atClientServiceMap[atsign];
+            await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
+            atClientInstance = atClientServiceMap[atsign].atClient;
+            atClientServiceInstance = atClientServiceMap[atsign];
 
-          SetupRoutes.pushAndRemoveAll(
-              NavService.navKey.currentContext, Routes.HOME);
-        },
-        onError: (error) {
-          print('Onboarding throws $error error');
-        },
-      );
+            SetupRoutes.pushAndRemoveAll(
+                NavService.navKey.currentContext, Routes.HOME);
+          },
+          onError: (error) {
+            print('Onboarding throws $error error');
+          },
+          appAPIKey: MixedConstants.ONBOARD_API_KEY);
     }
   }
 }

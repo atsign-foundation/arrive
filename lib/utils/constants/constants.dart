@@ -24,4 +24,7 @@ class MixedConstants {
 
   static const int maxTTL = 10080 * 60;
   static const bool isDedicated = true;
+
+  // Onboarding API key - requires different key for production
+  static String ONBOARD_API_KEY = '477b-876u-bcez-c42z-6a3d';
 }

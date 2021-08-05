@@ -45,30 +45,30 @@ class _SplashState extends State<Splash> {
       backendService = BackendService.getInstance();
       if (BackendService.getInstance().atClientPreference != null) {
         Onboarding(
-          context: context,
-          atClientPreference: BackendService.getInstance().atClientPreference,
-          domain: MixedConstants.ROOT_DOMAIN,
-          onboard: (value, atsign) async {
-            print('_initBackendService onboarded: $value , atsign:$atsign');
-            BackendService.getInstance().atClientServiceMap = value;
-            // await BackendService.getInstance().onboard();
-            BackendService.getInstance().atClientInstance =
-                value[atsign].atClient;
-            BackendService.getInstance().atClientServiceInstance =
-                value[atsign];
+            context: context,
+            atClientPreference: BackendService.getInstance().atClientPreference,
+            domain: MixedConstants.ROOT_DOMAIN,
+            onboard: (value, atsign) async {
+              print('_initBackendService onboarded: $value , atsign:$atsign');
+              BackendService.getInstance().atClientServiceMap = value;
+              // await BackendService.getInstance().onboard();
+              BackendService.getInstance().atClientInstance =
+                  value[atsign].atClient;
+              BackendService.getInstance().atClientServiceInstance =
+                  value[atsign];
 
-            // ignore: unawaited_futures
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(),
-              ),
-            );
-          },
-          onError: (error) {
-            print('_initBackendService error in onboarding: $error');
-          },
-        );
+              // ignore: unawaited_futures
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(),
+                ),
+              );
+            },
+            onError: (error) {
+              print('_initBackendService error in onboarding: $error');
+            },
+            appAPIKey: MixedConstants.ONBOARD_API_KEY);
       } else {
         setState(() {
           authenticating = false;
@@ -177,19 +177,19 @@ class _SplashState extends State<Splash> {
                             if (authenticating) return;
 
                             Onboarding(
-                              context: context,
-                              atClientPreference: BackendService.getInstance()
-                                  .atClientPreference,
-                              domain: MixedConstants.ROOT_DOMAIN,
-                              appColor: Color.fromARGB(255, 240, 94, 62),
-                              onboard: onOnboardCompletes,
-                              onError: (error) {
-                                print('error in onboard plugin:$error');
-                                setState(() {
-                                  authenticating = false;
-                                });
-                              },
-                            );
+                                context: context,
+                                atClientPreference: BackendService.getInstance()
+                                    .atClientPreference,
+                                domain: MixedConstants.ROOT_DOMAIN,
+                                appColor: Color.fromARGB(255, 240, 94, 62),
+                                onboard: onOnboardCompletes,
+                                onError: (error) {
+                                  print('error in onboard plugin:$error');
+                                  setState(() {
+                                    authenticating = false;
+                                  });
+                                },
+                                appAPIKey: MixedConstants.ONBOARD_API_KEY);
                           },
                           bgColor: AllColors().Black,
                           child: authenticating

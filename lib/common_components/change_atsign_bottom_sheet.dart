@@ -85,35 +85,38 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                   return GestureDetector(
                     onTap: () async {
                       Onboarding(
-                        atsign: widget.atSignList[index],
-                        context: context,
-                        atClientPreference: atClientPrefernce,
-                        domain: MixedConstants.ROOT_DOMAIN,
-                        appColor: Color.fromARGB(255, 240, 94, 62),
-                        onboard: (value, atsign) async {
-                          backendService.atClientServiceMap = value;
+                          atsign: widget.atSignList[index],
+                          context: context,
+                          atClientPreference: atClientPrefernce,
+                          domain: MixedConstants.ROOT_DOMAIN,
+                          appColor: Color.fromARGB(255, 240, 94, 62),
+                          onboard: (value, atsign) async {
+                            backendService.atClientServiceMap = value;
 
-                          var atSign = backendService.atClientServiceMap[atsign]
-                              .atClient.currentAtSign;
+                            var atSign = backendService
+                                .atClientServiceMap[atsign]
+                                .atClient
+                                .currentAtSign;
 
-                          await backendService.atClientServiceMap[atsign]
-                              .makeAtSignPrimary(atSign);
-                          BackendService.getInstance().atClientInstance =
-                              backendService
-                                  .atClientServiceMap[atsign].atClient;
-                          BackendService.getInstance().atClientServiceInstance =
-                              backendService.atClientServiceMap[atsign];
+                            await backendService.atClientServiceMap[atsign]
+                                .makeAtSignPrimary(atSign);
+                            BackendService.getInstance().atClientInstance =
+                                backendService
+                                    .atClientServiceMap[atsign].atClient;
+                            BackendService.getInstance()
+                                    .atClientServiceInstance =
+                                backendService.atClientServiceMap[atsign];
 
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            // TODO: Add LocationProvider init here if any issue
-                          });
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              // TODO: Add LocationProvider init here if any issue
+                            });
 
-                          SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
-                        },
-                        onError: (error) {
-                          print('Onboarding throws $error error');
-                        },
-                      );
+                            SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
+                          },
+                          onError: (error) {
+                            print('Onboarding throws $error error');
+                          },
+                          appAPIKey: MixedConstants.ONBOARD_API_KEY);
 
                       setState(() {});
                     },
@@ -151,33 +154,33 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
               GestureDetector(
                 onTap: () {
                   Onboarding(
-                    atsign: '',
-                    context: context,
-                    atClientPreference: atClientPrefernce,
-                    domain: MixedConstants.ROOT_DOMAIN,
-                    appColor: Color.fromARGB(255, 240, 94, 62),
-                    onboard: (value, atsign) async {
-                      backendService.atClientServiceMap = value;
+                      atsign: '',
+                      context: context,
+                      atClientPreference: atClientPrefernce,
+                      domain: MixedConstants.ROOT_DOMAIN,
+                      appColor: Color.fromARGB(255, 240, 94, 62),
+                      onboard: (value, atsign) async {
+                        backendService.atClientServiceMap = value;
 
-                      var atSign = backendService
-                          .atClientServiceMap[atsign].atClient.currentAtSign;
-                      await backendService.atClientServiceMap[atsign]
-                          .makeAtSignPrimary(atSign);
+                        var atSign = backendService
+                            .atClientServiceMap[atsign].atClient.currentAtSign;
+                        await backendService.atClientServiceMap[atsign]
+                            .makeAtSignPrimary(atSign);
 
-                      await BackendService.getInstance().onboard();
+                        await BackendService.getInstance().onboard();
 
-                      // ignore: unawaited_futures
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
-                        ),
-                      );
-                    },
-                    onError: (error) {
-                      print('Onboarding throws $error error');
-                    },
-                  );
+                        // ignore: unawaited_futures
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(),
+                          ),
+                        );
+                      },
+                      onError: (error) {
+                        print('Onboarding throws $error error');
+                      },
+                      appAPIKey: MixedConstants.ONBOARD_API_KEY);
                   setState(() {});
                 },
                 child: Container(
