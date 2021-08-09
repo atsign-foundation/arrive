@@ -7,6 +7,7 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/overlapping-contacts.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
+import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -72,8 +73,8 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
           ),
           (selectedContact != null)
               ? (OverlappingContacts(
-                  selectedList: [selectedContact],
-                  onRemove: () {
+                  [selectedContact],
+                  onRemove: (_index) {
                     setState(() {
                       selectedContact = null;
                     });
@@ -130,7 +131,8 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong ${result.toString()}', context);
+      CustomToast().show('Something went wrong ${result.toString()}', context,
+          bgColor: AllColors().RED);
       setState(() {
         isLoading = false;
       });
