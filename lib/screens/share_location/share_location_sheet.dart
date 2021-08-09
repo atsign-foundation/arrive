@@ -3,6 +3,7 @@ import 'package:at_contacts_flutter/screens/contacts_screen.dart';
 import 'package:at_contacts_group_flutter/screens/group_contact_view/group_contact_view.dart';
 import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
+import 'package:at_location_flutter/service/sharing_location_service.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
@@ -66,21 +67,39 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                           selectedContacts = [];
                         } else {
                           selectedContacts = [];
-                          s.forEach((element) {
-                            element.group.members.forEach((element) {
+                          s.forEach((_groupElement) {
+                            // for contacts
+                            if (_groupElement.contact != null) {
                               var _containsContact = false;
 
                               // to prevent one contact from getting added again
                               selectedContacts.forEach((_contact) {
-                                if (element.atSign == _contact.atSign) {
+                                if (_groupElement.contact.atSign ==
+                                    _contact.atSign) {
                                   _containsContact = true;
                                 }
                               });
 
                               if (!_containsContact) {
-                                selectedContacts.add(element);
+                                selectedContacts.add(_groupElement.contact);
                               }
-                            });
+                            } else if (_groupElement.group != null) {
+                              // for groups
+                              _groupElement.group.members.forEach((element) {
+                                var _containsContact = false;
+
+                                // to prevent one contact from getting added again
+                                selectedContacts.forEach((_contact) {
+                                  if (element.atSign == _contact.atSign) {
+                                    _containsContact = true;
+                                  }
+                                });
+
+                                if (!_containsContact) {
+                                  selectedContacts.add(element);
+                                }
+                              });
+                            }
                           });
                         }
                       });
@@ -202,28 +221,35 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       isLoading = true;
     });
 
-    // var result =
-    //     await sendShareLocationNotification(selectedContacts.atSign, minutes);
+    var result;
+    if (selectedContacts.length > 1) {
+      await SharingLocationService()
+          .sendShareLocationToGroup(selectedContacts, minutes: minutes);
+    } else {
+      result = await sendShareLocationNotification(
+          selectedContacts[0].atSign, minutes);
+    }
 
-    // if (result == null) {
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    //   Navigator.of(context).pop();
-    //   return;
-    // }
+    if (result == null) {
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.of(context).pop();
+      return;
+    }
 
-    // if (result == true) {
-    //   CustomToast().show('Share Location Request sent', context);
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    //   Navigator.of(context).pop();
-    // } else {
-    //   CustomToast().show('Something went wrong', context);
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // }
+    if (result == true) {
+      CustomToast().show('Share Location Request sent', context);
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.of(context).pop();
+    } else {
+      CustomToast()
+          .show('Something went wrong', context, bgColor: AllColors().RED);
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }
