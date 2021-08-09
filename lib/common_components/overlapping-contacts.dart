@@ -12,11 +12,11 @@ import 'package:at_common_flutter/services/size_config.dart';
 
 // ignore: must_be_immutable
 class OverlappingContacts extends StatefulWidget {
-  final List<AtContact> selectedList;
-  Function onRemove;
+  List<AtContact> selectedList;
+  Function(int) onRemove;
   bool isMultipleUser;
-  OverlappingContacts(
-      {Key key, this.selectedList, this.onRemove, this.isMultipleUser = true})
+  OverlappingContacts(this.selectedList,
+      {Key key, this.onRemove, this.isMultipleUser = true})
       : super(key: key);
   @override
   _OverlappingContactsState createState() => _OverlappingContactsState();
@@ -147,7 +147,9 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                     top: 10.toHeight,
                     right: 0,
                     child: InkWell(
-                      onTap: widget.onRemove,
+                      onTap: () {
+                        widget.onRemove(0);
+                      },
                       child: Container(
                           width: 20.toWidth,
                           child: Icon(
@@ -179,11 +181,14 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                             onTileTap: () {},
                             isSelected: widget.selectedList
                                 .contains(widget.selectedList[index]),
-                            onRemove: widget.onRemove ??
-                                () {
-                                  EventService().removeSelectedContact(index);
-                                  EventService().update();
-                                },
+                            onRemove: () {
+                              if (widget.onRemove != null) {
+                                widget.onRemove(index);
+                              } else {
+                                EventService().removeSelectedContact(index);
+                                EventService().update();
+                              }
+                            },
                             name: widget.selectedList[index].tags != null &&
                                     widget.selectedList[index].tags['name'] !=
                                         null

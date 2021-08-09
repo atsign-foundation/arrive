@@ -1,5 +1,6 @@
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
+import 'package:at_contacts_group_flutter/screens/group_contact_view/group_contact_view.dart';
 import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
@@ -18,7 +19,7 @@ class ShareLocationSheet extends StatefulWidget {
 }
 
 class _ShareLocationSheetState extends State<ShareLocationSheet> {
-  AtContact selectedContact;
+  List<AtContact> selectedContacts = [];
   bool isLoading;
   String selectedOption;
 
@@ -33,9 +34,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
     return Container(
       height: 500,
       padding: EdgeInsets.all(25),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
           CustomAppBar(
             centerTitle: false,
@@ -57,31 +56,48 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ContactsScreen(
+                  builder: (context) => GroupContactView(
                     asSelectionScreen: true,
-                    asSingleSelectionScreen: true,
-                    context: context,
-                    selectedList: (selectedList) {
-                      if (selectedList.isNotEmpty) {
-                        setState(() {
-                          selectedContact = selectedList[0];
-                        });
-                      }
+                    showGroups: true,
+                    showContacts: true,
+                    selectedList: (s) {
+                      setState(() {
+                        if (s.isEmpty) {
+                          selectedContacts = [];
+                        } else {
+                          selectedContacts = [];
+                          s.forEach((element) {
+                            element.group.members.forEach((element) {
+                              var _containsContact = false;
+
+                              // to prevent one contact from getting added again
+                              selectedContacts.forEach((_contact) {
+                                if (element.atSign == _contact.atSign) {
+                                  _containsContact = true;
+                                }
+                              });
+
+                              if (!_containsContact) {
+                                selectedContacts.add(element);
+                              }
+                            });
+                          });
+                        }
+                      });
                     },
                   ),
                 ),
               );
             },
           ),
-          (selectedContact != null)
+          (selectedContacts.isNotEmpty)
               ? (OverlappingContacts(
-                  selectedList: [selectedContact],
-                  onRemove: () {
+                  selectedContacts,
+                  onRemove: (_index) {
                     setState(() {
-                      selectedContact = null;
+                      selectedContacts.removeAt(_index);
                     });
                   },
-                  isMultipleUser: false,
                 ))
               : SizedBox(),
           SizedBox(height: 25),
@@ -143,7 +159,10 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               },
             ),
           ),
-          Expanded(child: SizedBox()),
+          // Expanded(child: SizedBox()),
+          SizedBox(
+            height: 100,
+          ),
           Center(
             child: isLoading
                 ? CircularProgressIndicator()
@@ -165,7 +184,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
   // ignore: always_declare_return_types
   onShareTap() async {
-    if (selectedContact == null) {
+    if (selectedContacts == null) {
       CustomToast().show('Select a contact', context);
       return;
     }
@@ -183,28 +202,28 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       isLoading = true;
     });
 
-    var result =
-        await sendShareLocationNotification(selectedContact.atSign, minutes);
+    // var result =
+    //     await sendShareLocationNotification(selectedContacts.atSign, minutes);
 
-    if (result == null) {
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.of(context).pop();
-      return;
-    }
+    // if (result == null) {
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //   Navigator.of(context).pop();
+    //   return;
+    // }
 
-    if (result == true) {
-      CustomToast().show('Share Location Request sent', context);
-      setState(() {
-        isLoading = false;
-      });
-      Navigator.of(context).pop();
-    } else {
-      CustomToast().show('Something went wrong', context);
-      setState(() {
-        isLoading = false;
-      });
-    }
+    // if (result == true) {
+    //   CustomToast().show('Share Location Request sent', context);
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    //   Navigator.of(context).pop();
+    // } else {
+    //   CustomToast().show('Something went wrong', context);
+    //   setState(() {
+    //     isLoading = false;
+    //   });
+    // }
   }
 }

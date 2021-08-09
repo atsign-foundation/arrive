@@ -72,8 +72,8 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
           ),
           (selectedContact != null)
               ? (OverlappingContacts(
-                  selectedList: [selectedContact],
-                  onRemove: () {
+                  [selectedContact],
+                  onRemove: (_index) {
                     setState(() {
                       selectedContact = null;
                     });
