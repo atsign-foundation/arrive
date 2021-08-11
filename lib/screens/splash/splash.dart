@@ -48,6 +48,7 @@ class _SplashState extends State<Splash> {
             context: context,
             atClientPreference: BackendService.getInstance().atClientPreference,
             domain: MixedConstants.ROOT_DOMAIN,
+            appColor: Color.fromARGB(255, 240, 94, 62),
             onboard: (value, atsign) async {
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
