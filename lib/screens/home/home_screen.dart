@@ -163,12 +163,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               (myLatLng != null)
                   ? showLocation(
-                      UniqueKey(),
+                      null,
                       mapController,
                       location: myLatLng,
                     )
                   : showLocation(
-                      UniqueKey(),
+                      null,
                       mapController,
                     ),
               Positioned(

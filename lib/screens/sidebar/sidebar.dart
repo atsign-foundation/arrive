@@ -335,7 +335,7 @@ class _SideBarState extends State<SideBar> {
                   child: TextFormField(
                     textAlign: TextAlign.center,
                     validator: (value) {
-                      if (value != atsign) {
+                      if (value.toLowerCase().replaceAll(' ', '') != atsign) {
                         return "The @sign doesn't match. Please retype.";
                       } else {
                         return null;
