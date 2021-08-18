@@ -5,9 +5,9 @@ class MixedConstants {
   // for local server
   // static const String ROOT_DOMAIN = 'vip.ve.atsign.zone';
   // for staging server
-  // static const String ROOT_DOMAIN = 'root.atsign.wtf';
+  static const String ROOT_DOMAIN = 'root.atsign.wtf';
   // for production server
-  static const String ROOT_DOMAIN = 'root.atsign.org';
+  // static const String ROOT_DOMAIN = 'root.atsign.org';
 
   static const String TERMS_CONDITIONS = 'https://atsign.com/terms-conditions/';
   // static const String PRIVACY_POLICY = 'https://atsign.com/privacy-policy/';
@@ -20,7 +20,8 @@ class MixedConstants {
   static const String API_KEY = 'yRCeKfJDPQDTp11YI1db67J_fww80QP6R3Llckg-REw';
 
   static const String appNamespace = 'rrive';
-  static const String syncRegex = '.$appNamespace@';
+  static const String syncRegex =
+      '(.$appNamespace|atconnections|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})';
 
   static const int maxTTL = 10080 * 60;
   static const bool isDedicated = true;
