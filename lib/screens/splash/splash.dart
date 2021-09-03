@@ -28,8 +28,17 @@ class _SplashState extends State<Splash> {
   bool authenticating = false;
   bool isOnboarded = false;
 
+  clearKeyChain() async {
+    var _list = await KeyChainManager.getInstance().getAtSignListFromKeychain();
+    for (var _atsign in _list) {
+      await KeyChainManager.getInstance().deleteAtSignFromKeychain(_atsign);
+    }
+  }
+
   @override
   void initState() {
+    // clearKeyChain();
+
     super.initState();
     BackendService.getInstance().getAtClientPreference().then(
         (value) => BackendService.getInstance().atClientPreference = value);
@@ -53,8 +62,8 @@ class _SplashState extends State<Splash> {
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
               // await BackendService.getInstance().onboard();
-              BackendService.getInstance().atClientInstance =
-                  value[atsign].atClient;
+              // BackendService.getInstance().atClientInstance =
+              //     value[atsign].atClient;
               BackendService.getInstance().atClientServiceInstance =
                   value[atsign];
 

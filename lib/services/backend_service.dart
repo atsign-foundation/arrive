@@ -18,7 +18,7 @@ class BackendService {
     return _singleton;
   }
   AtClientService atClientServiceInstance;
-  AtClientImpl atClientInstance;
+  // AtClientImpl atClientInstance;
   String _atsign;
   // ignore: non_constant_identifier_names
   String app_lifecycle_state;
@@ -57,7 +57,7 @@ class BackendService {
       atClientPreference: atClientPreference,
       atsign: atsign,
     );
-    atClientInstance = atClientServiceInstance.atClient;
+    // atClientInstance = atClientServiceInstance.atClient;
     return result;
   }
 
@@ -77,27 +77,27 @@ class BackendService {
   }
 
   ///Fetches atsign from device keychain.
-  Future<String> getAtSign() async {
-    return atClientServiceInstance.atClient.currentAtSign;
-  }
+  // Future<String> getAtSign() async {
+  //   return atClientServiceInstance.atClient.currentAtSign;
+  // }
 
-  // ///Fetches privatekey for [atsign] from device keychain.
-  Future<String> getPrivateKey(String atsign) async {
-    return await atClientServiceInstance.getPrivateKey(atsign);
-  }
+  // // ///Fetches privatekey for [atsign] from device keychain.
+  // Future<String> getPrivateKey(String atsign) async {
+  //   return await atClientServiceInstance.getPrivateKey(atsign);
+  // }
 
-  ///Fetches publickey for [atsign] from device keychain.
-  Future<String> getPublicKey(String atsign) async {
-    return await atClientServiceInstance.getPublicKey(atsign);
-  }
+  // ///Fetches publickey for [atsign] from device keychain.
+  // Future<String> getPublicKey(String atsign) async {
+  //   return await atClientServiceInstance.getPublicKey(atsign);
+  // }
 
-  Future<String> getAESKey(String atsign) async {
-    return await atClientServiceInstance.getAESKey(atsign);
-  }
+  // Future<String> getAESKey(String atsign) async {
+  //   return await atClientServiceInstance.getAESKey(atsign);
+  // }
 
-  Future<Map<String, String>> getEncryptedKeys(String atsign) async {
-    return await atClientServiceInstance.getEncryptedKeys(atsign);
-  }
+  // Future<Map<String, String>> getEncryptedKeys(String atsign) async {
+  //   return await atClientServiceInstance.getEncryptedKeys(atsign);
+  // }
 
   static final KeyChainManager _keyChainManager = KeyChainManager.getInstance();
   Future<List<String>> getAtsignList() async {
@@ -109,11 +109,12 @@ class BackendService {
   deleteAtSignFromKeyChain(String atsign) async {
     var atSignList = await getAtsignList();
 
-    await atClientServiceMap[atsign].deleteAtSignFromKeychain(atsign);
+    await KeyChainManager.getInstance().deleteAtSignFromKeychain(atsign);
 
     if (atSignList != null) {
-      atSignList
-          .removeWhere((element) => element == atClientInstance.currentAtSign);
+      atSignList.removeWhere((element) =>
+          element ==
+          atClientServiceInstance.atClientManager.atClient.getCurrentAtSign());
     }
 
     var atClientPrefernce;
@@ -138,10 +139,10 @@ class BackendService {
           onboard: (value, atsign) async {
             atClientServiceMap = value;
 
-            var atSign = atClientServiceMap[atsign].atClient.currentAtSign;
+            var atSign = atsign;
 
-            await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
-            atClientInstance = atClientServiceMap[atsign].atClient;
+            // await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
+            // atClientInstance = atClientServiceMap[atsign].atClient;
             atClientServiceInstance = atClientServiceMap[atsign];
 
             SetupRoutes.pushAndRemoveAll(

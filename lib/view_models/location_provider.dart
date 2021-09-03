@@ -22,7 +22,7 @@ class LocationProvider extends BaseModel {
   // ignore: non_constant_identifier_names
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
 
-  void init(AtClientImpl atClient, String activeAtSign,
+  void init(AtClientManager atClientManager, String activeAtSign,
       GlobalKey<NavigatorState> navKey) {
     setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
     allNotifications = [];
@@ -31,7 +31,7 @@ class LocationProvider extends BaseModel {
 
     initialiseLocationSharing();
 
-    initialiseEventService(atClient, navKey,
+    initialiseEventService(atClientManager, navKey,
         mapKey: MixedConstants.MAP_KEY,
         apiKey: MixedConstants.API_KEY,
         rootDomain: MixedConstants.ROOT_DOMAIN,
@@ -39,7 +39,7 @@ class LocationProvider extends BaseModel {
         initLocation: false);
 
     initializeLocationService(
-      atClient, activeAtSign, navKey,
+      atClientManager.atClient, activeAtSign, navKey,
       mapKey: MixedConstants.MAP_KEY,
       apiKey: MixedConstants.API_KEY,
       // getAtValue: LocationNotificationListener().getAtValue

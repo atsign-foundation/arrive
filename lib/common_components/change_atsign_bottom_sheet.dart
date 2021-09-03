@@ -33,11 +33,13 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
     contactDetails = {};
 
     await Future.forEach(widget.atSignList, (element) async {
-      var contactDetail = await getAtSignDetails(
-          BackendService.getInstance().atClientInstance.currentAtSign);
-      contactDetails[
-              '${BackendService.getInstance().atClientInstance.currentAtSign}'] =
-          contactDetail;
+      var _currentAtsign = BackendService.getInstance()
+          .atClientServiceInstance
+          .atClientManager
+          .atClient
+          .getCurrentAtSign();
+      var contactDetail = await getAtSignDetails(_currentAtsign);
+      contactDetails['$_currentAtsign'] = contactDetail;
     });
     setState(() {});
   }
@@ -93,16 +95,16 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           onboard: (value, atsign) async {
                             backendService.atClientServiceMap = value;
 
-                            var atSign = backendService
-                                .atClientServiceMap[atsign]
-                                .atClient
-                                .currentAtSign;
+                            // var atSign = backendService
+                            //     .atClientServiceMap[atsign]
+                            //     .atClient
+                            //     .currentAtSign;
 
-                            await backendService.atClientServiceMap[atsign]
-                                .makeAtSignPrimary(atSign);
-                            BackendService.getInstance().atClientInstance =
-                                backendService
-                                    .atClientServiceMap[atsign].atClient;
+                            // await backendService.atClientServiceMap[atsign]
+                            //     .makeAtSignPrimary(atSign);
+                            // BackendService.getInstance().atClientInstance =
+                            //     backendService
+                            //         .atClientServiceMap[atsign].atClient;
                             BackendService.getInstance()
                                     .atClientServiceInstance =
                                 backendService.atClientServiceMap[atsign];
@@ -162,10 +164,10 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       onboard: (value, atsign) async {
                         backendService.atClientServiceMap = value;
 
-                        var atSign = backendService
-                            .atClientServiceMap[atsign].atClient.currentAtSign;
-                        await backendService.atClientServiceMap[atsign]
-                            .makeAtSignPrimary(atSign);
+                        // var atSign = backendService
+                        //     .atClientServiceMap[atsign].atClient.currentAtSign;
+                        // await backendService.atClientServiceMap[atsign]
+                        //     .makeAtSignPrimary(atSign);
 
                         await BackendService.getInstance().onboard();
 
