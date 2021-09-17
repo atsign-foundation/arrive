@@ -70,6 +70,11 @@ dependency_overrides:
       url: https://github.com/atsign-foundation/at_libraries.git
       path: at_lookup
       ref: trunk
+  at_utils:
+    git:
+      url: https://github.com/atsign-foundation/at_tools.git
+      path: at_utils
+      ref: trunk
   file_picker: ^4.0.0
 
 dev_dependencies:
