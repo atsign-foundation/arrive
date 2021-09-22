@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -136,6 +137,7 @@ class BackendService {
           atClientPreference: atClientPrefernce,
           domain: MixedConstants.ROOT_DOMAIN,
           appColor: Color.fromARGB(255, 240, 94, 62),
+          rootEnvironment: RootEnvironment.Production,
           onboard: (value, atsign) async {
             atClientServiceMap = value;
 

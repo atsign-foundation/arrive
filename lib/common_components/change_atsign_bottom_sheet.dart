@@ -92,6 +92,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           atClientPreference: atClientPrefernce,
                           domain: MixedConstants.ROOT_DOMAIN,
                           appColor: Color.fromARGB(255, 240, 94, 62),
+                          rootEnvironment: RootEnvironment.Production,
                           onboard: (value, atsign) async {
                             backendService.atClientServiceMap = value;
 
@@ -161,6 +162,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       atClientPreference: atClientPrefernce,
                       domain: MixedConstants.ROOT_DOMAIN,
                       appColor: Color.fromARGB(255, 240, 94, 62),
+                      rootEnvironment: RootEnvironment.Production,
                       onboard: (value, atsign) async {
                         backendService.atClientServiceMap = value;
 

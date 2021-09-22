@@ -31,15 +31,17 @@ class LocationProvider extends BaseModel {
 
     initialiseLocationSharing();
 
-    initialiseEventService(atClientManager, navKey,
-        mapKey: MixedConstants.MAP_KEY,
-        apiKey: MixedConstants.API_KEY,
-        rootDomain: MixedConstants.ROOT_DOMAIN,
-        streamAlternative: updateEvents,
-        initLocation: false);
+    initialiseEventService(
+      navKey,
+      mapKey: MixedConstants.MAP_KEY,
+      apiKey: MixedConstants.API_KEY,
+      rootDomain: MixedConstants.ROOT_DOMAIN,
+      streamAlternative: updateEvents,
+      initLocation: false,
+    );
 
     initializeLocationService(
-      atClientManager.atClient, activeAtSign, navKey,
+      navKey,
       mapKey: MixedConstants.MAP_KEY,
       apiKey: MixedConstants.API_KEY,
       // getAtValue: LocationNotificationListener().getAtValue

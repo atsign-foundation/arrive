@@ -58,6 +58,7 @@ class _SplashState extends State<Splash> {
             atClientPreference: BackendService.getInstance().atClientPreference,
             domain: MixedConstants.ROOT_DOMAIN,
             appColor: Color.fromARGB(255, 240, 94, 62),
+            rootEnvironment: RootEnvironment.Production,
             onboard: (value, atsign) async {
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
@@ -67,6 +68,7 @@ class _SplashState extends State<Splash> {
               BackendService.getInstance().atClientServiceInstance =
                   value[atsign];
 
+              AtClientManager.getInstance().syncService.sync();
               // ignore: unawaited_futures
               Navigator.pushReplacement(
                 context,
@@ -193,6 +195,7 @@ class _SplashState extends State<Splash> {
                                 domain: MixedConstants.ROOT_DOMAIN,
                                 appColor: Color.fromARGB(255, 240, 94, 62),
                                 onboard: onOnboardCompletes,
+                                rootEnvironment: RootEnvironment.Production,
                                 onError: (error) {
                                   print('error in onboard plugin:$error');
                                   setState(() {

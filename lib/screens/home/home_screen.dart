@@ -72,18 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
         .atClient
         .getCurrentAtSign();
     // ignore: await_only_futures
-    await initializeContactsService(
-        BackendService.getInstance().atClientServiceInstance.atClientManager,
-        currentAtSign,
-        rootDomain: MixedConstants.ROOT_DOMAIN);
+    await initializeContactsService(rootDomain: MixedConstants.ROOT_DOMAIN);
     setState(() {
       contactsLoaded = true;
     });
 
-    initializeGroupService(
-        BackendService.getInstance().atClientServiceInstance.atClientManager,
-        currentAtSign,
-        rootDomain: MixedConstants.ROOT_DOMAIN);
+    initializeGroupService(rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
   void _getMyLocation() async {
