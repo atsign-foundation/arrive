@@ -94,9 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
         (permission == LocationPermission.whileInUse))) {
       Geolocator.getPositionStream(distanceFilter: 2)
           .listen((locationStream) async {
-        setState(() {
-          myLatLng = LatLng(locationStream.latitude, locationStream.longitude);
-        });
+        if (mounted) {
+          setState(() {
+            myLatLng =
+                LatLng(locationStream.latitude, locationStream.longitude);
+          });
+        }
       });
     }
   }

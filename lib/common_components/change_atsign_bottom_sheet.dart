@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
@@ -95,6 +96,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           rootEnvironment: RootEnvironment.Production,
                           onboard: (value, atsign) async {
                             backendService.atClientServiceMap = value;
+                            await KeychainUtil.makeAtSignPrimary(atsign);
 
                             // var atSign = backendService
                             //     .atClientServiceMap[atsign]
@@ -109,6 +111,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                             BackendService.getInstance()
                                     .atClientServiceInstance =
                                 backendService.atClientServiceMap[atsign];
+
+                            BackendService.getInstance().syncWithSecondary();
 
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               // TODO: Add LocationProvider init here if any issue
@@ -165,6 +169,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       rootEnvironment: RootEnvironment.Production,
                       onboard: (value, atsign) async {
                         backendService.atClientServiceMap = value;
+                        await KeychainUtil.makeAtSignPrimary(atsign);
 
                         // var atSign = backendService
                         //     .atClientServiceMap[atsign].atClient.currentAtSign;
@@ -172,6 +177,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                         //     .makeAtSignPrimary(atSign);
 
                         await BackendService.getInstance().onboard();
+                        BackendService.getInstance().syncWithSecondary();
 
                         // ignore: unawaited_futures
                         Navigator.pushReplacement(

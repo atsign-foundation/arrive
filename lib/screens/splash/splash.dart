@@ -62,13 +62,15 @@ class _SplashState extends State<Splash> {
             onboard: (value, atsign) async {
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
+              await KeychainUtil.makeAtSignPrimary(atsign);
               // await BackendService.getInstance().onboard();
               // BackendService.getInstance().atClientInstance =
               //     value[atsign].atClient;
               BackendService.getInstance().atClientServiceInstance =
                   value[atsign];
+              BackendService.getInstance().syncWithSecondary();
 
-              AtClientManager.getInstance().syncService.sync();
+              // AtClientManager.getInstance().syncService.sync();
               // ignore: unawaited_futures
               Navigator.pushReplacement(
                 context,
@@ -242,6 +244,8 @@ class _SplashState extends State<Splash> {
     });
 
     BackendService.getInstance().atClientServiceMap = value;
+    await KeychainUtil.makeAtSignPrimary(atsign);
+    BackendService.getInstance().syncWithSecondary();
 
     // ignore: unawaited_futures
     Navigator.pushReplacement(
