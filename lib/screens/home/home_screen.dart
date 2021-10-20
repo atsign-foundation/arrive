@@ -43,10 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng myLatLng;
   String currentAtSign;
   bool contactsLoaded;
+  Key _mapKey; // so that map doesnt refresh, when we dont want it to
 
   @override
   void initState() {
     super.initState();
+    _mapKey = UniqueKey();
     contactsLoaded = false;
     initializePlugins();
     _getMyLocation();
@@ -166,12 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               (myLatLng != null)
                   ? showLocation(
-                      null,
+                      _mapKey,
                       mapController,
                       location: myLatLng,
                     )
                   : showLocation(
-                      null,
+                      _mapKey,
                       mapController,
                     ),
               Positioned(
