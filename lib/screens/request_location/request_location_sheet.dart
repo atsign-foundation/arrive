@@ -1,7 +1,7 @@
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
-import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
+import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
@@ -107,7 +107,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
   // ignore: always_declare_return_types
   onRequestTap() async {
     if (selectedContact == null) {
-      CustomToast().show('Select a contact', context);
+      CustomToast().show('Select a contact', context, isError: true);
       return;
     }
     setState(() {
@@ -125,14 +125,14 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     }
 
     if (result == true) {
-      CustomToast().show('Location Request sent', context);
+      CustomToast().show('Location Request sent', context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
       CustomToast().show('Something went wrong ${result.toString()}', context,
-          bgColor: AllColors().RED);
+          isError: true);
       setState(() {
         isLoading = false;
       });

@@ -43,10 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng myLatLng;
   String currentAtSign;
   bool contactsLoaded;
+  Key _mapKey; // so that map doesnt refresh, when we dont want it to
 
   @override
   void initState() {
     super.initState();
+    _mapKey = UniqueKey();
     contactsLoaded = false;
     initializePlugins();
     _getMyLocation();
@@ -56,28 +58,28 @@ class _HomeScreenState extends State<HomeScreen> {
     locationProvider = context.read<LocationProvider>();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      var atClient =
-          BackendService.getInstance().atClientServiceInstance.atClient;
-      Provider.of<LocationProvider>(context, listen: false)
-          .init(atClient, atClient.currentAtSign, NavService.navKey);
+      var atClientManager =
+          BackendService.getInstance().atClientServiceInstance.atClientManager;
+      Provider.of<LocationProvider>(context, listen: false).init(
+          atClientManager,
+          atClientManager.atClient.getCurrentAtSign(),
+          NavService.navKey);
     });
   }
 
   void initializePlugins() async {
-    currentAtSign = await BackendService.getInstance().getAtSign();
+    currentAtSign = BackendService.getInstance()
+        .atClientServiceInstance
+        .atClientManager
+        .atClient
+        .getCurrentAtSign();
     // ignore: await_only_futures
-    await initializeContactsService(
-        BackendService.getInstance().atClientServiceInstance.atClient,
-        currentAtSign,
-        rootDomain: MixedConstants.ROOT_DOMAIN);
+    await initializeContactsService(rootDomain: MixedConstants.ROOT_DOMAIN);
     setState(() {
       contactsLoaded = true;
     });
 
-    initializeGroupService(
-        BackendService.getInstance().atClientServiceInstance.atClient,
-        currentAtSign,
-        rootDomain: MixedConstants.ROOT_DOMAIN);
+    initializeGroupService(rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
   void _getMyLocation() async {
@@ -94,9 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
         (permission == LocationPermission.whileInUse))) {
       Geolocator.getPositionStream(distanceFilter: 2)
           .listen((locationStream) async {
-        setState(() {
-          myLatLng = LatLng(locationStream.latitude, locationStream.longitude);
-        });
+        if (mounted) {
+          setState(() {
+            myLatLng =
+                LatLng(locationStream.latitude, locationStream.longitude);
+          });
+        }
       });
     }
   }
@@ -110,44 +115,44 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void deleteAllPreviousKeys() async {
-    var atClient = BackendService.getInstance().atClientInstance;
+  // void deleteAllPreviousKeys() async {
+  // var atClient = BackendService.getInstance().atClientInstance;
 
-    var keys = [
-      'locationnotify',
-      'sharelocation',
-      'sharelocationacknowledged',
-      'requestlocation',
-      'requestlocationacknowledged',
-      'deleterequestacklocation',
-      'createevent',
-      'eventacknowledged',
-      'updateeventlocation',
-    ];
+  // var keys = [
+  //   'locationnotify',
+  //   'sharelocation',
+  //   'sharelocationacknowledged',
+  //   'requestlocation',
+  //   'requestlocationacknowledged',
+  //   'deleterequestacklocation',
+  //   'createevent',
+  //   'eventacknowledged',
+  //   'updateeventlocation',
+  // ];
 
-    for (var i = 0; i < keys.length; i++) {
-      var response = await atClient.getKeys(
-        regex: keys[i],
-      );
-      response.forEach((key) async {
-        if (!'@$key'.contains('cached')) {
-          // the keys i have created
-          var atKey = getAtKey(key);
-          var result = await atClient.delete(atKey,
-              isDedicated: MixedConstants.isDedicated);
+  // for (var i = 0; i < keys.length; i++) {
+  //   var response = await atClient.getKeys(
+  //     regex: keys[i],
+  //   );
+  //   response.forEach((key) async {
+  //     if (!'@$key'.contains('cached')) {
+  //       // the keys i have created
+  //       var atKey = getAtKey(key);
+  //       var result = await atClient.delete(atKey,
+  //           isDedicated: MixedConstants.isDedicated);
 
-          if (result) {
-            if (MixedConstants.isDedicated) {
-              await SyncSecondary()
-                  .callSyncSecondary(SyncOperation.syncSecondary);
-            }
-          }
+  //       if (result) {
+  //         if (MixedConstants.isDedicated) {
+  //           await SyncSecondary()
+  //               .callSyncSecondary(SyncOperation.syncSecondary);
+  //         }
+  //       }
 
-          print('$key is deleted ? $result');
-        }
-      });
-    }
-  }
+  //       print('$key is deleted ? $result');
+  //     }
+  //   });
+  // }
+  // }
 
   MapController mapController = MapController();
 
@@ -163,12 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               (myLatLng != null)
                   ? showLocation(
-                      null,
+                      _mapKey,
                       mapController,
                       location: myLatLng,
                     )
                   : showLocation(
-                      null,
+                      _mapKey,
                       mapController,
                     ),
               Positioned(
@@ -302,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     CreateEvent(
                       BackendService.getInstance()
                           .atClientServiceInstance
-                          .atClient,
+                          .atClientManager,
                     ),
                     SizeConfig().screenHeight * 0.9,
                     onSheetCLosed: () {});
@@ -356,8 +361,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .atsignCreator ==
                                   BackendService.getInstance()
                                       .atClientServiceInstance
+                                      .atClientManager
                                       .atClient
-                                      .currentAtSign
+                                      .getCurrentAtSign()
                               ? hybridElement.locationKeyModel
                                   .locationNotificationModel.receiver
                               : hybridElement.locationKeyModel

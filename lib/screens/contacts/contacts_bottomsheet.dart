@@ -1,5 +1,5 @@
-import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
+import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -91,13 +91,14 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
     }
 
     if (result == true) {
-      CustomToast().show('Location Request sent', context);
+      CustomToast().show('Location Request sent', context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong ${result.toString()}', context);
+      CustomToast().show('Something went wrong ${result.toString()}', context,
+          isError: true);
       setState(() {
         isLoading = false;
       });
@@ -121,13 +122,14 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
     }
 
     if (result == true) {
-      CustomToast().show('Share Location Request sent', context);
+      CustomToast()
+          .show('Share Location Request sent', context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong', context);
+      CustomToast().show('Something went wrong', context, isError: true);
       setState(() {
         isLoading = false;
       });

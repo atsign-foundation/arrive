@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
@@ -36,8 +37,16 @@ class _SideBarState extends State<SideBar> {
     buildNumber: 'Unknown',
   );
 
+  String _currentAtsign;
+
   @override
   void initState() {
+    _currentAtsign = BackendService.getInstance()
+        .atClientServiceInstance
+        .atClientManager
+        .atClient
+        .getCurrentAtSign();
+
     super.initState();
     getEventCreator();
     state = false;
@@ -62,8 +71,7 @@ class _SideBarState extends State<SideBar> {
 
   // ignore: always_declare_return_types
   getEventCreator() async {
-    var contact = await getAtSignDetails(
-        BackendService.getInstance().atClientInstance.currentAtSign);
+    var contact = await getAtSignDetails(_currentAtsign);
     name = null;
     if (contact != null) {
       if (contact.tags != null && contact.tags['image'] != null) {
@@ -107,11 +115,7 @@ class _SideBarState extends State<SideBar> {
                             fit: BoxFit.fill,
                           ),
                         )
-                      : ContactInitial(
-                          initials: BackendService.getInstance()
-                              .atClientServiceInstance
-                              .atClient
-                              .currentAtSign),
+                      : ContactInitial(initials: _currentAtsign),
                   Flexible(
                       child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
@@ -128,10 +132,7 @@ class _SideBarState extends State<SideBar> {
                               )
                             : SizedBox(),
                         Text(
-                          BackendService.getInstance()
-                                  .atClientInstance
-                                  .currentAtSign ??
-                              '@sign',
+                          _currentAtsign ?? '@sign',
                           style: CustomTextStyles().darkGrey14,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -151,11 +152,9 @@ class _SideBarState extends State<SideBar> {
               'Contacts',
               Icons.contacts_rounded,
               () async {
-                var backendService = BackendService.getInstance();
-                var currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
                     arguments: {
-                      'currentAtSign': currentAtSign,
+                      'currentAtSign': _currentAtsign,
                       'asSelectionScreen': false,
                       'onSendIconPressed': (String atsign) {
                         bottomSheet(context, ContactsBottomSheet(atsign), 150);
@@ -183,10 +182,8 @@ class _SideBarState extends State<SideBar> {
               'Groups',
               Icons.group,
               () async {
-                var backendService = BackendService.getInstance();
-                var currentAtSign = await backendService.getAtSign();
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
-                  'currentAtSign': currentAtSign,
+                  'currentAtSign': _currentAtsign,
                 });
               },
             ),
@@ -210,9 +207,7 @@ class _SideBarState extends State<SideBar> {
               'Delete @sign',
               Icons.delete,
               () async {
-                _deleteAtSign(BackendService.getInstance()
-                    .atClientInstance
-                    .currentAtSign);
+                _deleteAtSign(_currentAtsign);
                 setState(() {});
               },
             ),
@@ -257,11 +252,9 @@ class _SideBarState extends State<SideBar> {
             )),
             Expanded(child: Container(height: 0)),
             iconText('Switch @sign', Icons.logout, () async {
-              var currentAtsign =
-                  BackendService.getInstance().atClientInstance.currentAtSign;
-              var atSignList = await BackendService.getInstance()
-                  .atClientServiceMap[currentAtsign]
-                  .getAtsignList();
+              var currentAtsign = _currentAtsign;
+              var atSignList = await KeyChainManager.getInstance()
+                  .getAtSignListFromKeychain();
 
               await showModalBottomSheet(
                 context: context,

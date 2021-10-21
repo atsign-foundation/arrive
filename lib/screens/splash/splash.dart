@@ -28,8 +28,17 @@ class _SplashState extends State<Splash> {
   bool authenticating = false;
   bool isOnboarded = false;
 
+  clearKeyChain() async {
+    var _list = await KeyChainManager.getInstance().getAtSignListFromKeychain();
+    for (var _atsign in _list) {
+      await KeyChainManager.getInstance().deleteAtSignFromKeychain(_atsign);
+    }
+  }
+
   @override
   void initState() {
+    // clearKeyChain();
+
     super.initState();
     BackendService.getInstance().getAtClientPreference().then(
         (value) => BackendService.getInstance().atClientPreference = value);
@@ -49,15 +58,19 @@ class _SplashState extends State<Splash> {
             atClientPreference: BackendService.getInstance().atClientPreference,
             domain: MixedConstants.ROOT_DOMAIN,
             appColor: Color.fromARGB(255, 240, 94, 62),
+            rootEnvironment: RootEnvironment.Production,
             onboard: (value, atsign) async {
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
+              await KeychainUtil.makeAtSignPrimary(atsign);
               // await BackendService.getInstance().onboard();
-              BackendService.getInstance().atClientInstance =
-                  value[atsign].atClient;
+              // BackendService.getInstance().atClientInstance =
+              //     value[atsign].atClient;
               BackendService.getInstance().atClientServiceInstance =
                   value[atsign];
+              BackendService.getInstance().syncWithSecondary();
 
+              // AtClientManager.getInstance().syncService.sync();
               // ignore: unawaited_futures
               Navigator.pushReplacement(
                 context,
@@ -184,6 +197,7 @@ class _SplashState extends State<Splash> {
                                 domain: MixedConstants.ROOT_DOMAIN,
                                 appColor: Color.fromARGB(255, 240, 94, 62),
                                 onboard: onOnboardCompletes,
+                                rootEnvironment: RootEnvironment.Production,
                                 onError: (error) {
                                   print('error in onboard plugin:$error');
                                   setState(() {
@@ -230,6 +244,8 @@ class _SplashState extends State<Splash> {
     });
 
     BackendService.getInstance().atClientServiceMap = value;
+    await KeychainUtil.makeAtSignPrimary(atsign);
+    BackendService.getInstance().syncWithSecondary();
 
     // ignore: unawaited_futures
     Navigator.pushReplacement(

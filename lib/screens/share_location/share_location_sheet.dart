@@ -1,8 +1,8 @@
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/screens/contacts_screen.dart';
 import 'package:at_contacts_group_flutter/screens/group_contact_view/group_contact_view.dart';
-import 'package:at_contacts_group_flutter/widgets/custom_toast.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
+import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:at_location_flutter/service/sharing_location_service.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
@@ -204,11 +204,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
   // ignore: always_declare_return_types
   onShareTap() async {
     if (selectedContacts == null) {
-      CustomToast().show('Select a contact', context);
+      CustomToast().show('Select a contact', context, isError: true);
       return;
     }
     if (selectedOption == null) {
-      CustomToast().show('Select time', context);
+      CustomToast().show('Select time', context, isError: true);
       return;
     }
 
@@ -239,14 +239,14 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
     }
 
     if (result == true) {
-      CustomToast().show('Share Location Request sent', context);
+      CustomToast()
+          .show('Share Location Request sent', context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast()
-          .show('Something went wrong', context, bgColor: AllColors().RED);
+      CustomToast().show('Something went wrong', context, isError: true);
       setState(() {
         isLoading = false;
       });

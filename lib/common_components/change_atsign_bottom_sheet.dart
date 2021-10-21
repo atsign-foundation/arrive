@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
@@ -33,11 +34,13 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
     contactDetails = {};
 
     await Future.forEach(widget.atSignList, (element) async {
-      var contactDetail = await getAtSignDetails(
-          BackendService.getInstance().atClientInstance.currentAtSign);
-      contactDetails[
-              '${BackendService.getInstance().atClientInstance.currentAtSign}'] =
-          contactDetail;
+      var _currentAtsign = BackendService.getInstance()
+          .atClientServiceInstance
+          .atClientManager
+          .atClient
+          .getCurrentAtSign();
+      var contactDetail = await getAtSignDetails(_currentAtsign);
+      contactDetails['$_currentAtsign'] = contactDetail;
     });
     setState(() {});
   }
@@ -90,22 +93,26 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           atClientPreference: atClientPrefernce,
                           domain: MixedConstants.ROOT_DOMAIN,
                           appColor: Color.fromARGB(255, 240, 94, 62),
+                          rootEnvironment: RootEnvironment.Production,
                           onboard: (value, atsign) async {
                             backendService.atClientServiceMap = value;
+                            await KeychainUtil.makeAtSignPrimary(atsign);
 
-                            var atSign = backendService
-                                .atClientServiceMap[atsign]
-                                .atClient
-                                .currentAtSign;
+                            // var atSign = backendService
+                            //     .atClientServiceMap[atsign]
+                            //     .atClient
+                            //     .currentAtSign;
 
-                            await backendService.atClientServiceMap[atsign]
-                                .makeAtSignPrimary(atSign);
-                            BackendService.getInstance().atClientInstance =
-                                backendService
-                                    .atClientServiceMap[atsign].atClient;
+                            // await backendService.atClientServiceMap[atsign]
+                            //     .makeAtSignPrimary(atSign);
+                            // BackendService.getInstance().atClientInstance =
+                            //     backendService
+                            //         .atClientServiceMap[atsign].atClient;
                             BackendService.getInstance()
                                     .atClientServiceInstance =
                                 backendService.atClientServiceMap[atsign];
+
+                            BackendService.getInstance().syncWithSecondary();
 
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               // TODO: Add LocationProvider init here if any issue
@@ -159,15 +166,18 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       atClientPreference: atClientPrefernce,
                       domain: MixedConstants.ROOT_DOMAIN,
                       appColor: Color.fromARGB(255, 240, 94, 62),
+                      rootEnvironment: RootEnvironment.Production,
                       onboard: (value, atsign) async {
                         backendService.atClientServiceMap = value;
+                        await KeychainUtil.makeAtSignPrimary(atsign);
 
-                        var atSign = backendService
-                            .atClientServiceMap[atsign].atClient.currentAtSign;
-                        await backendService.atClientServiceMap[atsign]
-                            .makeAtSignPrimary(atSign);
+                        // var atSign = backendService
+                        //     .atClientServiceMap[atsign].atClient.currentAtSign;
+                        // await backendService.atClientServiceMap[atsign]
+                        //     .makeAtSignPrimary(atSign);
 
                         await BackendService.getInstance().onboard();
+                        BackendService.getInstance().syncWithSecondary();
 
                         // ignore: unawaited_futures
                         Navigator.pushReplacement(
