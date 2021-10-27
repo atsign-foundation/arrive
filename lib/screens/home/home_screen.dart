@@ -158,87 +158,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          endDrawer: Container(
-            width: 250.toWidth,
-            child: SideBar(),
-          ),
-          body: Stack(
-            children: [
-              (myLatLng != null)
-                  ? showLocation(
-                      _mapKey,
-                      mapController,
-                      location: myLatLng,
-                    )
-                  : showLocation(
-                      _mapKey,
-                      mapController,
-                    ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: SizedBox(
-                  height: 55.toHeight,
-                  child: FloatingIcon(
-                      bgColor: Theme.of(context).primaryColor,
-                      icon: Icons.table_rows,
-                      iconColor: Theme.of(context).scaffoldBackgroundColor),
+    return Scaffold(
+      endDrawer: Container(
+        width: 250.toWidth,
+        child: SideBar(),
+      ),
+      body: SafeArea(
+          child: Stack(
+        children: [
+          (myLatLng != null)
+              ? showLocation(
+                  _mapKey,
+                  mapController,
+                  location: myLatLng,
+                )
+              : showLocation(
+                  _mapKey,
+                  mapController,
                 ),
-              ),
-              Positioned(bottom: 264.toHeight, child: header()),
-              contactsLoaded
-                  ? ProviderHandler<LocationProvider>(
-                      key: UniqueKey(),
-                      functionName: locationProvider.GET_ALL_NOTIFICATIONS,
-                      showError: false,
-                      load: (provider) => {},
-                      loaderBuilder: (provider) {
-                        return Container(
-                          child: SlidingUpPanel(
-                              controller: pc,
-                              minHeight: 267.toHeight,
-                              maxHeight: 530.toHeight,
-                              panelBuilder: (scrollController) =>
-                                  collapsedContent(
-                                      false,
-                                      scrollController,
-                                      Center(
-                                        child: CircularProgressIndicator(),
-                                      ))),
-                        );
-                      },
-                      errorBuilder: (provider) {
-                        return SlidingUpPanel(
-                            controller: pc,
-                            minHeight: 267.toHeight,
-                            maxHeight: 530.toHeight,
-                            panelBuilder: (scrollController) =>
-                                collapsedContent(false, scrollController,
-                                    emptyWidget('Something went wrong!!')));
-                      },
-                      successBuilder: (provider) {
-                        return SlidingUpPanel(
-                          controller: pc,
-                          minHeight: 267.toHeight,
-                          maxHeight: 530.toHeight,
-                          panelBuilder: (scrollController) {
-                            if (provider.allNotifications.isNotEmpty) {
-                              return collapsedContent(
-                                  false,
-                                  scrollController,
-                                  getListView(provider.allNotifications,
-                                      scrollController));
-                            } else {
-                              return collapsedContent(false, scrollController,
-                                  emptyWidget('No Data Found!!'));
-                            }
-                          },
-                        );
-                      },
-                    )
-                  : Container(
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SizedBox(
+              height: 55.toHeight,
+              child: FloatingIcon(
+                  bgColor: Theme.of(context).primaryColor,
+                  icon: Icons.table_rows,
+                  iconColor: Theme.of(context).scaffoldBackgroundColor),
+            ),
+          ),
+          Positioned(bottom: 264.toHeight, child: header()),
+          contactsLoaded
+              ? ProviderHandler<LocationProvider>(
+                  key: UniqueKey(),
+                  functionName: locationProvider.GET_ALL_NOTIFICATIONS,
+                  showError: false,
+                  load: (provider) => {},
+                  loaderBuilder: (provider) {
+                    return Container(
                       child: SlidingUpPanel(
                           controller: pc,
                           minHeight: 267.toHeight,
@@ -249,9 +206,52 @@ class _HomeScreenState extends State<HomeScreen> {
                               Center(
                                 child: CircularProgressIndicator(),
                               ))),
-                    ),
-            ],
-          )),
+                    );
+                  },
+                  errorBuilder: (provider) {
+                    return SlidingUpPanel(
+                        controller: pc,
+                        minHeight: 267.toHeight,
+                        maxHeight: 530.toHeight,
+                        panelBuilder: (scrollController) => collapsedContent(
+                            false,
+                            scrollController,
+                            emptyWidget('Something went wrong!!')));
+                  },
+                  successBuilder: (provider) {
+                    return SlidingUpPanel(
+                      controller: pc,
+                      minHeight: 267.toHeight,
+                      maxHeight: 530.toHeight,
+                      panelBuilder: (scrollController) {
+                        if (provider.allNotifications.isNotEmpty) {
+                          return collapsedContent(
+                              false,
+                              scrollController,
+                              getListView(
+                                  provider.allNotifications, scrollController));
+                        } else {
+                          return collapsedContent(false, scrollController,
+                              emptyWidget('No Data Found!!'));
+                        }
+                      },
+                    );
+                  },
+                )
+              : Container(
+                  child: SlidingUpPanel(
+                      controller: pc,
+                      minHeight: 267.toHeight,
+                      maxHeight: 530.toHeight,
+                      panelBuilder: (scrollController) => collapsedContent(
+                          false,
+                          scrollController,
+                          Center(
+                            child: CircularProgressIndicator(),
+                          ))),
+                ),
+        ],
+      )),
     );
   }
 

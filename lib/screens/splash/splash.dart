@@ -129,9 +129,9 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return SafeArea(
-      child: Scaffold(
-        body: isOnboarded
+    return Scaffold(
+      body: SafeArea(
+        child: isOnboarded
             ? Center(
                 child: CircularProgressIndicator(),
               )
