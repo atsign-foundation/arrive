@@ -6,6 +6,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,17 +29,8 @@ class _SplashState extends State<Splash> {
   bool authenticating = false;
   bool isOnboarded = false;
 
-  clearKeyChain() async {
-    var _list = await KeyChainManager.getInstance().getAtSignListFromKeychain();
-    for (var _atsign in _list) {
-      await KeyChainManager.getInstance().deleteAtSignFromKeychain(_atsign);
-    }
-  }
-
   @override
   void initState() {
-    // clearKeyChain();
-
     super.initState();
     BackendService.getInstance().getAtClientPreference().then(
         (value) => BackendService.getInstance().atClientPreference = value);
@@ -179,61 +171,217 @@ class _SplashState extends State<Splash> {
                     ),
                   ),
                   Positioned(
-                    bottom: 130.toHeight,
+                    bottom: 105.toHeight,
                     right: 36.toWidth,
                     child: Opacity(
                       opacity: authenticating ? 0.5 : 1,
-                      child: CustomButton(
-                          height: 40,
-                          width: 150,
-                          radius: 100.toHeight,
-                          onTap: () async {
-                            if (authenticating) return;
+                      child: Column(
+                        children: [
+                          CustomButton(
+                              height: 40,
+                              width: SizeConfig().screenWidth * 0.8,
+                              radius: 100.toHeight,
+                              onTap: () async {
+                                if (authenticating) return;
 
-                            Onboarding(
-                                context: context,
-                                atClientPreference: BackendService.getInstance()
-                                    .atClientPreference,
-                                domain: MixedConstants.ROOT_DOMAIN,
-                                appColor: Color.fromARGB(255, 240, 94, 62),
-                                onboard: onOnboardCompletes,
-                                rootEnvironment: RootEnvironment.Production,
-                                onError: (error) {
-                                  print('error in onboard plugin:$error');
-                                  setState(() {
-                                    authenticating = false;
-                                  });
-                                },
-                                appAPIKey: MixedConstants.ONBOARD_API_KEY);
-                          },
-                          bgColor: AllColors().Black,
-                          child: authenticating
-                              ? Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Authenticating',
-                                        textScaleFactor: 1,
-                                        style: CustomTextStyles().white15,
+                                Onboarding(
+                                    context: context,
+                                    atClientPreference:
+                                        BackendService.getInstance()
+                                            .atClientPreference,
+                                    domain: MixedConstants.ROOT_DOMAIN,
+                                    appColor: Color.fromARGB(255, 240, 94, 62),
+                                    onboard: onOnboardCompletes,
+                                    rootEnvironment: RootEnvironment.Production,
+                                    onError: (error) {
+                                      print('error in onboard plugin:$error');
+                                      setState(() {
+                                        authenticating = false;
+                                      });
+                                    },
+                                    appAPIKey: MixedConstants.ONBOARD_API_KEY);
+                              },
+                              bgColor: AllColors().Black,
+                              child: authenticating
+                                  ? Center(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            'Authenticating',
+                                            textScaleFactor: 1,
+                                            style: CustomTextStyles().white15,
+                                          ),
+                                          TypingIndicator(
+                                            showIndicator: true,
+                                          ),
+                                        ],
                                       ),
-                                      TypingIndicator(
-                                        showIndicator: true,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Text(
-                                  'Explore',
-                                  textScaleFactor: 1,
-                                  style: CustomTextStyles().white15,
-                                )),
+                                    )
+                                  : Text(
+                                      'Explore',
+                                      textScaleFactor: 1,
+                                      style: CustomTextStyles().white15,
+                                    )),
+                          SizedBox(height: 10.toHeight),
+                          InkWell(
+                            onTap: () {
+                              _showResetDialog();
+                            },
+                            child: Text('Reset',
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
       ),
     );
+  }
+
+  _showResetDialog() async {
+    bool isSelectAtsign = false;
+    bool isSelectAll = false;
+    var atsignsList = await KeychainUtil.getAtsignList();
+    if (atsignsList == null) {
+      atsignsList = [];
+    }
+    Map atsignMap = {};
+    for (String atsign in atsignsList) {
+      atsignMap[atsign] = false;
+    }
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, stateSet) {
+            return AlertDialog(
+                title: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(TextStrings.resetDescription,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15)),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                    )
+                  ],
+                ),
+                content: atsignsList.isEmpty
+                    ? Column(mainAxisSize: MainAxisSize.min, children: [
+                        Text(TextStrings.noAtsignToReset,
+                            style: TextStyle(fontSize: 15)),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              'Close',
+                              style: TextStyle(
+                                fontSize: 15,
+                                // color: AtTheme.themecolor,
+                              ),
+                            ),
+                          ),
+                        )
+                      ])
+                    : SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CheckboxListTile(
+                              onChanged: (value) {
+                                isSelectAll = value;
+                                atsignMap
+                                    .updateAll((key, value1) => value1 = value);
+                                // atsignMap[atsign] = value;
+                                stateSet(() {});
+                              },
+                              value: isSelectAll,
+                              checkColor: Colors.white,
+                              title: Text('Select All',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                            ),
+                            for (var atsign in atsignsList)
+                              CheckboxListTile(
+                                onChanged: (value) {
+                                  atsignMap[atsign] = value;
+                                  stateSet(() {});
+                                },
+                                value: atsignMap[atsign],
+                                checkColor: Colors.white,
+                                title: Text('$atsign'),
+                              ),
+                            Divider(thickness: 0.8),
+                            if (isSelectAtsign)
+                              Text(TextStrings.resetErrorText,
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(TextStrings.resetWarningText,
+                                style: TextStyle(fontSize: 14)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(children: [
+                              TextButton(
+                                onPressed: () {
+                                  var tempAtsignMap = {};
+                                  tempAtsignMap.addAll(atsignMap);
+                                  tempAtsignMap.removeWhere(
+                                      (key, value) => value == false);
+                                  if (tempAtsignMap.keys.toList().isEmpty) {
+                                    isSelectAtsign = true;
+                                    stateSet(() {});
+                                  } else {
+                                    isSelectAtsign = false;
+                                    _resetDevice(tempAtsignMap.keys.toList());
+                                  }
+                                },
+                                child: Text('Remove',
+                                    style: TextStyle(
+                                      color: AllColors().FONT_PRIMARY,
+                                      fontSize: 15,
+                                    )),
+                              ),
+                              Spacer(),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Cancel',
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.black)))
+                            ])
+                          ],
+                        ),
+                      ));
+          });
+        });
+  }
+
+  _resetDevice(List checkedAtsigns) async {
+    Navigator.of(context).pop();
+    await BackendService.getInstance()
+        .resetAtsigns(checkedAtsigns)
+        .then((value) async {
+      print('reset done');
+    }).catchError((e) {
+      print('error in reset: $e');
+    });
   }
 
   // ignore: always_declare_return_types
