@@ -176,8 +176,8 @@ class BackendService {
     print('syncStatus : $syncStatus, data changed : ${syncStatus.dataChange}');
 
     if (syncStatus.syncStatus == SyncStatus.failure) {
-      ErrorDialog()
-          .show('Sync failed', context: NavService.navKey.currentContext);
+      // ErrorDialog()
+      //     .show('Sync failed', context: NavService.navKey.currentContext);
     }
 
     if (syncStatus.dataChange && !isSyncedDataFetched) {

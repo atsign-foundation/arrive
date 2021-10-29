@@ -58,8 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     locationProvider = context.read<LocationProvider>();
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      var atClientManager =
-          BackendService.getInstance().atClientServiceInstance.atClientManager;
+      var atClientManager = AtClientManager.getInstance();
       Provider.of<LocationProvider>(context, listen: false).init(
           atClientManager,
           atClientManager.atClient.getCurrentAtSign(),
@@ -68,11 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void initializePlugins() async {
-    currentAtSign = BackendService.getInstance()
-        .atClientServiceInstance
-        .atClientManager
-        .atClient
-        .getCurrentAtSign();
+    currentAtSign = AtClientManager.getInstance().atClient.getCurrentAtSign();
     // ignore: await_only_futures
     await initializeContactsService(rootDomain: MixedConstants.ROOT_DOMAIN);
     setState(() {
