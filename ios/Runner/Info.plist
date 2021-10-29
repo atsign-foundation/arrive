@@ -45,14 +45,18 @@
 	<string>We need access to your bluetooth connection to message when wi-fi is not available</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The camera is used to scan QR code to pair your device with your @sign</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>The Location access is used to get your current Location</string>
+	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Because</string>
+	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>microphone permission is needed because of plugin dependencies.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>photos is required to upload for a group image</string>
+	<string>The app uses the photos that you choose to upload and update your group details</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
