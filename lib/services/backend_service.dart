@@ -175,6 +175,7 @@ class BackendService {
   }
 
   void syncWithSecondary() async {
+    isSyncedDataFetched = false;
     syncService = AtClientManager.getInstance().syncService;
     syncService.sync(onDone: _onSuccessCallback);
     syncService.setOnDone(_onSuccessCallback);
