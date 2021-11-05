@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:at_contact/at_contact.dart';
+import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
+import 'package:atsign_location_app/screens/contacts/add_contact.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +65,7 @@ class _DisplayTileState extends State<DisplayTile> {
       child: Row(
         children: [
           Stack(
+            clipBehavior: Clip.none,
             children: [
               (image != null)
                   ? ClipRRect(
@@ -96,6 +99,30 @@ class _DisplayTileState extends State<DisplayTile> {
                       ),
                     )
                   : SizedBox(),
+              ((widget.atsignCreator != null) &&
+                      (ContactService().contactList.indexWhere((element) =>
+                              element.atSign == widget.atsignCreator) ==
+                          -1))
+                  ? Positioned(
+                      right: -5,
+                      top: -10,
+                      child: GestureDetector(
+                          onTap: () async {
+                            await showDialog<void>(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return AddContact(
+                                  atSignName: widget.atsignCreator,
+                                  image: image,
+                                  name: name,
+                                );
+                              },
+                            );
+                            setState(() {});
+                          },
+                          child: Icon(Icons.person_add)))
+                  : SizedBox()
             ],
           ),
           Expanded(
