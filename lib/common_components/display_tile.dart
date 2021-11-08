@@ -64,66 +64,77 @@ class _DisplayTileState extends State<DisplayTile> {
       padding: EdgeInsets.fromLTRB(0, 0, 15, 10.5),
       child: Row(
         children: [
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              (image != null)
-                  ? ClipRRect(
-                      borderRadius:
-                          BorderRadius.all(Radius.circular(30.toFont)),
-                      child: Image.memory(
-                        image,
-                        width: 50.toFont,
-                        height: 50.toFont,
-                        fit: BoxFit.fill,
-                      ),
-                    )
-                  : widget.atsignCreator != null
-                      ? ContactInitial(initials: widget.atsignCreator)
-                      : SizedBox(),
-              widget.number != null
-                  ? Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: 28.toFont,
-                        width: 28.toFont,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0.toFont),
-                            color: AllColors().BLUE),
-                        child: Text(
-                          '+${widget.number}',
-                          style: CustomTextStyles().black10,
+          GestureDetector(
+            onTap: ((widget.atsignCreator != null) &&
+                    (ContactService().contactList.indexWhere((element) =>
+                            element.atSign == widget.atsignCreator) ==
+                        -1))
+                ? () async {
+                    await showDialog<void>(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AddContact(
+                          atSignName: widget.atsignCreator,
+                          image: image,
+                          name: name,
+                        );
+                      },
+                    );
+                    setState(() {});
+                  }
+                : null,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                (image != null)
+                    ? ClipRRect(
+                        borderRadius:
+                            BorderRadius.all(Radius.circular(30.toFont)),
+                        child: Image.memory(
+                          image,
+                          width: 50.toFont,
+                          height: 50.toFont,
+                          fit: BoxFit.fill,
                         ),
-                      ),
-                    )
-                  : SizedBox(),
-              ((widget.atsignCreator != null) &&
-                      (ContactService().contactList.indexWhere((element) =>
-                              element.atSign == widget.atsignCreator) ==
-                          -1))
-                  ? Positioned(
-                      right: -5,
-                      top: -10,
-                      child: GestureDetector(
-                          onTap: () async {
-                            await showDialog<void>(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context) {
-                                return AddContact(
-                                  atSignName: widget.atsignCreator,
-                                  image: image,
-                                  name: name,
-                                );
-                              },
-                            );
-                            setState(() {});
-                          },
-                          child: Icon(Icons.person_add)))
-                  : SizedBox()
-            ],
+                      )
+                    : widget.atsignCreator != null
+                        ? ContactInitial(initials: widget.atsignCreator)
+                        : SizedBox(),
+                widget.number != null
+                    ? Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 28.toFont,
+                          width: 28.toFont,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.0.toFont),
+                              color: AllColors().BLUE),
+                          child: Text(
+                            '+${widget.number}',
+                            style: CustomTextStyles().black10,
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+                ((widget.atsignCreator != null) &&
+                        (ContactService().contactList.indexWhere((element) =>
+                                element.atSign == widget.atsignCreator) ==
+                            -1))
+                    ? Positioned(
+                        right: -5,
+                        top: -10,
+                        child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            child: Icon(Icons.person_add)))
+                    : SizedBox()
+              ],
+            ),
           ),
           Expanded(
             child: Padding(

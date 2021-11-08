@@ -85,7 +85,7 @@ class _AddContactState extends State<AddContact> {
             },
             // validator: Validators.validateAdduser,
             decoration: InputDecoration(
-              hintText: 'Enter Nick Name',
+              hintText: 'Enter Nick Name (Optional)',
             ),
             style: TextStyle(fontSize: 15.toFont),
           ),
