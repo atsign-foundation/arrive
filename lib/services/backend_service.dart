@@ -37,6 +37,14 @@ class BackendService {
   Map<String, AtClientService> atClientServiceMap = {};
   bool isSyncedDataFetched = false;
 
+  ///Resets [atsigns] list from device storage.
+  Future<void> resetAtsigns(List atsigns) async {
+    for (String atsign in atsigns) {
+      await KeychainUtil.resetAtSignFromKeychain(atsign);
+      atClientServiceMap.remove(atsign);
+    }
+  }
+
   Future<bool> onboard({String atsign}) async {
     atClientServiceInstance = AtClientService();
     if (Platform.isIOS) {
