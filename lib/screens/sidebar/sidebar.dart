@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:at_backupkey_flutter/at_backupkey_flutter.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
@@ -185,6 +186,20 @@ class _SideBarState extends State<SideBar> {
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
                   'currentAtSign': _currentAtsign,
                 });
+              },
+            ),
+            SizedBox(
+              height: 25.toHeight,
+            ),
+            iconText(
+              'Backup your keys',
+              Icons.file_copy,
+              () async {
+                BackupKeyWidget(
+                  atClientService: AtClientManager.getInstance().atClient,
+                  atsign:
+                      AtClientManager.getInstance().atClient.getCurrentAtSign(),
+                ).showBackupDialog(context);
               },
             ),
             SizedBox(
