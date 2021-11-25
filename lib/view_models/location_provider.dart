@@ -23,7 +23,7 @@ class LocationProvider extends BaseModel {
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
 
   void init(AtClientManager atClientManager, String activeAtSign,
-      GlobalKey<NavigatorState> navKey) {
+      GlobalKey<NavigatorState> navKey) async {
     setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
     allNotifications = [];
     allLocationNotifications = [];
@@ -31,16 +31,7 @@ class LocationProvider extends BaseModel {
 
     initialiseLocationSharing();
 
-    initialiseEventService(
-      navKey,
-      mapKey: MixedConstants.MAP_KEY,
-      apiKey: MixedConstants.API_KEY,
-      rootDomain: MixedConstants.ROOT_DOMAIN,
-      streamAlternative: updateEvents,
-      initLocation: false,
-    );
-
-    initializeLocationService(
+    await initializeLocationService(
       navKey,
       mapKey: MixedConstants.MAP_KEY,
       apiKey: MixedConstants.API_KEY,
@@ -49,18 +40,27 @@ class LocationProvider extends BaseModel {
       streamAlternative: notificationUpdate,
     );
 
+    await initialiseEventService(
+      navKey,
+      mapKey: MixedConstants.MAP_KEY,
+      apiKey: MixedConstants.API_KEY,
+      rootDomain: MixedConstants.ROOT_DOMAIN,
+      streamAlternative: updateEvents,
+      initLocation: false,
+    );
+
     SendLocationNotification().setLocationPrompt(() async {
       await locationPromptDialog(
         isShareLocationData: false,
         isRequestLocationData: false,
       );
     });
-    EventLocationShare().setLocationPrompt(() async {
-      await locationPromptDialog(
-        isShareLocationData: false,
-        isRequestLocationData: false,
-      );
-    });
+    // EventLocationShare().setLocationPrompt(() async {
+    //   await locationPromptDialog(
+    //     isShareLocationData: false,
+    //     isRequestLocationData: false,
+    //   );
+    // });
 
     // setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
@@ -125,7 +125,7 @@ class LocationProvider extends BaseModel {
   Future<void> initialiseLocationSharing() async {
     isSharing = await getShareLocation();
     SendLocationNotification().setMasterSwitchState(isSharing);
-    EventLocationShare().setMasterSwitchState(isSharing);
+    // EventLocationShare().setMasterSwitchState(isSharing);
     notifyListeners();
   }
 
@@ -138,7 +138,7 @@ class LocationProvider extends BaseModel {
     isSharing = value;
 
     SendLocationNotification().setMasterSwitchState(value);
-    EventLocationShare().setMasterSwitchState(value);
+    // EventLocationShare().setMasterSwitchState(value);
 
     notifyListeners();
   }

@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
@@ -120,6 +121,10 @@ class _DisplayTileState extends State<DisplayTile> {
                       )
                     : SizedBox(),
                 ((widget.atsignCreator != null) &&
+                        (widget.atsignCreator !=
+                            AtClientManager.getInstance()
+                                .atClient
+                                .getCurrentAtSign()) &&
                         (ContactService().contactList.indexWhere((element) =>
                                 element.atSign == widget.atsignCreator) ==
                             -1))

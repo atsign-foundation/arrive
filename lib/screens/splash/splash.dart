@@ -32,14 +32,17 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    BackendService.getInstance().getAtClientPreference().then(
-        (value) => BackendService.getInstance().atClientPreference = value);
+    // BackendService.getInstance().getAtClientPreference().then(
+    //     (value) => BackendService.getInstance().atClientPreference = value);
     _initBackendService();
   }
 
   String state;
   void _initBackendService() async {
     try {
+      BackendService.getInstance().atClientPreference =
+          await BackendService.getInstance().getAtClientPreference();
+
       await checkLocationPermission();
       setMapKey();
 
