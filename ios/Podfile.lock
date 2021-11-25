@@ -1,8 +1,6 @@
 PODS:
   - at_backupkey_flutter (0.0.1):
     - Flutter
-  - at_chat_flutter (0.0.1):
-    - Flutter
   - at_contacts_flutter (0.0.1):
     - Flutter
   - at_contacts_group_flutter (0.0.1):
@@ -12,6 +10,8 @@ PODS:
   - at_location_flutter (0.0.1):
     - Flutter
   - at_onboarding_flutter (0.0.1):
+    - Flutter
+  - biometric_storage (0.0.1):
     - Flutter
   - DKImagePickerController/Core (4.3.2):
     - DKImagePickerController/ImageDataManager
@@ -107,12 +107,12 @@ PODS:
 
 DEPENDENCIES:
   - at_backupkey_flutter (from `.symlinks/plugins/at_backupkey_flutter/ios`)
-  - at_chat_flutter (from `.symlinks/plugins/at_chat_flutter/ios`)
   - at_contacts_flutter (from `.symlinks/plugins/at_contacts_flutter/ios`)
   - at_contacts_group_flutter (from `.symlinks/plugins/at_contacts_group_flutter/ios`)
   - at_events_flutter (from `.symlinks/plugins/at_events_flutter/ios`)
   - at_location_flutter (from `.symlinks/plugins/at_location_flutter/ios`)
   - at_onboarding_flutter (from `.symlinks/plugins/at_onboarding_flutter/ios`)
+  - biometric_storage (from `.symlinks/plugins/biometric_storage/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
@@ -145,8 +145,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   at_backupkey_flutter:
     :path: ".symlinks/plugins/at_backupkey_flutter/ios"
-  at_chat_flutter:
-    :path: ".symlinks/plugins/at_chat_flutter/ios"
   at_contacts_flutter:
     :path: ".symlinks/plugins/at_contacts_flutter/ios"
   at_contacts_group_flutter:
@@ -157,6 +155,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/at_location_flutter/ios"
   at_onboarding_flutter:
     :path: ".symlinks/plugins/at_onboarding_flutter/ios"
+  biometric_storage:
+    :path: ".symlinks/plugins/biometric_storage/ios"
   emoji_picker_flutter:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   file_picker:
@@ -192,17 +192,17 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   at_backupkey_flutter: 2fc3d01138175e41bce8b574387a47544c53e01b
-  at_chat_flutter: 8df1b69f14a74f0360b21916b5dd6916c9ae7130
   at_contacts_flutter: 11ad3deb3c2a8f1e9daf302ac5962dadd48e21fb
   at_contacts_group_flutter: 31bc718fdb2baca1ae36509009e48cf33a23fa5f
   at_events_flutter: 88b4a1773db9a4cb48ade0a7b9f79a1b351337b4
   at_location_flutter: 11cdb9f57b41159f51d1ce151f78c31b9b292607
   at_onboarding_flutter: e8219b6d0bfb236d3837ec3528871aebdcc56e8d
+  biometric_storage: 1400f1382af3a4cc2bf05340e13c3d8de873ceb9
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   emoji_picker_flutter: 4f9a1ac31d355e1bf9622a1e821a809149130127
   file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
-  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
   flutter_keychain: 01aabf894ffe8b01adfda1d9df21c210c1b4b452
   flutter_qr_reader: d930dde3b2cfe2b3d0bb7d66e5ff3e514300a5e5
@@ -226,4 +226,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: be3641bcaef7a85afc04e2ed523c1b5ffa98afbe
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2
