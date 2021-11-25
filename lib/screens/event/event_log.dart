@@ -28,51 +28,49 @@ class _EventLogState extends State<EventLog>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SafeArea(
-        child: Scaffold(
-          appBar: CustomAppBar(
-            centerTitle: true,
-            padding: true,
-            title: 'Events',
-            action: PopButton(label: 'Close'),
-          ),
-          body: SingleChildScrollView(
-            child: Container(
-              height: SizeConfig().screenHeight - (80.toHeight),
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    height: 40,
-                    child: TabBar(
-                      indicatorColor: Theme.of(context).primaryColor,
-                      indicatorWeight: 3.toHeight,
-                      labelColor: Theme.of(context).primaryColor,
-                      unselectedLabelColor: AllColors().DARK_GREY,
-                      controller: _controller,
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            'Upcoming',
-                            style: TextStyle(
-                                fontSize: 16.toFont, letterSpacing: 1),
-                          ),
-                        ),
-                        Tab(
-                          child: Text('Past',
-                              style: TextStyle(
-                                  fontSize: 16.toFont, letterSpacing: 1)),
-                        )
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                      child: TabBarView(
+    return Scaffold(
+      appBar: CustomAppBar(
+        centerTitle: true,
+        padding: true,
+        title: 'Events',
+        action: PopButton(label: 'Close'),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            height: SizeConfig().screenHeight - (80.toHeight),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 40,
+                  child: TabBar(
+                    indicatorColor: Theme.of(context).primaryColor,
+                    indicatorWeight: 3.toHeight,
+                    labelColor: Theme.of(context).primaryColor,
+                    unselectedLabelColor: AllColors().DARK_GREY,
                     controller: _controller,
-                    children: [getUpcomingEvents(), getPastEvents()],
-                  )),
-                ],
-              ),
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          'Upcoming',
+                          style:
+                              TextStyle(fontSize: 16.toFont, letterSpacing: 1),
+                        ),
+                      ),
+                      Tab(
+                        child: Text('Past',
+                            style: TextStyle(
+                                fontSize: 16.toFont, letterSpacing: 1)),
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: TabBarView(
+                  controller: _controller,
+                  children: [getUpcomingEvents(), getPastEvents()],
+                )),
+              ],
             ),
           ),
         ),
