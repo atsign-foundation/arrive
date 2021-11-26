@@ -132,7 +132,10 @@ class LocationProvider extends BaseModel {
   Future<void> updateShareLocation(bool value) async {
     await _hiveDataProvider.insertData(
       'Sharing',
-      {'isSharing': value.toString()},
+      {
+        'isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}':
+            value.toString()
+      },
     );
 
     isSharing = value;
@@ -145,6 +148,18 @@ class LocationProvider extends BaseModel {
 
   Future<bool> getShareLocation() async {
     var data = await _hiveDataProvider.readData('Sharing');
-    return (data['isSharing'] == 'true') ? true : false;
+
+    if ((data['isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
+            null) ||
+        (data['isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
+            'null')) {
+      await updateShareLocation(true);
+    }
+
+    return (data[
+                'isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
+            'true')
+        ? true
+        : false;
   }
 }

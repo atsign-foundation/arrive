@@ -167,7 +167,8 @@ class _DisplayTileState extends State<DisplayTile> {
                           widget.semiTitle,
                           style: (widget.semiTitle == 'Action required' ||
                                       widget.semiTitle == 'Request declined') ||
-                                  (widget.semiTitle == 'Cancelled')
+                                  (widget.semiTitle == 'Cancelled' ||
+                                      (widget.semiTitle == 'Request rejected'))
                               ? CustomTextStyles().orange12
                               : CustomTextStyles().darkGrey12,
                           maxLines: 1,
