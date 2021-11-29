@@ -8,6 +8,7 @@ import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -15,6 +16,7 @@ import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:at_location_flutter/utils/constants/constants.dart'
     as location_package_constants;
+import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -55,6 +57,8 @@ class _SplashState extends State<Splash> {
             appColor: Color.fromARGB(255, 240, 94, 62),
             rootEnvironment: RootEnvironment.Production,
             onboard: (value, atsign) async {
+              Provider.of<LocationProvider>(context, listen: false).resetData();
+
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
               await KeychainUtil.makeAtSignPrimary(atsign);
@@ -391,6 +395,8 @@ class _SplashState extends State<Splash> {
       authenticating = true;
       isOnboarded = true;
     });
+
+    Provider.of<LocationProvider>(context, listen: false).resetData();
 
     BackendService.getInstance().atClientServiceMap = value;
     await KeychainUtil.makeAtSignPrimary(atsign);

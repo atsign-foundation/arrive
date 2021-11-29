@@ -10,8 +10,10 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:provider/provider.dart';
 
 class AtSignBottomSheet extends StatefulWidget {
   final List<String> atSignList;
@@ -95,6 +97,9 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           appColor: Color.fromARGB(255, 240, 94, 62),
                           rootEnvironment: RootEnvironment.Production,
                           onboard: (value, atsign) async {
+                            Provider.of<LocationProvider>(context,
+                                    listen: false)
+                                .resetData();
                             backendService.atClientServiceMap = value;
                             await KeychainUtil.makeAtSignPrimary(atsign);
 
@@ -168,6 +173,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       appColor: Color.fromARGB(255, 240, 94, 62),
                       rootEnvironment: RootEnvironment.Production,
                       onboard: (value, atsign) async {
+                        Provider.of<LocationProvider>(context, listen: false)
+                            .resetData();
                         backendService.atClientServiceMap = value;
                         await KeychainUtil.makeAtSignPrimary(atsign);
 

@@ -18,16 +18,28 @@ class LocationProvider extends BaseModel {
   List<KeyLocationModel> allLocationNotifications = [];
   List<EventKeyLocationModel> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
-  bool isSharing = false;
+  bool isSharing = false, isGettingLoadedFirstTime = true;
   // ignore: non_constant_identifier_names
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
 
-  void init(AtClientManager atClientManager, String activeAtSign,
-      GlobalKey<NavigatorState> navKey) async {
-    setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
+  void resetData() {
     allNotifications = [];
     allLocationNotifications = [];
     allEventNotifications = [];
+    isGettingLoadedFirstTime = true;
+  }
+
+  void init(AtClientManager atClientManager, String activeAtSign,
+      GlobalKey<NavigatorState> navKey) async {
+    if (isGettingLoadedFirstTime) {
+      setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
+      isGettingLoadedFirstTime = false;
+    }
+    // allNotifications = [];
+    allLocationNotifications = [];
+    allEventNotifications = [];
+
+    // AtClientManager.getInstance().notificationService.stopAllSubscriptions();
 
     initialiseLocationSharing();
 
@@ -37,7 +49,7 @@ class LocationProvider extends BaseModel {
       apiKey: MixedConstants.API_KEY,
       // getAtValue: LocationNotificationListener().getAtValue
       showDialogBox: true,
-      streamAlternative: notificationUpdate,
+      streamAlternative: updateLocation,
     );
 
     await initialiseEventService(
@@ -66,8 +78,8 @@ class LocationProvider extends BaseModel {
   }
 
   // ignore: always_declare_return_types
-  notificationUpdate(List<KeyLocationModel> list) {
-    print('location package notificationUpdate');
+  updateLocation(List<KeyLocationModel> list) {
+    print('location package updateLocation');
 
     allLocationNotifications = list;
     updateAllNotification(locationsList: allLocationNotifications);
@@ -75,7 +87,7 @@ class LocationProvider extends BaseModel {
 
   // ignore: always_declare_return_types
   updateEvents(List<EventKeyLocationModel> list) {
-    print('events package notificationUpdate');
+    print('events package updateEvents');
 
     allEventNotifications = list;
     updateAllNotification(eventsList: allEventNotifications);
