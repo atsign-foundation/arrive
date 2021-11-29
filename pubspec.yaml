@@ -40,6 +40,18 @@ dependencies:
   at_onboarding_flutter: ^3.0.4
   at_location_flutter: ^3.0.1
   at_events_flutter: ^3.0.1
+
+dependency_overrides:
+  at_location_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_location_flutter
+      ref: member-info-in-location-data
+  at_events_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_events_flutter
+      ref: member-info-in-location-data
       
 dev_dependencies:
   flutter_test:
