@@ -67,6 +67,10 @@ class _DisplayTileState extends State<DisplayTile> {
         children: [
           GestureDetector(
             onTap: ((widget.atsignCreator != null) &&
+                    (widget.atsignCreator !=
+                        AtClientManager.getInstance()
+                            .atClient
+                            .getCurrentAtSign()) &&
                     (ContactService().contactList.indexWhere((element) =>
                             element.atSign == widget.atsignCreator) ==
                         -1))
@@ -79,10 +83,12 @@ class _DisplayTileState extends State<DisplayTile> {
                           atSignName: widget.atsignCreator,
                           image: image,
                           name: name,
+                          onSuccessCallback: () {
+                            setState(() {});
+                          },
                         );
                       },
                     );
-                    setState(() {});
                   }
                 : null,
             child: Stack(
