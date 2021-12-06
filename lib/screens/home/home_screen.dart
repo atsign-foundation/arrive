@@ -232,7 +232,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 : SizedBox(),
             contactsLoaded
                 ? ProviderHandler<LocationProvider>(
-                    key: UniqueKey(),
                     functionName: locationProvider.GET_ALL_NOTIFICATIONS,
                     showError: false,
                     load: (provider) => {},

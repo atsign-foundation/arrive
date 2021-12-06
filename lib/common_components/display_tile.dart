@@ -17,7 +17,8 @@ class DisplayTile extends StatefulWidget {
   final bool showName, showRetry;
   final Function onRetryTapped;
   DisplayTile(
-      {@required this.title,
+      {Key key,
+      @required this.title,
       this.atsignCreator,
       @required this.subTitle,
       this.semiTitle,
@@ -26,7 +27,8 @@ class DisplayTile extends StatefulWidget {
       this.showName = false,
       this.action,
       this.showRetry = false,
-      this.onRetryTapped});
+      this.onRetryTapped})
+      : super(key: key);
 
   @override
   _DisplayTileState createState() => _DisplayTileState();
