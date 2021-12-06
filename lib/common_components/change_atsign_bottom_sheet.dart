@@ -36,11 +36,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
     contactDetails = {};
 
     await Future.forEach(widget.atSignList, (element) async {
-      var _currentAtsign = BackendService.getInstance()
-          .atClientServiceInstance
-          .atClientManager
-          .atClient
-          .getCurrentAtSign();
+      var _currentAtsign =
+          AtClientManager.getInstance().atClient.getCurrentAtSign();
       var contactDetail = await getAtSignDetails(_currentAtsign);
       contactDetails['$_currentAtsign'] = contactDetail;
     });

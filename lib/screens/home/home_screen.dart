@@ -40,10 +40,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
   LocationProvider locationProvider = LocationProvider();
-  LatLng myLatLng;
+  LatLng myLatLng, previousLatLng;
   String currentAtSign;
-  bool contactsLoaded;
+  bool contactsLoaded, moveMap = true;
   Key _mapKey; // so that map doesnt refresh, when we dont want it to
+  MapController mapController = MapController();
 
   @override
   void initState() {
@@ -149,10 +150,21 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
   // }
 
-  MapController mapController = MapController();
+  void shouldMoveMap() {
+    //// if we don't want to move the map then comment
+    if (previousLatLng != myLatLng) {
+      moveMap = true;
+    } else {
+      moveMap = false;
+    }
+
+    previousLatLng = myLatLng;
+  }
 
   @override
   Widget build(BuildContext context) {
+    shouldMoveMap();
+
     return Scaffold(
       endDrawer: Container(
         width: 250.toWidth,
@@ -166,10 +178,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     _mapKey,
                     mapController,
                     location: myLatLng,
+                    moveMap: moveMap,
                   )
                 : showLocation(
                     _mapKey,
                     mapController,
+                    moveMap: moveMap,
                   ),
             Positioned(
               top: 0,
@@ -302,9 +316,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottomSheet(
                     context,
                     CreateEvent(
-                      BackendService.getInstance()
-                          .atClientServiceInstance
-                          .atClientManager,
+                      AtClientManager.getInstance(),
                     ),
                     SizeConfig().screenHeight * 0.9,
                     onSheetCLosed: () {});
@@ -356,9 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .locationKeyModel
                                       .locationNotificationModel
                                       .atsignCreator ==
-                                  BackendService.getInstance()
-                                      .atClientServiceInstance
-                                      .atClientManager
+                                  AtClientManager.getInstance()
                                       .atClient
                                       .getCurrentAtSign()
                               ? hybridElement.locationKeyModel
