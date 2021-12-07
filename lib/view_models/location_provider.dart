@@ -1,6 +1,8 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_events_flutter/models/event_key_location_model.dart';
+import 'package:at_events_flutter/services/at_event_notification_listener.dart';
 import 'package:at_events_flutter/services/event_location_share.dart';
+import 'package:at_location_flutter/service/at_location_notification_listener.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'package:atsign_location_app/data_services/hive/hive_db.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
@@ -18,20 +20,44 @@ class LocationProvider extends BaseModel {
   List<KeyLocationModel> allLocationNotifications = [];
   List<EventKeyLocationModel> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
-  bool isSharing = false;
+  bool isSharing = false, isGettingLoadedFirstTime = true;
   // ignore: non_constant_identifier_names
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
 
-  void init(AtClientManager atClientManager, String activeAtSign,
-      GlobalKey<NavigatorState> navKey) {
-    setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
+  void resetData() {
     allNotifications = [];
     allLocationNotifications = [];
     allEventNotifications = [];
+    isGettingLoadedFirstTime = true;
+
+    AtLocationNotificationListener().resetMonitor();
+    AtEventNotificationListener().resetMonitor();
+  }
+
+  void init(AtClientManager atClientManager, String activeAtSign,
+      GlobalKey<NavigatorState> navKey) async {
+    if (isGettingLoadedFirstTime) {
+      setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
+      isGettingLoadedFirstTime = false;
+    }
+    // allNotifications = [];
+    allLocationNotifications = [];
+    allEventNotifications = [];
+
+    // AtClientManager.getInstance().notificationService.stopAllSubscriptions();
 
     initialiseLocationSharing();
 
-    initialiseEventService(
+    await initializeLocationService(
+      navKey,
+      mapKey: MixedConstants.MAP_KEY,
+      apiKey: MixedConstants.API_KEY,
+      // getAtValue: LocationNotificationListener().getAtValue
+      showDialogBox: true,
+      streamAlternative: updateLocation,
+    );
+
+    await initialiseEventService(
       navKey,
       mapKey: MixedConstants.MAP_KEY,
       apiKey: MixedConstants.API_KEY,
@@ -40,34 +66,25 @@ class LocationProvider extends BaseModel {
       initLocation: false,
     );
 
-    initializeLocationService(
-      navKey,
-      mapKey: MixedConstants.MAP_KEY,
-      apiKey: MixedConstants.API_KEY,
-      // getAtValue: LocationNotificationListener().getAtValue
-      showDialogBox: true,
-      streamAlternative: notificationUpdate,
-    );
-
     SendLocationNotification().setLocationPrompt(() async {
       await locationPromptDialog(
         isShareLocationData: false,
         isRequestLocationData: false,
       );
     });
-    EventLocationShare().setLocationPrompt(() async {
-      await locationPromptDialog(
-        isShareLocationData: false,
-        isRequestLocationData: false,
-      );
-    });
+    // EventLocationShare().setLocationPrompt(() async {
+    //   await locationPromptDialog(
+    //     isShareLocationData: false,
+    //     isRequestLocationData: false,
+    //   );
+    // });
 
     // setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   // ignore: always_declare_return_types
-  notificationUpdate(List<KeyLocationModel> list) {
-    print('location package notificationUpdate');
+  updateLocation(List<KeyLocationModel> list) {
+    print('location package updateLocation');
 
     allLocationNotifications = list;
     updateAllNotification(locationsList: allLocationNotifications);
@@ -75,7 +92,7 @@ class LocationProvider extends BaseModel {
 
   // ignore: always_declare_return_types
   updateEvents(List<EventKeyLocationModel> list) {
-    print('events package notificationUpdate');
+    print('events package updateEvents');
 
     allEventNotifications = list;
     updateAllNotification(eventsList: allEventNotifications);
@@ -125,26 +142,41 @@ class LocationProvider extends BaseModel {
   Future<void> initialiseLocationSharing() async {
     isSharing = await getShareLocation();
     SendLocationNotification().setMasterSwitchState(isSharing);
-    EventLocationShare().setMasterSwitchState(isSharing);
+    // EventLocationShare().setMasterSwitchState(isSharing);
     notifyListeners();
   }
 
   Future<void> updateShareLocation(bool value) async {
     await _hiveDataProvider.insertData(
       'Sharing',
-      {'isSharing': value.toString()},
+      {
+        'isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}':
+            value.toString()
+      },
     );
 
     isSharing = value;
 
     SendLocationNotification().setMasterSwitchState(value);
-    EventLocationShare().setMasterSwitchState(value);
+    // EventLocationShare().setMasterSwitchState(value);
 
     notifyListeners();
   }
 
   Future<bool> getShareLocation() async {
     var data = await _hiveDataProvider.readData('Sharing');
-    return (data['isSharing'] == 'true') ? true : false;
+
+    if ((data['isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
+            null) ||
+        (data['isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
+            'null')) {
+      await updateShareLocation(true);
+    }
+
+    return (data[
+                'isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
+            'true')
+        ? true
+        : false;
   }
 }

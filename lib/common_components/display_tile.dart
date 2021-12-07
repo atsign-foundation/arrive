@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
@@ -16,7 +17,8 @@ class DisplayTile extends StatefulWidget {
   final bool showName, showRetry;
   final Function onRetryTapped;
   DisplayTile(
-      {@required this.title,
+      {Key key,
+      @required this.title,
       this.atsignCreator,
       @required this.subTitle,
       this.semiTitle,
@@ -25,7 +27,8 @@ class DisplayTile extends StatefulWidget {
       this.showName = false,
       this.action,
       this.showRetry = false,
-      this.onRetryTapped});
+      this.onRetryTapped})
+      : super(key: key);
 
   @override
   _DisplayTileState createState() => _DisplayTileState();
@@ -66,6 +69,10 @@ class _DisplayTileState extends State<DisplayTile> {
         children: [
           GestureDetector(
             onTap: ((widget.atsignCreator != null) &&
+                    (widget.atsignCreator !=
+                        AtClientManager.getInstance()
+                            .atClient
+                            .getCurrentAtSign()) &&
                     (ContactService().contactList.indexWhere((element) =>
                             element.atSign == widget.atsignCreator) ==
                         -1))
@@ -78,10 +85,12 @@ class _DisplayTileState extends State<DisplayTile> {
                           atSignName: widget.atsignCreator,
                           image: image,
                           name: name,
+                          onSuccessCallback: () {
+                            setState(() {});
+                          },
                         );
                       },
                     );
-                    setState(() {});
                   }
                 : null,
             child: Stack(
@@ -120,6 +129,10 @@ class _DisplayTileState extends State<DisplayTile> {
                       )
                     : SizedBox(),
                 ((widget.atsignCreator != null) &&
+                        (widget.atsignCreator !=
+                            AtClientManager.getInstance()
+                                .atClient
+                                .getCurrentAtSign()) &&
                         (ContactService().contactList.indexWhere((element) =>
                                 element.atSign == widget.atsignCreator) ==
                             -1))
@@ -162,7 +175,8 @@ class _DisplayTileState extends State<DisplayTile> {
                           widget.semiTitle,
                           style: (widget.semiTitle == 'Action required' ||
                                       widget.semiTitle == 'Request declined') ||
-                                  (widget.semiTitle == 'Cancelled')
+                                  (widget.semiTitle == 'Cancelled' ||
+                                      (widget.semiTitle == 'Request rejected'))
                               ? CustomTextStyles().orange12
                               : CustomTextStyles().darkGrey12,
                           maxLines: 1,

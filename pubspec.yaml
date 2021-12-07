@@ -13,7 +13,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+24
+version: 1.0.1+25
 environment:
   sdk: ">=2.7.0 <3.0.0"
 dependencies:
@@ -40,15 +40,24 @@ dependencies:
   at_onboarding_flutter: ^3.0.4
   at_location_flutter: ^3.0.1
   at_events_flutter: ^3.0.1
-      
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
 
 dependency_overrides:
   #Please remove this after at_backupkey_flutter have version newer thạn 3.0.0
   at_backupkey_flutter: ^3.0.1
-
+  at_location_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_location_flutter
+      ref: feat/location-event-documentation
+  at_events_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_events_flutter
+      ref: feat/location-event-documentation
+      
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.

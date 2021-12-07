@@ -8,6 +8,7 @@ import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -15,6 +16,7 @@ import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:at_location_flutter/utils/constants/constants.dart'
     as location_package_constants;
+import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -32,14 +34,17 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    BackendService.getInstance().getAtClientPreference().then(
-        (value) => BackendService.getInstance().atClientPreference = value);
+    // BackendService.getInstance().getAtClientPreference().then(
+    //     (value) => BackendService.getInstance().atClientPreference = value);
     _initBackendService();
   }
 
   String state;
   void _initBackendService() async {
     try {
+      BackendService.getInstance().atClientPreference =
+          await BackendService.getInstance().getAtClientPreference();
+
       await checkLocationPermission();
       setMapKey();
 
@@ -52,6 +57,8 @@ class _SplashState extends State<Splash> {
             appColor: Color.fromARGB(255, 240, 94, 62),
             rootEnvironment: RootEnvironment.Production,
             onboard: (value, atsign) async {
+              Provider.of<LocationProvider>(context, listen: false).resetData();
+
               print('_initBackendService onboarded: $value , atsign:$atsign');
               BackendService.getInstance().atClientServiceMap = value;
               await KeychainUtil.makeAtSignPrimary(atsign);
@@ -122,124 +129,122 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      body: SafeArea(
-        child: isOnboarded
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Stack(
-                children: [
-                  Image.asset(
-                    'assets/images/splash_bg.png',
-                    fit: BoxFit.fill,
-                    height: SizeConfig().screenHeight,
-                    width: SizeConfig().screenWidth,
+      body: isOnboarded
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Stack(
+              children: [
+                Image.asset(
+                  'assets/images/splash_bg.png',
+                  fit: BoxFit.fill,
+                  height: SizeConfig().screenHeight,
+                  width: SizeConfig().screenWidth,
+                ),
+                Positioned(
+                  top: 330.toHeight,
+                  left: 16.toWidth,
+                  child: Text(
+                    'Stay connected!',
+                    textScaleFactor: 1,
+                    style: CustomTextStyles().blackPlayfairDisplay38,
                   ),
-                  Positioned(
-                    top: 330.toHeight,
-                    left: 16.toWidth,
-                    child: Text(
-                      'Stay connected!',
-                      textScaleFactor: 1,
-                      style: CustomTextStyles().blackPlayfairDisplay38,
-                    ),
+                ),
+                Positioned(
+                  top: 381.toHeight,
+                  left: 15.toWidth,
+                  child: Text(
+                    'Wherever',
+                    textScaleFactor: 1,
+                    style: CustomTextStyles().blackPlayfairDisplay38,
                   ),
-                  Positioned(
-                    top: 381.toHeight,
-                    left: 15.toWidth,
-                    child: Text(
-                      'Wherever',
-                      textScaleFactor: 1,
-                      style: CustomTextStyles().blackPlayfairDisplay38,
-                    ),
+                ),
+                Positioned(
+                  top: 428.toHeight,
+                  left: 15.toWidth,
+                  child: Text(
+                    'you go.',
+                    textScaleFactor: 1,
+                    style: CustomTextStyles().blackPlayfairDisplay38,
                   ),
-                  Positioned(
-                    top: 428.toHeight,
-                    left: 15.toWidth,
-                    child: Text(
-                      'you go.',
-                      textScaleFactor: 1,
-                      style: CustomTextStyles().blackPlayfairDisplay38,
-                    ),
+                ),
+                Positioned(
+                  bottom: 32.toHeight,
+                  left: 16.toWidth,
+                  child: Text(
+                    ' The @ Company Copyright 2021',
+                    style: CustomTextStyles().darkGrey13,
                   ),
-                  Positioned(
-                    bottom: 32.toHeight,
-                    left: 16.toWidth,
-                    child: Text(
-                      ' The @ Company Copyright 2021',
-                      style: CustomTextStyles().darkGrey13,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 105.toHeight,
-                    right: 36.toWidth,
-                    child: Opacity(
-                      opacity: authenticating ? 0.5 : 1,
-                      child: Column(
-                        children: [
-                          CustomButton(
-                              height: 40,
-                              width: SizeConfig().screenWidth * 0.8,
-                              radius: 100.toHeight,
-                              onTap: () async {
-                                if (authenticating) return;
+                ),
+                Positioned(
+                  bottom: 105.toHeight,
+                  right: 36.toWidth,
+                  child: Opacity(
+                    opacity: authenticating ? 0.5 : 1,
+                    child: Column(
+                      children: [
+                        CustomButton(
+                            height: 40,
+                            width: SizeConfig().screenWidth * 0.8,
+                            radius: 100.toHeight,
+                            onTap: () async {
+                              if (authenticating) return;
 
-                                Onboarding(
-                                    context: context,
-                                    atClientPreference:
-                                        BackendService.getInstance()
-                                            .atClientPreference,
-                                    domain: MixedConstants.ROOT_DOMAIN,
-                                    appColor: Color.fromARGB(255, 240, 94, 62),
-                                    onboard: onOnboardCompletes,
-                                    rootEnvironment: RootEnvironment.Production,
-                                    onError: (error) {
-                                      print('error in onboard plugin:$error');
-                                      setState(() {
-                                        authenticating = false;
-                                      });
-                                    },
-                                    appAPIKey: MixedConstants.ONBOARD_API_KEY);
-                              },
-                              bgColor: AllColors().Black,
-                              child: authenticating
-                                  ? Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            'Authenticating',
-                                            textScaleFactor: 1,
-                                            style: CustomTextStyles().white15,
-                                          ),
-                                          TypingIndicator(
-                                            showIndicator: true,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Text(
-                                      'Explore',
-                                      textScaleFactor: 1,
-                                      style: CustomTextStyles().white15,
-                                    )),
-                          SizedBox(height: 10.toHeight),
-                          InkWell(
-                            onTap: () {
-                              _showResetDialog();
+                              Onboarding(
+                                  context: context,
+                                  atClientPreference:
+                                      BackendService.getInstance()
+                                          .atClientPreference,
+                                  domain: MixedConstants.ROOT_DOMAIN,
+                                  appColor: Color.fromARGB(255, 240, 94, 62),
+                                  onboard: onOnboardCompletes,
+                                  rootEnvironment: RootEnvironment.Production,
+                                  onError: (error) {
+                                    print('error in onboard plugin:$error');
+                                    setState(() {
+                                      authenticating = false;
+                                    });
+                                  },
+                                  appAPIKey: MixedConstants.ONBOARD_API_KEY);
                             },
-                            child: Text('Reset',
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold)),
-                          ),
-                        ],
-                      ),
+                            bgColor: AllColors().Black,
+                            child: authenticating
+                                ? Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Authenticating',
+                                          textScaleFactor: 1,
+                                          style: CustomTextStyles().white15,
+                                        ),
+                                        TypingIndicator(
+                                          showIndicator: true,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : Text(
+                                    'Explore',
+                                    textScaleFactor: 1,
+                                    style: CustomTextStyles().white15,
+                                  )),
+                        SizedBox(height: 10.toHeight),
+                        InkWell(
+                          onTap: () {
+                            _showResetDialog();
+                          },
+                          child: Text('Reset',
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-      ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -390,6 +395,8 @@ class _SplashState extends State<Splash> {
       authenticating = true;
       isOnboarded = true;
     });
+
+    Provider.of<LocationProvider>(context, listen: false).resetData();
 
     BackendService.getInstance().atClientServiceMap = value;
     await KeychainUtil.makeAtSignPrimary(atsign);

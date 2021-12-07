@@ -42,11 +42,7 @@ class _SideBarState extends State<SideBar> {
 
   @override
   void initState() {
-    _currentAtsign = BackendService.getInstance()
-        .atClientServiceInstance
-        .atClientManager
-        .atClient
-        .getCurrentAtSign();
+    _currentAtsign = AtClientManager.getInstance().atClient.getCurrentAtSign();
 
     super.initState();
     getEventCreator();

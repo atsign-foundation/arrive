@@ -154,6 +154,10 @@ class BackendService {
           appColor: Color.fromARGB(255, 240, 94, 62),
           rootEnvironment: RootEnvironment.Production,
           onboard: (value, atsign) async {
+            Provider.of<LocationProvider>(NavService.navKey.currentContext,
+                    listen: false)
+                .resetData();
+
             atClientServiceMap = value;
 
             var atSign = atsign;

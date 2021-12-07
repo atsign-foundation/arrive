@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
@@ -5,9 +7,7 @@ import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart';
 import 'package:at_location_flutter/service/my_location.dart';
-import 'package:at_location_flutter/service/sync_secondary.dart';
 import 'package:at_location_flutter/show_location.dart';
-import 'package:at_location_flutter/utils/constants/init_location_service.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
@@ -17,7 +17,6 @@ import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:atsign_location_app/screens/request_location/request_location_sheet.dart';
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
-import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
@@ -40,10 +39,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   PanelController pc = PanelController();
   LocationProvider locationProvider = LocationProvider();
-  LatLng myLatLng;
+  LatLng myLatLng, previousLatLng;
   String currentAtSign;
-  bool contactsLoaded;
+  bool contactsLoaded, moveMap;
   Key _mapKey; // so that map doesnt refresh, when we dont want it to
+  MapController mapController = MapController();
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _mapKey = UniqueKey();
     contactsLoaded = false;
     initializePlugins();
-    _getMyLocation();
+    _getLocationStatus();
     // deleteAllPreviousKeys();
     // cleanKeychain();
 
@@ -77,6 +77,21 @@ class _HomeScreenState extends State<HomeScreen> {
     initializeGroupService(rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
+  void _getLocationStatus() {
+    Geolocator.getServiceStatusStream().listen((event) {
+      _mapKey = UniqueKey();
+      if (event == ServiceStatus.disabled) {
+        setState(() {
+          myLatLng = null;
+        });
+      } else if (event == ServiceStatus.enabled) {
+        _getMyLocation();
+      }
+    });
+  }
+
+  StreamSubscription<Position> _positionStream;
+
   void _getMyLocation() async {
     var newMyLatLng = await getMyLocation();
     if (newMyLatLng != null) {
@@ -89,7 +104,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (((permission == LocationPermission.always) ||
         (permission == LocationPermission.whileInUse))) {
-      Geolocator.getPositionStream(distanceFilter: 2)
+      if (_positionStream != null) {
+        await _positionStream.cancel();
+      }
+
+      _positionStream = Geolocator.getPositionStream(distanceFilter: 2)
           .listen((locationStream) async {
         if (mounted) {
           setState(() {
@@ -149,10 +168,28 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
   // }
 
-  MapController mapController = MapController();
+  void shouldMoveMap() {
+    if (myLatLng != null) {
+      if (moveMap == null) {
+        moveMap = true;
+      } else {
+        moveMap = false;
+      }
+    }
+
+    previousLatLng = myLatLng;
+  }
+
+  void zoomOutFn() {
+    if (mapController != null) {
+      mapController.move(myLatLng, 8);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    shouldMoveMap();
+
     return Scaffold(
       endDrawer: Container(
         width: 250.toWidth,
@@ -166,10 +203,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     _mapKey,
                     mapController,
                     location: myLatLng,
+                    moveMap: moveMap ?? false,
                   )
                 : showLocation(
                     _mapKey,
                     mapController,
+                    moveMap: moveMap ?? false,
                   ),
             Positioned(
               top: 0,
@@ -183,9 +222,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Positioned(bottom: 264.toHeight, child: header()),
+            myLatLng != null
+                ? Positioned(
+                    top: 100,
+                    right: 0,
+                    child: FloatingIcon(
+                        icon: Icons.zoom_out_map, onPressed: zoomOutFn),
+                  )
+                : SizedBox(),
             contactsLoaded
                 ? ProviderHandler<LocationProvider>(
-                    key: UniqueKey(),
                     functionName: locationProvider.GET_ALL_NOTIFICATIONS,
                     showError: false,
                     load: (provider) => {},
@@ -302,9 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottomSheet(
                     context,
                     CreateEvent(
-                      BackendService.getInstance()
-                          .atClientServiceInstance
-                          .atClientManager,
+                      AtClientManager.getInstance(),
                     ),
                     SizeConfig().screenHeight * 0.9,
                     onSheetCLosed: () {});
@@ -356,9 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       .locationKeyModel
                                       .locationNotificationModel
                                       .atsignCreator ==
-                                  BackendService.getInstance()
-                                      .atClientServiceInstance
-                                      .atClientManager
+                                  AtClientManager.getInstance()
                                       .atClient
                                       .getCurrentAtSign()
                               ? hybridElement.locationKeyModel

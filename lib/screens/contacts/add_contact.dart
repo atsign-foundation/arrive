@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 class AddContact extends StatefulWidget {
   final String atSignName, name;
   final Uint8List image;
-  const AddContact({Key key, this.atSignName, this.name, this.image})
+  final Function onSuccessCallback;
+  const AddContact(
+      {Key key, this.atSignName, this.name, this.image, this.onSuccessCallback})
       : super(key: key);
 
   @override
@@ -113,6 +115,12 @@ class _AddContactState extends State<AddContact> {
                       setState(() {
                         isContactAdding = false;
                       });
+
+                      await ContactService().fetchContacts();
+
+                      if (widget.onSuccessCallback != null) {
+                        widget.onSuccessCallback();
+                      }
                       Navigator.pop(context);
                     },
                   ),
