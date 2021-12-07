@@ -77,7 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
     initializeGroupService(rootDomain: MixedConstants.ROOT_DOMAIN);
   }
 
-  void _getLocationStatus() {
+  void _getLocationStatus() async {
+    await _getMyLocation();
+
     Geolocator.getServiceStatusStream().listen((event) {
       _mapKey = UniqueKey();
       if (event == ServiceStatus.disabled) {
@@ -92,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   StreamSubscription<Position> _positionStream;
 
-  void _getMyLocation() async {
+  Future<void> _getMyLocation() async {
     var newMyLatLng = await getMyLocation();
     if (newMyLatLng != null) {
       setState(() {
