@@ -42,25 +42,22 @@ dependencies:
   at_events_flutter: ^3.0.1
 
 dependency_overrides:
+  #Please remove this after at_backupkey_flutter have version newer thạn 3.0.0
+  at_backupkey_flutter: ^3.0.1
   at_location_flutter:
     git:
       url: https://github.com/atsign-foundation/at_widgets.git
       path: at_location_flutter
-      ref: member-info-in-location-data
+      ref: feat/location-event-documentation
   at_events_flutter:
     git:
       url: https://github.com/atsign-foundation/at_widgets.git
       path: at_events_flutter
-      ref: member-info-in-location-data
+      ref: feat/location-event-documentation
       
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-dependency_overrides:
-  #Please remove this after at_backupkey_flutter have version newer thạn 3.0.0
-  at_backupkey_flutter: ^3.0.1
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.
