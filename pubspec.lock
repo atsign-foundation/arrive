@@ -46,16 +46,20 @@ packages:
   at_client:
     dependency: "direct main"
     description:
-      name: at_client
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_client
+      ref: HEAD
+      resolved-ref: caedc8036e833e0679d3a011c35cfb4c8e39ff00
+      url: "https://github.com/atsign-foundation/at_client_sdk.git"
+    source: git
     version: "3.0.6"
   at_client_mobile:
     dependency: "direct main"
     description:
-      name: at_client_mobile
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_client_mobile
+      ref: HEAD
+      resolved-ref: caedc8036e833e0679d3a011c35cfb4c8e39ff00
+      url: "https://github.com/atsign-foundation/at_client_sdk.git"
+    source: git
     version: "3.1.2"
   at_common_flutter:
     dependency: transitive
@@ -97,7 +101,7 @@ packages:
     description:
       path: at_events_flutter
       ref: "feat/location-event-documentation"
-      resolved-ref: b581e8693b9d7a4bc2710468cb057f2c0ba04ee6
+      resolved-ref: acebf68e540b9f0bb325718e40c00197469b016f
       url: "https://github.com/atsign-foundation/at_widgets.git"
     source: git
     version: "3.0.1"
@@ -106,7 +110,7 @@ packages:
     description:
       path: at_location_flutter
       ref: "feat/location-event-documentation"
-      resolved-ref: b581e8693b9d7a4bc2710468cb057f2c0ba04ee6
+      resolved-ref: acebf68e540b9f0bb325718e40c00197469b016f
       url: "https://github.com/atsign-foundation/at_widgets.git"
     source: git
     version: "3.0.1"
@@ -120,9 +124,11 @@ packages:
   at_onboarding_flutter:
     dependency: "direct main"
     description:
-      name: at_onboarding_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_onboarding_flutter
+      ref: "feat/onboarding-with-trunk-changes"
+      resolved-ref: a6a88107caed6a808e0a1bab46119336521c69c8
+      url: "https://github.com/atsign-foundation/at_widgets.git"
+    source: git
     version: "3.1.1"
   at_persistence_secondary_server:
     dependency: transitive
@@ -130,7 +136,7 @@ packages:
       name: at_persistence_secondary_server
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.10"
+    version: "3.0.11"
   at_persistence_spec:
     dependency: transitive
     description:
@@ -628,7 +634,7 @@ packages:
       name: path_provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.7"
+    version: "2.0.8"
   path_provider_android:
     dependency: transitive
     description:
@@ -649,7 +655,7 @@ packages:
       name: path_provider_linux
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.4"
   path_provider_macos:
     dependency: transitive
     description:
@@ -817,7 +823,7 @@ packages:
       name: shared_preferences
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.9"
+    version: "2.0.11"
   shared_preferences_android:
     dependency: transitive
     description:
@@ -1046,14 +1052,14 @@ packages:
       name: webview_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.0"
+    version: "2.8.0"
   webview_flutter_android:
     dependency: transitive
     description:
       name: webview_flutter_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.8.0"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
@@ -1067,7 +1073,7 @@ packages:
       name: webview_flutter_wkwebview
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.5.0"
+    version: "2.7.1"
   win32:
     dependency: transitive
     description:
