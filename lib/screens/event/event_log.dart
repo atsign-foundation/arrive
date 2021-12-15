@@ -1,5 +1,8 @@
+import 'package:at_events_flutter/common_components/bottom_sheet.dart';
 import 'package:at_events_flutter/models/event_notification.dart';
+import 'package:at_events_flutter/screens/map_screen/events_collapsed_content.dart';
 import 'package:at_events_flutter/services/event_key_stream_service.dart';
+import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
@@ -83,9 +86,7 @@ Widget getUpcomingEvents() {
   var upcomingEvents = Provider.of<LocationProvider>(
           NavService.navKey.currentContext,
           listen: false)
-      .allEventNotifications
-      .map((e) => e.eventNotificationModel)
-      .toList();
+      .allEventNotifications;
   return ListView.separated(
     scrollDirection: Axis.vertical,
     itemCount: upcomingEvents.length,
@@ -95,12 +96,21 @@ Widget getUpcomingEvents() {
     itemBuilder: (context, index) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
-        child: DisplayTile(
-          title: upcomingEvents[index].title,
-          atsignCreator: upcomingEvents[index].atsignCreator,
-          subTitle:
-              'Event on ${dateToString(upcomingEvents[index].event.date)}',
-          invitedBy: 'Invited by ${upcomingEvents[index].atsignCreator}',
+        child: InkWell(
+          onTap: () {
+            HomeEventService().onEventModelTap(
+                upcomingEvents[index].eventNotificationModel,
+                upcomingEvents[index].haveResponded);
+          },
+          child: DisplayTile(
+            title: upcomingEvents[index].eventNotificationModel.title,
+            atsignCreator:
+                upcomingEvents[index].eventNotificationModel.atsignCreator,
+            subTitle:
+                'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
+            invitedBy:
+                'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+          ),
         ),
       );
     },
@@ -121,11 +131,25 @@ Widget getPastEvents() {
     itemBuilder: (context, index) {
       return Padding(
         padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
-        child: DisplayTile(
-          title: pastEvents[index].title,
-          atsignCreator: pastEvents[index].atsignCreator,
-          subTitle: 'Event on ${dateToString(pastEvents[index].event.date)}',
-          invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+        child: InkWell(
+          onTap: () {
+            bottomSheet(
+              context,
+              EventsCollapsedContent(
+                pastEvents[index],
+                key: UniqueKey(),
+                static: true,
+              ),
+              300,
+              onSheetCLosed: () {},
+            );
+          },
+          child: DisplayTile(
+            title: pastEvents[index].title,
+            atsignCreator: pastEvents[index].atsignCreator,
+            subTitle: 'Event on ${dateToString(pastEvents[index].event.date)}',
+            invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+          ),
         ),
       );
     },

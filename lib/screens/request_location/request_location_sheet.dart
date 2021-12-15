@@ -131,8 +131,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong ${result.toString()}', context,
-          isError: true);
+      CustomToast().show('Something went wrong', context, isError: true);
       setState(() {
         isLoading = false;
       });
