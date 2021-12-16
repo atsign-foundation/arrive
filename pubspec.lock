@@ -101,7 +101,7 @@ packages:
     description:
       path: at_events_flutter
       ref: "feat/location-event-documentation"
-      resolved-ref: acebf68e540b9f0bb325718e40c00197469b016f
+      resolved-ref: b3ecc8f97148d9371b5445d0fc0bb04bb365d092
       url: "https://github.com/atsign-foundation/at_widgets.git"
     source: git
     version: "3.0.1"
@@ -110,7 +110,7 @@ packages:
     description:
       path: at_location_flutter
       ref: "feat/location-event-documentation"
-      resolved-ref: acebf68e540b9f0bb325718e40c00197469b016f
+      resolved-ref: b3ecc8f97148d9371b5445d0fc0bb04bb365d092
       url: "https://github.com/atsign-foundation/at_widgets.git"
     source: git
     version: "3.0.1"
@@ -311,7 +311,7 @@ packages:
       name: file_picker
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.7"
+    version: "4.2.8"
   file_saver:
     dependency: transitive
     description:
