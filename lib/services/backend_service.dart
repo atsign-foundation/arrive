@@ -128,7 +128,7 @@ class BackendService {
     if (atSignList != null) {
       atSignList.removeWhere((element) =>
           element ==
-          atClientServiceInstance.atClientManager.atClient.getCurrentAtSign());
+          AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
 
     var atClientPrefernce;
