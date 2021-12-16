@@ -6,6 +6,7 @@ import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
+import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
@@ -129,123 +130,196 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      body: isOnboarded
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : Stack(
-              children: [
-                Image.asset(
-                  'assets/images/splash_bg.png',
-                  fit: BoxFit.fill,
-                  height: SizeConfig().screenHeight,
-                  width: SizeConfig().screenWidth,
-                ),
-                Positioned(
-                  top: 330.toHeight,
-                  left: 16.toWidth,
-                  child: Text(
-                    'Stay connected!',
-                    textScaleFactor: 1,
-                    style: CustomTextStyles().blackPlayfairDisplay38,
-                  ),
-                ),
-                Positioned(
-                  top: 381.toHeight,
-                  left: 15.toWidth,
-                  child: Text(
-                    'Wherever',
-                    textScaleFactor: 1,
-                    style: CustomTextStyles().blackPlayfairDisplay38,
-                  ),
-                ),
-                Positioned(
-                  top: 428.toHeight,
-                  left: 15.toWidth,
-                  child: Text(
-                    'you go.',
-                    textScaleFactor: 1,
-                    style: CustomTextStyles().blackPlayfairDisplay38,
-                  ),
-                ),
-                Positioned(
-                  bottom: 32.toHeight,
-                  left: 16.toWidth,
-                  child: Text(
-                    ' The @ Company Copyright 2021',
-                    style: CustomTextStyles().darkGrey13,
-                  ),
-                ),
-                Positioned(
-                  bottom: 105.toHeight,
-                  right: 36.toWidth,
-                  child: Opacity(
-                    opacity: authenticating ? 0.5 : 1,
-                    child: Column(
-                      children: [
-                        CustomButton(
-                            height: 40,
-                            width: SizeConfig().screenWidth * 0.8,
-                            radius: 100.toHeight,
-                            onTap: () async {
-                              if (authenticating) return;
-
-                              Onboarding(
-                                  context: context,
-                                  atClientPreference:
-                                      BackendService.getInstance()
-                                          .atClientPreference,
-                                  domain: MixedConstants.ROOT_DOMAIN,
-                                  appColor: Color.fromARGB(255, 240, 94, 62),
-                                  onboard: onOnboardCompletes,
-                                  rootEnvironment: RootEnvironment.Production,
-                                  onError: (error) {
-                                    print('error in onboard plugin:$error');
-                                    setState(() {
-                                      authenticating = false;
-                                    });
-                                  },
-                                  appAPIKey: MixedConstants.ONBOARD_API_KEY);
-                            },
-                            bgColor: AllColors().Black,
-                            child: authenticating
-                                ? Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Authenticating',
-                                          textScaleFactor: 1,
-                                          style: CustomTextStyles().white15,
-                                        ),
-                                        TypingIndicator(
-                                          showIndicator: true,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                : Text(
-                                    'Explore',
-                                    textScaleFactor: 1,
-                                    style: CustomTextStyles().white15,
-                                  )),
-                        SizedBox(height: 10.toHeight),
-                        InkWell(
-                          onTap: () {
-                            _showResetDialog();
-                          },
-                          child: Text('Reset',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold)),
+        body: isOnboarded
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Stack(children: [
+                Container(
+                    width: SizeConfig().screenWidth,
+                    height: SizeConfig().screenHeight,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                          AllImages().SPLASH_BG,
                         ),
-                      ],
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-    );
+                    child: SafeArea(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 4,
+                            child: SizedBox()
+                          ),
+                          Expanded(
+                            flex: 8,
+                            child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 36.toWidth,
+                                  vertical: 10.toHeight,
+                                ),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        flex: 6,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Stay connected!',
+                                              textScaleFactor: 1,
+                                              style: CustomTextStyles()
+                                                  .blackPlayfairDisplay38,
+                                            ),
+                                            SizedBox(height: 5.toHeight),
+                                            Text(
+                                              'Wherever',
+                                              textScaleFactor: 1,
+                                              style: CustomTextStyles()
+                                                  .blackPlayfairDisplay38,
+                                            ),
+                                            SizedBox(
+                                              height: 5.toHeight,
+                                            ),
+                                            Text(
+                                              'you go.',
+                                              textScaleFactor: 1,
+                                              style: CustomTextStyles()
+                                                  .blackPlayfairDisplay38,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ])),
+                          ),
+                          Expanded(flex: 2, child: SizedBox()),
+                          Expanded(
+                            flex: 4,
+                            child:Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 25.toWidth),
+                              child: Opacity(
+                                  opacity: authenticating ? 0.5 : 1,
+                                  child: Column(
+                                    children: [
+                                      CustomButton(
+                                          height: 40,
+                                          width: SizeConfig().screenWidth * 0.8,
+                                          radius: 100.toHeight,
+                                          onTap: () async {
+                                            if (authenticating) return;
+                                            Onboarding(
+                                                context: context,
+                                                atClientPreference:
+                                                    BackendService.getInstance()
+                                                        .atClientPreference,
+                                                domain: MixedConstants.ROOT_DOMAIN,
+                                                appColor: Color.fromARGB(
+                                                    255, 240, 94, 62),
+                                                onboard: onOnboardCompletes,
+                                                rootEnvironment:
+                                                    RootEnvironment.Production,
+                                                onError: (error) {
+                                                  print(
+                                                      'error in onboard plugin:$error');
+                                                  setState(() {
+                                                    authenticating = false;
+                                                  });
+                                                },
+                                                appAPIKey:
+                                                    MixedConstants.ONBOARD_API_KEY);
+                                          },
+                                          bgColor: AllColors().Black,
+                                          child: authenticating
+                                              ? Center(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.center,
+                                                    children: [
+                                                      Text(
+                                                        'Authenticating',
+                                                        textScaleFactor: 1,
+                                                        style: CustomTextStyles()
+                                                            .white15,
+                                                      ),
+                                                      TypingIndicator(
+                                                        showIndicator: true,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                              : Text(
+                                                  'Explore',
+                                                  textScaleFactor: 1,
+                                                  style: CustomTextStyles().white15,
+                                                )),
+                                      SizedBox(height: 15.toHeight),
+                                      InkWell(
+                                        onTap: () {
+                                          _showResetDialog();
+                                        },
+                                        child: Text(
+                                          TextStrings.resetButton,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            )
+                          ),
+                          Center(
+                            child: Text(
+                              TextStrings.appName,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w800),
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          Center(
+                            child: Text(
+                              TextStrings.copyRight,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'HelveticaNeu',
+                                color: Colors.grey.withOpacity(0.8),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),    
+              authenticating
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Column(
+                        children: [
+                          CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.red)),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            'Logging in',
+                            style: CustomTextStyles().white15,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : SizedBox()
+              ]));
   }
 
   _showResetDialog() async {
@@ -411,3 +485,4 @@ class _SplashState extends State<Splash> {
     );
   }
 }
+
