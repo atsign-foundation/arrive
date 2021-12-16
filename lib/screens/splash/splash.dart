@@ -178,10 +178,12 @@ class _SplashState extends State<Splash> {
                 ),
                 Positioned(
                   bottom: 105.toHeight,
-                  right: 36.toWidth,
+                  left: (SizeConfig().screenWidth * 0.1),
+                  right: (SizeConfig().screenWidth * 0.1),
                   child: Opacity(
                     opacity: authenticating ? 0.5 : 1,
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         CustomButton(
                             height: 40,

@@ -62,7 +62,6 @@ class BackendService {
 
     atClientPreference.isLocalStoreRequired = true;
     atClientPreference.commitLogPath = path;
-    atClientPreference.syncStrategy = SyncStrategy.IMMEDIATE;
     atClientPreference.rootDomain = MixedConstants.ROOT_DOMAIN;
     atClientPreference.hiveStoragePath = path;
     atClientPreference.downloadPath = downloadDirectory.path;
@@ -84,7 +83,6 @@ class BackendService {
     var _atClientPreference = AtClientPreference()
       ..isLocalStoreRequired = true
       ..commitLogPath = path
-      ..syncStrategy = SyncStrategy.IMMEDIATE
       ..rootDomain = MixedConstants.ROOT_DOMAIN
       ..namespace = MixedConstants.appNamespace
       ..syncRegex = MixedConstants.syncRegex
@@ -130,7 +128,7 @@ class BackendService {
     if (atSignList != null) {
       atSignList.removeWhere((element) =>
           element ==
-          atClientServiceInstance.atClientManager.atClient.getCurrentAtSign());
+          AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
 
     var atClientPrefernce;
