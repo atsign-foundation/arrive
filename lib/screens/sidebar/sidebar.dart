@@ -238,32 +238,28 @@ class _SideBarState extends State<SideBar> {
                             'Location Sharing',
                             style: CustomTextStyles().darkGrey16,
                           ),
-                          Consumer<LocationProvider>(
-                            builder: (context, provider, child) {
-                              return Switch(
-                                value: provider.isSharing,
-                                onChanged: (value) async {
-                                  provider.changeLocationSharingMode(true);
-                                  if (value) {
-                                    var _res = await isLocationServiceEnabled();
-                                    if (_res == null) {
-                                      provider.changeLocationSharingMode(false);
-                                      return;
-                                    }
-
-                                    if (_res == false) {
-                                      CustomToast().show(
-                                          'Location permission not granted',
-                                          context);
-                                      provider.changeLocationSharingMode(false);
-                                      return;
-                                    }
-                                  }
-                                  // ignore: unawaited_futures
-                                  await provider.updateShareLocation(value);
+                          Switch(
+                            value: provider.isSharing,
+                            onChanged: (value) async {
+                              provider.changeLocationSharingMode(true);
+                              if (value) {
+                                var _res = await isLocationServiceEnabled();
+                                if (_res == null) {
                                   provider.changeLocationSharingMode(false);
-                                },
-                              );
+                                  return;
+                                }
+
+                                if (_res == false) {
+                                  CustomToast().show(
+                                      'Location permission not granted',
+                                      context);
+                                  provider.changeLocationSharingMode(false);
+                                  return;
+                                }
+                              }
+                              // ignore: unawaited_futures
+                              await provider.updateShareLocation(value);
+                              provider.changeLocationSharingMode(false);
                             },
                           ),
                         ],
