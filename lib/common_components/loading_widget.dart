@@ -52,6 +52,33 @@ class LoadingDialog {
     }
   }
 
+  Widget onlyText(String text, {TextStyle style, double fontSize}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Flexible(
+          child: Text(
+            text,
+            textScaleFactor: 1,
+            style: style ??
+                TextStyle(
+                    color: AllColors().DARK_GREY,
+                    fontSize: fontSize ?? 20.toFont,
+                    fontWeight: FontWeight.w400,
+                    decoration: TextDecoration.none),
+          ),
+        ),
+        TypingIndicator(
+          showIndicator: true,
+          flashingCircleBrightColor: AllColors().LIGHT_GREY,
+          flashingCircleDarkColor: AllColors().DARK_GREY,
+        ),
+      ],
+    );
+  }
+
   // ignore: always_declare_return_types
   hide() {
     print('hide called');
