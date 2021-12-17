@@ -48,19 +48,19 @@ packages:
     description:
       path: at_client
       ref: HEAD
-      resolved-ref: caedc8036e833e0679d3a011c35cfb4c8e39ff00
+      resolved-ref: cdc908aa021e5d3133d8c3150ac3aee6c5c72de9
       url: "https://github.com/atsign-foundation/at_client_sdk.git"
     source: git
-    version: "3.0.6"
+    version: "3.0.7"
   at_client_mobile:
     dependency: "direct main"
     description:
       path: at_client_mobile
       ref: HEAD
-      resolved-ref: caedc8036e833e0679d3a011c35cfb4c8e39ff00
+      resolved-ref: cdc908aa021e5d3133d8c3150ac3aee6c5c72de9
       url: "https://github.com/atsign-foundation/at_client_sdk.git"
     source: git
-    version: "3.1.2"
+    version: "3.1.3"
   at_common_flutter:
     dependency: transitive
     description:
@@ -92,9 +92,11 @@ packages:
   at_contacts_group_flutter:
     dependency: "direct main"
     description:
-      name: at_contacts_group_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_contacts_group_flutter
+      ref: "feat/group-contact-image-mismatch"
+      resolved-ref: "8ef3b3681812912c28dafcde563fa386dd308748"
+      url: "https://github.com/atsign-foundation/at_widgets.git"
+    source: git
     version: "3.1.1"
   at_events_flutter:
     dependency: "direct main"
@@ -494,7 +496,7 @@ packages:
       name: hive
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.4"
+    version: "2.0.5"
   hive_flutter:
     dependency: "direct main"
     description:
