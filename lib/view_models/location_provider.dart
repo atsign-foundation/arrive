@@ -19,7 +19,9 @@ class LocationProvider extends BaseModel {
   List<KeyLocationModel> allLocationNotifications = [];
   List<EventKeyLocationModel> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
-  bool isSharing = false, isGettingLoadedFirstTime = true;
+  bool isSharing = false,
+      isGettingLoadedFirstTime = true,
+      locationSharingSwitchProcessing = false;
   // ignore: non_constant_identifier_names
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
 
@@ -28,6 +30,7 @@ class LocationProvider extends BaseModel {
     allLocationNotifications = [];
     allEventNotifications = [];
     isGettingLoadedFirstTime = true;
+    locationSharingSwitchProcessing = false;
 
     AtLocationNotificationListener().resetMonitor();
     AtEventNotificationListener().resetMonitor();
@@ -138,6 +141,11 @@ class LocationProvider extends BaseModel {
     setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
+  void changeLocationSharingMode(bool _mode) {
+    locationSharingSwitchProcessing = _mode;
+    notifyListeners();
+  }
+
   Future<void> initialiseLocationSharing() async {
     isSharing = await getShareLocation();
     SendLocationNotification().setMasterSwitchState(isSharing);
@@ -153,12 +161,9 @@ class LocationProvider extends BaseModel {
             value.toString()
       },
     );
-
     isSharing = value;
-
     SendLocationNotification().setMasterSwitchState(value);
     // EventLocationShare().setMasterSwitchState(value);
-
     notifyListeners();
   }
 
