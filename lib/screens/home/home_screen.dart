@@ -394,6 +394,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
                 child: DisplayTile(
+                  key: UniqueKey(),
                   atsignCreator:
                       hybridElement.type == NotificationModelType.EventModel
                           ? hybridElement.eventKeyModel.eventNotificationModel
