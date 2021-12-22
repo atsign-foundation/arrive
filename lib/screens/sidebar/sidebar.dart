@@ -7,6 +7,7 @@ import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/change_atsign_bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/dialog_box/manage_location_sharing.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
@@ -221,6 +222,16 @@ class _SideBarState extends State<SideBar> {
               () async {
                 _deleteAtSign(_currentAtsign);
                 setState(() {});
+              },
+            ),
+            SizedBox(
+              height: 25.toHeight,
+            ),
+            iconText(
+              'Manage location sharing',
+              Icons.location_on,
+              () {
+                manageLocationSharing();
               },
             ),
             SizedBox(
