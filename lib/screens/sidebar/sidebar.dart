@@ -7,6 +7,7 @@ import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/change_atsign_bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/dialog_box/manage_location_sharing.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
@@ -61,7 +62,8 @@ class _SideBarState extends State<SideBar> {
 
   // ignore: always_declare_return_types
   getLocationSharing() async {
-    var newState = await LocationProvider().getShareLocation();
+    var newState =
+        Provider.of<LocationProvider>(context, listen: false).isSharing;
     setState(() {
       state = newState;
     });
@@ -226,6 +228,16 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 25.toHeight,
             ),
+            iconText(
+              'Manage location sharing',
+              Icons.location_on,
+              () {
+                manageLocationSharing();
+              },
+            ),
+            SizedBox(
+              height: 25.toHeight,
+            ),
             Consumer<LocationProvider>(
               builder: (context, provider, child) {
                 return provider.locationSharingSwitchProcessing
@@ -258,7 +270,7 @@ class _SideBarState extends State<SideBar> {
                                 }
                               }
                               // ignore: unawaited_futures
-                              await provider.updateShareLocation(value);
+                              await provider.updateLocationSharingKey(value);
                               provider.changeLocationSharingMode(false);
                             },
                           ),
