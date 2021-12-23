@@ -62,7 +62,8 @@ class _SideBarState extends State<SideBar> {
 
   // ignore: always_declare_return_types
   getLocationSharing() async {
-    var newState = await LocationProvider().getShareLocation();
+    var newState =
+        Provider.of<LocationProvider>(context, listen: false).isSharing;
     setState(() {
       state = newState;
     });
@@ -269,7 +270,7 @@ class _SideBarState extends State<SideBar> {
                                 }
                               }
                               // ignore: unawaited_futures
-                              await provider.updateShareLocation(value);
+                              await provider.updateLocationSharingKey(value);
                               provider.changeLocationSharingMode(false);
                             },
                           ),
