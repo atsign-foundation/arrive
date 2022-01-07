@@ -84,112 +84,114 @@ class _EventLogState extends State<EventLog>
       ),
     );
   }
-}
 
-Widget getUpcomingEvents() {
-  var upcomingEvents = Provider.of<LocationProvider>(
-          NavService.navKey.currentContext,
-          listen: false)
-      .allEventNotifications;
-  return ListView.separated(
-    scrollDirection: Axis.vertical,
-    itemCount: upcomingEvents.length,
-    separatorBuilder: (context, index) {
-      return Divider();
-    },
-    itemBuilder: (context, index) {
-      return Slidable(
-        actionPane: SlidableDrawerActionPane(),
-        actionExtentRatio: 0.15,
-        secondaryActions: <Widget>[
-          IconSlideAction(
-            caption: 'Delete',
-            color: AllColors().RED,
-            icon: Icons.delete,
-            onTap: () {
-              deleteDialogConfirmation(EventAndLocationHybrid(
-                  NotificationModelType.EventModel,
-                  eventKeyModel: upcomingEvents[index]));
-            },
-          ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
-          child: InkWell(
-            onTap: () {
-              HomeEventService().onEventModelTap(
-                  upcomingEvents[index].eventNotificationModel,
-                  upcomingEvents[index].haveResponded);
-            },
-            child: DisplayTile(
-              title: upcomingEvents[index].eventNotificationModel.title,
-              atsignCreator:
-                  upcomingEvents[index].eventNotificationModel.atsignCreator,
-              subTitle:
-                  'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
-              invitedBy:
-                  'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+  Widget getUpcomingEvents() {
+    var upcomingEvents = Provider.of<LocationProvider>(
+            NavService.navKey.currentContext,
+            listen: false)
+        .allEventNotifications;
+    return ListView.separated(
+      scrollDirection: Axis.vertical,
+      itemCount: upcomingEvents.length,
+      separatorBuilder: (context, index) {
+        return Divider();
+      },
+      itemBuilder: (context, index) {
+        return Slidable(
+          actionPane: SlidableDrawerActionPane(),
+          actionExtentRatio: 0.15,
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: 'Delete',
+              color: AllColors().RED,
+              icon: Icons.delete,
+              onTap: () async {
+                await deleteDialogConfirmation(EventAndLocationHybrid(
+                    NotificationModelType.EventModel,
+                    eventKeyModel: upcomingEvents[index]));
+                setState(() {});
+              },
+            ),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
+            child: InkWell(
+              onTap: () {
+                HomeEventService().onEventModelTap(
+                    upcomingEvents[index].eventNotificationModel,
+                    upcomingEvents[index].haveResponded);
+              },
+              child: DisplayTile(
+                title: upcomingEvents[index].eventNotificationModel.title,
+                atsignCreator:
+                    upcomingEvents[index].eventNotificationModel.atsignCreator,
+                subTitle:
+                    'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
+                invitedBy:
+                    'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
-Widget getPastEvents() {
-  var pastEvents = EventKeyStreamService()
-      .allPastEventNotifications
-      .map((e) => e.eventNotificationModel)
-      .toList();
-  return ListView.separated(
-    scrollDirection: Axis.vertical,
-    itemCount: pastEvents.length,
-    separatorBuilder: (context, index) {
-      return Divider();
-    },
-    itemBuilder: (context, index) {
-      return Slidable(
-        actionPane: SlidableDrawerActionPane(),
-        actionExtentRatio: 0.15,
-        secondaryActions: <Widget>[
-          IconSlideAction(
-            caption: 'Delete',
-            color: AllColors().RED,
-            icon: Icons.delete,
-            onTap: () {
-              deleteDialogConfirmation(EventAndLocationHybrid(
-                  NotificationModelType.EventModel,
-                  eventKeyModel: EventKeyLocationModel(
-                      eventNotificationModel: pastEvents[index])));
-            },
-          ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
-          child: InkWell(
-            onTap: () {
-              bottomSheet(
-                context,
-                EventsCollapsedContent(
-                  pastEvents[index],
-                  key: UniqueKey(),
-                  isStatic: true,
-                ),
-                300,
-                onSheetCLosed: () {},
-              );
-            },
-            child: DisplayTile(
-              title: pastEvents[index].title,
-              atsignCreator: pastEvents[index].atsignCreator,
-              subTitle:
-                  'Event on ${dateToString(pastEvents[index].event.date)}',
-              invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+  Widget getPastEvents() {
+    var pastEvents = EventKeyStreamService()
+        .allPastEventNotifications
+        .map((e) => e.eventNotificationModel)
+        .toList();
+    return ListView.separated(
+      scrollDirection: Axis.vertical,
+      itemCount: pastEvents.length,
+      separatorBuilder: (context, index) {
+        return Divider();
+      },
+      itemBuilder: (context, index) {
+        return Slidable(
+          actionPane: SlidableDrawerActionPane(),
+          actionExtentRatio: 0.15,
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: 'Delete',
+              color: AllColors().RED,
+              icon: Icons.delete,
+              onTap: () async {
+                await deleteDialogConfirmation(EventAndLocationHybrid(
+                    NotificationModelType.EventModel,
+                    eventKeyModel: EventKeyLocationModel(
+                        eventNotificationModel: pastEvents[index])));
+                setState(() {});
+              },
+            ),
+          ],
+          child: Padding(
+            padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
+            child: InkWell(
+              onTap: () {
+                bottomSheet(
+                  context,
+                  EventsCollapsedContent(
+                    pastEvents[index],
+                    key: UniqueKey(),
+                    isStatic: true,
+                  ),
+                  300,
+                  onSheetCLosed: () {},
+                );
+              },
+              child: DisplayTile(
+                title: pastEvents[index].title,
+                atsignCreator: pastEvents[index].atsignCreator,
+                subTitle:
+                    'Event on ${dateToString(pastEvents[index].event.date)}',
+                invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
+  }
 }
