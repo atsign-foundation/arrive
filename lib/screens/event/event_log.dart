@@ -1,16 +1,20 @@
 import 'package:at_events_flutter/common_components/bottom_sheet.dart';
+import 'package:at_events_flutter/models/event_key_location_model.dart';
 import 'package:at_events_flutter/models/event_notification.dart';
 import 'package:at_events_flutter/screens/map_screen/events_collapsed_content.dart';
 import 'package:at_events_flutter/services/event_key_stream_service.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
+import 'package:atsign_location_app/common_components/dialog_box/delete_dialog_confirmation.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
+import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 class EventLog extends StatefulWidget {
@@ -94,22 +98,38 @@ Widget getUpcomingEvents() {
       return Divider();
     },
     itemBuilder: (context, index) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
-        child: InkWell(
-          onTap: () {
-            HomeEventService().onEventModelTap(
-                upcomingEvents[index].eventNotificationModel,
-                upcomingEvents[index].haveResponded);
-          },
-          child: DisplayTile(
-            title: upcomingEvents[index].eventNotificationModel.title,
-            atsignCreator:
-                upcomingEvents[index].eventNotificationModel.atsignCreator,
-            subTitle:
-                'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
-            invitedBy:
-                'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+      return Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.15,
+        secondaryActions: <Widget>[
+          IconSlideAction(
+            caption: 'Delete',
+            color: AllColors().RED,
+            icon: Icons.delete,
+            onTap: () {
+              deleteDialogConfirmation(EventAndLocationHybrid(
+                  NotificationModelType.EventModel,
+                  eventKeyModel: upcomingEvents[index]));
+            },
+          ),
+        ],
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
+          child: InkWell(
+            onTap: () {
+              HomeEventService().onEventModelTap(
+                  upcomingEvents[index].eventNotificationModel,
+                  upcomingEvents[index].haveResponded);
+            },
+            child: DisplayTile(
+              title: upcomingEvents[index].eventNotificationModel.title,
+              atsignCreator:
+                  upcomingEvents[index].eventNotificationModel.atsignCreator,
+              subTitle:
+                  'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
+              invitedBy:
+                  'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+            ),
           ),
         ),
       );
@@ -129,26 +149,44 @@ Widget getPastEvents() {
       return Divider();
     },
     itemBuilder: (context, index) {
-      return Padding(
-        padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
-        child: InkWell(
-          onTap: () {
-            bottomSheet(
-              context,
-              EventsCollapsedContent(
-                pastEvents[index],
-                key: UniqueKey(),
-                static: true,
-              ),
-              300,
-              onSheetCLosed: () {},
-            );
-          },
-          child: DisplayTile(
-            title: pastEvents[index].title,
-            atsignCreator: pastEvents[index].atsignCreator,
-            subTitle: 'Event on ${dateToString(pastEvents[index].event.date)}',
-            invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+      return Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.15,
+        secondaryActions: <Widget>[
+          IconSlideAction(
+            caption: 'Delete',
+            color: AllColors().RED,
+            icon: Icons.delete,
+            onTap: () {
+              deleteDialogConfirmation(EventAndLocationHybrid(
+                  NotificationModelType.EventModel,
+                  eventKeyModel: EventKeyLocationModel(
+                      eventNotificationModel: pastEvents[index])));
+            },
+          ),
+        ],
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
+          child: InkWell(
+            onTap: () {
+              bottomSheet(
+                context,
+                EventsCollapsedContent(
+                  pastEvents[index],
+                  key: UniqueKey(),
+                  isStatic: true,
+                ),
+                300,
+                onSheetCLosed: () {},
+              );
+            },
+            child: DisplayTile(
+              title: pastEvents[index].title,
+              atsignCreator: pastEvents[index].atsignCreator,
+              subTitle:
+                  'Event on ${dateToString(pastEvents[index].event.date)}',
+              invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+            ),
           ),
         ),
       );
