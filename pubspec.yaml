@@ -30,48 +30,17 @@ dependencies:
   pedantic: ^1.11.0
 
 
-  at_client_mobile: ^3.0.3
-  at_client: ^3.0.4
-  at_contact: ^3.0.1
-  at_commons: ^3.0.0
-  at_lookup: ^3.0.3
-  at_contacts_group_flutter: ^3.0.2
-  at_contacts_flutter: ^3.0.1
-  at_onboarding_flutter: ^3.0.4
-  at_location_flutter: ^3.0.1
-  at_events_flutter: ^3.0.1
+  at_client_mobile: ^3.1.4
+  at_client: ^3.0.8
+  at_contact: ^3.0.3
+  at_commons: ^3.0.2
+  at_lookup: ^3.0.5
+  at_contacts_group_flutter: ^3.1.2
+  at_contacts_flutter: ^3.1.2
+  at_onboarding_flutter: ^3.1.2
+  at_location_flutter: ^3.1.0
+  at_events_flutter: ^3.1.0
 
-dependency_overrides:
-  at_contacts_group_flutter:
-    git:
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_contacts_group_flutter
-      ref: feat/group-contact-image-mismatch
-  at_client_mobile: 
-    git:
-      url: https://github.com/atsign-foundation/at_client_sdk.git
-      path: at_client_mobile
-  at_client: 
-    git:
-      url: https://github.com/atsign-foundation/at_client_sdk.git
-      path: at_client
-  at_onboarding_flutter:
-    git:
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_onboarding_flutter  
-      ref: feat/onboarding-with-trunk-changes
-  #Please remove this after at_backupkey_flutter have version newer thạn 3.0.0
-  at_backupkey_flutter: ^3.0.1
-  at_location_flutter:
-    git:
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_location_flutter
-      ref: feat/location-event-documentation
-  at_events_flutter:
-    git:
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_events_flutter
-      ref: feat/location-event-documentation
       
 dev_dependencies:
   flutter_test:
