@@ -138,7 +138,7 @@ Widget getPastEvents() {
               EventsCollapsedContent(
                 pastEvents[index],
                 key: UniqueKey(),
-                static: true,
+                isStatic: true,
               ),
               300,
               onSheetCLosed: () {},

@@ -64,6 +64,7 @@ class LocationProvider extends BaseModel {
       // getAtValue: LocationNotificationListener().getAtValue
       showDialogBox: true,
       streamAlternative: updateLocation,
+      isEventInUse: true, // not tested
     );
 
     await initialiseEventService(
