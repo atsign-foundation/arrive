@@ -11,6 +11,6 @@ class TextStrings {
       'Please select atleast one @sign to reset';
   static const String resetWarningText =
       'Warning: This action cannot be undone';
-  static const String appName = '@arrive';
+  static const String appName = '@rrive';
   static const String copyRight = '© 2021 The @ Company';
 }

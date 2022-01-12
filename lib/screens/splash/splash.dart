@@ -150,10 +150,7 @@ class _SplashState extends State<Splash> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            flex: 4,
-                            child: SizedBox()
-                          ),
+                          Expanded(flex: 8, child: SizedBox()),
                           Expanded(
                             flex: 8,
                             child: Container(
@@ -198,12 +195,13 @@ class _SplashState extends State<Splash> {
                                       ),
                                     ])),
                           ),
-                          Expanded(flex: 2, child: SizedBox()),
+                          Expanded(flex: 1, child: SizedBox()),
                           Expanded(
-                            flex: 4,
-                            child:Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 25.toWidth),
-                              child: Opacity(
+                              flex: 4,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 25.toWidth),
+                                child: Opacity(
                                   opacity: authenticating ? 0.5 : 1,
                                   child: Column(
                                     children: [
@@ -218,7 +216,8 @@ class _SplashState extends State<Splash> {
                                                 atClientPreference:
                                                     BackendService.getInstance()
                                                         .atClientPreference,
-                                                domain: MixedConstants.ROOT_DOMAIN,
+                                                domain:
+                                                    MixedConstants.ROOT_DOMAIN,
                                                 appColor: Color.fromARGB(
                                                     255, 240, 94, 62),
                                                 onboard: onOnboardCompletes,
@@ -231,21 +230,23 @@ class _SplashState extends State<Splash> {
                                                     authenticating = false;
                                                   });
                                                 },
-                                                appAPIKey:
-                                                    MixedConstants.ONBOARD_API_KEY);
+                                                appAPIKey: MixedConstants
+                                                    .ONBOARD_API_KEY);
                                           },
                                           bgColor: AllColors().Black,
                                           child: authenticating
                                               ? Center(
                                                   child: Row(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment.center,
+                                                        MainAxisAlignment
+                                                            .center,
                                                     children: [
                                                       Text(
                                                         'Authenticating',
                                                         textScaleFactor: 1,
-                                                        style: CustomTextStyles()
-                                                            .white15,
+                                                        style:
+                                                            CustomTextStyles()
+                                                                .white15,
                                                       ),
                                                       TypingIndicator(
                                                         showIndicator: true,
@@ -256,7 +257,8 @@ class _SplashState extends State<Splash> {
                                               : Text(
                                                   'Explore',
                                                   textScaleFactor: 1,
-                                                  style: CustomTextStyles().white15,
+                                                  style: CustomTextStyles()
+                                                      .white15,
                                                 )),
                                       SizedBox(height: 15.toHeight),
                                       InkWell(
@@ -273,8 +275,7 @@ class _SplashState extends State<Splash> {
                                     ],
                                   ),
                                 ),
-                            )
-                          ),
+                              )),
                           Center(
                             child: Text(
                               TextStrings.appName,
@@ -295,30 +296,30 @@ class _SplashState extends State<Splash> {
                           ),
                         ],
                       ),
-                    )),    
-              authenticating
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Column(
+                    )),
+                authenticating
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.red)),
-                          SizedBox(
-                            height: 20,
+                          Center(
+                            child: Column(
+                              children: [
+                                CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.red)),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  'Logging in',
+                                  style: CustomTextStyles().white15,
+                                )
+                              ],
+                            ),
                           ),
-                          Text(
-                            'Logging in',
-                            style: CustomTextStyles().white15,
-                          )
                         ],
-                      ),
-                    ),
-                  ],
-                )
-              : SizedBox()
+                      )
+                    : SizedBox()
               ]));
   }
 
@@ -485,4 +486,3 @@ class _SplashState extends State<Splash> {
     );
   }
 }
-
