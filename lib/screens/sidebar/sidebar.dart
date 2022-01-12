@@ -5,9 +5,10 @@ import 'package:at_contact/at_contact.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:at_location_flutter/common_components/custom_toast.dart';
-import 'package:at_location_flutter/service/my_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/change_atsign_bottom_sheet.dart';
+import 'package:atsign_location_app/common_components/dialog_box/manage_location_sharing.dart';
+import 'package:atsign_location_app/common_components/loading_widget.dart';
 import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/contacts/contacts_bottomsheet.dart';
@@ -17,6 +18,7 @@ import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
@@ -60,7 +62,8 @@ class _SideBarState extends State<SideBar> {
 
   // ignore: always_declare_return_types
   getLocationSharing() async {
-    var newState = await LocationProvider().getShareLocation();
+    var newState =
+        Provider.of<LocationProvider>(context, listen: false).isSharing;
     setState(() {
       state = newState;
     });
@@ -225,33 +228,55 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 25.toHeight,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Location Sharing',
-                  style: CustomTextStyles().darkGrey16,
-                ),
-                Consumer<LocationProvider>(
-                  builder: (context, provider, child) {
-                    return Switch(
-                      value: provider.isSharing,
-                      onChanged: (value) async {
-                        if (value) {
-                          var latlng = await getMyLocation();
-                          if (latlng == null) {
-                            CustomToast().show(
-                                'Location permission not granted', context);
-                            return;
-                          }
-                        }
-                        // ignore: unawaited_futures
-                        provider.updateShareLocation(value);
-                      },
-                    );
-                  },
-                ),
-              ],
+            iconText(
+              'Manage location sharing',
+              Icons.location_on,
+              () {
+                manageLocationSharing();
+              },
+            ),
+            SizedBox(
+              height: 25.toHeight,
+            ),
+            Consumer<LocationProvider>(
+              builder: (context, provider, child) {
+                return provider.locationSharingSwitchProcessing
+                    ? LoadingDialog()
+                        .onlyText('Processing', fontSize: 16.toFont)
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Location Sharing',
+                            style: CustomTextStyles().darkGrey16,
+                          ),
+                          Switch(
+                            value: provider.isSharing,
+                            onChanged: (value) async {
+                              provider.changeLocationSharingMode(true);
+                              if (value) {
+                                var _res = await isLocationServiceEnabled();
+                                if (_res == null) {
+                                  provider.changeLocationSharingMode(false);
+                                  return;
+                                }
+
+                                if (_res == false) {
+                                  CustomToast().show(
+                                      'Location permission not granted',
+                                      context);
+                                  provider.changeLocationSharingMode(false);
+                                  return;
+                                }
+                              }
+                              // ignore: unawaited_futures
+                              await provider.updateLocationSharingKey(value);
+                              provider.changeLocationSharingMode(false);
+                            },
+                          ),
+                        ],
+                      );
+              },
             ),
             SizedBox(
               height: 14.toHeight,
@@ -416,5 +441,50 @@ class _SideBarState extends State<SideBar> {
         ],
       ),
     );
+  }
+
+  Future<bool> isLocationServiceEnabled() async {
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (!serviceEnabled) {
+        return false;
+      }
+
+      permission = await Geolocator.checkPermission();
+
+      if (permission == LocationPermission.deniedForever) {
+        return false;
+      }
+
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.deniedForever) {
+          return false;
+        }
+
+        if (permission == LocationPermission.denied) {
+          return false;
+        }
+      }
+
+      return true;
+    } catch (e) {
+      if (e is PermissionRequestInProgressException) {
+        CustomToast().show(
+            ' A request for location permissions is already running, please wait for it to complete before doing another request.',
+            context,
+            duration: 5,
+            isError: true);
+      } else {
+        CustomToast().show('Please, try again!', context, isError: true);
+      }
+
+      print('Error in isLocationServiceEnabled $e');
+      return null;
+    }
   }
 }

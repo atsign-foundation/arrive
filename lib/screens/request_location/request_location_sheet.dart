@@ -1,13 +1,13 @@
 import 'package:at_contact/at_contact.dart';
-import 'package:at_contacts_flutter/screens/contacts_screen.dart';
+import 'package:at_contacts_group_flutter/screens/group_contact_view/group_contact_view.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
 import 'package:at_location_flutter/common_components/custom_toast.dart';
+import 'package:at_location_flutter/service/request_location_service.dart';
 import 'package:atsign_location_app/common_components/custom_appbar.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/overlapping-contacts.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
-import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -18,7 +18,7 @@ class RequestLocationSheet extends StatefulWidget {
 }
 
 class _RequestLocationSheetState extends State<RequestLocationSheet> {
-  AtContact selectedContact;
+  List<AtContact> selectedContacts = [];
   bool isLoading;
   @override
   void initState() {
@@ -31,9 +31,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     return Container(
       height: 400,
       padding: EdgeInsets.all(25),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: ListView(
         children: [
           CustomAppBar(
             centerTitle: false,
@@ -55,34 +53,71 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ContactsScreen(
+                  builder: (context) => GroupContactView(
                     asSelectionScreen: true,
-                    asSingleSelectionScreen: true,
-                    context: context,
-                    selectedList: (selectedList) {
-                      if (selectedList.isNotEmpty) {
-                        setState(() {
-                          selectedContact = selectedList[0];
-                        });
-                      }
+                    showGroups: true,
+                    showContacts: true,
+                    selectedList: (s) {
+                      setState(() {
+                        if (s.isEmpty) {
+                          selectedContacts = [];
+                        } else {
+                          selectedContacts = [];
+                          s.forEach((_groupElement) {
+                            // for contacts
+                            if (_groupElement.contact != null) {
+                              var _containsContact = false;
+
+                              // to prevent one contact from getting added again
+                              selectedContacts.forEach((_contact) {
+                                if (_groupElement.contact.atSign ==
+                                    _contact.atSign) {
+                                  _containsContact = true;
+                                }
+                              });
+
+                              if (!_containsContact) {
+                                selectedContacts.add(_groupElement.contact);
+                              }
+                            } else if (_groupElement.group != null) {
+                              // for groups
+                              _groupElement.group.members.forEach((element) {
+                                var _containsContact = false;
+
+                                // to prevent one contact from getting added again
+                                selectedContacts.forEach((_contact) {
+                                  if (element.atSign == _contact.atSign) {
+                                    _containsContact = true;
+                                  }
+                                });
+
+                                if (!_containsContact) {
+                                  selectedContacts.add(element);
+                                }
+                              });
+                            }
+                          });
+                        }
+                      });
                     },
                   ),
                 ),
               );
             },
           ),
-          (selectedContact != null)
+          (selectedContacts.isNotEmpty)
               ? (OverlappingContacts(
-                  [selectedContact],
+                  selectedContacts,
                   onRemove: (_index) {
                     setState(() {
-                      selectedContact = null;
+                      selectedContacts.removeAt(_index);
                     });
                   },
-                  isMultipleUser: false,
                 ))
               : SizedBox(),
-          Expanded(child: SizedBox()),
+          SizedBox(
+            height: 100,
+          ),
           Center(
             child: isLoading
                 ? CircularProgressIndicator()
@@ -106,7 +141,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
 
   // ignore: always_declare_return_types
   onRequestTap() async {
-    if (selectedContact == null) {
+    if (selectedContacts == null) {
       CustomToast().show('Select a contact', context, isError: true);
       return;
     }
@@ -114,8 +149,14 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
       isLoading = true;
     });
 
-    var result = await sendRequestLocationNotification(selectedContact.atSign);
-
+    var result;
+    if (selectedContacts.length > 1) {
+      await RequestLocationService()
+          .sendRequestLocationToGroup(selectedContacts);
+    } else {
+      result =
+          await sendRequestLocationNotification(selectedContacts[0].atSign);
+    }
     if (result == null) {
       setState(() {
         isLoading = false;
@@ -131,8 +172,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong ${result.toString()}', context,
-          isError: true);
+      CustomToast().show('Something went wrong', context, isError: true);
       setState(() {
         isLoading = false;
       });

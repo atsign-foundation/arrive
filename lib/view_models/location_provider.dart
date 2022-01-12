@@ -1,11 +1,13 @@
 import 'package:at_client_mobile/at_client_mobile.dart';
+import 'package:at_commons/at_commons.dart';
 import 'package:at_events_flutter/models/event_key_location_model.dart';
 import 'package:at_events_flutter/services/at_event_notification_listener.dart';
-import 'package:at_events_flutter/services/event_location_share.dart';
+import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:at_location_flutter/service/at_location_notification_listener.dart';
 import 'package:atsign_location_app/common_components/dialog_box/location_prompt_dialog.dart';
 import 'package:atsign_location_app/data_services/hive/hive_db.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/view_models/base_model.dart';
 import 'package:at_location_flutter/at_location_flutter.dart';
@@ -20,7 +22,11 @@ class LocationProvider extends BaseModel {
   List<KeyLocationModel> allLocationNotifications = [];
   List<EventKeyLocationModel> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
-  bool isSharing = false, isGettingLoadedFirstTime = true;
+  String locationSharingKey =
+      'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign().replaceAll('@', '')}';
+  bool isSharing = false,
+      isGettingLoadedFirstTime = true,
+      locationSharingSwitchProcessing = false;
   // ignore: non_constant_identifier_names
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
 
@@ -29,6 +35,9 @@ class LocationProvider extends BaseModel {
     allLocationNotifications = [];
     allEventNotifications = [];
     isGettingLoadedFirstTime = true;
+    locationSharingSwitchProcessing = false;
+    locationSharingKey =
+        'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign().replaceAll('@', '')}';
 
     AtLocationNotificationListener().resetMonitor();
     AtEventNotificationListener().resetMonitor();
@@ -55,6 +64,7 @@ class LocationProvider extends BaseModel {
       // getAtValue: LocationNotificationListener().getAtValue
       showDialogBox: true,
       streamAlternative: updateLocation,
+      isEventInUse: true, // not tested
     );
 
     await initialiseEventService(
@@ -139,6 +149,11 @@ class LocationProvider extends BaseModel {
     setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
+  void changeLocationSharingMode(bool _mode) {
+    locationSharingSwitchProcessing = _mode;
+    notifyListeners();
+  }
+
   Future<void> initialiseLocationSharing() async {
     isSharing = await getShareLocation();
     SendLocationNotification().setMasterSwitchState(isSharing);
@@ -146,37 +161,58 @@ class LocationProvider extends BaseModel {
     notifyListeners();
   }
 
-  Future<void> updateShareLocation(bool value) async {
-    await _hiveDataProvider.insertData(
-      'Sharing',
-      {
-        'isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}':
-            value.toString()
-      },
-    );
+  Future<bool> getShareLocation() async {
+    var allLocationSharingKey =
+        await AtClientManager.getInstance().atClient.getAtKeys(
+              regex: locationSharingKey,
+            );
 
-    isSharing = value;
+    var alreadyExists = allLocationSharingKey.isNotEmpty;
 
-    SendLocationNotification().setMasterSwitchState(value);
-    // EventLocationShare().setMasterSwitchState(value);
+    var atKey = AtKey()
+      ..metadata = Metadata()
+      ..metadata.ttr = -1
+      ..metadata.ccd = true
+      ..key = locationSharingKey;
+    var value =
+        await AtClientManager.getInstance().atClient.get(atKey).catchError(
+            // ignore: invalid_return_type_for_catch_error
+            (e) async {
+      print('error in get getShareLocation $e');
 
-    notifyListeners();
+      /// create
+      /// if key already exists, then make false for safer side
+      /// else make it true, as a default value
+      await updateLocationSharingKey(!alreadyExists);
+    });
+
+    return (value.value == 'true') ? true : false;
   }
 
-  Future<bool> getShareLocation() async {
-    var data = await _hiveDataProvider.readData('Sharing');
+  Future<bool> updateLocationSharingKey(bool value) async {
+    try {
+      var atKey = AtKey()
+        ..metadata = Metadata()
+        ..metadata.ttr = -1
+        ..metadata.ccd = true
+        ..key = locationSharingKey;
 
-    if ((data['isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
-            null) ||
-        (data['isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
-            'null')) {
-      await updateShareLocation(true);
+      var result = await AtClientManager.getInstance()
+          .atClient
+          .put(atKey, value.toString());
+
+      if (result == true) {
+        isSharing = value;
+        SendLocationNotification().setMasterSwitchState(value);
+      }
+
+      notifyListeners();
+
+      return result;
+    } catch (e) {
+      CustomToast().show('Error in switching location sharing $e ',
+          NavService.navKey.currentContext);
+      return false;
     }
-
-    return (data[
-                'isSharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()}'] ==
-            'true')
-        ? true
-        : false;
   }
 }

@@ -3,11 +3,14 @@ import 'dart:async';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
+import 'package:at_events_flutter/services/event_key_stream_service.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart';
+import 'package:at_location_flutter/service/key_stream_service.dart';
 import 'package:at_location_flutter/service/my_location.dart';
 import 'package:at_location_flutter/show_location.dart';
+import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
 import 'package:atsign_location_app/common_components/display_tile.dart';
@@ -25,6 +28,7 @@ import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -380,79 +384,101 @@ class _HomeScreenState extends State<HomeScreen> {
         children: allHybridNotifications.map((hybridElement) {
           return Column(
             children: [
-              InkWell(
-                onTap: () {
-                  if (hybridElement.type == NotificationModelType.EventModel) {
-                    HomeEventService().onEventModelTap(
-                        hybridElement.eventKeyModel.eventNotificationModel,
-                        hybridElement.eventKeyModel.haveResponded);
-                  } else {
-                    HomeScreenService().onLocationModelTap(
-                        hybridElement
-                            .locationKeyModel.locationNotificationModel,
-                        hybridElement.locationKeyModel.haveResponded);
-                  }
-                },
-                child: DisplayTile(
-                  atsignCreator:
-                      hybridElement.type == NotificationModelType.EventModel
-                          ? hybridElement.eventKeyModel.eventNotificationModel
-                              .atsignCreator
-                          : (hybridElement
-                                      .locationKeyModel
-                                      .locationNotificationModel
-                                      .atsignCreator ==
-                                  AtClientManager.getInstance()
-                                      .atClient
-                                      .getCurrentAtSign()
-                              ? hybridElement.locationKeyModel
-                                  .locationNotificationModel.receiver
-                              : hybridElement.locationKeyModel
-                                  .locationNotificationModel.atsignCreator),
-                  number: hybridElement.type == NotificationModelType.EventModel
-                      ? hybridElement.eventKeyModel.eventNotificationModel.group
-                          .members.length
-                      : null,
-                  title: hybridElement.type == NotificationModelType.EventModel
-                      ? 'Event - ' +
-                          hybridElement
-                              .eventKeyModel.eventNotificationModel.title
-                      : getTitle(hybridElement
-                          .locationKeyModel.locationNotificationModel),
-                  subTitle: hybridElement.type ==
-                          NotificationModelType.EventModel
-                      ? HomeEventService().getSubTitle(
-                          hybridElement.eventKeyModel.eventNotificationModel)
-                      : getSubTitle(hybridElement
-                          .locationKeyModel.locationNotificationModel),
-                  semiTitle:
-                      hybridElement.type == NotificationModelType.EventModel
-                          ? HomeEventService().getSemiTitle(
-                              hybridElement
-                                  .eventKeyModel.eventNotificationModel,
-                              hybridElement.eventKeyModel.haveResponded)
-                          : getSemiTitle(
-                              hybridElement
-                                  .locationKeyModel.locationNotificationModel,
-                              hybridElement.locationKeyModel.haveResponded),
-                  showRetry:
-                      hybridElement.type == NotificationModelType.EventModel
-                          ? HomeEventService()
-                              .calculateShowRetry(hybridElement.eventKeyModel)
-                          : calculateShowRetry(hybridElement.locationKeyModel),
-                  onRetryTapped: () {
+              Slidable(
+                actionPane: SlidableDrawerActionPane(),
+                actionExtentRatio: 0.15,
+                secondaryActions: <Widget>[
+                  IconSlideAction(
+                    caption: 'Delete',
+                    color: AllColors().RED,
+                    icon: Icons.delete,
+                    onTap: () {
+                      _deleteDialogConfirmation(hybridElement);
+                    },
+                  ),
+                ],
+                child: InkWell(
+                  onTap: () {
                     if (hybridElement.type ==
                         NotificationModelType.EventModel) {
                       HomeEventService().onEventModelTap(
                           hybridElement.eventKeyModel.eventNotificationModel,
-                          false);
+                          hybridElement.eventKeyModel.haveResponded);
                     } else {
                       HomeScreenService().onLocationModelTap(
                           hybridElement
                               .locationKeyModel.locationNotificationModel,
-                          false);
+                          hybridElement.locationKeyModel.haveResponded);
                     }
                   },
+                  child: DisplayTile(
+                    key: Key(hybridElement.type ==
+                            NotificationModelType.EventModel
+                        ? hybridElement.eventKeyModel.eventNotificationModel.key
+                        : hybridElement
+                            .locationKeyModel.locationNotificationModel.key),
+                    atsignCreator:
+                        hybridElement.type == NotificationModelType.EventModel
+                            ? hybridElement.eventKeyModel.eventNotificationModel
+                                .atsignCreator
+                            : (hybridElement
+                                        .locationKeyModel
+                                        .locationNotificationModel
+                                        .atsignCreator ==
+                                    AtClientManager.getInstance()
+                                        .atClient
+                                        .getCurrentAtSign()
+                                ? hybridElement.locationKeyModel
+                                    .locationNotificationModel.receiver
+                                : hybridElement.locationKeyModel
+                                    .locationNotificationModel.atsignCreator),
+                    number:
+                        hybridElement.type == NotificationModelType.EventModel
+                            ? hybridElement.eventKeyModel.eventNotificationModel
+                                .group.members.length
+                            : null,
+                    title:
+                        hybridElement.type == NotificationModelType.EventModel
+                            ? 'Event - ' +
+                                hybridElement
+                                    .eventKeyModel.eventNotificationModel.title
+                            : getTitle(hybridElement
+                                .locationKeyModel.locationNotificationModel),
+                    subTitle: hybridElement.type ==
+                            NotificationModelType.EventModel
+                        ? HomeEventService().getSubTitle(
+                            hybridElement.eventKeyModel.eventNotificationModel)
+                        : getSubTitle(hybridElement
+                            .locationKeyModel.locationNotificationModel),
+                    semiTitle:
+                        hybridElement.type == NotificationModelType.EventModel
+                            ? HomeEventService().getSemiTitle(
+                                hybridElement
+                                    .eventKeyModel.eventNotificationModel,
+                                hybridElement.eventKeyModel.haveResponded)
+                            : getSemiTitle(
+                                hybridElement
+                                    .locationKeyModel.locationNotificationModel,
+                                hybridElement.locationKeyModel.haveResponded),
+                    showRetry: hybridElement.type ==
+                            NotificationModelType.EventModel
+                        ? HomeEventService()
+                            .calculateShowRetry(hybridElement.eventKeyModel)
+                        : calculateShowRetry(hybridElement.locationKeyModel),
+                    onRetryTapped: () {
+                      if (hybridElement.type ==
+                          NotificationModelType.EventModel) {
+                        HomeEventService().onEventModelTap(
+                            hybridElement.eventKeyModel.eventNotificationModel,
+                            false);
+                      } else {
+                        HomeScreenService().onLocationModelTap(
+                            hybridElement
+                                .locationKeyModel.locationNotificationModel,
+                            false);
+                      }
+                    },
+                  ),
                 ),
               ),
               Divider()
@@ -484,5 +510,124 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _deleteDialogConfirmation(
+      EventAndLocationHybrid hybridElement) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (_context, _setDialogState) {
+          var _dialogLoading = false;
+
+          return AlertDialog(
+            contentPadding: EdgeInsets.fromLTRB(15, 30, 15, 20),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Are you sure you want to delete ${eventAndLocationHybridDetails(hybridElement)}?',
+                    style: CustomTextStyles().grey16,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 30),
+                  _dialogLoading
+                      ? CircularProgressIndicator()
+                      : CustomButton(
+                          onTap: () async {
+                            _setDialogState(() {
+                              _dialogLoading = true;
+                            });
+
+                            if (hybridElement.type ==
+                                NotificationModelType.EventModel) {
+                              await EventKeyStreamService().deleteData(
+                                  hybridElement
+                                      .eventKeyModel.eventNotificationModel);
+                            } else {
+                              await KeyStreamService().deleteData(hybridElement
+                                  .locationKeyModel.locationNotificationModel);
+                            }
+
+                            _setDialogState(() {
+                              _dialogLoading = false;
+                            });
+                            Navigator.of(context).pop();
+                          },
+                          bgColor: Theme.of(context).primaryColor,
+                          width: 164.toWidth,
+                          height: 48.toHeight,
+                          child: Text(
+                            'Yes',
+                            style: TextStyle(
+                                fontSize: 15.toFont,
+                                color:
+                                    Theme.of(context).scaffoldBackgroundColor),
+                          ),
+                        ),
+                  SizedBox(height: 5),
+                  _dialogLoading
+                      ? SizedBox()
+                      : CustomButton(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          bgColor: Theme.of(context).scaffoldBackgroundColor,
+                          width: 140.toWidth,
+                          height: 36.toHeight,
+                          child: Text(
+                            'No! Cancel this',
+                            style: TextStyle(
+                                fontSize: 14.toFont,
+                                color: Theme.of(context).primaryColor),
+                          ),
+                        ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  String eventAndLocationHybridDetails(EventAndLocationHybrid hybridElement) {
+    if (hybridElement.type == NotificationModelType.EventModel) {
+      return hybridElement.eventKeyModel.eventNotificationModel.title;
+    }
+
+    var _type = hybridElement.locationKeyModel.locationNotificationModel.key
+            .contains('sharelocation')
+        ? 'share location'
+        : 'request location';
+
+    String _mode;
+
+    if (hybridElement.locationKeyModel.locationNotificationModel.key
+        .contains('sharelocation')) {
+      if (hybridElement
+              .locationKeyModel.locationNotificationModel.atsignCreator ==
+          AtClientManager.getInstance().atClient.getCurrentAtSign()) {
+        _mode =
+            'sent to ${hybridElement.locationKeyModel.locationNotificationModel.receiver}';
+      } else {
+        _mode =
+            'received from ${hybridElement.locationKeyModel.locationNotificationModel.atsignCreator}';
+      }
+    } else {
+      if (hybridElement
+              .locationKeyModel.locationNotificationModel.atsignCreator !=
+          AtClientManager.getInstance().atClient.getCurrentAtSign()) {
+        _mode =
+            'sent to ${hybridElement.locationKeyModel.locationNotificationModel.atsignCreator}';
+      } else {
+        _mode =
+            'received from ${hybridElement.locationKeyModel.locationNotificationModel.receiver}';
+      }
+    }
+
+    return '$_type $_mode';
   }
 }

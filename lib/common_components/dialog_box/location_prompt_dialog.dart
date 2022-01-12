@@ -117,7 +117,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                                 } else {
                                   await Provider.of<LocationProvider>(context,
                                           listen: false)
-                                      .updateShareLocation(true);
+                                      .updateLocationSharingKey(true);
                                 }
 
                                 if (mounted) {
