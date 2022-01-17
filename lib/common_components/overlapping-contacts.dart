@@ -7,6 +7,7 @@ import 'package:at_events_flutter/at_events_flutter.dart';
 import 'package:at_events_flutter/common_components/contact_list_tile.dart';
 import 'package:at_location_flutter/common_components/contacts_initial.dart';
 import 'package:at_location_flutter/common_components/custom_circle_avatar.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
@@ -107,8 +108,8 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                       widget.selectedList.length - 1 == 0
                                           ? ''
                                           : widget.selectedList.length - 1 == 1
-                                              ? ' and ${widget.selectedList.length - 1} other'
-                                              : ' and ${widget.selectedList.length - 1} others',
+                                              ? '${widget.selectedList.length - 1}'+ TextStrings.other
+                                              : TextStrings.and +'${widget.selectedList.length - 1}'+ TextStrings.others,
                                       style: TextStyle(fontSize: 12.toFont),
                                       overflow: TextOverflow.ellipsis,
                                     ),

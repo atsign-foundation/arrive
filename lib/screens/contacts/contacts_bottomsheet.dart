@@ -4,6 +4,7 @@ import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.
 import 'package:atsign_location_app/common_components/tasks.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:atsign_location_app/common_components/text_tile_repeater.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 
 class ContactsBottomSheet extends StatefulWidget {
@@ -34,7 +35,7 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
               children: [
                 Expanded(
                   child: Tasks(
-                      task: 'Request Location',
+                      task: TextStrings.requestLocation,
                       icon: Icons.sync,
                       angle: (-3.14 / 2),
                       onTap: onRequestLocation),
@@ -48,12 +49,12 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
                             context,
                             TextTileRepeater(
                               title:
-                                  'How long do you want to share your location for ?',
+                                  TextStrings.shareLocationDurationDescription,
                               options: [
-                                '30 mins',
-                                '2 hours',
-                                '24 hours',
-                                'Until turned off'
+                                TextStrings.k30mins,
+                                TextStrings.k2hours,
+                                TextStrings.k24hours,
+                                TextStrings.untilTurnedOff
                               ],
                               onChanged: (value) async {
                                 minutes = (value == '30 mins'
@@ -91,13 +92,13 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
     }
 
     if (result == true) {
-      CustomToast().show('Location Request sent', context, isSuccess: true);
+      CustomToast().show(TextStrings.locationRequestSent, context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong ${result.toString()}', context,
+      CustomToast().show(TextStrings.somethingWentWrong +'${result.toString()}', context,
           isError: true);
       setState(() {
         isLoading = false;
@@ -123,13 +124,13 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
 
     if (result == true) {
       CustomToast()
-          .show('Share Location Request sent', context, isSuccess: true);
+          .show(TextStrings.shareLocationRequestSent, context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong', context, isError: true);
+      CustomToast().show(TextStrings.somethingWentWrong, context, isError: true);
       setState(() {
         isLoading = false;
       });

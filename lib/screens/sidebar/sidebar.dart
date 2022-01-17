@@ -14,6 +14,7 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/contacts/contacts_bottomsheet.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
@@ -132,7 +133,7 @@ class _SideBarState extends State<SideBar> {
                               )
                             : SizedBox(),
                         Text(
-                          _currentAtsign ?? '@sign',
+                          _currentAtsign ?? TextStrings.atSign,
                           style: CustomTextStyles().darkGrey14,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -143,13 +144,13 @@ class _SideBarState extends State<SideBar> {
                 ],
               ),
             ),
-            iconText('Events', Icons.arrow_upward,
+            iconText(TextStrings.events, Icons.arrow_upward,
                 () => SetupRoutes.push(context, Routes.EVENT_LOG)),
             SizedBox(
               height: 25.toHeight,
             ),
             iconText(
-              'Contacts',
+              TextStrings.contacts,
               Icons.contacts_rounded,
               () async {
                 return SetupRoutes.push(context, Routes.CONTACT_SCREEN,
@@ -166,7 +167,7 @@ class _SideBarState extends State<SideBar> {
               height: 25.toHeight,
             ),
             iconText(
-              'Blocked Contacts',
+              TextStrings.blockedContacts,
               Icons.not_interested,
               () async {
                 return SetupRoutes.push(
@@ -179,7 +180,7 @@ class _SideBarState extends State<SideBar> {
               height: 25.toHeight,
             ),
             iconText(
-              'Groups',
+              TextStrings.groups,
               Icons.group,
               () async {
                 return SetupRoutes.push(context, Routes.GROUP_LIST, arguments: {
@@ -191,7 +192,7 @@ class _SideBarState extends State<SideBar> {
               height: 25.toHeight,
             ),
             iconText(
-              'Backup your keys',
+              TextStrings.backupYourKeys,
               Icons.file_copy,
               () async {
                 BackupKeyWidget(
@@ -204,13 +205,13 @@ class _SideBarState extends State<SideBar> {
             SizedBox(
               height: 25.toHeight,
             ),
-            iconText('FAQ', Icons.question_answer,
+            iconText(TextStrings.faq, Icons.question_answer,
                 () => SetupRoutes.push(context, Routes.FAQS)),
             SizedBox(
               height: 25.toHeight,
             ),
             iconText(
-                'Terms and Conditions',
+                TextStrings.termsAndCondition,
                 Icons.text_format_outlined,
                 () =>
                     SetupRoutes.push(context, Routes.TERMS_CONDITIONS_SCREEN)),
@@ -218,7 +219,7 @@ class _SideBarState extends State<SideBar> {
               height: 25.toHeight,
             ),
             iconText(
-              'Delete @sign',
+              TextStrings.deleteAtSign,
               Icons.delete,
               () async {
                 _deleteAtSign(_currentAtsign);
@@ -229,7 +230,7 @@ class _SideBarState extends State<SideBar> {
               height: 25.toHeight,
             ),
             iconText(
-              'Manage location sharing',
+              TextStrings.manageLocationSharing,
               Icons.location_on,
               () {
                 manageLocationSharing();
@@ -242,12 +243,12 @@ class _SideBarState extends State<SideBar> {
               builder: (context, provider, child) {
                 return provider.locationSharingSwitchProcessing
                     ? LoadingDialog()
-                        .onlyText('Processing', fontSize: 16.toFont)
+                        .onlyText(TextStrings.processing, fontSize: 16.toFont)
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Location Sharing',
+                            TextStrings.locationSharing,
                             style: CustomTextStyles().darkGrey16,
                           ),
                           Switch(
@@ -263,7 +264,7 @@ class _SideBarState extends State<SideBar> {
 
                                 if (_res == false) {
                                   CustomToast().show(
-                                      'Location permission not granted',
+                                      TextStrings.locationPermissionNotGranted,
                                       context);
                                   provider.changeLocationSharingMode(false);
                                   return;
@@ -283,11 +284,11 @@ class _SideBarState extends State<SideBar> {
             ),
             Flexible(
                 child: Text(
-              'When you turn this on, everyone you have given access to can see  your location.',
+              TextStrings.locationAccessDescription,
               style: CustomTextStyles().darkGrey12,
             )),
             Expanded(child: Container(height: 0)),
-            iconText('Switch @sign', Icons.logout, () async {
+            iconText(TextStrings.switchAtsign, Icons.logout, () async {
               var currentAtsign = _currentAtsign;
               var atSignList = await KeyChainManager.getInstance()
                   .getAtSignListFromKeychain();
@@ -302,7 +303,7 @@ class _SideBarState extends State<SideBar> {
             }),
             Expanded(child: Container(height: 0)),
             Text(
-              'App Version ${_packageInfo.version} (${_packageInfo.buildNumber})',
+              TextStrings.appVersion +'${_packageInfo.version} (${_packageInfo.buildNumber})',
               style: CustomTextStyles().darkGrey13,
             ),
           ],
@@ -321,7 +322,7 @@ class _SideBarState extends State<SideBar> {
             scrollable: true,
             title: Center(
               child: Text(
-                'Delete @sign',
+                TextStrings.deleteAtSign,
                 style: TextStyle(
                     color: Colors.black,
                     letterSpacing: 0.1,
@@ -333,7 +334,7 @@ class _SideBarState extends State<SideBar> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Are you sure you want to delete all data associated with',
+                  TextStrings.areYouSureYouWantToDeleteAllAssociatedData,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     letterSpacing: 0.1,
@@ -350,7 +351,7 @@ class _SideBarState extends State<SideBar> {
                         fontWeight: FontWeight.bold)),
                 SizedBox(height: 20),
                 Text(
-                  'Type the @sign above to proceed',
+                  TextStrings.typeTheAtsignAboveToProceed,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey[700],
@@ -382,7 +383,7 @@ class _SideBarState extends State<SideBar> {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  "Caution: this action can't be undone",
+                  TextStrings.cautionTheActionCannotBeUndone,
                   style: TextStyle(
                     fontSize: 13.toFont,
                     letterSpacing: 0.1,
@@ -394,7 +395,7 @@ class _SideBarState extends State<SideBar> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextButton(
-                        child: Text('DELETE',
+                        child: Text(TextStrings.delete,
                             style: CustomTextStyles().primaryBold14),
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
@@ -406,7 +407,7 @@ class _SideBarState extends State<SideBar> {
                         }),
                     Spacer(),
                     TextButton(
-                        child: Text('Cancel',
+                        child: Text(TextStrings.cancel,
                             style: CustomTextStyles().primaryBold14),
                         onPressed: () {
                           Navigator.pop(context);
@@ -475,12 +476,12 @@ class _SideBarState extends State<SideBar> {
     } catch (e) {
       if (e is PermissionRequestInProgressException) {
         CustomToast().show(
-            ' A request for location permissions is already running, please wait for it to complete before doing another request.',
+            TextStrings.locationPermissionAlreadyRunning,
             context,
             duration: 5,
             isError: true);
       } else {
-        CustomToast().show('Please, try again!', context, isError: true);
+        CustomToast().show(TextStrings.pleaseTryAgain, context, isError: true);
       }
 
       print('Error in isLocationServiceEnabled $e');

@@ -169,14 +169,14 @@ class _SplashState extends State<Splash> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              'Stay connected!',
+                                              TextStrings.stayConnected,
                                               textScaleFactor: 1,
                                               style: CustomTextStyles()
                                                   .blackPlayfairDisplay38,
                                             ),
                                             SizedBox(height: 5.toHeight),
                                             Text(
-                                              'Wherever',
+                                              TextStrings.whereEver,
                                               textScaleFactor: 1,
                                               style: CustomTextStyles()
                                                   .blackPlayfairDisplay38,
@@ -185,7 +185,7 @@ class _SplashState extends State<Splash> {
                                               height: 5.toHeight,
                                             ),
                                             Text(
-                                              'you go.',
+                                              TextStrings.youGo,
                                               textScaleFactor: 1,
                                               style: CustomTextStyles()
                                                   .blackPlayfairDisplay38,
@@ -242,7 +242,7 @@ class _SplashState extends State<Splash> {
                                                             .center,
                                                     children: [
                                                       Text(
-                                                        'Authenticating',
+                                                        TextStrings.authenticating,
                                                         textScaleFactor: 1,
                                                         style:
                                                             CustomTextStyles()
@@ -255,7 +255,7 @@ class _SplashState extends State<Splash> {
                                                   ),
                                                 )
                                               : Text(
-                                                  'Explore',
+                                                  TextStrings.explore,
                                                   textScaleFactor: 1,
                                                   style: CustomTextStyles()
                                                       .white15,
@@ -311,7 +311,7 @@ class _SplashState extends State<Splash> {
                                   height: 20,
                                 ),
                                 Text(
-                                  'Logging in',
+                                  TextStrings.loggingIn,
                                   style: CustomTextStyles().white15,
                                 )
                               ],
@@ -365,7 +365,7 @@ class _SplashState extends State<Splash> {
                               Navigator.pop(context);
                             },
                             child: Text(
-                              'Close',
+                              TextStrings.close,
                               style: TextStyle(
                                 fontSize: 15,
                                 // color: AtTheme.themecolor,
@@ -388,7 +388,7 @@ class _SplashState extends State<Splash> {
                               },
                               value: isSelectAll,
                               checkColor: Colors.white,
-                              title: Text('Select All',
+                              title: Text(TextStrings.selectAll,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                   )),
@@ -431,7 +431,7 @@ class _SplashState extends State<Splash> {
                                     _resetDevice(tempAtsignMap.keys.toList());
                                   }
                                 },
-                                child: Text('Remove',
+                                child: Text(TextStrings.remove,
                                     style: TextStyle(
                                       color: AllColors().FONT_PRIMARY,
                                       fontSize: 15,
@@ -442,7 +442,7 @@ class _SplashState extends State<Splash> {
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: Text('Cancel',
+                                  child: Text(TextStrings.cancel,
                                       style: TextStyle(
                                           fontSize: 15, color: Colors.black)))
                             ])
