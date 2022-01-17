@@ -1,16 +1,22 @@
-# atsign_location_app
+<img src="https://atsign.dev/assets/img/@dev.png?sanitize=true">
 
-A new Flutter project.
+### Now for a little internet optimism
 
-## Getting Started
+# @‎rrive README
 
-This project is a starting point for a Flutter application.
+@‎rrive makes peer-to-peer encrypted location sharing easy. 
 
-A few resources to get you started if this is your first Flutter project:
+## Who is this for?
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+We have open sourced @‎rrive so that you can see how apps on The @ Platform
+work. We also welcome issues and pull requests so that we can make @‎rrive
+better.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md) has detailed guidance on how to make a
+pull request.
+
+## Maintainers
+
+Created by @sarika01, @sachins-geekyants and @nitesh2599
