@@ -157,45 +157,6 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  // void deleteAllPreviousKeys() async {
-  // var atClient = BackendService.getInstance().atClientInstance;
-
-  // var keys = [
-  //   'locationnotify',
-  //   'sharelocation',
-  //   'sharelocationacknowledged',
-  //   'requestlocation',
-  //   'requestlocationacknowledged',
-  //   'deleterequestacklocation',
-  //   'createevent',
-  //   'eventacknowledged',
-  //   'updateeventlocation',
-  // ];
-
-  // for (var i = 0; i < keys.length; i++) {
-  //   var response = await atClient.getKeys(
-  //     regex: keys[i],
-  //   );
-  //   response.forEach((key) async {
-  //     if (!'@$key'.contains('cached')) {
-  //       // the keys i have created
-  //       var atKey = getAtKey(key);
-  //       var result = await atClient.delete(atKey,
-  //           isDedicated: MixedConstants.isDedicated);
-
-  //       if (result) {
-  //         if (MixedConstants.isDedicated) {
-  //           await SyncSecondary()
-  //               .callSyncSecondary(SyncOperation.syncSecondary);
-  //         }
-  //       }
-
-  //       print('$key is deleted ? $result');
-  //     }
-  //   });
-  // }
-  // }
-
   void shouldMoveMap() {
     if (myLatLng != null) {
       if (moveMap == null) {
@@ -333,6 +294,65 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  Widget header() {
+    return Container(
+      height: 85.toHeight,
+      width: SizeConfig().screenWidth * 0.95,
+      margin:
+          EdgeInsets.symmetric(horizontal: 10.toWidth, vertical: 10.toHeight),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: AllColors().DARK_GREY,
+            blurRadius: 10.0,
+            spreadRadius: 1.0,
+            offset: Offset(0.0, 0.0),
+          )
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Tasks(
+              task: 'Create Event',
+              icon: Icons.event,
+              onTap: () {
+                bottomSheet(
+                    context,
+                    CreateEvent(
+                      AtClientManager.getInstance(),
+                    ),
+                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
+                  _controller.animateTo(0);
+                });
+              }),
+          Tasks(
+              task: 'Request Location',
+              icon: Icons.sync,
+              angle: (-3.14 / 2),
+              onTap: () async {
+                bottomSheet(context, RequestLocationSheet(), 500.toHeight,
+                    onSheetCLosed: () {
+                  _controller.animateTo(1);
+                });
+              }),
+          Tasks(
+              task: 'Share Location',
+              icon: Icons.person_add,
+              onTap: () {
+                bottomSheet(context, ShareLocationSheet(), 600.toHeight,
+                    onSheetCLosed: () {
+                  _controller.animateTo(1);
+                });
+              })
+        ],
+      ),
+    );
+  }
+
   Widget renderEventsAndLocation(
       List<EventAndLocationHybrid> eventNotifications,
       List<EventAndLocationHybrid> locationNotifications,
@@ -430,158 +450,6 @@ class _HomeScreenState extends State<HomeScreen>
     } else {
       return emptyWidget('No Data Found!!');
     }
-  }
-
-  Widget collapsedContent(
-      bool isExpanded, ScrollController slidingScrollController, dynamic T) {
-    return Container(
-        height: !isExpanded ? 260.toHeight : 530.toHeight,
-        padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: AllColors().DARK_GREY,
-              blurRadius: 10.0,
-              spreadRadius: 1.0,
-              offset: Offset(0.0, 0.0),
-            )
-          ],
-        ),
-        child: T);
-  }
-
-  Widget header() {
-    return Container(
-      height: 85.toHeight,
-      width: SizeConfig().screenWidth * 0.95,
-      margin:
-          EdgeInsets.symmetric(horizontal: 10.toWidth, vertical: 10.toHeight),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: AllColors().DARK_GREY,
-            blurRadius: 10.0,
-            spreadRadius: 1.0,
-            offset: Offset(0.0, 0.0),
-          )
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Tasks(
-              task: 'Create Event',
-              icon: Icons.event,
-              onTap: () {
-                bottomSheet(
-                    context,
-                    CreateEvent(
-                      AtClientManager.getInstance(),
-                    ),
-                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
-                  _controller.animateTo(0);
-                });
-              }),
-          Tasks(
-              task: 'Request Location',
-              icon: Icons.sync,
-              angle: (-3.14 / 2),
-              onTap: () async {
-                bottomSheet(context, RequestLocationSheet(), 500.toHeight,
-                    onSheetCLosed: () {
-                  _controller.animateTo(1);
-                });
-              }),
-          Tasks(
-              task: 'Share Location',
-              icon: Icons.person_add,
-              onTap: () {
-                bottomSheet(context, ShareLocationSheet(), 600.toHeight,
-                    onSheetCLosed: () {
-                  _controller.animateTo(1);
-                });
-              })
-        ],
-      ),
-    );
-  }
-
-  bool shouldCurrentEventBeRendered(
-      EventNotificationModel eventNotificationModel) {
-    switch (_eventFilter) {
-      case EventFilters.None:
-        return true;
-
-      case EventFilters.Sent:
-        return compareAtSign(eventNotificationModel.atsignCreator,
-            AtClientManager.getInstance().atClient.getCurrentAtSign());
-
-      case EventFilters.Received:
-        return !compareAtSign(eventNotificationModel.atsignCreator,
-            AtClientManager.getInstance().atClient.getCurrentAtSign());
-    }
-  }
-
-  bool shouldCurrentLocationBeRendered(
-      LocationNotificationModel locationNotificationModel) {
-    switch (_locationFilter) {
-      case LocationFilters.None:
-        return true;
-
-      case LocationFilters.Pending:
-        {
-          if (locationNotificationModel.key.contains(
-              LocationPackageConstants.MixedConstants.SHARE_LOCATION)) {
-            return false;
-          } else {
-            if ((locationNotificationModel.isAccepted == false) &&
-                (locationNotificationModel.isExited == false)) {
-              return true;
-            }
-          }
-
-          return false;
-        }
-      case LocationFilters.Sent:
-        return locationNotificationModel.key.contains(
-                LocationPackageConstants.MixedConstants.SHARE_LOCATION)
-            ? compareAtSign(locationNotificationModel.atsignCreator,
-                AtClientManager.getInstance().atClient.getCurrentAtSign())
-            : compareAtSign(locationNotificationModel.receiver,
-                AtClientManager.getInstance().atClient.getCurrentAtSign());
-      case LocationFilters.Received:
-        return locationNotificationModel.key.contains(
-                LocationPackageConstants.MixedConstants.SHARE_LOCATION)
-            ? compareAtSign(locationNotificationModel.receiver,
-                AtClientManager.getInstance().atClient.getCurrentAtSign())
-            : compareAtSign(locationNotificationModel.atsignCreator,
-                AtClientManager.getInstance().atClient.getCurrentAtSign());
-    }
-  }
-
-  bool shouldCurrentHybridBeRendered(
-      EventAndLocationHybrid eventAndLocationHybrid) {
-    if (eventAndLocationHybrid.type == NotificationModelType.EventModel) {
-      var _shouldCurrentEventBeRendered = shouldCurrentEventBeRendered(
-          eventAndLocationHybrid.eventKeyModel.eventNotificationModel);
-      if (_shouldCurrentEventBeRendered) {
-        eventsRenderedWithFilter++;
-      }
-      return _shouldCurrentEventBeRendered;
-    }
-
-    var _shouldCurrentLocationBeRendered = shouldCurrentLocationBeRendered(
-        eventAndLocationHybrid.locationKeyModel.locationNotificationModel);
-    if (_shouldCurrentLocationBeRendered) {
-      locationsRenderedWithFilter++;
-    }
-    return _shouldCurrentLocationBeRendered;
   }
 
   /// We will filter data while rendering it, using [shouldCurrentHybridBeRendered]
@@ -716,6 +584,78 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
+  bool shouldCurrentHybridBeRendered(
+      EventAndLocationHybrid eventAndLocationHybrid) {
+    if (eventAndLocationHybrid.type == NotificationModelType.EventModel) {
+      var _shouldCurrentEventBeRendered = shouldCurrentEventBeRendered(
+          eventAndLocationHybrid.eventKeyModel.eventNotificationModel);
+      if (_shouldCurrentEventBeRendered) {
+        eventsRenderedWithFilter++;
+      }
+      return _shouldCurrentEventBeRendered;
+    }
+
+    var _shouldCurrentLocationBeRendered = shouldCurrentLocationBeRendered(
+        eventAndLocationHybrid.locationKeyModel.locationNotificationModel);
+    if (_shouldCurrentLocationBeRendered) {
+      locationsRenderedWithFilter++;
+    }
+    return _shouldCurrentLocationBeRendered;
+  }
+
+  bool shouldCurrentEventBeRendered(
+      EventNotificationModel eventNotificationModel) {
+    switch (_eventFilter) {
+      case EventFilters.None:
+        return true;
+
+      case EventFilters.Sent:
+        return compareAtSign(eventNotificationModel.atsignCreator,
+            AtClientManager.getInstance().atClient.getCurrentAtSign());
+
+      case EventFilters.Received:
+        return !compareAtSign(eventNotificationModel.atsignCreator,
+            AtClientManager.getInstance().atClient.getCurrentAtSign());
+    }
+  }
+
+  bool shouldCurrentLocationBeRendered(
+      LocationNotificationModel locationNotificationModel) {
+    switch (_locationFilter) {
+      case LocationFilters.None:
+        return true;
+
+      case LocationFilters.Pending:
+        {
+          if (locationNotificationModel.key.contains(
+              LocationPackageConstants.MixedConstants.SHARE_LOCATION)) {
+            return false;
+          } else {
+            if ((locationNotificationModel.isAccepted == false) &&
+                (locationNotificationModel.isExited == false)) {
+              return true;
+            }
+          }
+
+          return false;
+        }
+      case LocationFilters.Sent:
+        return locationNotificationModel.key.contains(
+                LocationPackageConstants.MixedConstants.SHARE_LOCATION)
+            ? compareAtSign(locationNotificationModel.atsignCreator,
+                AtClientManager.getInstance().atClient.getCurrentAtSign())
+            : compareAtSign(locationNotificationModel.receiver,
+                AtClientManager.getInstance().atClient.getCurrentAtSign());
+      case LocationFilters.Received:
+        return locationNotificationModel.key.contains(
+                LocationPackageConstants.MixedConstants.SHARE_LOCATION)
+            ? compareAtSign(locationNotificationModel.receiver,
+                AtClientManager.getInstance().atClient.getCurrentAtSign())
+            : compareAtSign(locationNotificationModel.atsignCreator,
+                AtClientManager.getInstance().atClient.getCurrentAtSign());
+    }
+  }
+
   Widget emptyWidget(String title) {
     return Column(
       children: [
@@ -736,6 +676,27 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  Widget collapsedContent(
+      bool isExpanded, ScrollController slidingScrollController, dynamic T) {
+    return Container(
+        height: !isExpanded ? 260.toHeight : 530.toHeight,
+        padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+          color: Theme.of(context).scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: AllColors().DARK_GREY,
+              blurRadius: 10.0,
+              spreadRadius: 1.0,
+              offset: Offset(0.0, 0.0),
+            )
+          ],
+        ),
+        child: T);
+  }
+
   Future<void> _openFilterDialog(FilterScreenType _filterScreenType) {
     return showDialog<void>(
       context: NavService.navKey.currentContext,
@@ -746,7 +707,7 @@ class _HomeScreenState extends State<HomeScreen>
               title: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Filter',
+                  Text('Filter ${_filterScreenType.name}s',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 15)),
                   SizedBox(
