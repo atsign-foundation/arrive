@@ -62,6 +62,9 @@ class _HomeScreenState extends State<HomeScreen>
   Key _mapKey; // so that map doesnt refresh, when we dont want it to
   MapController mapController = MapController();
   TabController _controller;
+  int eventsRenderedWithFilter = 0,
+      locationsRenderedWithFilter =
+          0; // count used to show no data found after applying filter
 
   EventFilters _eventFilter = EventFilters.None;
   LocationFilters _locationFilter = LocationFilters.None;
@@ -395,7 +398,16 @@ class _HomeScreenState extends State<HomeScreen>
   Widget renderEvents(List<EventAndLocationHybrid> eventNotifications,
       ScrollController scrollController) {
     if (eventNotifications.isNotEmpty) {
-      return getListView(eventNotifications, scrollController);
+      var _list = getListView(
+          eventNotifications, scrollController, FilterScreenType.Event);
+
+      /// after rendering events, we will have [eventsRenderedWithFilter] count
+      if ((_eventFilter != EventFilters.None) &&
+          (eventsRenderedWithFilter == 0)) {
+        return emptyWidget('No ${_eventFilter.name} Event data found');
+      }
+
+      return _list;
     } else {
       return emptyWidget('No Data Found!!');
     }
@@ -404,7 +416,17 @@ class _HomeScreenState extends State<HomeScreen>
   Widget renderLocations(List<EventAndLocationHybrid> locationNotifications,
       ScrollController scrollController) {
     if (locationNotifications.isNotEmpty) {
-      return getListView(locationNotifications, scrollController);
+      var _list = getListView(
+          locationNotifications, scrollController, FilterScreenType.Location);
+
+      /// after rendering locations, we will have [locationsRenderedWithFilter] count
+
+      if ((_locationFilter != LocationFilters.None) &&
+          (locationsRenderedWithFilter == 0)) {
+        return emptyWidget('No ${_locationFilter.name} Location data found');
+      }
+
+      return _list;
     } else {
       return emptyWidget('No Data Found!!');
     }
@@ -494,21 +516,15 @@ class _HomeScreenState extends State<HomeScreen>
       EventNotificationModel eventNotificationModel) {
     switch (_eventFilter) {
       case EventFilters.None:
-        {
-          return true;
-        }
+        return true;
 
       case EventFilters.Sent:
-        {
-          return compareAtSign(eventNotificationModel.atsignCreator,
-              AtClientManager.getInstance().atClient.getCurrentAtSign());
-        }
+        return compareAtSign(eventNotificationModel.atsignCreator,
+            AtClientManager.getInstance().atClient.getCurrentAtSign());
 
       case EventFilters.Received:
-        {
-          return !compareAtSign(eventNotificationModel.atsignCreator,
-              AtClientManager.getInstance().atClient.getCurrentAtSign());
-        }
+        return !compareAtSign(eventNotificationModel.atsignCreator,
+            AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
   }
 
@@ -516,9 +532,8 @@ class _HomeScreenState extends State<HomeScreen>
       LocationNotificationModel locationNotificationModel) {
     switch (_locationFilter) {
       case LocationFilters.None:
-        {
-          return true;
-        }
+        return true;
+
       case LocationFilters.Pending:
         {
           if (locationNotificationModel.key.contains(
@@ -553,16 +568,34 @@ class _HomeScreenState extends State<HomeScreen>
   bool shouldCurrentHybridBeRendered(
       EventAndLocationHybrid eventAndLocationHybrid) {
     if (eventAndLocationHybrid.type == NotificationModelType.EventModel) {
-      return shouldCurrentEventBeRendered(
+      var _shouldCurrentEventBeRendered = shouldCurrentEventBeRendered(
           eventAndLocationHybrid.eventKeyModel.eventNotificationModel);
+      if (_shouldCurrentEventBeRendered) {
+        eventsRenderedWithFilter++;
+      }
+      return _shouldCurrentEventBeRendered;
     }
 
-    return shouldCurrentLocationBeRendered(
+    var _shouldCurrentLocationBeRendered = shouldCurrentLocationBeRendered(
         eventAndLocationHybrid.locationKeyModel.locationNotificationModel);
+    if (_shouldCurrentLocationBeRendered) {
+      locationsRenderedWithFilter++;
+    }
+    return _shouldCurrentLocationBeRendered;
   }
 
-  Widget getListView(List<EventAndLocationHybrid> allHybridNotifications,
-      ScrollController slidingScrollController) {
+  /// We will filter data while rendering it, using [shouldCurrentHybridBeRendered]
+  /// and use [eventsRenderedWithFilter]/[locationsRenderedWithFilter] to keep count of elements rendered
+  Widget getListView(
+      List<EventAndLocationHybrid> allHybridNotifications,
+      ScrollController slidingScrollController,
+      FilterScreenType filterScreenType) {
+    if (filterScreenType == FilterScreenType.Event) {
+      eventsRenderedWithFilter = 0;
+    } else {
+      locationsRenderedWithFilter = 0;
+    }
+
     try {
       return ListView(
         children: allHybridNotifications.map((hybridElement) {
