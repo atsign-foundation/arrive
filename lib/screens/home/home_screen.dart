@@ -753,6 +753,8 @@ class _HomeScreenState extends State<HomeScreen>
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
+                          Provider.of<LocationProvider>(context, listen: false)
+                              .animateToIndex = -1; // reset animateToIndex
                           setState(() {});
                         },
                         child: Text('Filter',
