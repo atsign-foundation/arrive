@@ -19,8 +19,8 @@ import 'package:at_location_flutter/service/send_location_notification.dart';
 class LocationProvider extends BaseModel {
   LocationProvider();
   List<EventAndLocationHybrid> allNotifications = [];
-  List<KeyLocationModel> allLocationNotifications = [];
-  List<EventKeyLocationModel> allEventNotifications = [];
+  List<EventAndLocationHybrid> allLocationNotifications = [];
+  List<EventAndLocationHybrid> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
   String locationSharingKey =
       'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign().replaceAll('@', '')}';
@@ -29,8 +29,10 @@ class LocationProvider extends BaseModel {
       locationSharingSwitchProcessing = false;
   // ignore: non_constant_identifier_names
   String GET_ALL_NOTIFICATIONS = 'get_all_notifications';
+  int animateToIndex = -1;
 
   void resetData() {
+    animateToIndex = -1;
     allNotifications = [];
     allLocationNotifications = [];
     allEventNotifications = [];
@@ -53,18 +55,15 @@ class LocationProvider extends BaseModel {
     allLocationNotifications = [];
     allEventNotifications = [];
 
-    // AtClientManager.getInstance().notificationService.stopAllSubscriptions();
-
     initialiseLocationSharing();
 
     await initializeLocationService(
       navKey,
       mapKey: MixedConstants.MAP_KEY,
       apiKey: MixedConstants.API_KEY,
-      // getAtValue: LocationNotificationListener().getAtValue
       showDialogBox: true,
       streamAlternative: updateLocation,
-      isEventInUse: true, // not tested
+      isEventInUse: true,
     );
 
     await initialiseEventService(
@@ -82,70 +81,35 @@ class LocationProvider extends BaseModel {
         isRequestLocationData: false,
       );
     });
-    // EventLocationShare().setLocationPrompt(() async {
-    //   await locationPromptDialog(
-    //     isShareLocationData: false,
-    //     isRequestLocationData: false,
-    //   );
-    // });
-
-    // setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   // ignore: always_declare_return_types
   updateLocation(List<KeyLocationModel> list) {
-    print('location package updateLocation');
+    if (allLocationNotifications.length < list.length) {
+      animateToIndex = 1; // Locations is index 1 in home screen
+    } else {
+      animateToIndex = -1; // don't animate
+    }
 
-    allLocationNotifications = list;
-    updateAllNotification(locationsList: allLocationNotifications);
+    allLocationNotifications = list
+        .map((e) => EventAndLocationHybrid(NotificationModelType.LocationModel,
+            locationKeyModel: e))
+        .toList();
+    setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   // ignore: always_declare_return_types
   updateEvents(List<EventKeyLocationModel> list) {
-    print('events package updateEvents');
-
-    allEventNotifications = list;
-    updateAllNotification(eventsList: allEventNotifications);
-  }
-
-  // ignore: always_declare_return_types
-  updateAllNotification(
-      {List<KeyLocationModel> locationsList,
-      List<EventKeyLocationModel> eventsList}) async {
-    allNotifications = [];
-
-    if (locationsList != null) {
-      locationsList.forEach((element) {
-        var _obj = EventAndLocationHybrid(NotificationModelType.LocationModel,
-            locationKeyModel: element);
-
-        allNotifications.add(_obj);
-      });
+    if (allEventNotifications.length < list.length) {
+      animateToIndex = 0; // Events is index 0 in home screen
     } else {
-      allLocationNotifications.forEach((element) {
-        var _obj = EventAndLocationHybrid(NotificationModelType.LocationModel,
-            locationKeyModel: element);
-
-        allNotifications.add(_obj);
-      });
+      animateToIndex = -1; // don't animate
     }
 
-    if (eventsList != null) {
-      eventsList.forEach((element) {
-        var _obj = EventAndLocationHybrid(NotificationModelType.EventModel,
-            eventKeyModel: element);
-
-        allNotifications.add(_obj);
-      });
-    } else {
-      allEventNotifications.forEach((element) {
-        var _obj = EventAndLocationHybrid(NotificationModelType.EventModel,
-            eventKeyModel: element);
-
-        allNotifications.add(_obj);
-      });
-    }
-
+    allEventNotifications = list
+        .map((e) => EventAndLocationHybrid(NotificationModelType.EventModel,
+            eventKeyModel: e))
+        .toList();
     setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 

@@ -106,9 +106,7 @@ class _EventLogState extends State<EventLog>
               color: AllColors().RED,
               icon: Icons.delete,
               onTap: () async {
-                await deleteDialogConfirmation(EventAndLocationHybrid(
-                    NotificationModelType.EventModel,
-                    eventKeyModel: upcomingEvents[index]));
+                await deleteDialogConfirmation(upcomingEvents[index]);
                 setState(() {});
               },
             ),
@@ -118,17 +116,22 @@ class _EventLogState extends State<EventLog>
             child: InkWell(
               onTap: () {
                 HomeEventService().onEventModelTap(
-                    upcomingEvents[index].eventNotificationModel,
-                    upcomingEvents[index].haveResponded);
+                    upcomingEvents[index].eventKeyModel.eventNotificationModel,
+                    upcomingEvents[index].eventKeyModel.haveResponded);
               },
               child: DisplayTile(
-                title: upcomingEvents[index].eventNotificationModel.title,
-                atsignCreator:
-                    upcomingEvents[index].eventNotificationModel.atsignCreator,
+                title: upcomingEvents[index]
+                    .eventKeyModel
+                    .eventNotificationModel
+                    .title,
+                atsignCreator: upcomingEvents[index]
+                    .eventKeyModel
+                    .eventNotificationModel
+                    .atsignCreator,
                 subTitle:
-                    'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
+                    'Event on ${dateToString(upcomingEvents[index].eventKeyModel.eventNotificationModel.event.date)}',
                 invitedBy:
-                    'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+                    'Invited by ${upcomingEvents[index].eventKeyModel.eventNotificationModel.atsignCreator}',
               ),
             ),
           ),
