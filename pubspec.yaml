@@ -52,7 +52,7 @@ dependency_overrides:
       url: https://github.com/atsign-foundation/at_widgets.git
       path: at_events_flutter
       ref: feat/event-bug-fixes
-      
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -71,6 +71,7 @@ flutter:
     - assets/images/splash_bg.png
     - assets/images/empty_group.png
     - assets/images/group_photo.png
+    - assets/images/filter_alt_off.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

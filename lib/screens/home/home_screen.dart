@@ -69,6 +69,9 @@ class _HomeScreenState extends State<HomeScreen>
   EventFilters _eventFilter = EventFilters.None;
   LocationFilters _locationFilter = LocationFilters.None;
 
+  Function setFilterIconState,
+      setFloatingActionState; // to re-render this when tab bar's index change
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +83,18 @@ class _HomeScreenState extends State<HomeScreen>
     _getLocationStatus();
     // deleteAllPreviousKeys();
     // cleanKeychain();
+
+    _controller.addListener(() {
+      if (setFilterIconState != null) {
+        setFilterIconState(
+            () {}); // to re-render this when tab bar's index change
+      }
+
+      if (setFloatingActionState != null) {
+        setFloatingActionState(
+            () {}); // to re-render this when tab bar's index change
+      }
+    });
 
     locationProvider = context.read<LocationProvider>();
 
@@ -183,6 +198,31 @@ class _HomeScreenState extends State<HomeScreen>
       endDrawer: Container(
         width: 250.toWidth,
         child: SideBar(),
+      ),
+      floatingActionButton: StatefulBuilder(
+        builder: (_context, _setFloatingActionState) {
+          setFloatingActionState =
+              _setFloatingActionState; // to re-render this when tab bar's index change
+          return isFilterApplied()
+              ? InkWell(
+                  onTap: () {
+                    removeFilter();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(4.toHeight),
+                    child: Image.asset(
+                      AllImages().FILTER_ALT_OFF,
+                      height: 25.toFont,
+                      color: AllColors().ORANGE,
+                    ),
+                  ),
+                )
+              : SizedBox();
+        },
       ),
       body: SafeArea(
         child: Stack(
@@ -392,8 +432,18 @@ class _HomeScreenState extends State<HomeScreen>
                     ? FilterScreenType.Event
                     : FilterScreenType.Location);
               },
-              child:
-                  Icon(Icons.more_vert, size: 25.toFont, color: Colors.black),
+              child: StatefulBuilder(
+                builder: (_context, _setFilterIconState) {
+                  setFilterIconState =
+                      _setFilterIconState; // to re-render this when tab bar's index change
+
+                  return Icon(Icons.filter_alt,
+                      size: 25.toFont,
+                      color: isFilterApplied()
+                          ? AllColors().ORANGE
+                          : Colors.black);
+                },
+              ),
             )
           ],
         ),
@@ -654,6 +704,24 @@ class _HomeScreenState extends State<HomeScreen>
             : compareAtSign(locationNotificationModel.atsignCreator,
                 AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
+  }
+
+  void removeFilter() {
+    if (_controller.index == 0) {
+      _eventFilter = EventFilters.None;
+    } else {
+      _locationFilter = LocationFilters.None;
+    }
+
+    setState(() {});
+  }
+
+  bool isFilterApplied() {
+    if (_controller.index == 0) {
+      return _eventFilter != EventFilters.None;
+    }
+
+    return _locationFilter != LocationFilters.None;
   }
 
   Widget emptyWidget(String title) {
