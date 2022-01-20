@@ -8,6 +8,7 @@ import 'package:atsign_location_app/common_components/display_tile.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -35,8 +36,8 @@ class _EventLogState extends State<EventLog>
       appBar: CustomAppBar(
         centerTitle: true,
         padding: true,
-        title: 'Events',
-        action: PopButton(label: 'Close'),
+        title: TextStrings.events,
+        action: PopButton(label: TextStrings.close),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -55,13 +56,13 @@ class _EventLogState extends State<EventLog>
                     tabs: [
                       Tab(
                         child: Text(
-                          'Upcoming',
+                          TextStrings.upcoming,
                           style:
                               TextStyle(fontSize: 16.toFont, letterSpacing: 1),
                         ),
                       ),
                       Tab(
-                        child: Text('Past',
+                        child: Text(TextStrings.past,
                             style: TextStyle(
                                 fontSize: 16.toFont, letterSpacing: 1)),
                       )
@@ -107,9 +108,9 @@ Widget getUpcomingEvents() {
             atsignCreator:
                 upcomingEvents[index].eventNotificationModel.atsignCreator,
             subTitle:
-                'Event on ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
+                '${TextStrings.eventOn} ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
             invitedBy:
-                'Invited by ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+                '${TextStrings.invitedBy} ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
           ),
         ),
       );
@@ -147,8 +148,10 @@ Widget getPastEvents() {
           child: DisplayTile(
             title: pastEvents[index].title,
             atsignCreator: pastEvents[index].atsignCreator,
-            subTitle: 'Event on ${dateToString(pastEvents[index].event.date)}',
-            invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+            subTitle:
+                '${TextStrings.eventOn} ${dateToString(pastEvents[index].event.date)}',
+            invitedBy:
+                '${TextStrings.invitedBy} ${pastEvents[index].atsignCreator}',
           ),
         ),
       );

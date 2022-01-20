@@ -24,6 +24,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
@@ -264,7 +265,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           panelBuilder: (scrollController) => collapsedContent(
                               false,
                               scrollController,
-                              emptyWidget('Something went wrong!!')));
+                              emptyWidget(TextStrings.somethingWentWrongPleaseTryAgain)));
                     },
                     successBuilder: (provider) {
                       return SlidingUpPanel(
@@ -280,7 +281,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     scrollController));
                           } else {
                             return collapsedContent(false, scrollController,
-                                emptyWidget('No Data Found!!'));
+                                emptyWidget(TextStrings.noDataFound));
                           }
                         },
                       );
@@ -348,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Tasks(
-              task: 'Create Event',
+              task: TextStrings.createEvent,
               icon: Icons.event,
               onTap: () {
                 bottomSheet(
@@ -360,14 +361,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSheetCLosed: () {});
               }),
           Tasks(
-              task: 'Request Location',
+              task: TextStrings.requestLocation,
               icon: Icons.sync,
               angle: (-3.14 / 2),
               onTap: () async {
                 bottomSheet(context, RequestLocationSheet(), 500.toHeight);
               }),
           Tasks(
-              task: 'Share Location',
+              task: TextStrings.shareLocation,
               icon: Icons.person_add,
               onTap: () {
                 bottomSheet(context, ShareLocationSheet(), 600.toHeight);
@@ -389,7 +390,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 actionExtentRatio: 0.15,
                 secondaryActions: <Widget>[
                   IconSlideAction(
-                    caption: 'Delete',
+                    caption: TextStrings.delete,
                     color: AllColors().RED,
                     icon: Icons.delete,
                     onTap: () {
@@ -439,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : null,
                     title:
                         hybridElement.type == NotificationModelType.EventModel
-                            ? 'Event - ' +
+                            ? '${TextStrings.event }'+
                                 hybridElement
                                     .eventKeyModel.eventNotificationModel.title
                             : getTitle(hybridElement
@@ -487,8 +488,8 @@ class _HomeScreenState extends State<HomeScreen> {
         }).toList(),
       );
     } catch (e) {
-      print('Error in getListView $e');
-      return emptyWidget('Something went wrong!! ${e.toString()}');
+      print('${TextStrings.errorInGetListView} $e');
+      return emptyWidget('${TextStrings.somethingWentWrongPleaseTryAgain} ${e.toString()}');
     }
   }
 
@@ -528,7 +529,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Are you sure you want to delete ${eventAndLocationHybridDetails(hybridElement)}?',
+                    TextStrings.areYouSureYouWantToDelete+'${eventAndLocationHybridDetails(hybridElement)}?',
                     style: CustomTextStyles().grey16,
                     textAlign: TextAlign.center,
                   ),
@@ -560,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 164.toWidth,
                           height: 48.toHeight,
                           child: Text(
-                            'Yes',
+                            TextStrings.yes,
                             style: TextStyle(
                                 fontSize: 15.toFont,
                                 color:
@@ -578,7 +579,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 140.toWidth,
                           height: 36.toHeight,
                           child: Text(
-                            'No! Cancel this',
+                            TextStrings.noCancelThis,
                             style: TextStyle(
                                 fontSize: 14.toFont,
                                 color: Theme.of(context).primaryColor),
