@@ -1,3 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart' show dotenv;
+
 class MixedConstants {
   // static const String WEBSITE_URL = 'https://staging.atsign.wtf/';
   static const String WEBSITE_URL = 'https://atsign.com/';
@@ -16,10 +18,9 @@ class MixedConstants {
 
   static const int TIME_OUT = 60000;
 
-  static const String MAP_KEY = 'B3Wus46C2WZFhwZKQkEx';
-  static const String API_KEY = 'yRCeKfJDPQDTp11YI1db67J_fww80QP6R3Llckg-REw';
+  static String MAP_KEY = dotenv.get('MAP_KEY');
+  static String API_KEY = dotenv.get('API_KEY');
 
-  /// TODO: Remove -temp
   static const String appNamespace = 'rrive';
   static const String syncRegex =
       '(.$appNamespace|atconnections|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})';
@@ -29,4 +30,8 @@ class MixedConstants {
 
   // Onboarding API key - requires different key for production
   static String ONBOARD_API_KEY = '477b-876u-bcez-c42z-6a3d';
+
+  /// Load the environment variables from the .env file.
+  /// Directly calls load from the dotenv package.
+  static Future<void> load() => dotenv.load();
 }

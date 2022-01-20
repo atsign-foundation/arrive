@@ -41,6 +41,8 @@ dependencies:
   at_location_flutter: ^3.1.0
   at_events_flutter: ^3.1.0
 
+  flutter_dotenv: ^5.0.2
+
       
 dev_dependencies:
   flutter_test:
@@ -55,6 +57,7 @@ flutter:
   uses-material-design: true
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/images/person1.png
     - assets/images/person2.png
     - assets/images/splash_bg.png
