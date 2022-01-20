@@ -108,8 +108,8 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                       widget.selectedList.length - 1 == 0
                                           ? ''
                                           : widget.selectedList.length - 1 == 1
-                                              ? '${widget.selectedList.length - 1}'+ TextStrings.other
-                                              : TextStrings.and +'${widget.selectedList.length - 1}'+ TextStrings.others,
+                                              ? '${widget.selectedList.length - 1} '+ TextStrings.other
+                                              : TextStrings.and +' ${widget.selectedList.length - 1} '+ TextStrings.others,
                                       style: TextStyle(fontSize: 12.toFont),
                                       overflow: TextOverflow.ellipsis,
                                     ),
