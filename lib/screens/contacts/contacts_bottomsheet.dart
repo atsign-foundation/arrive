@@ -98,7 +98,7 @@ class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show(TextStrings.somethingWentWrong +'${result.toString()}', context,
+      CustomToast().show('${TextStrings.somethingWentWrong} ${result.toString()}', context,
           isError: true);
       setState(() {
         isLoading = false;

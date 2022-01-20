@@ -303,7 +303,7 @@ class _SideBarState extends State<SideBar> {
             }),
             Expanded(child: Container(height: 0)),
             Text(
-              TextStrings.appVersion +'${_packageInfo.version} (${_packageInfo.buildNumber})',
+              '${TextStrings.appVersion} ${_packageInfo.version} (${_packageInfo.buildNumber})',
               style: CustomTextStyles().darkGrey13,
             ),
           ],
@@ -476,10 +476,8 @@ class _SideBarState extends State<SideBar> {
     } catch (e) {
       if (e is PermissionRequestInProgressException) {
         CustomToast().show(
-            TextStrings.locationPermissionAlreadyRunning,
-            context,
-            duration: 5,
-            isError: true);
+            TextStrings.locationPermissionAlreadyRunning, context,
+            duration: 5, isError: true);
       } else {
         CustomToast().show(TextStrings.pleaseTryAgain, context, isError: true);
       }

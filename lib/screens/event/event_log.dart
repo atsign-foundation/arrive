@@ -108,9 +108,9 @@ Widget getUpcomingEvents() {
             atsignCreator:
                 upcomingEvents[index].eventNotificationModel.atsignCreator,
             subTitle:
-                TextStrings.eventOn +'${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
+                '${TextStrings.eventOn} ${dateToString(upcomingEvents[index].eventNotificationModel.event.date)}',
             invitedBy:
-                TextStrings.invitedBy +'${upcomingEvents[index].eventNotificationModel.atsignCreator}',
+                '${TextStrings.invitedBy} ${upcomingEvents[index].eventNotificationModel.atsignCreator}',
           ),
         ),
       );
@@ -148,8 +148,10 @@ Widget getPastEvents() {
           child: DisplayTile(
             title: pastEvents[index].title,
             atsignCreator: pastEvents[index].atsignCreator,
-            subTitle: TextStrings.eventOn +'${dateToString(pastEvents[index].event.date)}',
-            invitedBy: TextStrings.eventOn +'${pastEvents[index].atsignCreator}',
+            subTitle:
+                '${TextStrings.eventOn} ${dateToString(pastEvents[index].event.date)}',
+            invitedBy:
+                '${TextStrings.invitedBy} ${pastEvents[index].atsignCreator}',
           ),
         ),
       );

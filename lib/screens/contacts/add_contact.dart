@@ -39,7 +39,7 @@ class _AddContactState extends State<AddContact> {
           children: [
             Expanded(
               child: Text(
-                TextStrings.add +'${widget.atSignName}'+ TextStrings.toContacts,
+                '${TextStrings.add} ${widget.atSignName} ${TextStrings.toContacts}',
                 textAlign: TextAlign.center,
                 style: CustomTextStyles().black16,
               ),

@@ -440,7 +440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : null,
                     title:
                         hybridElement.type == NotificationModelType.EventModel
-                            ? TextStrings.event +
+                            ? '${TextStrings.event }'+
                                 hybridElement
                                     .eventKeyModel.eventNotificationModel.title
                             : getTitle(hybridElement
@@ -488,8 +488,8 @@ class _HomeScreenState extends State<HomeScreen> {
         }).toList(),
       );
     } catch (e) {
-      print(TextStrings.errorInGetListView +'$e');
-      return emptyWidget(TextStrings.somethingWentWrongPleaseTryAgain +'${e.toString()}');
+      print('${TextStrings.errorInGetListView} $e');
+      return emptyWidget('${TextStrings.somethingWentWrongPleaseTryAgain} ${e.toString()}');
     }
   }
 
