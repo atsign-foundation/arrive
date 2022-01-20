@@ -85,14 +85,16 @@ class _HomeScreenState extends State<HomeScreen>
     // cleanKeychain();
 
     _controller.addListener(() {
-      if (setFilterIconState != null) {
-        setFilterIconState(
-            () {}); // to re-render this when tab bar's index change
-      }
+      if (mounted) {
+        if (setFilterIconState != null) {
+          setFilterIconState(
+              () {}); // to re-render this when tab bar's index change
+        }
 
-      if (setFloatingActionState != null) {
-        setFloatingActionState(
-            () {}); // to re-render this when tab bar's index change
+        if (setFloatingActionState != null) {
+          setFloatingActionState(
+              () {}); // to re-render this when tab bar's index change
+        }
       }
     });
 
@@ -261,6 +263,7 @@ class _HomeScreenState extends State<HomeScreen>
                 : SizedBox(),
             contactsLoaded
                 ? ProviderHandler<LocationProvider>(
+                    key: UniqueKey(),
                     functionName: locationProvider.GET_ALL_NOTIFICATIONS,
                     showError: false,
                     load: (provider) => {},
@@ -295,7 +298,9 @@ class _HomeScreenState extends State<HomeScreen>
                         minHeight: 267.toHeight,
                         maxHeight: 530.toHeight,
                         panelBuilder: (scrollController) {
-                          if (provider.animateToIndex != -1) {
+                          print('builder called uppanel');
+                          if ((provider.animateToIndex != -1) && (mounted)) {
+                            // setFilterIconState will help to avoid position changing when tabbar is not built
                             _controller.animateTo(provider.animateToIndex);
                           }
 
@@ -405,6 +410,7 @@ class _HomeScreenState extends State<HomeScreen>
               child: Container(
                 height: 40,
                 child: TabBar(
+                  key: Key('Tabbar'),
                   indicatorColor: Theme.of(context).primaryColor,
                   indicatorWeight: 3.toHeight,
                   labelColor: Theme.of(context).primaryColor,
@@ -745,8 +751,10 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget collapsedContent(
-      bool isExpanded, ScrollController slidingScrollController, dynamic T) {
+      bool isExpanded, ScrollController slidingScrollController, dynamic T,
+      {Key key}) {
     return Container(
+        key: key,
         height: !isExpanded ? 260.toHeight : 530.toHeight,
         padding: EdgeInsets.fromLTRB(15.toWidth, 7.toHeight, 0, 0),
         decoration: BoxDecoration(
