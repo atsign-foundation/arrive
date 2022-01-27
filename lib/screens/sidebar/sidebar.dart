@@ -13,6 +13,7 @@ import 'package:atsign_location_app/routes/route_names.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:atsign_location_app/screens/contacts/contacts_bottomsheet.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
@@ -222,7 +223,7 @@ class _SideBarState extends State<SideBar> {
               TextStrings.deleteAtSign,
               Icons.delete,
               () async {
-                _deleteAtSign(_currentAtsign);
+                _showResetDialog();
                 setState(() {});
               },
             ),
@@ -312,111 +313,134 @@ class _SideBarState extends State<SideBar> {
     );
   }
 
-  // ignore: always_declare_return_types
-  _deleteAtSign(String atsign) async {
-    final _formKey = GlobalKey<FormState>();
+  _showResetDialog() async {
+    var isSelectAtsign = false;
+    var isSelectAll = false;
+    var atsignsList = await KeychainUtil.getAtsignList();
+    atsignsList ??= [];
+
+    var atsignMap = {};
+    for (var atsign in atsignsList) {
+      atsignMap[atsign] = false;
+    }
     await showDialog(
-        context: context,
+        barrierDismissible: true,
+        context: NavService.navKey.currentContext,
         builder: (BuildContext context) {
-          return AlertDialog(
-            scrollable: true,
-            title: Center(
-              child: Text(
-                TextStrings.deleteAtSign,
-                style: TextStyle(
-                    color: Colors.black,
-                    letterSpacing: 0.1,
-                    fontSize: 20.toFont,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  TextStrings.areYouSureYouWantToDeleteAllAssociatedData,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    letterSpacing: 0.1,
-                    color: Colors.grey[700],
-                    fontSize: 15.toFont,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text('$atsign',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 20.toFont,
-                        letterSpacing: 0.1,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(height: 20),
-                Text(
-                  TextStrings.typeTheAtsignAboveToProceed,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    letterSpacing: 0.1,
-                    fontSize: 12.toFont,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    textAlign: TextAlign.center,
-                    validator: (value) {
-                      if (value.toLowerCase().replaceAll(' ', '') != atsign) {
-                        return "The @sign doesn't match. Please retype.";
-                      } else {
-                        return null;
-                      }
-                    },
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AllColors().DARK_GREY)),
-                        filled: true,
-                        fillColor: Colors.white),
-                  ),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  TextStrings.cautionTheActionCannotBeUndone,
-                  style: TextStyle(
-                    fontSize: 13.toFont,
-                    letterSpacing: 0.1,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          return StatefulBuilder(builder: (context, stateSet) {
+            return AlertDialog(
+                title: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    TextButton(
-                        child: Text(TextStrings.delete,
-                            style: CustomTextStyles().primaryBold14),
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            await BackendService.getInstance()
-                                .deleteAtSignFromKeyChain(atsign);
-                            // await Navigator.pushNamedAndRemoveUntil(
-                            //     context, Routes.SPLASH, (route) => false);
-                          }
-                        }),
-                    Spacer(),
-                    TextButton(
-                        child: Text(TextStrings.cancel,
-                            style: CustomTextStyles().primaryBold14),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        })
+                    Text(TextStrings.resetDescription,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 15)),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divider(
+                      thickness: 0.8,
+                    )
                   ],
-                )
-              ],
-            ),
-          );
+                ),
+                content: atsignsList.isEmpty
+                    ? Column(mainAxisSize: MainAxisSize.min, children: [
+                        Text(TextStrings.noAtsignToReset,
+                            style: TextStyle(fontSize: 15)),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              TextStrings.close,
+                              style: TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        )
+                      ])
+                    : SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CheckboxListTile(
+                              onChanged: (value) {
+                                isSelectAll = value;
+                                atsignMap
+                                    .updateAll((key, value1) => value1 = value);
+                                stateSet(() {});
+                              },
+                              value: isSelectAll,
+                              checkColor: Colors.white,
+                              title: Text(TextStrings.selectAll,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                            ),
+                            for (var atsign in atsignsList)
+                              CheckboxListTile(
+                                onChanged: (value) {
+                                  atsignMap[atsign] = value;
+                                  stateSet(() {});
+                                },
+                                value: atsignMap[atsign],
+                                checkColor: Colors.white,
+                                title: Text('$atsign'),
+                              ),
+                            Divider(thickness: 0.8),
+                            if (isSelectAtsign)
+                              Text(TextStrings.resetErrorText,
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(TextStrings.resetWarningText,
+                                style: TextStyle(fontSize: 14)),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(children: [
+                              TextButton(
+                                onPressed: () async {
+                                  var tempAtsignMap = {};
+                                  tempAtsignMap.addAll(atsignMap);
+                                  tempAtsignMap.removeWhere(
+                                      (key, value) => value == false);
+                                  if (tempAtsignMap.keys.toList().isEmpty) {
+                                    isSelectAtsign = true;
+                                    stateSet(() {});
+                                  } else {
+                                    isSelectAtsign = false;
+                                    await BackendService.getInstance()
+                                        .resetDevice(
+                                            tempAtsignMap.keys.toList());
+                                    await BackendService.getInstance()
+                                        .onboardNextAtsign();
+                                  }
+                                },
+                                child: Text(TextStrings.remove,
+                                    style: TextStyle(
+                                      color: AllColors().FONT_PRIMARY,
+                                      fontSize: 15,
+                                    )),
+                              ),
+                              Spacer(),
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(TextStrings.cancel,
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.black)))
+                            ])
+                          ],
+                        ),
+                      ));
+          });
         });
   }
 

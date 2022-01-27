@@ -186,7 +186,7 @@ class LocationProvider extends BaseModel {
       await updateLocationSharingKey(!alreadyExists);
     });
 
-    return (value.value == 'true') ? true : false;
+    return (value != null && value.value == 'true') ? true : false;
   }
 
   Future<bool> updateLocationSharingKey(bool value) async {
