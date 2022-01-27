@@ -38,9 +38,8 @@ dependencies:
   at_contacts_group_flutter: ^3.1.2
   at_contacts_flutter: ^3.1.2
   at_onboarding_flutter: ^3.1.2
-  at_location_flutter: ^3.1.0
-  at_events_flutter: ^3.1.0
-
+  at_location_flutter: ^3.1.1
+  at_events_flutter: ^3.1.1
   flutter_dotenv: ^5.0.2
 
       
