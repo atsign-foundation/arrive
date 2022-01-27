@@ -115,7 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
         await _positionStream.cancel();
       }
 
-      _positionStream = Geolocator.getPositionStream(distanceFilter: 2)
+      _positionStream = Geolocator.getPositionStream(
+              locationSettings: LocationSettings(distanceFilter: 2))
           .listen((locationStream) async {
         if (mounted) {
           setState(() {
@@ -265,7 +266,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           panelBuilder: (scrollController) => collapsedContent(
                               false,
                               scrollController,
-                              emptyWidget(TextStrings.somethingWentWrongPleaseTryAgain)));
+                              emptyWidget(TextStrings
+                                  .somethingWentWrongPleaseTryAgain)));
                     },
                     successBuilder: (provider) {
                       return SlidingUpPanel(
@@ -440,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             : null,
                     title:
                         hybridElement.type == NotificationModelType.EventModel
-                            ? '${TextStrings.event }'+
+                            ? '${TextStrings.event}' +
                                 hybridElement
                                     .eventKeyModel.eventNotificationModel.title
                             : getTitle(hybridElement
@@ -489,7 +491,8 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } catch (e) {
       print('${TextStrings.errorInGetListView} $e');
-      return emptyWidget('${TextStrings.somethingWentWrongPleaseTryAgain} ${e.toString()}');
+      return emptyWidget(
+          '${TextStrings.somethingWentWrongPleaseTryAgain} ${e.toString()}');
     }
   }
 
@@ -529,7 +532,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    TextStrings.areYouSureYouWantToDelete+'${eventAndLocationHybridDetails(hybridElement)}?',
+                    TextStrings.areYouSureYouWantToDelete +
+                        '${eventAndLocationHybridDetails(hybridElement)}?',
                     style: CustomTextStyles().grey16,
                     textAlign: TextAlign.center,
                   ),
