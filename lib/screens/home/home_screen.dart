@@ -153,7 +153,8 @@ class _HomeScreenState extends State<HomeScreen>
         await _positionStream.cancel();
       }
 
-      _positionStream = Geolocator.getPositionStream(distanceFilter: 2)
+      _positionStream = Geolocator.getPositionStream(
+              locationSettings: LocationSettings(distanceFilter: 2))
           .listen((locationStream) async {
         if (mounted) {
           setState(() {
