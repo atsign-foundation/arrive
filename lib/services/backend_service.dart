@@ -127,8 +127,7 @@ class BackendService {
 
     if (atSignList != null) {
       atSignList.removeWhere((element) =>
-          element ==
-          AtClientManager.getInstance().atClient.getCurrentAtSign());
+          element == AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
 
     var atClientPrefernce;
@@ -199,6 +198,31 @@ class BackendService {
               AtClientManager.getInstance().atClient.getCurrentAtSign(),
               NavService.navKey);
       isSyncedDataFetched = true;
+    }
+  }
+
+  resetDevice(List checkedAtsigns) async {
+    Navigator.of(NavService.navKey.currentContext).pop();
+    await BackendService.getInstance()
+        .resetAtsigns(checkedAtsigns)
+        .then((value) async {
+      print('reset done');
+    }).catchError((e) {
+      print('error in reset: $e');
+    });
+  }
+
+  onboardNextAtsign() async {
+    var atSignList = await KeychainUtil.getAtsignList();
+    var atClient = AtClientManager.getInstance().atClient;
+    if (atSignList != null &&
+        atSignList.isNotEmpty &&
+        atClient.getCurrentAtSign() != atSignList.first) {
+      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
+          Routes.SPLASH, (Route<dynamic> route) => false);
+    } else if (atSignList == null || atSignList.isEmpty) {
+      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
+          Routes.SPLASH, (Route<dynamic> route) => false);
     }
   }
 }
