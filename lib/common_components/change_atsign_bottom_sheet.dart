@@ -94,6 +94,14 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           appColor: Color.fromARGB(255, 240, 94, 62),
                           rootEnvironment: RootEnvironment.Production,
                           onboard: (value, atsign) async {
+                            await AtClientManager.getInstance()
+                                .setCurrentAtSign(
+                                    atsign,
+                                    MixedConstants.appNamespace,
+                                    atClientPrefernce);
+                            BackendService.getInstance().syncService =
+                                AtClientManager.getInstance().syncService;
+
                             Provider.of<LocationProvider>(context,
                                     listen: false)
                                 .resetData();
@@ -170,6 +178,13 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       appColor: Color.fromARGB(255, 240, 94, 62),
                       rootEnvironment: RootEnvironment.Production,
                       onboard: (value, atsign) async {
+                        await AtClientManager.getInstance().setCurrentAtSign(
+                            atsign,
+                            MixedConstants.appNamespace,
+                            atClientPrefernce);
+                        BackendService.getInstance().syncService =
+                            AtClientManager.getInstance().syncService;
+
                         Provider.of<LocationProvider>(context, listen: false)
                             .resetData();
                         backendService.atClientServiceMap = value;

@@ -127,8 +127,7 @@ class BackendService {
 
     if (atSignList != null) {
       atSignList.removeWhere((element) =>
-          element ==
-          AtClientManager.getInstance().atClient.getCurrentAtSign());
+          element == AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
 
     var atClientPrefernce;
@@ -152,6 +151,13 @@ class BackendService {
           appColor: Color.fromARGB(255, 240, 94, 62),
           rootEnvironment: RootEnvironment.Production,
           onboard: (value, atsign) async {
+            await AtClientManager.getInstance().setCurrentAtSign(
+                atsign,
+                MixedConstants.appNamespace,
+                BackendService.getInstance().atClientPreference);
+            BackendService.getInstance().syncService =
+                AtClientManager.getInstance().syncService;
+
             Provider.of<LocationProvider>(NavService.navKey.currentContext,
                     listen: false)
                 .resetData();
