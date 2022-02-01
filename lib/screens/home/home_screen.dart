@@ -87,13 +87,21 @@ class _HomeScreenState extends State<HomeScreen>
     _controller.addListener(() {
       if (mounted) {
         if (setFilterIconState != null) {
-          setFilterIconState(
-              () {}); // to re-render this when tab bar's index change
+          try {
+            setFilterIconState(
+                () {}); // to re-render this when tab bar's index change
+          } catch (e) {
+            print('Error in setFilterIconState $e');
+          }
         }
 
         if (setFloatingActionState != null) {
-          setFloatingActionState(
-              () {}); // to re-render this when tab bar's index change
+          try {
+            setFloatingActionState(
+                () {}); // to re-render this when tab bar's index change
+          } catch (e) {
+            print('Error in setFloatingActionState $e');
+          }
         }
       }
     });
