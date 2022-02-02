@@ -376,14 +376,14 @@ class _HomeScreenState extends State<HomeScreen>
               task: TextStrings.createEvent,
               icon: Icons.event,
               onTap: () {
-                bottomSheet(
-                    context,
-                    CreateEvent(
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateEvent(
                       AtClientManager.getInstance(),
                     ),
-                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
-                  _controller.animateTo(0);
-                });
+                  ),
+                );
               }),
           Tasks(
               task: TextStrings.requestLocation,
