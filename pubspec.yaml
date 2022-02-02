@@ -42,6 +42,13 @@ dependencies:
   at_events_flutter: ^3.1.1
   flutter_dotenv: ^5.0.2
 
+dependency_overrides:
+  at_utils: 
+    git:
+      url: https://github.com/atsign-foundation/at_tools.git
+      path: at_utils
+      ref: git-386
+      
 dev_dependencies:
   flutter_test:
     sdk: flutter
