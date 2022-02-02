@@ -42,6 +42,12 @@ dependencies:
   at_events_flutter: ^3.1.1
   flutter_dotenv: ^5.0.2
 
+dependency_overrides:
+  at_utils: 
+    git:
+      url: https://github.com/atsign-foundation/at_tools.git
+      path: at_utils
+      ref: git-386
       
 dev_dependencies:
   flutter_test:
@@ -62,6 +68,7 @@ flutter:
     - assets/images/splash_bg.png
     - assets/images/empty_group.png
     - assets/images/group_photo.png
+    - assets/images/filter_alt_off.png
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

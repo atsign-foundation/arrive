@@ -58,6 +58,13 @@ class _SplashState extends State<Splash> {
             appColor: Color.fromARGB(255, 240, 94, 62),
             rootEnvironment: RootEnvironment.Production,
             onboard: (value, atsign) async {
+              await AtClientManager.getInstance().setCurrentAtSign(
+                  atsign,
+                  MixedConstants.appNamespace,
+                  BackendService.getInstance().atClientPreference);
+              BackendService.getInstance().syncService =
+                  AtClientManager.getInstance().syncService;
+
               Provider.of<LocationProvider>(context, listen: false).resetData();
 
               print('_initBackendService onboarded: $value , atsign:$atsign');
@@ -466,6 +473,13 @@ class _SplashState extends State<Splash> {
 
   // ignore: always_declare_return_types
   onOnboardCompletes(Map<String, AtClientService> value, String atsign) async {
+    await AtClientManager.getInstance().setCurrentAtSign(
+        atsign,
+        MixedConstants.appNamespace,
+        BackendService.getInstance().atClientPreference);
+    BackendService.getInstance().syncService =
+        AtClientManager.getInstance().syncService;
+
     setState(() {
       authenticating = true;
       isOnboarded = true;

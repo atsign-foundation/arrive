@@ -70,7 +70,7 @@ packages:
       name: at_commons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.0.3"
   at_contact:
     dependency: "direct main"
     description:
@@ -112,7 +112,7 @@ packages:
       name: at_lookup
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.5"
+    version: "3.0.6"
   at_onboarding_flutter:
     dependency: "direct main"
     description:
@@ -154,7 +154,7 @@ packages:
       name: at_utils
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.3"
+    version: "3.0.4"
   biometric_storage:
     dependency: transitive
     description:
