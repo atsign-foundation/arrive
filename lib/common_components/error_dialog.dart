@@ -1,6 +1,7 @@
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_popup_route.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -37,7 +38,7 @@ class ErrorDialogWidget extends StatelessWidget {
             children: <Widget>[
               SizedBox(height: 20.toHeight),
               Text(
-                'Some Error occured',
+                TextStrings.someErrorOccured,
                 style: CustomTextStyles().black18,
               ),
               SizedBox(height: 10.toHeight),
@@ -57,7 +58,7 @@ class ErrorDialogWidget extends StatelessWidget {
                         if (onButtonPress != null) onButtonPress();
                       },
                       child: Text(
-                        'OK',
+                        TextStrings.ok,
                         style: TextStyle(
                             color: Theme.of(context).scaffoldBackgroundColor),
                       ),
@@ -94,7 +95,7 @@ class ErrorDialog {
           CustomPopupRoutes(
               pageBuilder: (_, __, ___) => ErrorDialogWidget(
                     text: text.toString(),
-                    buttonText: (buttonText == null) ? 'ok' : buttonText,
+                    buttonText: (buttonText == null) ? TextStrings.ok : buttonText,
                     onButtonPress: onButtonPressed,
                     includeCancel: includeCancel,
                   ),

@@ -32,6 +32,7 @@ import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
@@ -299,7 +300,8 @@ class _HomeScreenState extends State<HomeScreen>
                           panelBuilder: (scrollController) => collapsedContent(
                               false,
                               scrollController,
-                              emptyWidget('Something went wrong!!')));
+                              emptyWidget(TextStrings
+                                  .somethingWentWrongPleaseTryAgain)));
                     },
                     successBuilder: (provider) {
                       return SlidingUpPanel(
@@ -324,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     scrollController));
                           } else {
                             return collapsedContent(false, scrollController,
-                                emptyWidget('No Data Found!!'));
+                                emptyWidget(TextStrings.noDataFound));
                           }
                         },
                       );
@@ -371,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen>
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Tasks(
-              task: 'Create Event',
+              task: TextStrings.createEvent,
               icon: Icons.event,
               onTap: () {
                 bottomSheet(
@@ -384,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen>
                 });
               }),
           Tasks(
-              task: 'Request Location',
+              task: TextStrings.requestLocation,
               icon: Icons.sync,
               angle: (-3.14 / 2),
               onTap: () async {
@@ -394,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen>
                 });
               }),
           Tasks(
-              task: 'Share Location',
+              task: TextStrings.shareLocation,
               icon: Icons.person_add,
               onTap: () {
                 bottomSheet(context, ShareLocationSheet(), 600.toHeight,
@@ -644,8 +646,9 @@ class _HomeScreenState extends State<HomeScreen>
         }).toList(),
       );
     } catch (e) {
-      print('Error in getListView $e');
-      return emptyWidget('Something went wrong!! ${e.toString()}');
+      print('${TextStrings.errorInGetListView} $e');
+      return emptyWidget(
+          '${TextStrings.somethingWentWrongPleaseTryAgain} ${e.toString()}');
     }
   }
 

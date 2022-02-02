@@ -10,6 +10,7 @@ import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/overlapping-contacts.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -39,19 +40,19 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
         children: [
           CustomAppBar(
             centerTitle: false,
-            title: 'Share Location',
-            action: PopButton(label: 'Cancel'),
+            title: TextStrings.shareLocation,
+            action: PopButton(label:TextStrings.cancel),
           ),
           SizedBox(
             height: 25,
           ),
-          Text('Share with', style: CustomTextStyles().greyLabel14),
+          Text(TextStrings.shareWith, style: CustomTextStyles().greyLabel14),
           SizedBox(height: 10),
           CustomInputField(
             width: SizeConfig().screenWidth * 0.95,
             height: 50.toFont,
             isReadOnly: true,
-            hintText: 'Search @sign from contacts',
+            hintText: TextStrings.searchAtsignFromContact,
             icon: Icons.contacts_rounded,
             onTap: () {
               Navigator.push(
@@ -121,7 +122,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               : SizedBox(),
           SizedBox(height: 25),
           Text(
-            'Duration',
+           TextStrings.duration,
             style: CustomTextStyles().greyLabel14,
           ),
           SizedBox(height: 10),
@@ -137,21 +138,21 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               elevation: 0,
               dropdownColor: AllColors().INPUT_GREY_BACKGROUND,
               value: selectedOption,
-              hint: Text('Select Duration',
+              hint: Text(TextStrings.selectDuration,
                   style: TextStyle(
                       color: AllColors().LIGHT_GREY_LABEL,
                       fontSize: 15.toFont)),
               style:
                   TextStyle(color: AllColors().DARK_GREY, fontSize: 13.toFont),
               items: [
-                'Select Duration',
-                '30 mins',
-                '2 hours',
-                '24 hours',
-                'Until turned off'
+                TextStrings.selectDuration,
+                TextStrings.k30mins,
+                TextStrings.k2hours,
+                TextStrings.k24hours,
+                TextStrings.untilTurnedOff
               ].map((String option) {
                 return DropdownMenuItem<String>(
-                  value: option == 'Select Duration' ? null : option,
+                  value: option == TextStrings.selectDuration ? null : option,
                   child:
                       // option == 'Select Duration'
                       //     ? Row(
@@ -190,7 +191,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                     bgColor: Theme.of(context).primaryColor,
                     width: 164,
                     height: 48,
-                    child: Text('Share',
+                    child: Text(TextStrings.share,
                         style: TextStyle(
                             color: Theme.of(context).scaffoldBackgroundColor,
                             fontSize: 16.toFont)),
@@ -204,11 +205,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
   // ignore: always_declare_return_types
   onShareTap() async {
     if (selectedContacts == null) {
-      CustomToast().show('Select a contact', context, isError: true);
+      CustomToast().show(TextStrings.selectAContact, context, isError: true);
       return;
     }
     if (selectedOption == null) {
-      CustomToast().show('Select time', context, isError: true);
+      CustomToast().show(TextStrings.selectTime, context, isError: true);
       return;
     }
 
@@ -240,13 +241,13 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
     if (result == true) {
       CustomToast()
-          .show('Share Location Request sent', context, isSuccess: true);
+          .show(TextStrings.shareLocationRequestSent, context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong', context, isError: true);
+      CustomToast().show(TextStrings.somethingWentWrong, context, isError: true);
       setState(() {
         isLoading = false;
       });

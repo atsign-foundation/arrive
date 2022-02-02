@@ -11,6 +11,7 @@ import 'package:at_location_flutter/service/sharing_location_service.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
@@ -95,12 +96,12 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
           children: [
             allNotificationsSharingLocationFor.isNotEmpty
                 ? Text(
-                    'You are currently sharing your location for these: ',
+                    TextStrings.youAreCurrentlySharingYourLocationForThese,
                     style: CustomTextStyles().grey16,
                     textAlign: TextAlign.center,
                   )
                 : Text(
-                    'You are not sharing your location with anyone. ',
+                    TextStrings.youAreNotSharingYourLocationWithAnyone,
                     style: CustomTextStyles().grey16,
                     textAlign: TextAlign.center,
                   ),
@@ -175,7 +176,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
 
   Future<void> _changeEventLocationSharing(
       LocationSharingData _locationSharingData, bool _value) async {
-    LoadingDialog().show(text: 'Updating');
+    LoadingDialog().show(text: TextStrings.updating);
 
     var result = await EventKeyStreamService().actionOnEvent(
       _locationSharingData
@@ -194,7 +195,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
 
       setState(() {});
     } else {
-      CustomToast().show('Something went wrong , please try again.', context,
+      CustomToast().show(TextStrings.somethingWentWrongPleaseTryAgain, context,
           isError: true);
     }
   }
@@ -210,12 +211,12 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
       return;
     }
 
-    LoadingDialog().show(text: 'Updating');
-    if (locationNotificationModel.key.contains('sharelocation')) {
+    LoadingDialog().show(text: TextStrings.updating);
+    if (locationNotificationModel.key.contains(TextStrings.shareLocation)) {
       result = await SharingLocationService()
           .updateWithShareLocationAcknowledge(locationNotificationModel,
               isSharing: _value);
-    } else if (locationNotificationModel.key.contains('requestlocation')) {
+    } else if (locationNotificationModel.key.contains(TextStrings.requestLocation)) {
       result = await RequestLocationService().requestLocationAcknowledgment(
           locationNotificationModel, true,
           isSharing: _value);
@@ -228,7 +229,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
       setState(() {});
     } else {
       CustomToast()
-          .show('Something went wrong, try again.', context, isError: true);
+          .show(TextStrings.somethingWentWrongPleaseTryAgain, context, isError: true);
     }
   }
 
@@ -247,7 +248,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Are you sure you want to remove ?',
+                    TextStrings.areYouSureYouWantToRemove,
                     style: CustomTextStyles().grey16,
                     textAlign: TextAlign.center,
                   ),
@@ -262,7 +263,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
                           width: 164.toWidth,
                           height: 48.toHeight,
                           child: Text(
-                            'Yes',
+                            TextStrings.yes,
                             style: TextStyle(
                                 fontSize: 15.toFont,
                                 color:
@@ -280,7 +281,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
                           width: 140.toWidth,
                           height: 36.toHeight,
                           child: Text(
-                            'No! Cancel this',
+                            TextStrings.noCancelThis,
                             style: TextStyle(
                                 fontSize: 14.toFont,
                                 color: Theme.of(context).primaryColor),
@@ -301,7 +302,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
         .eventAndLocationHybrid.locationKeyModel.locationNotificationModel;
     bool result;
 
-    LoadingDialog().show(text: 'Updating');
+    LoadingDialog().show(text: TextStrings.updating);
     if (locationNotificationModel.key.contains('sharelocation')) {
       result =
           await SharingLocationService().deleteKey(locationNotificationModel);
@@ -317,7 +318,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
       Navigator.of(context).pop();
     } else {
       CustomToast()
-          .show('Something went wrong, try again.', context, isError: true);
+          .show(TextStrings.somethingWentWrongPleaseTryAgain, context, isError: true);
     }
   }
 }

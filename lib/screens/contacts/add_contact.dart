@@ -4,6 +4,7 @@ import 'package:at_common_flutter/services/size_config.dart';
 import 'package:at_common_flutter/widgets/custom_button.dart';
 import 'package:at_contacts_flutter/services/contact_service.dart';
 import 'package:atsign_location_app/common_components/custom_circle_avatar.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -38,7 +39,7 @@ class _AddContactState extends State<AddContact> {
           children: [
             Expanded(
               child: Text(
-                'Add ${widget.atSignName} to contacts ?',
+                '${TextStrings.add} ${widget.atSignName} ${TextStrings.toContacts}',
                 textAlign: TextAlign.center,
                 style: CustomTextStyles().black16,
               ),
@@ -87,7 +88,7 @@ class _AddContactState extends State<AddContact> {
             },
             // validator: Validators.validateAdduser,
             decoration: InputDecoration(
-              hintText: 'Enter Nick Name (Optional)',
+              hintText: TextStrings.enterNickName,
             ),
             style: TextStyle(fontSize: 15.toFont),
           ),
@@ -101,7 +102,7 @@ class _AddContactState extends State<AddContact> {
               : SizedBox(
                   width: SizeConfig().screenWidth,
                   child: CustomButton(
-                    buttonText: 'Yes',
+                    buttonText: TextStrings.yes,
                     fontColor: Colors.white,
                     onPressed: () async {
                       setState(() {
@@ -134,7 +135,7 @@ class _AddContactState extends State<AddContact> {
                   width: SizeConfig().screenWidth,
                   child: CustomButton(
                     buttonColor: Colors.white,
-                    buttonText: 'No',
+                    buttonText: TextStrings.no,
                     onPressed: () {
                       Navigator.pop(context);
                     },

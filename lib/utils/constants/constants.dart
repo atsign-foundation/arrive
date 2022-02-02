@@ -21,7 +21,6 @@ class MixedConstants {
   static String MAP_KEY = dotenv.get('MAP_KEY');
   static String API_KEY = dotenv.get('API_KEY');
 
-  /// TODO: Remove -temp
   static const String appNamespace = 'rrive';
   static const String syncRegex =
       '(.$appNamespace|atconnections|[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})';

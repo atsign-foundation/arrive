@@ -8,6 +8,7 @@ import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/custom_input_field.dart';
 import 'package:atsign_location_app/common_components/overlapping-contacts.dart';
 import 'package:atsign_location_app/common_components/pop_button.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -35,19 +36,19 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
         children: [
           CustomAppBar(
             centerTitle: false,
-            title: 'Request Location',
-            action: PopButton(label: 'Cancel'),
+            title: TextStrings.requestLocation,
+            action: PopButton(label: TextStrings.cancel),
           ),
           SizedBox(
             height: 25,
           ),
-          Text('Request From', style: CustomTextStyles().greyLabel14),
+          Text(TextStrings.requestFrom, style: CustomTextStyles().greyLabel14),
           SizedBox(height: 10),
           CustomInputField(
             width: SizeConfig().screenWidth * 0.95,
             height: 50.toHeight,
             isReadOnly: true,
-            hintText: 'Search @sign from contacts',
+            hintText: TextStrings.searchAtsignFromContact,
             icon: Icons.contacts_rounded,
             onTap: () {
               Navigator.push(
@@ -127,7 +128,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                     width: 164,
                     height: 48,
                     child: Text(
-                      'Request',
+                      TextStrings.request,
                       style: TextStyle(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           fontSize: 16.toFont),
@@ -142,7 +143,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
   // ignore: always_declare_return_types
   onRequestTap() async {
     if (selectedContacts == null) {
-      CustomToast().show('Select a contact', context, isError: true);
+      CustomToast().show(TextStrings.selectAContact, context, isError: true);
       return;
     }
     setState(() {
@@ -166,13 +167,13 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     }
 
     if (result == true) {
-      CustomToast().show('Location Request sent', context, isSuccess: true);
+      CustomToast().show(TextStrings.locationRequestSent, context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show('Something went wrong', context, isError: true);
+      CustomToast().show(TextStrings.somethingWentWrong, context, isError: true);
       setState(() {
         isLoading = false;
       });

@@ -11,6 +11,7 @@ import 'package:atsign_location_app/common_components/pop_button.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -39,8 +40,8 @@ class _EventLogState extends State<EventLog>
       appBar: CustomAppBar(
         centerTitle: true,
         padding: true,
-        title: 'Events',
-        action: PopButton(label: 'Close'),
+        title: TextStrings.events,
+        action: PopButton(label: TextStrings.close),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -59,13 +60,13 @@ class _EventLogState extends State<EventLog>
                     tabs: [
                       Tab(
                         child: Text(
-                          'Upcoming',
+                          TextStrings.upcoming,
                           style:
                               TextStyle(fontSize: 16.toFont, letterSpacing: 1),
                         ),
                       ),
                       Tab(
-                        child: Text('Past',
+                        child: Text(TextStrings.past,
                             style: TextStyle(
                                 fontSize: 16.toFont, letterSpacing: 1)),
                       )

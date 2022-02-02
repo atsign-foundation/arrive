@@ -1,6 +1,7 @@
 import 'package:at_onboarding_flutter/services/size_config.dart';
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +84,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                         width: 70.toWidth,
                         height: 48.toHeight,
                         child: Text(
-                          'Okay!',
+                          TextStrings.okay,
                           style: TextStyle(
                               fontSize: 15.toFont,
                               color: Theme.of(context).scaffoldBackgroundColor),
@@ -95,7 +96,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                     children: <Widget>[
                       Text(
                         widget.text ??
-                            'Your main location sharing switch is turned off. Do you want to turn it on?',
+                            TextStrings.locationPromptDialogDescription,
                         style: CustomTextStyles().grey16,
                         textAlign: TextAlign.center,
                       ),
@@ -131,7 +132,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                               width: 164.toWidth,
                               height: 48.toHeight,
                               child: Text(
-                                widget.yesText ?? 'Yes! Turn it on',
+                                widget.yesText ?? TextStrings.yesTurnItOn,
                                 style: TextStyle(
                                     fontSize: 15.toFont,
                                     color: Theme.of(context)
@@ -149,7 +150,7 @@ class _LocationPromptState extends State<LocationPrompt> {
                           Navigator.of(context).pop();
                         },
                         child: Text(
-                          widget.noText ?? 'No!',
+                          widget.noText ?? TextStrings.no,
                           style: CustomTextStyles().black14,
                         ),
                       ),
