@@ -64,6 +64,12 @@ class TextStrings {
   static const areYouSureYouWantToDelete = 'Are you sure you want to delete ';
   static const event = 'Event - ';
   static const cancel = 'Cancel';
+  static const tabbar = 'Tabbar';
+  static const locations = 'Locations';
+  static const noWithoutSpecialcharacters = 'No';
+  static const eventData = 'Event data found';
+  static const locationData = 'Location data found';
+  static const filter = 'Filter';
   // Request Location Sheet
   static const requestFrom = 'Request From';
   static const searchAtsignFromContact = 'Search @sign from contacts';
