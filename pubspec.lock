@@ -95,16 +95,20 @@ packages:
   at_events_flutter:
     dependency: "direct main"
     description:
-      name: at_events_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_events_flutter
+      ref: "feat/event-bug-fixes"
+      resolved-ref: "7ba0676ce2eb6ec40b716e766a3312d7cc6e7719"
+      url: "https://github.com/atsign-foundation/at_widgets.git"
+    source: git
     version: "3.1.1"
   at_location_flutter:
     dependency: "direct main"
     description:
-      name: at_location_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_location_flutter
+      ref: "feat/event-bug-fixes"
+      resolved-ref: "7ba0676ce2eb6ec40b716e766a3312d7cc6e7719"
+      url: "https://github.com/atsign-foundation/at_widgets.git"
+    source: git
     version: "3.1.1"
   at_lookup:
     dependency: "direct main"
@@ -149,11 +153,13 @@ packages:
     source: hosted
     version: "1.0.0"
   at_utils:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: at_utils
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_utils
+      ref: git-386
+      resolved-ref: b1fac2e027dd4786f6096a5fbc3ac40eb417980a
+      url: "https://github.com/atsign-foundation/at_tools.git"
+    source: git
     version: "3.0.4"
   biometric_storage:
     dependency: transitive
