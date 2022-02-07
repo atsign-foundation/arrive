@@ -103,7 +103,7 @@ class _EventLogState extends State<EventLog>
           actionExtentRatio: 0.15,
           secondaryActions: <Widget>[
             IconSlideAction(
-              caption: 'Delete',
+              caption: TextStrings.delete,
               color: AllColors().RED,
               icon: Icons.delete,
               onTap: () async {
@@ -130,9 +130,9 @@ class _EventLogState extends State<EventLog>
                     .eventNotificationModel
                     .atsignCreator,
                 subTitle:
-                    'Event on ${dateToString(upcomingEvents[index].eventKeyModel.eventNotificationModel.event.date)}',
+                    '${TextStrings.eventOn} ${dateToString(upcomingEvents[index].eventKeyModel.eventNotificationModel.event.date)}',
                 invitedBy:
-                    'Invited by ${upcomingEvents[index].eventKeyModel.eventNotificationModel.atsignCreator}',
+                    '${TextStrings.invitedBy} ${upcomingEvents[index].eventKeyModel.eventNotificationModel.atsignCreator}',
               ),
             ),
           ),
@@ -158,7 +158,7 @@ class _EventLogState extends State<EventLog>
           actionExtentRatio: 0.15,
           secondaryActions: <Widget>[
             IconSlideAction(
-              caption: 'Delete',
+              caption: TextStrings.delete,
               color: AllColors().RED,
               icon: Icons.delete,
               onTap: () async {
@@ -189,8 +189,9 @@ class _EventLogState extends State<EventLog>
                 title: pastEvents[index].title,
                 atsignCreator: pastEvents[index].atsignCreator,
                 subTitle:
-                    'Event on ${dateToString(pastEvents[index].event.date)}',
-                invitedBy: 'Invited by ${pastEvents[index].atsignCreator}',
+                    '${TextStrings.eventOn} ${dateToString(pastEvents[index].event.date)}',
+                invitedBy:
+                    '${TextStrings.invitedBy} ${pastEvents[index].atsignCreator}',
               ),
             ),
           ),

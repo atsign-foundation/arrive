@@ -376,14 +376,14 @@ class _HomeScreenState extends State<HomeScreen>
               task: TextStrings.createEvent,
               icon: Icons.event,
               onTap: () {
-                bottomSheet(
-                    context,
-                    CreateEvent(
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateEvent(
                       AtClientManager.getInstance(),
                     ),
-                    SizeConfig().screenHeight * 0.9, onSheetCLosed: () {
-                  _controller.animateTo(0);
-                });
+                  ),
+                );
               }),
           Tasks(
               task: TextStrings.requestLocation,
@@ -421,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen>
               child: Container(
                 height: 40,
                 child: TabBar(
-                  key: Key('Tabbar'),
+                  key: Key(TextStrings.tabbar),
                   indicatorColor: Theme.of(context).primaryColor,
                   indicatorWeight: 3.toHeight,
                   labelColor: Theme.of(context).primaryColor,
@@ -430,12 +430,12 @@ class _HomeScreenState extends State<HomeScreen>
                   tabs: [
                     Tab(
                       child: Text(
-                        'Events',
+                        TextStrings.events,
                         style: TextStyle(fontSize: 16.toFont, letterSpacing: 1),
                       ),
                     ),
                     Tab(
-                      child: Text('Locations',
+                      child: Text(TextStrings.locations,
                           style:
                               TextStyle(fontSize: 16.toFont, letterSpacing: 1)),
                     )
@@ -491,12 +491,13 @@ class _HomeScreenState extends State<HomeScreen>
       /// after rendering events, we will have [eventsRenderedWithFilter] count
       if ((_eventFilter != EventFilters.None) &&
           (eventsRenderedWithFilter == 0)) {
-        return emptyWidget('No ${_eventFilter.name} Event data found');
+        return emptyWidget(
+            '${TextStrings.noWithoutSpecialcharacters} ${_eventFilter.name} ${TextStrings.eventData}');
       }
 
       return _list;
     } else {
-      return emptyWidget('No Data Found!!');
+      return emptyWidget(TextStrings.noDataFound);
     }
   }
 
@@ -510,12 +511,13 @@ class _HomeScreenState extends State<HomeScreen>
 
       if ((_locationFilter != LocationFilters.None) &&
           (locationsRenderedWithFilter == 0)) {
-        return emptyWidget('No ${_locationFilter.name} Location data found');
+        return emptyWidget(
+            '${TextStrings.noWithoutSpecialcharacters} ${_locationFilter.name} ${TextStrings.locationData}');
       }
 
       return _list;
     } else {
-      return emptyWidget('No Data Found!!');
+      return emptyWidget(TextStrings.noDataFound);
     }
   }
 
@@ -539,7 +541,7 @@ class _HomeScreenState extends State<HomeScreen>
             actionExtentRatio: 0.15,
             secondaryActions: <Widget>[
               IconSlideAction(
-                caption: 'Delete',
+                caption: TextStrings.delete,
                 color: AllColors().RED,
                 icon: Icons.delete,
                 onTap: () {
@@ -594,7 +596,7 @@ class _HomeScreenState extends State<HomeScreen>
                               : null,
                           title: hybridElement.type ==
                                   NotificationModelType.EventModel
-                              ? 'Event - ' +
+                              ? TextStrings.event +
                                   hybridElement.eventKeyModel
                                       .eventNotificationModel.title
                               : getTitle(hybridElement
@@ -795,7 +797,7 @@ class _HomeScreenState extends State<HomeScreen>
               title: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Filter ${_filterScreenType.name}s',
+                  Text('${TextStrings.filter} ${_filterScreenType.name}s',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 15)),
                   SizedBox(
@@ -839,7 +841,7 @@ class _HomeScreenState extends State<HomeScreen>
                               .animateToIndex = -1; // reset animateToIndex
                           setState(() {});
                         },
-                        child: Text('Filter',
+                        child: Text(TextStrings.filter,
                             style: TextStyle(
                               color: AllColors().FONT_PRIMARY,
                               fontSize: 15,
@@ -850,7 +852,7 @@ class _HomeScreenState extends State<HomeScreen>
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          child: Text('Cancel',
+                          child: Text(TextStrings.cancel,
                               style:
                                   TextStyle(fontSize: 15, color: Colors.black)))
                     ])

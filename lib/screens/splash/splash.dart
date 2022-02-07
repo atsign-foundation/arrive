@@ -87,6 +87,7 @@ class _SplashState extends State<Splash> {
               );
             },
             onError: (error) {
+              BackendService.getInstance().showErrorSnackBar(error);
               print('_initBackendService error in onboarding: $error');
             },
             appAPIKey: MixedConstants.ONBOARD_API_KEY);
@@ -233,6 +234,8 @@ class _SplashState extends State<Splash> {
                                                 onError: (error) {
                                                   print(
                                                       'error in onboard plugin:$error');
+                                                  BackendService.getInstance()
+                                                      .showErrorSnackBar(error);
                                                   setState(() {
                                                     authenticating = false;
                                                   });
@@ -249,7 +252,8 @@ class _SplashState extends State<Splash> {
                                                             .center,
                                                     children: [
                                                       Text(
-                                                        TextStrings.authenticating,
+                                                        TextStrings
+                                                            .authenticating,
                                                         textScaleFactor: 1,
                                                         style:
                                                             CustomTextStyles()
