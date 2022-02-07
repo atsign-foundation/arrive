@@ -13,7 +13,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.3+30
+version: 1.0.3+31
 environment:
   sdk: ">=2.7.0 <3.0.0"
 dependencies:
@@ -30,35 +30,30 @@ dependencies:
   pedantic: ^1.11.0
 
 
-  at_client_mobile: ^3.1.4
-  at_client: ^3.0.8
+  at_client_mobile: ^3.1.5
+  at_client: ^3.0.9
   at_contact: ^3.0.3
-  at_commons: ^3.0.2
-  at_lookup: ^3.0.5
+  at_commons: ^3.0.3
+  at_lookup: ^3.0.7
   at_contacts_group_flutter: ^3.1.2
   at_contacts_flutter: ^3.1.2
-  at_onboarding_flutter: ^3.1.2
-  at_location_flutter: ^3.1.1
-  at_events_flutter: ^3.1.1
+  at_onboarding_flutter: ^3.1.4
+  at_location_flutter: ^3.1.2
+  at_events_flutter: ^3.1.2
   flutter_dotenv: ^5.0.2
 
-dependency_overrides:
-  at_location_flutter: 
-    git:  
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_location_flutter
-      ref: feat/event-bug-fixes
-  at_events_flutter: 
-    git:  
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_events_flutter
-      ref: feat/event-bug-fixes
+# dependency_overrides:
+#   at_location_flutter: 
+#     path: /Users/apple/Desktop/client_projects/at_company_github/at_widgets/at_location_flutter
+#   at_events_flutter: 
+#     path: /Users/apple/Desktop/client_projects/at_company_github/at_widgets/at_events_flutter
 
-  at_utils: 
-    git:
-      url: https://github.com/atsign-foundation/at_tools.git
-      path: at_utils
-      ref: git-386
+
+#   at_utils: 
+#     git:
+#       url: https://github.com/atsign-foundation/at_tools.git
+#       path: at_utils
+#       ref: git-386
       
 dev_dependencies:
   flutter_test:
