@@ -131,6 +131,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                             SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
                           },
                           onError: (error) {
+                            BackendService.getInstance()
+                                .showErrorSnackBar(error);
                             print('Onboarding throws $error error');
                           },
                           appAPIKey: MixedConstants.ONBOARD_API_KEY);
@@ -207,6 +209,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                         );
                       },
                       onError: (error) {
+                        BackendService.getInstance().showErrorSnackBar(error);
                         print('Onboarding throws $error error');
                       },
                       appAPIKey: MixedConstants.ONBOARD_API_KEY);

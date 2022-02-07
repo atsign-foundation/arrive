@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
 import 'package:atsign_location_app/common_components/error_dialog.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_lookup/src/connection/outbound_connection.dart';
@@ -176,6 +177,7 @@ class BackendService {
                 NavService.navKey.currentContext, Routes.HOME);
           },
           onError: (error) {
+            BackendService.getInstance().showErrorSnackBar(error);
             print('Onboarding throws $error error');
           },
           appAPIKey: MixedConstants.ONBOARD_API_KEY);
@@ -230,6 +232,26 @@ class BackendService {
     } else if (atSignList == null || atSignList.isEmpty) {
       await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
           Routes.SPLASH, (Route<dynamic> route) => false);
+    }
+  }
+
+  // ignore: always_declare_return_types
+  showErrorSnackBar(dynamic msg) {
+    try {
+      ScaffoldMessenger.of(NavService.navKey.currentContext)
+          .showSnackBar(SnackBar(
+        backgroundColor: AllColors().RED,
+        content: Text(
+          '${msg..toString()}',
+          style: TextStyle(
+              color: AllColors().WHITE,
+              fontSize: 16,
+              letterSpacing: 0.1,
+              fontWeight: FontWeight.normal),
+        ),
+      ));
+    } catch (e) {
+      print('Error while showing error snackbar $e');
     }
   }
 }
