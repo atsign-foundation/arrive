@@ -12,7 +12,7 @@ class TextStrings {
   static const String resetWarningText =
       'Warning: This action cannot be undone';
   static const String appName = '@rrive';
-  static const String copyRight = '© 2021 The @ Company';
+  static const String copyRight = '© 2022 The @ Company';
   // Display Title
   static const String retry = 'Retry';
   static const String actionRequired = 'Action required';
