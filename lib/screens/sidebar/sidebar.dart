@@ -197,7 +197,6 @@ class _SideBarState extends State<SideBar> {
               Icons.file_copy,
               () async {
                 BackupKeyWidget(
-                  atClientService: AtClientManager.getInstance().atClient,
                   atsign:
                       AtClientManager.getInstance().atClient.getCurrentAtSign(),
                 ).showBackupDialog(context);
