@@ -22,9 +22,9 @@ class BaseModel with ChangeNotifier {
   }
 
   // ignore: always_declare_return_types
-  reset(String? function) {
-    error?.remove(function);
-    status?.remove(function);
+  reset(String function) {
+    error.remove(function);
+    status.remove(function);
   }
 }
 
