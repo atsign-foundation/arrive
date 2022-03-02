@@ -14,10 +14,10 @@ class LoadingDialog {
   bool _showing = false;
 
   // ignore: always_declare_return_types
-  show({String text}) {
+  show({String? text}) {
     if (!_showing) {
       _showing = true;
-      NavService.navKey.currentState
+      NavService.navKey.currentState!
           .push(CustomPopupRoutes(
               pageBuilder: (_, __, ___) {
                 print('building loader');
@@ -52,7 +52,7 @@ class LoadingDialog {
     }
   }
 
-  Widget onlyText(String text, {TextStyle style, double fontSize}) {
+  Widget onlyText(String text, {TextStyle? style, double? fontSize}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +83,7 @@ class LoadingDialog {
   hide() {
     print('hide called');
     if (_showing) {
-      NavService.navKey.currentState.pop();
+      NavService.navKey.currentState!.pop();
       _showing = false;
     }
   }

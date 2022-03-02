@@ -19,8 +19,8 @@ class RequestLocationSheet extends StatefulWidget {
 }
 
 class _RequestLocationSheetState extends State<RequestLocationSheet> {
-  List<AtContact> selectedContacts = [];
-  bool isLoading;
+  List<AtContact?> selectedContacts = [];
+  late bool isLoading;
   @override
   void initState() {
     super.initState();
@@ -66,13 +66,13 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                           selectedContacts = [];
                           s.forEach((_groupElement) {
                             // for contacts
-                            if (_groupElement.contact != null) {
+                            if (_groupElement!.contact != null) {
                               var _containsContact = false;
 
                               // to prevent one contact from getting added again
                               selectedContacts.forEach((_contact) {
-                                if (_groupElement.contact.atSign ==
-                                    _contact.atSign) {
+                                if (_groupElement.contact!.atSign ==
+                                    _contact!.atSign) {
                                   _containsContact = true;
                                 }
                               });
@@ -82,12 +82,12 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                               }
                             } else if (_groupElement.group != null) {
                               // for groups
-                              _groupElement.group.members.forEach((element) {
+                              _groupElement.group!.members!.forEach((element) {
                                 var _containsContact = false;
 
                                 // to prevent one contact from getting added again
                                 selectedContacts.forEach((_contact) {
-                                  if (element.atSign == _contact.atSign) {
+                                  if (element.atSign == _contact!.atSign) {
                                     _containsContact = true;
                                   }
                                 });
@@ -142,7 +142,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
 
   // ignore: always_declare_return_types
   onRequestTap() async {
-    if (selectedContacts == null) {
+    if (selectedContacts.isEmpty) {
       CustomToast().show(TextStrings.selectAContact, context, isError: true);
       return;
     }
@@ -153,10 +153,10 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     var result;
     if (selectedContacts.length > 1) {
       await RequestLocationService()
-          .sendRequestLocationToGroup(selectedContacts);
+          .sendRequestLocationToGroup(selectedContacts as List<AtContact>);
     } else {
       result =
-          await sendRequestLocationNotification(selectedContacts[0].atSign);
+          await sendRequestLocationNotification(selectedContacts[0]!.atSign!);
     }
     if (result == null) {
       setState(() {
@@ -167,13 +167,15 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     }
 
     if (result == true) {
-      CustomToast().show(TextStrings.locationRequestSent, context, isSuccess: true);
+      CustomToast()
+          .show(TextStrings.locationRequestSent, context, isSuccess: true);
       setState(() {
         isLoading = false;
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show(TextStrings.somethingWentWrong, context, isError: true);
+      CustomToast()
+          .show(TextStrings.somethingWentWrong, context, isError: true);
       setState(() {
         isLoading = false;
       });

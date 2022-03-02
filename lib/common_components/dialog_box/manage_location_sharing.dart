@@ -22,7 +22,7 @@ import 'package:atsign_location_app/common_components/custom_button.dart'
 
 Future<void> manageLocationSharing() {
   var value = showDialog<void>(
-    context: NavService.navKey.currentContext,
+    context: NavService.navKey.currentContext!,
     barrierDismissible: true,
     builder: (BuildContext context) {
       return _ManageLocationSharing();
@@ -32,7 +32,7 @@ Future<void> manageLocationSharing() {
 }
 
 class _ManageLocationSharing extends StatefulWidget {
-  const _ManageLocationSharing({Key key}) : super(key: key);
+  const _ManageLocationSharing({Key? key}) : super(key: key);
 
   @override
   __ManageLocationSharingState createState() => __ManageLocationSharingState();
@@ -54,8 +54,8 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
         in Provider.of<LocationProvider>(context, listen: false)
             .allNotifications) {
       if (_notification.type == NotificationModelType.EventModel) {
-        var _event = _notification.eventKeyModel.eventNotificationModel;
-        if (!_event.isCancelled) {
+        var _event = _notification.eventKeyModel!.eventNotificationModel!;
+        if (!_event.isCancelled!) {
           var _myEventInfo = HomeEventService().getMyEventInfo(_event);
           if ((_myEventInfo != null) && (!_myEventInfo.isExited)) {
             allNotificationsSharingLocationFor.add(LocationSharingData(
@@ -67,11 +67,11 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
         }
       } else {
         var _locationData =
-            _notification.locationKeyModel.locationNotificationModel;
+            _notification.locationKeyModel!.locationNotificationModel!;
 
-        if (compareAtSign(_locationData.atsignCreator,
-            AtClientManager.getInstance().atClient.getCurrentAtSign())) {
-          var _myLocationInfo = getMyLocationInfo(_locationData);
+        if (compareAtSign(_locationData.atsignCreator!,
+            AtClientManager.getInstance().atClient.getCurrentAtSign()!)) {
+          var _myLocationInfo = getMyLocationInfo(_locationData)!;
           if (_myLocationInfo.isAccepted) {
             allNotificationsSharingLocationFor.add(LocationSharingData(
               eventAndLocationHybrid: _notification,
@@ -128,7 +128,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          ' -  ' + textForLocationSharingSwitch(_locationSharingData),
+          ' -  ' + textForLocationSharingSwitch(_locationSharingData)!,
           style: CustomTextStyles().darkGrey16,
         ),
         Switch(
@@ -141,26 +141,26 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
     );
   }
 
-  String textForLocationSharingSwitch(
+  String? textForLocationSharingSwitch(
       LocationSharingData _locationSharingData) {
     if (_locationSharingData.eventAndLocationHybrid.type ==
         NotificationModelType.EventModel) {
       return _locationSharingData
-          .eventAndLocationHybrid.eventKeyModel.eventNotificationModel.title;
+          .eventAndLocationHybrid.eventKeyModel!.eventNotificationModel!.title;
     }
 
-    return _locationSharingData.eventAndLocationHybrid.locationKeyModel
-        .locationNotificationModel.receiver;
+    return _locationSharingData.eventAndLocationHybrid.locationKeyModel!
+        .locationNotificationModel!.receiver;
   }
 
   bool booleanForLocationSharingSwitch(
       LocationSharingData _locationSharingData) {
     if (_locationSharingData.eventAndLocationHybrid.type ==
         NotificationModelType.EventModel) {
-      return _locationSharingData.eventInfo.isSharing;
+      return _locationSharingData.eventInfo!.isSharing;
     }
 
-    return _locationSharingData.locationInfo.isSharing;
+    return _locationSharingData.locationInfo!.isSharing;
   }
 
   Future<void> functionForLocationSharingSwitch(
@@ -180,7 +180,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
 
     var result = await EventKeyStreamService().actionOnEvent(
       _locationSharingData
-          .eventAndLocationHybrid.eventKeyModel.eventNotificationModel,
+          .eventAndLocationHybrid.eventKeyModel!.eventNotificationModel!,
       ATKEY_TYPE_ENUM.CREATEEVENT, // doesn't effect now
       isSharing: _value,
       isAccepted: true,
@@ -191,7 +191,7 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
     if (result == true) {
       _locationSharingData.eventInfo = HomeEventService().getMyEventInfo(
           _locationSharingData
-              .eventAndLocationHybrid.eventKeyModel.eventNotificationModel);
+              .eventAndLocationHybrid.eventKeyModel!.eventNotificationModel!);
 
       setState(() {});
     } else {
@@ -203,20 +203,20 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
   Future<void> _changeLocationSharing(
       LocationSharingData _locationSharingData, bool _value) async {
     var locationNotificationModel = _locationSharingData
-        .eventAndLocationHybrid.locationKeyModel.locationNotificationModel;
-    bool result;
+        .eventAndLocationHybrid.locationKeyModel!.locationNotificationModel;
+    late bool result;
 
-    if ((!_value) && (locationNotificationModel.to == null)) {
+    if ((!_value) && (locationNotificationModel!.to == null)) {
       await removePerson(_locationSharingData);
       return;
     }
 
     LoadingDialog().show(text: TextStrings.updating);
-    if (locationNotificationModel.key.contains(TextStrings.shareLocation)) {
+    if (locationNotificationModel!.key!.contains(TextStrings.shareLocation)) {
       result = await SharingLocationService()
           .updateWithShareLocationAcknowledge(locationNotificationModel,
               isSharing: _value);
-    } else if (locationNotificationModel.key.contains(TextStrings.requestLocation)) {
+    } else if (locationNotificationModel.key!.contains(TextStrings.requestLocation)) {
       result = await RequestLocationService().requestLocationAcknowledgment(
           locationNotificationModel, true,
           isSharing: _value);
@@ -299,14 +299,14 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
   Future<void> _dialogYesPressed(
       LocationSharingData _locationSharingData) async {
     var locationNotificationModel = _locationSharingData
-        .eventAndLocationHybrid.locationKeyModel.locationNotificationModel;
-    bool result;
+        .eventAndLocationHybrid.locationKeyModel!.locationNotificationModel!;
+    late bool result;
 
     LoadingDialog().show(text: TextStrings.updating);
-    if (locationNotificationModel.key.contains('sharelocation')) {
+    if (locationNotificationModel.key!.contains('sharelocation')) {
       result =
           await SharingLocationService().deleteKey(locationNotificationModel);
-    } else if (locationNotificationModel.key.contains('requestlocation')) {
+    } else if (locationNotificationModel.key!.contains('requestlocation')) {
       result = await RequestLocationService()
           .sendDeleteAck(locationNotificationModel);
     }
@@ -325,12 +325,12 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
 
 class LocationSharingData {
   EventAndLocationHybrid eventAndLocationHybrid;
-  LocationInfo locationInfo; // for type location
-  EventInfo eventInfo; // for type event
+  LocationInfo? locationInfo; // for type location
+  EventInfo? eventInfo; // for type event
 
   LocationSharingData({
-    @required this.eventAndLocationHybrid,
-    @required this.locationInfo,
-    @required this.eventInfo,
+    required this.eventAndLocationHybrid,
+    required this.locationInfo,
+    required this.eventInfo,
   });
 }

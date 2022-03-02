@@ -57,12 +57,12 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   PanelController pc = PanelController();
   LocationProvider locationProvider = LocationProvider();
-  LatLng myLatLng, previousLatLng;
-  String currentAtSign;
-  bool contactsLoaded, moveMap;
-  Key _mapKey; // so that map doesnt refresh, when we dont want it to
+  LatLng? myLatLng, previousLatLng;
+  String? currentAtSign;
+  bool? contactsLoaded, moveMap;
+  Key? _mapKey; // so that map doesnt refresh, when we dont want it to
   MapController mapController = MapController();
-  TabController _controller;
+  TabController? _controller;
   int eventsRenderedWithFilter = 0,
       locationsRenderedWithFilter =
           0; // count used to show no data found after applying filter
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen>
   EventFilters _eventFilter = EventFilters.None;
   LocationFilters _locationFilter = LocationFilters.None;
 
-  Function setFilterIconState,
+  Function? setFilterIconState,
       setFloatingActionState; // to re-render this when tab bar's index change
 
   @override
@@ -85,11 +85,11 @@ class _HomeScreenState extends State<HomeScreen>
     // deleteAllPreviousKeys();
     // cleanKeychain();
 
-    _controller.addListener(() {
+    _controller!.addListener(() {
       if (mounted) {
         if (setFilterIconState != null) {
           try {
-            setFilterIconState(
+            setFilterIconState!(
                 () {}); // to re-render this when tab bar's index change
           } catch (e) {
             print('Error in setFilterIconState $e');
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen>
 
         if (setFloatingActionState != null) {
           try {
-            setFloatingActionState(
+            setFloatingActionState!(
                 () {}); // to re-render this when tab bar's index change
           } catch (e) {
             print('Error in setFloatingActionState $e');
@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     locationProvider = context.read<LocationProvider>();
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       var atClientManager = AtClientManager.getInstance();
       Provider.of<LocationProvider>(context, listen: false).init(
           atClientManager,
@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen>
   void initializePlugins() async {
     currentAtSign = AtClientManager.getInstance().atClient.getCurrentAtSign();
     // ignore: await_only_futures
-    await initializeContactsService(rootDomain: MixedConstants.ROOT_DOMAIN);
+    initializeContactsService(rootDomain: MixedConstants.ROOT_DOMAIN);
     setState(() {
       contactsLoaded = true;
     });
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen>
     });
   }
 
-  StreamSubscription<Position> _positionStream;
+  StreamSubscription<Position>? _positionStream;
 
   Future<void> _getMyLocation() async {
     var newMyLatLng = await getMyLocation();
@@ -159,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen>
     if (((permission == LocationPermission.always) ||
         (permission == LocationPermission.whileInUse))) {
       if (_positionStream != null) {
-        await _positionStream.cancel();
+        await _positionStream!.cancel();
       }
 
       _positionStream = Geolocator.getPositionStream(
@@ -271,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen>
                         icon: Icons.zoom_out_map, onPressed: zoomOutFn),
                   )
                 : SizedBox(),
-            contactsLoaded
+            contactsLoaded!
                 ? ProviderHandler<LocationProvider>(
                     key: UniqueKey(),
                     functionName: locationProvider.GET_ALL_NOTIFICATIONS,
@@ -312,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen>
                           print('builder called uppanel');
                           if ((provider.animateToIndex != -1) && (mounted)) {
                             // setFilterIconState will help to avoid position changing when tabbar is not built
-                            _controller.animateTo(provider.animateToIndex);
+                            _controller!.animateTo(provider.animateToIndex);
                           }
 
                           if (provider.allEventNotifications.isNotEmpty ||
@@ -392,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen>
               onTap: () async {
                 bottomSheet(context, RequestLocationSheet(), 500.toHeight,
                     onSheetCLosed: () {
-                  _controller.animateTo(1);
+                  _controller!.animateTo(1);
                 });
               }),
           Tasks(
@@ -401,7 +401,7 @@ class _HomeScreenState extends State<HomeScreen>
               onTap: () {
                 bottomSheet(context, ShareLocationSheet(), 600.toHeight,
                     onSheetCLosed: () {
-                  _controller.animateTo(1);
+                  _controller!.animateTo(1);
                 });
               })
         ],
@@ -445,7 +445,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
             InkWell(
               onTap: () {
-                _openFilterDialog(_controller.index == 0
+                _openFilterDialog(_controller!.index == 0
                     ? FilterScreenType.Event
                     : FilterScreenType.Location);
               },
@@ -558,83 +558,89 @@ class _HomeScreenState extends State<HomeScreen>
                               NotificationModelType.EventModel) {
                             HomeEventService().onEventModelTap(
                                 hybridElement
-                                    .eventKeyModel.eventNotificationModel,
-                                hybridElement.eventKeyModel.haveResponded);
+                                    .eventKeyModel!.eventNotificationModel!,
+                                hybridElement.eventKeyModel!.haveResponded);
                           } else {
                             HomeScreenService().onLocationModelTap(
-                                hybridElement
-                                    .locationKeyModel.locationNotificationModel,
-                                hybridElement.locationKeyModel.haveResponded);
+                                hybridElement.locationKeyModel!
+                                    .locationNotificationModel!,
+                                hybridElement.locationKeyModel!.haveResponded!);
                           }
                         },
                         child: DisplayTile(
                           key: Key(hybridElement.type ==
                                   NotificationModelType.EventModel
                               ? hybridElement
-                                  .eventKeyModel.eventNotificationModel.key
-                              : hybridElement.locationKeyModel
-                                  .locationNotificationModel.key),
+                                  .eventKeyModel!.eventNotificationModel!.key!
+                              : hybridElement.locationKeyModel!
+                                  .locationNotificationModel!.key!),
                           atsignCreator: hybridElement.type ==
                                   NotificationModelType.EventModel
-                              ? hybridElement.eventKeyModel
-                                  .eventNotificationModel.atsignCreator
+                              ? hybridElement.eventKeyModel!
+                                  .eventNotificationModel!.atsignCreator
                               : (hybridElement
-                                          .locationKeyModel
-                                          .locationNotificationModel
+                                          .locationKeyModel!
+                                          .locationNotificationModel!
                                           .atsignCreator ==
                                       AtClientManager.getInstance()
                                           .atClient
                                           .getCurrentAtSign()
-                                  ? hybridElement.locationKeyModel
-                                      .locationNotificationModel.receiver
-                                  : hybridElement.locationKeyModel
-                                      .locationNotificationModel.atsignCreator),
+                                  ? hybridElement.locationKeyModel!
+                                      .locationNotificationModel!.receiver
+                                  : hybridElement
+                                      .locationKeyModel!
+                                      .locationNotificationModel!
+                                      .atsignCreator),
                           number: hybridElement.type ==
                                   NotificationModelType.EventModel
-                              ? hybridElement.eventKeyModel
-                                  .eventNotificationModel.group.members.length
+                              ? hybridElement
+                                  .eventKeyModel!
+                                  .eventNotificationModel!
+                                  .group!
+                                  .members!
+                                  .length
                               : null,
                           title: hybridElement.type ==
                                   NotificationModelType.EventModel
                               ? TextStrings.event +
-                                  hybridElement.eventKeyModel
-                                      .eventNotificationModel.title
-                              : getTitle(hybridElement
-                                  .locationKeyModel.locationNotificationModel),
+                                  hybridElement.eventKeyModel!
+                                      .eventNotificationModel!.title!
+                              : getTitle(hybridElement.locationKeyModel!
+                                  .locationNotificationModel!),
                           subTitle: hybridElement.type ==
                                   NotificationModelType.EventModel
                               ? HomeEventService().getSubTitle(hybridElement
-                                  .eventKeyModel.eventNotificationModel)
-                              : getSubTitle(hybridElement
-                                  .locationKeyModel.locationNotificationModel),
-                          semiTitle: hybridElement
-                                      .type ==
+                                  .eventKeyModel!.eventNotificationModel!)
+                              : getSubTitle(hybridElement.locationKeyModel!
+                                  .locationNotificationModel!),
+                          semiTitle: hybridElement.type ==
                                   NotificationModelType.EventModel
                               ? HomeEventService().getSemiTitle(
                                   hybridElement
-                                      .eventKeyModel.eventNotificationModel,
-                                  hybridElement.eventKeyModel.haveResponded)
+                                      .eventKeyModel!.eventNotificationModel!,
+                                  hybridElement.eventKeyModel!.haveResponded)
                               : getSemiTitle(
-                                  hybridElement.locationKeyModel
-                                      .locationNotificationModel,
-                                  hybridElement.locationKeyModel.haveResponded),
+                                  hybridElement.locationKeyModel!
+                                      .locationNotificationModel!,
+                                  hybridElement
+                                      .locationKeyModel!.haveResponded!),
                           showRetry: hybridElement.type ==
                                   NotificationModelType.EventModel
                               ? HomeEventService().calculateShowRetry(
-                                  hybridElement.eventKeyModel)
+                                  hybridElement.eventKeyModel!)
                               : calculateShowRetry(
-                                  hybridElement.locationKeyModel),
+                                  hybridElement.locationKeyModel!),
                           onRetryTapped: () {
                             if (hybridElement.type ==
                                 NotificationModelType.EventModel) {
                               HomeEventService().onEventModelTap(
                                   hybridElement
-                                      .eventKeyModel.eventNotificationModel,
+                                      .eventKeyModel!.eventNotificationModel!,
                                   false);
                             } else {
                               HomeScreenService().onLocationModelTap(
-                                  hybridElement.locationKeyModel
-                                      .locationNotificationModel,
+                                  hybridElement.locationKeyModel!
+                                      .locationNotificationModel!,
                                   false);
                             }
                           },
@@ -658,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen>
       EventAndLocationHybrid eventAndLocationHybrid) {
     if (eventAndLocationHybrid.type == NotificationModelType.EventModel) {
       var _shouldCurrentEventBeRendered = shouldCurrentEventBeRendered(
-          eventAndLocationHybrid.eventKeyModel.eventNotificationModel);
+          eventAndLocationHybrid.eventKeyModel!.eventNotificationModel);
       if (_shouldCurrentEventBeRendered) {
         eventsRenderedWithFilter++;
       }
@@ -666,7 +672,7 @@ class _HomeScreenState extends State<HomeScreen>
     }
 
     var _shouldCurrentLocationBeRendered = shouldCurrentLocationBeRendered(
-        eventAndLocationHybrid.locationKeyModel.locationNotificationModel);
+        eventAndLocationHybrid.locationKeyModel!.locationNotificationModel);
     if (_shouldCurrentLocationBeRendered) {
       locationsRenderedWithFilter++;
     }
@@ -674,30 +680,30 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   bool shouldCurrentEventBeRendered(
-      EventNotificationModel eventNotificationModel) {
+      EventNotificationModel? eventNotificationModel) {
     switch (_eventFilter) {
       case EventFilters.None:
         return true;
 
       case EventFilters.Sent:
-        return compareAtSign(eventNotificationModel.atsignCreator,
-            AtClientManager.getInstance().atClient.getCurrentAtSign());
+        return compareAtSign(eventNotificationModel!.atsignCreator!,
+            AtClientManager.getInstance().atClient.getCurrentAtSign()!);
 
       case EventFilters.Received:
-        return !compareAtSign(eventNotificationModel.atsignCreator,
-            AtClientManager.getInstance().atClient.getCurrentAtSign());
+        return !compareAtSign(eventNotificationModel!.atsignCreator!,
+            AtClientManager.getInstance().atClient.getCurrentAtSign()!);
     }
   }
 
   bool shouldCurrentLocationBeRendered(
-      LocationNotificationModel locationNotificationModel) {
+      LocationNotificationModel? locationNotificationModel) {
     switch (_locationFilter) {
       case LocationFilters.None:
         return true;
 
       case LocationFilters.Pending:
         {
-          if (locationNotificationModel.key.contains(
+          if (locationNotificationModel!.key!.contains(
               LocationPackageConstants.MixedConstants.SHARE_LOCATION)) {
             return false;
           } else {
@@ -710,24 +716,24 @@ class _HomeScreenState extends State<HomeScreen>
           return false;
         }
       case LocationFilters.Sent:
-        return locationNotificationModel.key.contains(
+        return locationNotificationModel!.key!.contains(
                 LocationPackageConstants.MixedConstants.SHARE_LOCATION)
-            ? compareAtSign(locationNotificationModel.atsignCreator,
-                AtClientManager.getInstance().atClient.getCurrentAtSign())
-            : compareAtSign(locationNotificationModel.receiver,
-                AtClientManager.getInstance().atClient.getCurrentAtSign());
+            ? compareAtSign(locationNotificationModel.atsignCreator!,
+                AtClientManager.getInstance().atClient.getCurrentAtSign()!)
+            : compareAtSign(locationNotificationModel.receiver!,
+                AtClientManager.getInstance().atClient.getCurrentAtSign()!);
       case LocationFilters.Received:
-        return locationNotificationModel.key.contains(
+        return locationNotificationModel!.key!.contains(
                 LocationPackageConstants.MixedConstants.SHARE_LOCATION)
-            ? compareAtSign(locationNotificationModel.receiver,
-                AtClientManager.getInstance().atClient.getCurrentAtSign())
-            : compareAtSign(locationNotificationModel.atsignCreator,
-                AtClientManager.getInstance().atClient.getCurrentAtSign());
+            ? compareAtSign(locationNotificationModel.receiver!,
+                AtClientManager.getInstance().atClient.getCurrentAtSign()!)
+            : compareAtSign(locationNotificationModel.atsignCreator!,
+                AtClientManager.getInstance().atClient.getCurrentAtSign()!);
     }
   }
 
   void removeFilter() {
-    if (_controller.index == 0) {
+    if (_controller!.index == 0) {
       _eventFilter = EventFilters.None;
     } else {
       _locationFilter = LocationFilters.None;
@@ -737,7 +743,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   bool isFilterApplied() {
-    if (_controller.index == 0) {
+    if (_controller!.index == 0) {
       return _eventFilter != EventFilters.None;
     }
 
@@ -766,7 +772,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget collapsedContent(
       bool isExpanded, ScrollController slidingScrollController, dynamic T,
-      {Key key}) {
+      {Key? key}) {
     return Container(
         key: key,
         height: !isExpanded ? 260.toHeight : 530.toHeight,
@@ -789,7 +795,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   Future<void> _openFilterDialog(FilterScreenType _filterScreenType) {
     return showDialog<void>(
-      context: NavService.navKey.currentContext,
+      context: NavService.navKey.currentContext!,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (_context, _setDialogState) {
@@ -819,9 +825,9 @@ class _HomeScreenState extends State<HomeScreen>
                       CheckboxListTile(
                         onChanged: (value) {
                           if (_filterScreenType == FilterScreenType.Event) {
-                            _eventFilter = _filterValue;
+                            _eventFilter = _filterValue as EventFilters;
                           } else {
-                            _locationFilter = _filterValue;
+                            _locationFilter = _filterValue as LocationFilters;
                           }
 
                           _setDialogState(() {});

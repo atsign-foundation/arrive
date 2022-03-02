@@ -27,7 +27,7 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   bool onboardSuccess = false;
   bool sharingStatus = false;
-  BackendService backendService;
+  late BackendService backendService;
   Completer c = Completer();
   bool authenticating = false;
   bool isOnboarded = false;
@@ -40,7 +40,7 @@ class _SplashState extends State<Splash> {
     _initBackendService();
   }
 
-  String state;
+  String? state;
   void _initBackendService() async {
     try {
       BackendService.getInstance().atClientPreference =
@@ -53,15 +53,15 @@ class _SplashState extends State<Splash> {
       if (BackendService.getInstance().atClientPreference != null) {
         Onboarding(
             context: context,
-            atClientPreference: BackendService.getInstance().atClientPreference,
+            atClientPreference: BackendService.getInstance().atClientPreference!,
             domain: MixedConstants.ROOT_DOMAIN,
             appColor: Color.fromARGB(255, 240, 94, 62),
             rootEnvironment: RootEnvironment.Production,
             onboard: (value, atsign) async {
               await AtClientManager.getInstance().setCurrentAtSign(
-                  atsign,
+                  atsign!,
                   MixedConstants.appNamespace,
-                  BackendService.getInstance().atClientPreference);
+                  BackendService.getInstance().atClientPreference!);
               BackendService.getInstance().syncService =
                   AtClientManager.getInstance().syncService;
 
@@ -104,10 +104,10 @@ class _SplashState extends State<Splash> {
         debugPrint('SystemChannels> $msg');
         backendService.app_lifecycle_state = msg;
         if (backendService.monitorConnection != null &&
-            backendService.monitorConnection.isInValid()) {
+            backendService.monitorConnection!.isInValid()) {
           // backendService.startMonitor();
         }
-      });
+      } as Future<String?> Function(String?)?);
     } catch (e) {
       print('Error in _initBackendService $e');
 
@@ -223,7 +223,7 @@ class _SplashState extends State<Splash> {
                                                 context: context,
                                                 atClientPreference:
                                                     BackendService.getInstance()
-                                                        .atClientPreference,
+                                                        .atClientPreference!,
                                                 domain:
                                                     MixedConstants.ROOT_DOMAIN,
                                                 appColor: Color.fromARGB(
@@ -336,7 +336,7 @@ class _SplashState extends State<Splash> {
 
   _showResetDialog() async {
     bool isSelectAtsign = false;
-    bool isSelectAll = false;
+    bool? isSelectAll = false;
     var atsignsList = await KeychainUtil.getAtsignList();
     if (atsignsList == null) {
       atsignsList = [];
@@ -365,7 +365,7 @@ class _SplashState extends State<Splash> {
                     )
                   ],
                 ),
-                content: atsignsList.isEmpty
+                content: atsignsList!.isEmpty
                     ? Column(mainAxisSize: MainAxisSize.min, children: [
                         Text(TextStrings.noAtsignToReset,
                             style: TextStyle(fontSize: 15)),
@@ -476,11 +476,11 @@ class _SplashState extends State<Splash> {
   }
 
   // ignore: always_declare_return_types
-  onOnboardCompletes(Map<String, AtClientService> value, String atsign) async {
+  onOnboardCompletes(Map<String?, AtClientService> value, String? atsign) async {
     await AtClientManager.getInstance().setCurrentAtSign(
-        atsign,
+        atsign!,
         MixedConstants.appNamespace,
-        BackendService.getInstance().atClientPreference);
+        BackendService.getInstance().atClientPreference!);
     BackendService.getInstance().syncService =
         AtClientManager.getInstance().syncService;
 

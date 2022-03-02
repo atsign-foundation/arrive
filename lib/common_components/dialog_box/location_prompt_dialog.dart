@@ -10,15 +10,15 @@ import 'package:provider/provider.dart';
 import '../custom_button.dart';
 
 Future<void> locationPromptDialog(
-    {String text,
-    String yesText,
-    String noText,
-    @required bool isShareLocationData,
-    @required bool isRequestLocationData,
+    {String? text,
+    String? yesText,
+    String? noText,
+    required bool isShareLocationData,
+    required bool isRequestLocationData,
     bool onlyText = false,
-    LocationNotificationModel locationNotificationModel}) {
+    LocationNotificationModel? locationNotificationModel}) {
   var value = showDialog<void>(
-    context: NavService.navKey.currentContext,
+    context: NavService.navKey.currentContext!,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return LocationPrompt(
@@ -35,17 +35,17 @@ Future<void> locationPromptDialog(
 }
 
 class LocationPrompt extends StatefulWidget {
-  final String text, yesText, noText;
+  final String? text, yesText, noText;
   final bool isShareLocationData, isRequestLocationData, onlyText;
-  final LocationNotificationModel locationNotificationModel;
+  final LocationNotificationModel? locationNotificationModel;
 
   LocationPrompt(
       {this.text,
       this.yesText,
       this.noText,
       this.onlyText = false,
-      @required this.isShareLocationData,
-      @required this.isRequestLocationData,
+      required this.isShareLocationData,
+      required this.isRequestLocationData,
       this.locationNotificationModel});
 
   @override
@@ -53,7 +53,7 @@ class LocationPrompt extends StatefulWidget {
 }
 
 class _LocationPromptState extends State<LocationPrompt> {
-  bool loading;
+  late bool loading;
 
   @override
   void initState() {
@@ -64,7 +64,7 @@ class _LocationPromptState extends State<LocationPrompt> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: SizeConfig().screenWidth * 0.8,
+      width: SizeConfig().screenWidth! * 0.8,
       child: AlertDialog(
         contentPadding: EdgeInsets.fromLTRB(15, 30, 15, 20),
         content: SingleChildScrollView(

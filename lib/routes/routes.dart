@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 
 class SetupRoutes {
   static String initialRoute = Routes.SPLASH;
-  static String currentAtSign;
+  static String? currentAtSign;
   static Map<String, WidgetBuilder> get routes {
     return {
       Routes.SPLASH: (context) => Splash(),
@@ -29,7 +29,7 @@ class SetupRoutes {
         return GroupList();
       },
       Routes.CONTACT_SCREEN: (context) {
-        Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+        Map<String, dynamic> args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
         return ContactsScreen(
           asSelectionScreen: args['asSelectionScreen'],
           context: context,
@@ -43,7 +43,7 @@ class SetupRoutes {
   }
 
   static Future push(BuildContext context, String value,
-      {Object arguments, Function callbackAfterNavigation}) {
+      {Object? arguments, Function? callbackAfterNavigation}) {
     return Navigator.of(context)
         .pushNamed(value, arguments: arguments)
         .then((response) {
@@ -55,7 +55,7 @@ class SetupRoutes {
 
   // ignore: always_declare_return_types
   static replace(BuildContext context, String value,
-      {dynamic arguments, Function callbackAfterNavigation}) {
+      {dynamic arguments, Function? callbackAfterNavigation}) {
     Navigator.of(context)
         .pushReplacementNamed(value, arguments: arguments)
         .then((response) {
@@ -67,7 +67,7 @@ class SetupRoutes {
 
   // ignore: always_declare_return_types
   static pushAndRemoveAll(BuildContext context, String value,
-      {dynamic arguments, Function callbackAfterNavigation}) {
+      {dynamic arguments, Function? callbackAfterNavigation}) {
     Navigator.of(context)
         .pushNamedAndRemoveUntil(
       value,

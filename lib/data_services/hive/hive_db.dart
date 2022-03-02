@@ -32,9 +32,9 @@ class HiveDataProvider implements LocalDataProviderContract {
   @override
   Future deleteData(
     String table, {
-    String whereClauseValue,
-    List whereClauseArgs,
-    List<String> keys,
+    String? whereClauseValue,
+    List? whereClauseArgs,
+    List<String>? keys,
   }) async {
     var box = await _getBox(table);
     // empty box
@@ -59,15 +59,15 @@ class HiveDataProvider implements LocalDataProviderContract {
   @override
   Future<Map<String, dynamic>> readData(
     String table, {
-    bool distinct,
-    List<String> keys,
-    List<String> columns,
-    String whereClauseValue,
-    List whereClauseArgs,
-    String groupBy,
-    String having,
-    String orderBy,
-    int limit,
+    bool? distinct,
+    List<String>? keys,
+    List<String>? columns,
+    String? whereClauseValue,
+    List? whereClauseArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
   }) async {
     var box = await _getBox(table);
     if (keys == null || keys.isEmpty) {
@@ -82,8 +82,8 @@ class HiveDataProvider implements LocalDataProviderContract {
   Future updateData(
     String table,
     Map<String, dynamic> values, {
-    String whereClauseValue,
-    List whereClauseArgs,
+    String? whereClauseValue,
+    List? whereClauseArgs,
   }) async {
     var box = await _getBox(table);
     if (values != null && values.isNotEmpty) {
@@ -93,18 +93,18 @@ class HiveDataProvider implements LocalDataProviderContract {
   }
 
   @override
-  Future runRawQuery({String query, List arguments}) async {
+  Future runRawQuery({String? query, List? arguments}) async {
     return null;
   }
 
   @override
-  Future<void> rawDeleteData(String table, {Map<String, dynamic> queries}) {
+  Future<void> rawDeleteData(String table, {Map<String, dynamic>? queries}) {
     throw UnimplementedError();
   }
 
   @override
   Future<List<Map<String, dynamic>>> rawReadData(String table,
-      {Map<String, dynamic> queries}) {
+      {Map<String, dynamic>? queries}) {
     throw UnimplementedError();
   }
 }

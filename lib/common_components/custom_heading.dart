@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
 class CustomHeading extends StatelessWidget {
-  final String heading, action;
+  final String? heading, action;
   CustomHeading({this.heading, this.action});
 
   @override
@@ -12,15 +12,15 @@ class CustomHeading extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           heading != null
-              ? Text(heading,
+              ? Text(heading!,
                   style: TextStyle(
-                      color: Theme.of(context).textTheme.headline1.color,
+                      color: Theme.of(context).textTheme.headline1!.color,
                       fontSize: 18.toFont))
               : SizedBox(),
           action != null
-              ? Text(action,
+              ? Text(action!,
                   style: TextStyle(
-                      color: Theme.of(context).textTheme.headline2.color,
+                      color: Theme.of(context).textTheme.headline2!.color,
                       fontSize: 18.toFont))
               : SizedBox()
         ],

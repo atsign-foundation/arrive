@@ -23,7 +23,7 @@ class LocationProvider extends BaseModel {
   List<EventAndLocationHybrid> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
   String locationSharingKey =
-      'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign().replaceAll('@', '')}';
+      'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()!.replaceAll('@', '')}';
   bool isSharing = false,
       isGettingLoadedFirstTime = true,
       locationSharingSwitchProcessing = false;
@@ -39,13 +39,13 @@ class LocationProvider extends BaseModel {
     isGettingLoadedFirstTime = true;
     locationSharingSwitchProcessing = false;
     locationSharingKey =
-        'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign().replaceAll('@', '')}';
+        'issharing-${AtClientManager.getInstance().atClient.getCurrentAtSign()!.replaceAll('@', '')}';
 
     AtLocationNotificationListener().resetMonitor();
     AtEventNotificationListener().resetMonitor();
   }
 
-  void init(AtClientManager atClientManager, String activeAtSign,
+  void init(AtClientManager atClientManager, String? activeAtSign,
       GlobalKey<NavigatorState> navKey) async {
     if (isGettingLoadedFirstTime) {
       setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
@@ -135,8 +135,8 @@ class LocationProvider extends BaseModel {
 
     var atKey = AtKey()
       ..metadata = Metadata()
-      ..metadata.ttr = -1
-      ..metadata.ccd = true
+      ..metadata!.ttr = -1
+      ..metadata!.ccd = true
       ..key = locationSharingKey;
     var value =
         await AtClientManager.getInstance().atClient.get(atKey).catchError(
@@ -157,8 +157,8 @@ class LocationProvider extends BaseModel {
     try {
       var atKey = AtKey()
         ..metadata = Metadata()
-        ..metadata.ttr = -1
-        ..metadata.ccd = true
+        ..metadata!.ttr = -1
+        ..metadata!.ccd = true
         ..key = locationSharingKey;
 
       var result = await AtClientManager.getInstance()

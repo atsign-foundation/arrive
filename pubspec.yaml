@@ -15,28 +15,28 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.3+32
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.0
-  provider: ^4.3.2+2
+  cupertino_icons: ^1.0.4
+  provider: ^6.0.2
   sliding_up_panel: ^2.0.0+1
-  hive: ^2.0.4
-  hive_flutter: ^1.0.0
-  latlong2: ^0.8.0
-  package_info: ^0.4.3+4
-  fluttertoast: ^8.0.3
-  pedantic: ^1.11.0
+  hive: ^2.0.6
+  hive_flutter: ^1.1.0
+  latlong2: ^0.8.1
+  package_info: ^2.0.2
+  fluttertoast: ^8.0.9
+  pedantic: ^1.11.1
 
 
-  at_client_mobile: ^3.1.6
-  at_client: ^3.0.10
-  at_contact: ^3.0.4
+  at_client_mobile: ^3.1.8
+  at_client: ^3.0.12
+  at_contact: ^3.0.5
   at_commons: ^3.0.5
-  at_lookup: ^3.0.9
-  at_contacts_group_flutter: ^4.0.0
-  at_contacts_flutter: ^4.0.0
+  at_lookup: ^3.0.10
+  at_contacts_group_flutter: ^4.0.1
+  at_contacts_flutter: ^4.0.1
   at_onboarding_flutter: ^4.0.0
   at_location_flutter: ^3.1.2
   at_events_flutter: ^3.1.2

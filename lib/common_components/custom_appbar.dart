@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
+  final String? title;
   final bool showBackIcon, centerTitle, padding;
-  final Widget leadingWidget, action;
+  final Widget? leadingWidget, action;
 
   const CustomAppBar(
       {this.title,
@@ -45,7 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         titleSpacing: 0.0,
         title: title != null
             ? Text(
-                title,
+                title!,
                 style: CustomTextStyles().black18,
               )
             : SizedBox(),

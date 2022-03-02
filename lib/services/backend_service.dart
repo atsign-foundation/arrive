@@ -24,29 +24,29 @@ class BackendService {
   factory BackendService.getInstance() {
     return _singleton;
   }
-  AtClientService atClientServiceInstance;
+  AtClientService? atClientServiceInstance;
   // AtClientImpl atClientInstance;
-  String _atsign;
+  String? _atsign;
   // ignore: non_constant_identifier_names
-  String app_lifecycle_state;
-  AtClientPreference atClientPreference;
+  String? app_lifecycle_state;
+  AtClientPreference? atClientPreference;
   bool autoAcceptFiles = false;
-  String get currentAtsign => _atsign;
-  OutboundConnection monitorConnection;
-  Directory downloadDirectory;
-  SyncService syncService;
-  Map<String, AtClientService> atClientServiceMap = {};
+  String? get currentAtsign => _atsign;
+  OutboundConnection? monitorConnection;
+  Directory? downloadDirectory;
+  late SyncService syncService;
+  Map<String?, AtClientService> atClientServiceMap = {};
   bool isSyncedDataFetched = false;
 
   ///Resets [atsigns] list from device storage.
   Future<void> resetAtsigns(List atsigns) async {
-    for (String atsign in atsigns) {
+    for (String atsign in atsigns as Iterable<String>) {
       await KeychainUtil.resetAtSignFromKeychain(atsign);
       atClientServiceMap.remove(atsign);
     }
   }
 
-  Future<bool> onboard({String atsign}) async {
+  Future<bool> onboard({String? atsign}) async {
     atClientServiceInstance = AtClientService();
     if (Platform.isIOS) {
       downloadDirectory =
@@ -61,16 +61,16 @@ class BackendService {
     var path = appSupportDirectory.path;
     atClientPreference = AtClientPreference();
 
-    atClientPreference.isLocalStoreRequired = true;
-    atClientPreference.commitLogPath = path;
-    atClientPreference.rootDomain = MixedConstants.ROOT_DOMAIN;
-    atClientPreference.hiveStoragePath = path;
-    atClientPreference.downloadPath = downloadDirectory.path;
-    atClientPreference.outboundConnectionTimeout = MixedConstants.TIME_OUT;
-    atClientPreference.namespace = MixedConstants.appNamespace;
-    atClientPreference.syncRegex = MixedConstants.syncRegex;
-    var result = await atClientServiceInstance.onboard(
-      atClientPreference: atClientPreference,
+    atClientPreference!.isLocalStoreRequired = true;
+    atClientPreference!.commitLogPath = path;
+    atClientPreference!.rootDomain = MixedConstants.ROOT_DOMAIN;
+    atClientPreference!.hiveStoragePath = path;
+    atClientPreference!.downloadPath = downloadDirectory!.path;
+    atClientPreference!.outboundConnectionTimeout = MixedConstants.TIME_OUT;
+    atClientPreference!.namespace = MixedConstants.appNamespace;
+    atClientPreference!.syncRegex = MixedConstants.syncRegex;
+    var result = await atClientServiceInstance!.onboard(
+      atClientPreference: atClientPreference!,
       atsign: atsign,
     );
     // atClientInstance = atClientServiceInstance.atClient;
@@ -115,7 +115,7 @@ class BackendService {
   // }
 
   static final KeyChainManager _keyChainManager = KeyChainManager.getInstance();
-  Future<List<String>> getAtsignList() async {
+  Future<List<String>?> getAtsignList() async {
     var atSignsList = await _keyChainManager.getAtSignListFromKeychain();
     return atSignsList;
   }
@@ -131,7 +131,7 @@ class BackendService {
           element == AtClientManager.getInstance().atClient.getCurrentAtSign());
     }
 
-    var atClientPrefernce;
+    late var atClientPrefernce;
     await getAtClientPreference().then((value) => atClientPrefernce = value);
     var tempAtsign;
     if (atSignList == null || atSignList.isEmpty) {
@@ -141,31 +141,31 @@ class BackendService {
     }
 
     if (tempAtsign == '') {
-      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
+      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext!,
           Routes.SPLASH, (Route<dynamic> route) => false);
     } else {
       Onboarding(
           atsign: tempAtsign,
-          context: NavService.navKey.currentContext,
+          context: NavService.navKey.currentContext!,
           atClientPreference: atClientPrefernce,
           domain: MixedConstants.ROOT_DOMAIN,
           appColor: Color.fromARGB(255, 240, 94, 62),
           rootEnvironment: RootEnvironment.Production,
           onboard: (value, atsign) async {
             await AtClientManager.getInstance().setCurrentAtSign(
-                atsign,
+                atsign!,
                 MixedConstants.appNamespace,
-                BackendService.getInstance().atClientPreference);
+                BackendService.getInstance().atClientPreference!);
             BackendService.getInstance().syncService =
                 AtClientManager.getInstance().syncService;
 
-            Provider.of<LocationProvider>(NavService.navKey.currentContext,
+            Provider.of<LocationProvider>(NavService.navKey.currentContext!,
                     listen: false)
                 .resetData();
 
             atClientServiceMap = value;
 
-            var atSign = atsign;
+            String? atSign = atsign;
 
             // await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
             // atClientInstance = atClientServiceMap[atsign].atClient;
@@ -174,7 +174,7 @@ class BackendService {
             BackendService.getInstance().syncWithSecondary();
 
             SetupRoutes.pushAndRemoveAll(
-                NavService.navKey.currentContext, Routes.HOME);
+                NavService.navKey.currentContext!, Routes.HOME);
           },
           onError: (error) {
             BackendService.getInstance().showErrorSnackBar(error);
@@ -200,7 +200,7 @@ class BackendService {
     }
 
     if (syncStatus.dataChange && !isSyncedDataFetched) {
-      Provider.of<LocationProvider>(NavService.navKey.currentContext,
+      Provider.of<LocationProvider>(NavService.navKey.currentContext!,
               listen: false)
           .init(
               AtClientManager.getInstance(),
@@ -211,7 +211,7 @@ class BackendService {
   }
 
   resetDevice(List checkedAtsigns) async {
-    Navigator.of(NavService.navKey.currentContext).pop();
+    Navigator.of(NavService.navKey.currentContext!).pop();
     await BackendService.getInstance()
         .resetAtsigns(checkedAtsigns)
         .then((value) async {
@@ -227,10 +227,10 @@ class BackendService {
     if (atSignList != null &&
         atSignList.isNotEmpty &&
         atClient.getCurrentAtSign() != atSignList.first) {
-      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
+      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext!,
           Routes.SPLASH, (Route<dynamic> route) => false);
     } else if (atSignList == null || atSignList.isEmpty) {
-      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext,
+      await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext!,
           Routes.SPLASH, (Route<dynamic> route) => false);
     }
   }
@@ -238,7 +238,7 @@ class BackendService {
   // ignore: always_declare_return_types
   showErrorSnackBar(dynamic msg) {
     try {
-      ScaffoldMessenger.of(NavService.navKey.currentContext)
+      ScaffoldMessenger.of(NavService.navKey.currentContext!)
           .showSnackBar(SnackBar(
         backgroundColor: AllColors().RED,
         content: Text(

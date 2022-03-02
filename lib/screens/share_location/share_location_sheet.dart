@@ -21,9 +21,9 @@ class ShareLocationSheet extends StatefulWidget {
 }
 
 class _ShareLocationSheetState extends State<ShareLocationSheet> {
-  List<AtContact> selectedContacts = [];
-  bool isLoading;
-  String selectedOption;
+  List<AtContact?> selectedContacts = [];
+  late bool isLoading;
+  String? selectedOption;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
           CustomAppBar(
             centerTitle: false,
             title: TextStrings.shareLocation,
-            action: PopButton(label:TextStrings.cancel),
+            action: PopButton(label: TextStrings.cancel),
           ),
           SizedBox(
             height: 25,
@@ -70,13 +70,13 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                           selectedContacts = [];
                           s.forEach((_groupElement) {
                             // for contacts
-                            if (_groupElement.contact != null) {
+                            if (_groupElement!.contact != null) {
                               var _containsContact = false;
 
                               // to prevent one contact from getting added again
                               selectedContacts.forEach((_contact) {
-                                if (_groupElement.contact.atSign ==
-                                    _contact.atSign) {
+                                if (_groupElement.contact!.atSign ==
+                                    _contact!.atSign) {
                                   _containsContact = true;
                                 }
                               });
@@ -86,12 +86,12 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                               }
                             } else if (_groupElement.group != null) {
                               // for groups
-                              _groupElement.group.members.forEach((element) {
+                              _groupElement.group!.members!.forEach((element) {
                                 var _containsContact = false;
 
                                 // to prevent one contact from getting added again
                                 selectedContacts.forEach((_contact) {
-                                  if (element.atSign == _contact.atSign) {
+                                  if (element.atSign == _contact!.atSign) {
                                     _containsContact = true;
                                   }
                                 });
@@ -122,7 +122,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
               : SizedBox(),
           SizedBox(height: 25),
           Text(
-           TextStrings.duration,
+            TextStrings.duration,
             style: CustomTextStyles().greyLabel14,
           ),
           SizedBox(height: 10),
@@ -172,7 +172,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                               fontSize: 13.toFont)),
                 );
               }).toList(),
-              onChanged: (value) {
+              onChanged: (dynamic value) {
                 setState(() {
                   selectedOption = value;
                 });
@@ -204,7 +204,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
   // ignore: always_declare_return_types
   onShareTap() async {
-    if (selectedContacts == null) {
+    if (selectedContacts.isEmpty) {
       CustomToast().show(TextStrings.selectAContact, context, isError: true);
       return;
     }
@@ -224,11 +224,12 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
     var result;
     if (selectedContacts.length > 1) {
-      await SharingLocationService()
-          .sendShareLocationToGroup(selectedContacts, minutes: minutes);
+      await SharingLocationService().sendShareLocationToGroup(
+          selectedContacts as List<AtContact>,
+          minutes: minutes);
     } else {
       result = await sendShareLocationNotification(
-          selectedContacts[0].atSign, minutes);
+          selectedContacts[0]!.atSign!, minutes);
     }
 
     if (result == null) {
@@ -247,7 +248,8 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
       });
       Navigator.of(context).pop();
     } else {
-      CustomToast().show(TextStrings.somethingWentWrong, context, isError: true);
+      CustomToast()
+          .show(TextStrings.somethingWentWrong, context, isError: true);
       setState(() {
         isLoading = false;
       });

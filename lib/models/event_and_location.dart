@@ -3,8 +3,8 @@ import 'package:at_location_flutter/location_modal/key_location_model.dart';
 
 class EventAndLocationHybrid {
   NotificationModelType type;
-  KeyLocationModel locationKeyModel;
-  EventKeyLocationModel eventKeyModel;
+  KeyLocationModel? locationKeyModel;
+  EventKeyLocationModel? eventKeyModel;
 
   EventAndLocationHybrid(this.type,
       {this.locationKeyModel, this.eventKeyModel});

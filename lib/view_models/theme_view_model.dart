@@ -4,8 +4,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'base_model.dart';
 
 class ThemeProvider extends BaseModel {
-  ThemeColor themeColor;
-  HiveDataProvider _hiveDataProvider;
+  ThemeColor? themeColor;
+  late HiveDataProvider _hiveDataProvider;
   bool isDark = false;
 
   ThemeProvider({this.themeColor}) {
@@ -41,7 +41,7 @@ class ThemeProvider extends BaseModel {
     notifyListeners();
   }
 
-  ThemeColor get getTheme => themeColor;
+  ThemeColor? get getTheme => themeColor;
 }
 
 enum ThemeColor { Light, Dark }

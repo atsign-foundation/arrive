@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // ignore: always_declare_return_types
 bottomSheet(BuildContext context, T, double height,
-    {Function onSheetCLosed}) async {
+    {Function? onSheetCLosed}) async {
   var future = showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
