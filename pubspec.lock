@@ -49,14 +49,14 @@ packages:
       name: at_client
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.12"
+    version: "3.0.13"
   at_client_mobile:
     dependency: "direct main"
     description:
       name: at_client_mobile
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.8"
+    version: "3.1.9"
   at_common_flutter:
     dependency: transitive
     description:
@@ -83,7 +83,7 @@ packages:
     description:
       path: at_contacts_flutter
       ref: trunk
-      resolved-ref: "93dcbc00aa18a5fcd52b2c5f0e8b974293fcf6c3"
+      resolved-ref: "17c55e211025c70296204289a7b1d480c31ad8cd"
       url: "git@github.com:atsign-foundation/at_widgets.git"
     source: git
     version: "4.0.1"
@@ -92,23 +92,25 @@ packages:
     description:
       path: at_contacts_group_flutter
       ref: trunk
-      resolved-ref: "93dcbc00aa18a5fcd52b2c5f0e8b974293fcf6c3"
+      resolved-ref: "17c55e211025c70296204289a7b1d480c31ad8cd"
       url: "git@github.com:atsign-foundation/at_widgets.git"
     source: git
     version: "4.0.1"
   at_events_flutter:
     dependency: "direct main"
     description:
-      name: at_events_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: at_events_flutter
+      ref: "feat/at_events_refactor"
+      resolved-ref: "1e74562f97f6bf73580efe9dbbca2b4a53ec8b78"
+      url: "git@github.com:atsign-foundation/at_widgets.git"
+    source: git
     version: "3.1.2"
   at_location_flutter:
     dependency: "direct main"
     description:
-      name: at_location_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "/Users/apple/Desktop/client_projects/at_company_github/at_widgets/at_location_flutter"
+      relative: false
+    source: path
     version: "3.1.2"
   at_lookup:
     dependency: "direct main"
@@ -116,13 +118,13 @@ packages:
       name: at_lookup
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.10"
+    version: "3.0.11"
   at_onboarding_flutter:
     dependency: "direct main"
     description:
       path: at_onboarding_flutter
       ref: trunk
-      resolved-ref: "93dcbc00aa18a5fcd52b2c5f0e8b974293fcf6c3"
+      resolved-ref: "17c55e211025c70296204289a7b1d480c31ad8cd"
       url: "git@github.com:atsign-foundation/at_widgets.git"
     source: git
     version: "4.0.0"
@@ -721,7 +723,7 @@ packages:
       name: permission_handler_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.0.2"
+    version: "9.0.2+1"
   permission_handler_apple:
     dependency: transitive
     description:
@@ -777,7 +779,7 @@ packages:
       name: pointycastle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.5.1"
+    version: "3.5.2"
   positioned_tap_detector_2:
     dependency: transitive
     description:

@@ -18,7 +18,6 @@ import 'package:at_location_flutter/service/send_location_notification.dart';
 
 class LocationProvider extends BaseModel {
   LocationProvider();
-  List<EventAndLocationHybrid> allNotifications = [];
   List<EventAndLocationHybrid> allLocationNotifications = [];
   List<EventAndLocationHybrid> allEventNotifications = [];
   final HiveDataProvider _hiveDataProvider = HiveDataProvider();
@@ -33,7 +32,6 @@ class LocationProvider extends BaseModel {
 
   void resetData() {
     animateToIndex = -1;
-    allNotifications = [];
     allLocationNotifications = [];
     allEventNotifications = [];
     isGettingLoadedFirstTime = true;
@@ -51,7 +49,6 @@ class LocationProvider extends BaseModel {
       setStatus(GET_ALL_NOTIFICATIONS, Status.Loading);
       isGettingLoadedFirstTime = false;
     }
-    // allNotifications = [];
     allLocationNotifications = [];
     allEventNotifications = [];
 

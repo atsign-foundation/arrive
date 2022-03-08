@@ -50,35 +50,39 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
   void calculateSharingLocationFor() {
     allNotificationsSharingLocationFor = [];
 
+    /// check events
     for (var _notification
         in Provider.of<LocationProvider>(context, listen: false)
-            .allNotifications) {
-      if (_notification.type == NotificationModelType.EventModel) {
-        var _event = _notification.eventKeyModel!.eventNotificationModel!;
-        if (!_event.isCancelled!) {
-          var _myEventInfo = HomeEventService().getMyEventInfo(_event);
-          if ((_myEventInfo != null) && (!_myEventInfo.isExited)) {
-            allNotificationsSharingLocationFor.add(LocationSharingData(
-              eventAndLocationHybrid: _notification,
-              eventInfo: _myEventInfo,
-              locationInfo: null,
-            ));
-          }
+            .allEventNotifications) {
+      var _event = _notification.eventKeyModel!.eventNotificationModel!;
+      if (!_event.isCancelled!) {
+        var _myEventInfo = HomeEventService().getMyEventInfo(_event);
+        if ((_myEventInfo != null) && (!_myEventInfo.isExited)) {
+          allNotificationsSharingLocationFor.add(LocationSharingData(
+            eventAndLocationHybrid: _notification,
+            eventInfo: _myEventInfo,
+            locationInfo: null,
+          ));
         }
-      } else {
-        var _locationData =
-            _notification.locationKeyModel!.locationNotificationModel!;
+      }
+    }
 
-        if (compareAtSign(_locationData.atsignCreator!,
-            AtClientManager.getInstance().atClient.getCurrentAtSign()!)) {
-          var _myLocationInfo = getMyLocationInfo(_locationData)!;
-          if (_myLocationInfo.isAccepted) {
-            allNotificationsSharingLocationFor.add(LocationSharingData(
-              eventAndLocationHybrid: _notification,
-              eventInfo: null,
-              locationInfo: _myLocationInfo,
-            ));
-          }
+    /// check locations
+    for (var _notification
+        in Provider.of<LocationProvider>(context, listen: false)
+            .allLocationNotifications) {
+      var _locationData =
+          _notification.locationKeyModel!.locationNotificationModel!;
+
+      if (compareAtSign(_locationData.atsignCreator!,
+          AtClientManager.getInstance().atClient.getCurrentAtSign()!)) {
+        var _myLocationInfo = getMyLocationInfo(_locationData)!;
+        if (_myLocationInfo.isAccepted) {
+          allNotificationsSharingLocationFor.add(LocationSharingData(
+            eventAndLocationHybrid: _notification,
+            eventInfo: null,
+            locationInfo: _myLocationInfo,
+          ));
         }
       }
     }
@@ -216,7 +220,8 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
       result = await SharingLocationService()
           .updateWithShareLocationAcknowledge(locationNotificationModel,
               isSharing: _value);
-    } else if (locationNotificationModel.key!.contains(TextStrings.requestLocation)) {
+    } else if (locationNotificationModel.key!
+        .contains(TextStrings.requestLocation)) {
       result = await RequestLocationService().requestLocationAcknowledgment(
           locationNotificationModel, true,
           isSharing: _value);
@@ -228,8 +233,8 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
           getMyLocationInfo(locationNotificationModel);
       setState(() {});
     } else {
-      CustomToast()
-          .show(TextStrings.somethingWentWrongPleaseTryAgain, context, isError: true);
+      CustomToast().show(TextStrings.somethingWentWrongPleaseTryAgain, context,
+          isError: true);
     }
   }
 
@@ -317,8 +322,8 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
       setState(() {});
       Navigator.of(context).pop();
     } else {
-      CustomToast()
-          .show(TextStrings.somethingWentWrongPleaseTryAgain, context, isError: true);
+      CustomToast().show(TextStrings.somethingWentWrongPleaseTryAgain, context,
+          isError: true);
     }
   }
 }
