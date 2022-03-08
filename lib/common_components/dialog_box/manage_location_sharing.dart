@@ -8,6 +8,7 @@ import 'package:at_location_flutter/common_components/custom_toast.dart';
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:at_location_flutter/service/request_location_service.dart';
 import 'package:at_location_flutter/service/sharing_location_service.dart';
+import 'package:at_location_flutter/utils/constants/constants.dart';
 import 'package:atsign_location_app/common_components/loading_widget.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
@@ -216,12 +217,13 @@ class __ManageLocationSharingState extends State<_ManageLocationSharing> {
     }
 
     LoadingDialog().show(text: TextStrings.updating);
-    if (locationNotificationModel!.key!.contains(TextStrings.shareLocation)) {
+    if (locationNotificationModel!.key!
+        .contains(MixedConstants.SHARE_LOCATION)) {
       result = await SharingLocationService()
           .updateWithShareLocationAcknowledge(locationNotificationModel,
               isSharing: _value);
     } else if (locationNotificationModel.key!
-        .contains(TextStrings.requestLocation)) {
+        .contains(MixedConstants.REQUEST_LOCATION)) {
       result = await RequestLocationService().requestLocationAcknowledgment(
           locationNotificationModel, true,
           isSharing: _value);
