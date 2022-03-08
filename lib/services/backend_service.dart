@@ -40,7 +40,7 @@ class BackendService {
 
   ///Resets [atsigns] list from device storage.
   Future<void> resetAtsigns(List atsigns) async {
-    for (String atsign in atsigns as Iterable<String>) {
+    for (String atsign in atsigns) {
       await KeychainUtil.resetAtSignFromKeychain(atsign);
       atClientServiceMap.remove(atsign);
     }

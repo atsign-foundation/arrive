@@ -47,6 +47,12 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
+  at_events_flutter:
+    git:
+      url: git@github.com:atsign-foundation/at_widgets.git
+      ref: feat/at_events_refactor
+      path: at_events_flutter
+  
   biometric_storage: ^4.0.1
   permission_handler: ^9.2.0
   at_contacts_flutter:
