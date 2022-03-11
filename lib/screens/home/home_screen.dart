@@ -43,6 +43,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
+import 'package:new_version/new_version.dart';
 
 enum FilterScreenType { Event, Location }
 enum EventFilters { Sent, Received, None }
@@ -76,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    checkForUpdate();
+
     _controller =
         _controller = TabController(length: 2, vsync: this, initialIndex: 0);
     _mapKey = UniqueKey();
@@ -116,6 +119,20 @@ class _HomeScreenState extends State<HomeScreen>
           atClientManager.atClient.getCurrentAtSign(),
           NavService.navKey);
     });
+  }
+
+  Future<void> checkForUpdate() async {
+    final newVersion = NewVersion();
+    final status = await newVersion.getVersionStatus();
+
+    //// for forced version update
+    // newVersion.showUpdateDialog(
+    //   context: context,
+    //   versionStatus: status,
+    //   allowDismissal: false,
+    // );
+
+    newVersion.showAlertIfNecessary(context: context);
   }
 
   void initializePlugins() async {
