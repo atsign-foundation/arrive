@@ -16,8 +16,8 @@ import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
 
 class AtSignBottomSheet extends StatefulWidget {
-  final List<String> atSignList;
-  AtSignBottomSheet({Key key, this.atSignList}) : super(key: key);
+  final List<String>? atSignList;
+  AtSignBottomSheet({Key? key, this.atSignList}) : super(key: key);
 
   @override
   _AtSignBottomSheetState createState() => _AtSignBottomSheetState();
@@ -35,9 +35,9 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
   getAtContactDetails() async {
     contactDetails = {};
 
-    await Future.forEach(widget.atSignList, (element) async {
+    await Future.forEach(widget.atSignList!, (dynamic element) async {
       var _currentAtsign =
-          AtClientManager.getInstance().atClient.getCurrentAtSign();
+          AtClientManager.getInstance().atClient.getCurrentAtSign()!;
       var contactDetail = await getAtSignDetails(_currentAtsign);
       contactDetails['$_currentAtsign'] = contactDetail;
     });
@@ -45,7 +45,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
   }
 
   BackendService backendService = BackendService.getInstance();
-  var atClientPrefernce;
+  late var atClientPrefernce;
   @override
   Widget build(BuildContext context) {
     backendService
@@ -66,19 +66,19 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
               Expanded(
                   child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.atSignList.length,
+                itemCount: widget.atSignList!.length,
                 itemBuilder: (context, index) {
-                  Uint8List image;
+                  Uint8List? image;
 
-                  if (contactDetails['${widget.atSignList[index]}'] != null) {
-                    if (contactDetails['${widget.atSignList[index]}'].tags !=
+                  if (contactDetails['${widget.atSignList![index]}'] != null) {
+                    if (contactDetails['${widget.atSignList![index]}']!.tags !=
                             null &&
-                        contactDetails['${widget.atSignList[index]}']
-                                .tags['image'] !=
+                        contactDetails['${widget.atSignList![index]}']!
+                                .tags!['image'] !=
                             null) {
                       List<int> intList =
-                          contactDetails['${widget.atSignList[index]}']
-                              .tags['image']
+                          contactDetails['${widget.atSignList![index]}']!
+                              .tags!['image']
                               .cast<int>();
                       image = Uint8List.fromList(intList);
                     }
@@ -87,7 +87,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                   return GestureDetector(
                     onTap: () async {
                       Onboarding(
-                          atsign: widget.atSignList[index],
+                          atsign: widget.atSignList![index],
                           context: context,
                           atClientPreference: atClientPrefernce,
                           domain: MixedConstants.ROOT_DOMAIN,
@@ -96,7 +96,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                           onboard: (value, atsign) async {
                             await AtClientManager.getInstance()
                                 .setCurrentAtSign(
-                                    atsign,
+                                    atsign!,
                                     MixedConstants.appNamespace,
                                     atClientPrefernce);
                             BackendService.getInstance().syncService =
@@ -124,7 +124,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
 
                             BackendService.getInstance().syncWithSecondary();
 
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                            WidgetsBinding.instance!.addPostFrameCallback((_) {
                               // TODO: Add LocationProvider init here if any issue
                             });
 
@@ -155,10 +155,10 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                   ),
                                 )
                               : ContactInitial(
-                                  initials: widget.atSignList[index],
+                                  initials: widget.atSignList![index],
                                 ),
                           Text(
-                            widget.atSignList[index],
+                            widget.atSignList![index],
                             style: TextStyle(fontSize: 15.toFont),
                           )
                         ],
@@ -181,7 +181,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                       rootEnvironment: RootEnvironment.Production,
                       onboard: (value, atsign) async {
                         await AtClientManager.getInstance().setCurrentAtSign(
-                            atsign,
+                            atsign!,
                             MixedConstants.appNamespace,
                             atClientPrefernce);
                         BackendService.getInstance().syncService =

@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
 class ErrorDialogWidget extends StatelessWidget {
-  final String text, buttonText;
-  final Function onButtonPress;
-  final bool includeCancel;
+  final String? text, buttonText;
+  final Function? onButtonPress;
+  final bool? includeCancel;
 
   ErrorDialogWidget({
-    @required this.text,
+    required this.text,
     this.buttonText,
     this.onButtonPress,
     this.includeCancel,
@@ -43,7 +43,7 @@ class ErrorDialogWidget extends StatelessWidget {
               ),
               SizedBox(height: 10.toHeight),
               Text(
-                text,
+                text!,
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 10.toHeight),
@@ -55,7 +55,7 @@ class ErrorDialogWidget extends StatelessWidget {
                       bgColor: Theme.of(context).primaryColor,
                       onTap: () {
                         Navigator.of(context).pop();
-                        if (onButtonPress != null) onButtonPress();
+                        if (onButtonPress != null) onButtonPress!();
                       },
                       child: Text(
                         TextStrings.ok,
@@ -83,14 +83,14 @@ class ErrorDialog {
 
   // ignore: always_declare_return_types
   show(String text,
-      {String buttonText,
-      Function onButtonPressed,
-      @required BuildContext context,
+      {String? buttonText,
+      Function? onButtonPressed,
+      required BuildContext context,
       bool includeCancel = false}) {
     if (!_showing) {
       _showing = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        NavService.navKey.currentState
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        NavService.navKey.currentState!
             .push(
           CustomPopupRoutes(
               pageBuilder: (_, __, ___) => ErrorDialogWidget(
@@ -111,6 +111,6 @@ class ErrorDialog {
 
   // ignore: always_declare_return_types
   hide() {
-    if (_showing) NavService.navKey.currentState.pop();
+    if (_showing) NavService.navKey.currentState!.pop();
   }
 }

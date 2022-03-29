@@ -117,7 +117,7 @@ class Themes {
     );
   }
 
-  static ThemeData getThemeData(ThemeColor _themeColor) {
+  static ThemeData getThemeData(ThemeColor? _themeColor) {
     if (_themeColor == ThemeColor.Dark) {
       return Themes.darkTheme;
     } else {

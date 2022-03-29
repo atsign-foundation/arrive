@@ -9,11 +9,15 @@ import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class AddContact extends StatefulWidget {
-  final String atSignName, name;
-  final Uint8List image;
-  final Function onSuccessCallback;
+  final String? atSignName, name;
+  final Uint8List? image;
+  final Function? onSuccessCallback;
   const AddContact(
-      {Key key, this.atSignName, this.name, this.image, this.onSuccessCallback})
+      {Key? key,
+      this.atSignName,
+      this.name,
+      this.image,
+      this.onSuccessCallback})
       : super(key: key);
 
   @override
@@ -22,7 +26,7 @@ class AddContact extends StatefulWidget {
 
 class _AddContactState extends State<AddContact> {
   bool isContactAdding = false;
-  String nickName;
+  String? nickName;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +69,7 @@ class _AddContactState extends State<AddContact> {
               ),
               (widget.name != null)
                   ? Text(
-                      widget.name,
+                      widget.name!,
                       style: CustomTextStyles().black16bold,
                     )
                   : SizedBox(),
@@ -119,7 +123,7 @@ class _AddContactState extends State<AddContact> {
                       await ContactService().fetchContacts();
 
                       if (widget.onSuccessCallback != null) {
-                        widget.onSuccessCallback();
+                        widget.onSuccessCallback!();
                       }
                       Navigator.pop(context);
                     },

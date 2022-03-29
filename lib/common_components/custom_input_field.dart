@@ -5,10 +5,10 @@ import 'package:at_common_flutter/services/size_config.dart';
 class CustomInputField extends StatelessWidget {
   final String hintText, initialValue;
   final double width, height;
-  final IconData icon;
-  final Function onTap, onIconTap, onSubmitted;
-  final Color iconColor;
-  final ValueChanged<String> value;
+  final IconData? icon;
+  final Function? onTap, onIconTap, onSubmitted;
+  final Color? iconColor;
+  final ValueChanged<String>? value;
   final bool isReadOnly;
 
   final textController = TextEditingController();
@@ -30,7 +30,7 @@ class CustomInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     textController.text = initialValue;
     return InkWell(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       child: Container(
         width: width,
         height: height,
@@ -54,21 +54,21 @@ class CustomInputField extends StatelessWidget {
                   hintStyle: TextStyle(
                       color: ColorConstants.darkGrey, fontSize: 15.toFont),
                 ),
-                onTap: onTap,
+                onTap: onTap as void Function()?,
                 onChanged: (val) {
-                  value(val);
+                  value!(val);
                 },
                 controller: textController,
                 onSubmitted: (str) {
                   if (onSubmitted != null) {
-                    onSubmitted(str);
+                    onSubmitted!(str);
                   }
                 },
               ),
             ),
             icon != null
                 ? InkWell(
-                    onTap: onIconTap ?? onTap,
+                    onTap: onIconTap as void Function()? ?? onTap as void Function()?,
                     child: Icon(
                       icon,
                       color: iconColor ?? ColorConstants.darkGrey,

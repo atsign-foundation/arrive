@@ -6,16 +6,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 
 class WebsiteScreen extends StatefulWidget {
-  final String title;
-  final String url;
+  final String? title;
+  final String? url;
 
-  const WebsiteScreen({Key key, this.title, this.url}) : super(key: key);
+  const WebsiteScreen({Key? key, this.title, this.url}) : super(key: key);
   @override
   _WebsiteScreenState createState() => _WebsiteScreenState();
 }
 
 class _WebsiteScreenState extends State<WebsiteScreen> {
-  bool loading;
+  late bool loading;
   @override
   void initState() {
     super.initState();
@@ -39,7 +39,7 @@ class _WebsiteScreenState extends State<WebsiteScreen> {
             size: 25.toHeight,
           ),
         ),
-        title: Text(widget.title, style: CustomTextStyles().black18),
+        title: Text(widget.title!, style: CustomTextStyles().black18),
       ),
       body: Stack(children: [
         WebView(

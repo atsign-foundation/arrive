@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 Future<void> deleteDialogConfirmation(
     EventAndLocationHybrid hybridElement) async {
   return showDialog<void>(
-    context: NavService.navKey.currentContext,
+    context: NavService.navKey.currentContext!,
     barrierDismissible: false,
     builder: (BuildContext context) {
       return StatefulBuilder(builder: (_context, _setDialogState) {
@@ -41,10 +41,10 @@ Future<void> deleteDialogConfirmation(
                               NotificationModelType.EventModel) {
                             await EventKeyStreamService().deleteData(
                                 hybridElement
-                                    .eventKeyModel.eventNotificationModel);
+                                    .eventKeyModel!.eventNotificationModel!);
                           } else {
                             await KeyStreamService().deleteData(hybridElement
-                                .locationKeyModel.locationNotificationModel);
+                                .locationKeyModel!.locationNotificationModel!);
                           }
 
                           _setDialogState(() {
@@ -88,38 +88,38 @@ Future<void> deleteDialogConfirmation(
   );
 }
 
-String eventAndLocationHybridDetails(EventAndLocationHybrid hybridElement) {
+String? eventAndLocationHybridDetails(EventAndLocationHybrid hybridElement) {
   if (hybridElement.type == NotificationModelType.EventModel) {
-    return hybridElement.eventKeyModel.eventNotificationModel.title;
+    return hybridElement.eventKeyModel!.eventNotificationModel!.title;
   }
 
-  var _type = hybridElement.locationKeyModel.locationNotificationModel.key
+  var _type = hybridElement.locationKeyModel!.locationNotificationModel!.key!
           .contains('sharelocation')
       ? 'share location'
       : 'request location';
 
   String _mode;
 
-  if (hybridElement.locationKeyModel.locationNotificationModel.key
+  if (hybridElement.locationKeyModel!.locationNotificationModel!.key!
       .contains('sharelocation')) {
     if (hybridElement
-            .locationKeyModel.locationNotificationModel.atsignCreator ==
+            .locationKeyModel!.locationNotificationModel!.atsignCreator ==
         AtClientManager.getInstance().atClient.getCurrentAtSign()) {
       _mode =
-          'sent to ${hybridElement.locationKeyModel.locationNotificationModel.receiver}';
+          'sent to ${hybridElement.locationKeyModel!.locationNotificationModel!.receiver}';
     } else {
       _mode =
-          'received from ${hybridElement.locationKeyModel.locationNotificationModel.atsignCreator}';
+          'received from ${hybridElement.locationKeyModel!.locationNotificationModel!.atsignCreator}';
     }
   } else {
     if (hybridElement
-            .locationKeyModel.locationNotificationModel.atsignCreator !=
+            .locationKeyModel!.locationNotificationModel!.atsignCreator !=
         AtClientManager.getInstance().atClient.getCurrentAtSign()) {
       _mode =
-          'sent to ${hybridElement.locationKeyModel.locationNotificationModel.atsignCreator}';
+          'sent to ${hybridElement.locationKeyModel!.locationNotificationModel!.atsignCreator}';
     } else {
       _mode =
-          'received from ${hybridElement.locationKeyModel.locationNotificationModel.receiver}';
+          'received from ${hybridElement.locationKeyModel!.locationNotificationModel!.receiver}';
     }
   }
 

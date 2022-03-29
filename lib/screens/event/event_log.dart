@@ -25,7 +25,7 @@ class EventLog extends StatefulWidget {
 
 class _EventLogState extends State<EventLog>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
 
   @override
   void initState() {
@@ -88,7 +88,7 @@ class _EventLogState extends State<EventLog>
 
   Widget getUpcomingEvents() {
     var upcomingEvents = Provider.of<LocationProvider>(
-            NavService.navKey.currentContext,
+            NavService.navKey.currentContext!,
             listen: false)
         .allEventNotifications;
     return ListView.separated(
@@ -117,22 +117,22 @@ class _EventLogState extends State<EventLog>
             child: InkWell(
               onTap: () {
                 HomeEventService().onEventModelTap(
-                    upcomingEvents[index].eventKeyModel.eventNotificationModel,
-                    upcomingEvents[index].eventKeyModel.haveResponded);
+                    upcomingEvents[index].eventKeyModel!.eventNotificationModel!,
+                    upcomingEvents[index].eventKeyModel!.haveResponded);
               },
               child: DisplayTile(
                 title: upcomingEvents[index]
-                    .eventKeyModel
-                    .eventNotificationModel
+                    .eventKeyModel!
+                    .eventNotificationModel!
                     .title,
                 atsignCreator: upcomingEvents[index]
-                    .eventKeyModel
-                    .eventNotificationModel
+                    .eventKeyModel!
+                    .eventNotificationModel!
                     .atsignCreator,
                 subTitle:
-                    '${TextStrings.eventOn} ${dateToString(upcomingEvents[index].eventKeyModel.eventNotificationModel.event.date)}',
+                    '${TextStrings.eventOn} ${dateToString(upcomingEvents[index].eventKeyModel!.eventNotificationModel!.event!.date!)}',
                 invitedBy:
-                    '${TextStrings.invitedBy} ${upcomingEvents[index].eventKeyModel.eventNotificationModel.atsignCreator}',
+                    '${TextStrings.invitedBy} ${upcomingEvents[index].eventKeyModel!.eventNotificationModel!.atsignCreator}',
               ),
             ),
           ),
@@ -177,7 +177,7 @@ class _EventLogState extends State<EventLog>
                 bottomSheet(
                   context,
                   EventsCollapsedContent(
-                    pastEvents[index],
+                    pastEvents[index]!,
                     key: UniqueKey(),
                     isStatic: true,
                   ),
@@ -186,12 +186,12 @@ class _EventLogState extends State<EventLog>
                 );
               },
               child: DisplayTile(
-                title: pastEvents[index].title,
-                atsignCreator: pastEvents[index].atsignCreator,
+                title: pastEvents[index]!.title,
+                atsignCreator: pastEvents[index]!.atsignCreator,
                 subTitle:
-                    '${TextStrings.eventOn} ${dateToString(pastEvents[index].event.date)}',
+                    '${TextStrings.eventOn} ${dateToString(pastEvents[index]!.event!.date!)}',
                 invitedBy:
-                    '${TextStrings.invitedBy} ${pastEvents[index].atsignCreator}',
+                    '${TextStrings.invitedBy} ${pastEvents[index]!.atsignCreator}',
               ),
             ),
           ),

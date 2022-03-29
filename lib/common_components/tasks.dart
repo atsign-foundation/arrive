@@ -8,14 +8,14 @@ class Tasks extends StatelessWidget {
   final Function onTap;
   final double angle;
   Tasks(
-      {@required this.task,
-      @required this.icon,
-      @required this.onTap,
+      {required this.task,
+      required this.icon,
+      required this.onTap,
       this.angle = 0.0});
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       child: Container(
         height: 52.toHeight,
         child: Column(
@@ -34,7 +34,7 @@ class Tasks extends StatelessWidget {
                 task,
                 textScaleFactor: 1,
                 style: TextStyle(
-                    color: Theme.of(context).primaryTextTheme.headline3.color,
+                    color: Theme.of(context).primaryTextTheme.headline3!.color,
                     fontSize: 14.toFont),
               ),
             )

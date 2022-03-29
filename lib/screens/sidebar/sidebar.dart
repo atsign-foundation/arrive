@@ -31,10 +31,10 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   bool state = false;
-  Uint8List image;
-  AtContact contact;
-  AtContactsImpl atContact;
-  String name;
+  Uint8List? image;
+  AtContact? contact;
+  AtContactsImpl? atContact;
+  String? name;
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
     packageName: 'Unknown',
@@ -42,7 +42,7 @@ class _SideBarState extends State<SideBar> {
     buildNumber: 'Unknown',
   );
 
-  String _currentAtsign;
+  String? _currentAtsign;
 
   @override
   void initState() {
@@ -73,17 +73,17 @@ class _SideBarState extends State<SideBar> {
 
   // ignore: always_declare_return_types
   getEventCreator() async {
-    var contact = await getAtSignDetails(_currentAtsign);
+    var contact = await getAtSignDetails(_currentAtsign!);
     name = null;
     if (contact != null) {
-      if (contact.tags != null && contact.tags['image'] != null) {
-        List<int> intList = contact.tags['image'].cast<int>();
+      if (contact.tags != null && contact.tags!['image'] != null) {
+        List<int>? intList = contact.tags!['image'].cast<int>();
         setState(() {
-          image = Uint8List.fromList(intList);
+          image = Uint8List.fromList(intList!);
         });
       }
-      if (contact.tags != null && contact.tags['name'] != null) {
-        var newName = contact.tags['name'].toString();
+      if (contact.tags != null && contact.tags!['name'] != null) {
+        var newName = contact.tags!['name'].toString();
         setState(() {
           name = newName;
         });
@@ -111,7 +111,7 @@ class _SideBarState extends State<SideBar> {
                           borderRadius:
                               BorderRadius.all(Radius.circular(30.toFont)),
                           child: Image.memory(
-                            image,
+                            image!,
                             width: 50.toFont,
                             height: 50.toFont,
                             fit: BoxFit.fill,
@@ -198,7 +198,7 @@ class _SideBarState extends State<SideBar> {
               () async {
                 BackupKeyWidget(
                   atsign:
-                      AtClientManager.getInstance().atClient.getCurrentAtSign(),
+                      AtClientManager.getInstance().atClient.getCurrentAtSign()!,
                 ).showBackupDialog(context);
               },
             ),
@@ -314,7 +314,7 @@ class _SideBarState extends State<SideBar> {
 
   _showResetDialog() async {
     var isSelectAtsign = false;
-    var isSelectAll = false;
+    bool? isSelectAll = false;
     var atsignsList = await KeychainUtil.getAtsignList();
     atsignsList ??= [];
 
@@ -324,7 +324,7 @@ class _SideBarState extends State<SideBar> {
     }
     await showDialog(
         barrierDismissible: true,
-        context: NavService.navKey.currentContext,
+        context: NavService.navKey.currentContext!,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, stateSet) {
             return AlertDialog(
@@ -342,7 +342,7 @@ class _SideBarState extends State<SideBar> {
                     )
                   ],
                 ),
-                content: atsignsList.isEmpty
+                content: atsignsList!.isEmpty
                     ? Column(mainAxisSize: MainAxisSize.min, children: [
                         Text(TextStrings.noAtsignToReset,
                             style: TextStyle(fontSize: 15)),
@@ -445,7 +445,7 @@ class _SideBarState extends State<SideBar> {
 
   Widget iconText(String text, IconData icon, Function onTap) {
     return InkWell(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       child: Row(
         children: [
           Icon(
@@ -467,7 +467,7 @@ class _SideBarState extends State<SideBar> {
     );
   }
 
-  Future<bool> isLocationServiceEnabled() async {
+  Future<bool?> isLocationServiceEnabled() async {
     try {
       bool serviceEnabled;
       LocationPermission permission;

@@ -17,7 +17,7 @@ class ContactsBottomSheet extends StatefulWidget {
 
 class _ContactsBottomSheetState extends State<ContactsBottomSheet> {
   bool isLoading = false;
-  int minutes;
+  int? minutes;
   @override
   Widget build(BuildContext context) {
     return Container(

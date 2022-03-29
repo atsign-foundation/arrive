@@ -13,11 +13,11 @@ import 'package:at_common_flutter/services/size_config.dart';
 
 // ignore: must_be_immutable
 class OverlappingContacts extends StatefulWidget {
-  List<AtContact> selectedList;
-  Function(int) onRemove;
+  List<AtContact?> selectedList;
+  Function(int)? onRemove;
   bool isMultipleUser;
   OverlappingContacts(this.selectedList,
-      {Key key, this.onRemove, this.isMultipleUser = true})
+      {Key? key, this.onRemove, this.isMultipleUser = true})
       : super(key: key);
   @override
   _OverlappingContactsState createState() => _OverlappingContactsState();
@@ -51,11 +51,11 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                     ? 3
                     : widget.selectedList.length,
                 (index) {
-                  Uint8List image;
-                  if (widget.selectedList[index].tags != null &&
-                      widget.selectedList[index].tags['image'] != null) {
+                  Uint8List? image;
+                  if (widget.selectedList[index]!.tags != null &&
+                      widget.selectedList[index]!.tags!['image'] != null) {
                     List<int> intList =
-                        widget.selectedList[index].tags['image'].cast<int>();
+                        widget.selectedList[index]!.tags!['image'].cast<int>();
                     image = Uint8List.fromList(intList);
                   }
                   return Positioned(
@@ -65,14 +65,14 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                       height: 28.toHeight,
                       width: 28.toHeight,
                       decoration: BoxDecoration(shape: BoxShape.circle),
-                      child: (widget.selectedList[index].tags != null &&
-                              widget.selectedList[index].tags['image'] != null)
+                      child: (widget.selectedList[index]!.tags != null &&
+                              widget.selectedList[index]!.tags!['image'] != null)
                           ? CustomCircleAvatar(
                               byteImage: image,
                               nonAsset: true,
                             )
                           : ContactInitial(
-                              initials: widget.selectedList[index].atSign,
+                              initials: widget.selectedList[index]!.atSign,
                             ),
                     ),
                   );
@@ -98,7 +98,7 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                   Container(
                                     width: 60.toWidth,
                                     child: Text(
-                                      '${widget.selectedList[0].atSign}',
+                                      '${widget.selectedList[0]!.atSign}',
                                       style: TextStyle(fontSize: 12.toFont),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -149,7 +149,7 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                     right: 0,
                     child: InkWell(
                       onTap: () {
-                        widget.onRemove(0);
+                        widget.onRemove!(0);
                       },
                       child: Container(
                           width: 20.toWidth,
@@ -168,12 +168,12 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                       child: ListView.builder(
                         itemCount: widget.selectedList.length,
                         itemBuilder: (context, index) {
-                          Uint8List image;
-                          if (widget.selectedList[index].tags != null &&
-                              widget.selectedList[index].tags['image'] !=
+                          Uint8List? image;
+                          if (widget.selectedList[index]!.tags != null &&
+                              widget.selectedList[index]!.tags!['image'] !=
                                   null) {
                             List<int> intList = widget
-                                .selectedList[index].tags['image']
+                                .selectedList[index]!.tags!['image']
                                 .cast<int>();
                             image = Uint8List.fromList(intList);
                           }
@@ -184,28 +184,28 @@ class _OverlappingContactsState extends State<OverlappingContacts> {
                                 .contains(widget.selectedList[index]),
                             onRemove: () {
                               if (widget.onRemove != null) {
-                                widget.onRemove(index);
+                                widget.onRemove!(index);
                               } else {
                                 EventService().removeSelectedContact(index);
                                 EventService().update();
                               }
                             },
-                            name: widget.selectedList[index].tags != null &&
-                                    widget.selectedList[index].tags['name'] !=
+                            name: widget.selectedList[index]!.tags != null &&
+                                    widget.selectedList[index]!.tags!['name'] !=
                                         null
-                                ? widget.selectedList[index].tags['name']
-                                : widget.selectedList[index].atSign
+                                ? widget.selectedList[index]!.tags!['name']
+                                : widget.selectedList[index]!.atSign!
                                     .substring(1),
-                            atSign: widget.selectedList[index].atSign,
-                            image: (widget.selectedList[index].tags != null &&
-                                    widget.selectedList[index].tags['image'] !=
+                            atSign: widget.selectedList[index]!.atSign,
+                            image: (widget.selectedList[index]!.tags != null &&
+                                    widget.selectedList[index]!.tags!['image'] !=
                                         null)
                                 ? CustomCircleAvatar(
                                     byteImage: image,
                                     nonAsset: true,
                                   )
                                 : ContactInitial(
-                                    initials: widget.selectedList[index].atSign,
+                                    initials: widget.selectedList[index]!.atSign,
                                   ),
                           );
                         },

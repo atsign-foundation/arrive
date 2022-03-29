@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 Future providerCallback<T extends BaseModel>(BuildContext context,
-    {@required final Function(T) task,
-    @required final String Function(T) taskName,
-    @required Function(T) onSuccess,
+    {required final Function(T) task,
+    required final String Function(T) taskName,
+    required Function(T) onSuccess,
     bool showDialog = true,
     bool showLoader = true,
-    String text,
-    Function onErrorHandeling,
-    Function onError}) async {
+    String? text,
+    Function? onErrorHandeling,
+    Function? onError}) async {
   final _provider = Provider.of<T>(context, listen: false);
   var _taskName = taskName(_provider);
 
