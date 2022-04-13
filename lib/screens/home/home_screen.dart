@@ -149,16 +149,16 @@ class _HomeScreenState extends State<HomeScreen>
   void _getLocationStatus() async {
     await _getMyLocation();
 
-    Geolocator.getServiceStatusStream().listen((event) {
-      _mapKey = UniqueKey();
-      if (event == ServiceStatus.disabled) {
-        setState(() {
-          myLatLng = null;
-        });
-      } else if (event == ServiceStatus.enabled) {
-        _getMyLocation();
-      }
-    });
+    // Geolocator.getServiceStatusStream().listen((event) {
+    //   _mapKey = UniqueKey();
+    //   if (event == ServiceStatus.disabled) {
+    //     setState(() {
+    //       myLatLng = null;
+    //     });
+    //   } else if (event == ServiceStatus.enabled) {
+    //     _getMyLocation();
+    //   }
+    // });
   }
 
   StreamSubscription<Position>? _positionStream;
@@ -179,8 +179,7 @@ class _HomeScreenState extends State<HomeScreen>
         await _positionStream!.cancel();
       }
 
-      _positionStream = Geolocator.getPositionStream(
-              locationSettings: LocationSettings(distanceFilter: 2))
+      _positionStream = Geolocator.getPositionStream(distanceFilter: 2)
           .listen((locationStream) async {
         if (mounted) {
           setState(() {
