@@ -34,4 +34,10 @@ class MixedConstants {
   /// Load the environment variables from the .env file.
   /// Directly calls load from the dotenv package.
   static Future<void> load() => dotenv.load();
+
+  /// release tags
+  static const MACOS_STORE_LINK = '';
+  static const WINDOWS_STORE_LINK = '';
+  static const RELEASE_TAG_API = '';
+  static const LINUX_STORE_LINK = '';
 }

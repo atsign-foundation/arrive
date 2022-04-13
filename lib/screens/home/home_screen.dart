@@ -29,6 +29,7 @@ import 'package:atsign_location_app/screens/request_location/request_location_sh
 import 'package:atsign_location_app/screens/share_location/share_location_sheet.dart';
 import 'package:atsign_location_app/screens/sidebar/sidebar.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
+import 'package:atsign_location_app/services/version_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -77,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    checkForUpdate();
+    VersionService.getInstance().init();
 
     _controller =
         _controller = TabController(length: 2, vsync: this, initialIndex: 0);
@@ -119,20 +120,6 @@ class _HomeScreenState extends State<HomeScreen>
           atClientManager.atClient.getCurrentAtSign(),
           NavService.navKey);
     });
-  }
-
-  Future<void> checkForUpdate() async {
-    final newVersion = NewVersion();
-    final status = await newVersion.getVersionStatus();
-
-    //// for forced version update
-    // newVersion.showUpdateDialog(
-    //   context: context,
-    //   versionStatus: status,
-    //   allowDismissal: false,
-    // );
-
-    newVersion.showAlertIfNecessary(context: context);
   }
 
   void initializePlugins() async {
