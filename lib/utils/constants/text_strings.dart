@@ -127,4 +127,13 @@ class TextStrings {
       'How long do you want to share your location for ?';
   // Share Location Sheet
   static const share = 'Share';
+
+  // version_service
+  static const releaseTagError = 'Error in fetching release tag.';
+  static const upgradeDialogShowError =
+      'Error in showing app upgrade dialog box.';
+  static const appVersionFetchError =
+      'Could not fetch latest app version details.';
+  static const update = 'Update';
+  static const mayBeLater = 'Maybe later';
 }
