@@ -38,6 +38,7 @@ class MixedConstants {
   /// release tags
   static const MACOS_STORE_LINK = '';
   static const WINDOWS_STORE_LINK = '';
-  static const RELEASE_TAG_API = '';
-  static const LINUX_STORE_LINK = '';
+  static const RELEASE_TAG_API =
+      'https://atsign-foundation.github.io/arrive/version.html';
+  static const LINUX_STORE_LINK = 'https://atsign.com/apps/';
 }
