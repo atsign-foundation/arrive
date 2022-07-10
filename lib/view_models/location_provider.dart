@@ -81,33 +81,40 @@ class LocationProvider extends BaseModel {
   }
 
   // ignore: always_declare_return_types
-  updateLocation(List<KeyLocationModel> list) {
-    if (allLocationNotifications.length < list.length) {
-      animateToIndex = 1; // Locations is index 1 in home screen
-    } else {
-      animateToIndex = -1; // don't animate
-    }
+  updateLocation(List<KeyLocationModel> list) async {
 
     allLocationNotifications = list
         .map((e) => EventAndLocationHybrid(NotificationModelType.LocationModel,
             locationKeyModel: e))
         .toList();
     setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
-  }
 
-  // ignore: always_declare_return_types
-  updateEvents(List<EventKeyLocationModel> list) {
-    if (allEventNotifications.length < list.length) {
-      animateToIndex = 0; // Events is index 0 in home screen
+    /// to navigate to new tab, we give some time for screens to re render
+    await Future.delayed(Duration(milliseconds: 500));
+    if (allLocationNotifications.length < list.length) {
+      animateToIndex = 1; // Locations is index 1 in home screen
     } else {
       animateToIndex = -1; // don't animate
     }
+    setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
+  }
 
+  // ignore: always_declare_return_types
+  updateEvents(List<EventKeyLocationModel> list) async {
+    
     allEventNotifications = list
         .map((e) => EventAndLocationHybrid(NotificationModelType.EventModel,
             eventKeyModel: e))
         .toList();
     setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
+
+    /// to navigate to new tab, we give some time for screens to re render
+    await Future.delayed(Duration(milliseconds: 500));
+    if (allEventNotifications.length < list.length) {
+      animateToIndex = 0; // Events is index 0 in home screen
+    } else {
+      animateToIndex = -1; // don't animate
+    }
   }
 
   void changeLocationSharingMode(bool _mode) {
