@@ -115,6 +115,7 @@ class LocationProvider extends BaseModel {
     } else {
       animateToIndex = -1; // don't animate
     }
+    setStatus(GET_ALL_NOTIFICATIONS, Status.Done);
   }
 
   void changeLocationSharingMode(bool _mode) {
