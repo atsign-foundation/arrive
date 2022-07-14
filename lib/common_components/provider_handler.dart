@@ -58,7 +58,7 @@ class ProviderHandler<T extends BaseModel> extends StatelessWidget {
       } else if (_provider.status[functionName] == Status.Done) {
         return successBuilder(_provider);
       } else {
-        WidgetsBinding.instance!.addPostFrameCallback((_) async {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           await load(_provider);
         });
         return Center(

@@ -124,7 +124,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
 
                             BackendService.getInstance().syncWithSecondary();
 
-                            WidgetsBinding.instance!.addPostFrameCallback((_) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
                               // TODO: Add LocationProvider init here if any issue
                             });
 
