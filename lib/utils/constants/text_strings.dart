@@ -5,10 +5,10 @@ class TextStrings {
 
   static final String resetButton = 'Reset';
   static const String resetDescription =
-      'This will remove the selected @sign and its details from this app only.';
-  static const String noAtsignToReset = 'No @signs are paired to reset. ';
+      'This will remove the selected atSign and its details from this app only.';
+  static const String noAtsignToReset = 'No atSigns are paired to reset. ';
   static const String resetErrorText =
-      'Please select atleast one @sign to reset';
+      'Please select atleast one atSign to reset';
   static const String resetWarningText =
       'Warning: This action cannot be undone';
   static const String appName = '@rrive';
@@ -72,7 +72,7 @@ class TextStrings {
   static const filter = 'Filter';
   // Request Location Sheet
   static const requestFrom = 'Request From';
-  static const searchAtsignFromContact = 'Search @sign from contacts';
+  static const searchAtsignFromContact = 'Search atSign from contacts';
   static const request = 'Request';
   static const selectAContact = 'Select a contact';
   static const locationRequestSent = 'Location Request sent';
@@ -88,25 +88,25 @@ class TextStrings {
   static const selectTime = 'Select time';
   static const shareLocationRequestSent = 'Share Location Request sent';
   // Side Bar
-  static const atSign = '@sign';
+  static const atSign = 'atSign';
   static const contacts = 'Contacts';
   static const blockedContacts = 'Blocked Contacts';
   static const groups = 'Groups';
   static const backupYourKeys = 'Backup your keys';
   static const faq = 'FAQ';
   static const termsAndCondition = 'Terms and Conditions';
-  static const deleteAtSign = 'Delete @sign';
+  static const deleteAtSign = 'Delete atSign';
   static const manageLocationSharing = 'Manage location sharing';
   static const processing = 'Processing';
   static const locationSharing = 'Location Sharing';
   static const locationPermissionNotGranted = 'Location permission not granted';
   static const locationAccessDescription =
       'When you turn this on, everyone you have given access to can see  your location.';
-  static const switchAtsign = 'Switch @sign';
+  static const switchAtsign = 'Switch atSign';
   static const appVersion = 'App Version ';
   static const areYouSureYouWantToDeleteAllAssociatedData =
       'Are you sure you want to delete all data associated with';
-  static const typeTheAtsignAboveToProceed = 'Type the @sign above to proceed';
+  static const typeTheAtsignAboveToProceed = 'Type the atSign above to proceed';
   static const cautionTheActionCannotBeUndone =
       "Caution: this action can't be undone";
   static const pleaseTryAgain = 'Please, try again!';
