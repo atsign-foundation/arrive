@@ -54,6 +54,10 @@ dependency_overrides:
     git:
       url: https://github.com/incrediblezayed/file_saver.git
       ref: main
+  at_location_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_location_flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
