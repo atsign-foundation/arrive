@@ -29,7 +29,7 @@ class MixedConstants {
   static const bool isDedicated = true;
 
   // Onboarding API key - requires different key for production
-  static String ONBOARD_API_KEY = '477b-876u-bcez-c42z-6a3d';
+  static String ONBOARD_API_KEY = 'yo0a-tu6r-z3er-zive-i87p';
 
   /// Load the environment variables from the .env file.
   /// Directly calls load from the dotenv package.

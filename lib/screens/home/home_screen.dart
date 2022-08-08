@@ -6,7 +6,6 @@ import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
 import 'package:at_events_flutter/models/event_notification.dart';
 import 'package:at_events_flutter/screens/create_event.dart';
-import 'package:at_events_flutter/services/event_key_stream_service.dart';
 import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:at_location_flutter/map_content/flutter_map/flutter_map.dart';
@@ -35,6 +34,7 @@ import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:atsign_location_app/view_models/base_model.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen>
 
     locationProvider = context.read<LocationProvider>();
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       var atClientManager = AtClientManager.getInstance();
       Provider.of<LocationProvider>(context, listen: false).init(
           atClientManager,
@@ -849,7 +849,9 @@ class _HomeScreenState extends State<HomeScreen>
                           Navigator.pop(context);
                           Provider.of<LocationProvider>(context, listen: false)
                               .animateToIndex = -1; // reset animateToIndex
-                          setState(() {});
+
+                          locationProvider.setStatus(locationProvider.GET_ALL_NOTIFICATIONS, Status.Done);
+                          /// used to refresh screen after applying filter
                         },
                         child: Text(TextStrings.filter,
                             style: TextStyle(
