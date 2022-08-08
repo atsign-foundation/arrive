@@ -15,7 +15,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 version: 1.0.3+32
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=2.12.0 <3.0.0"
 dependencies:
   flutter:
     sdk: flutter
@@ -28,7 +28,6 @@ dependencies:
   package_info: ^2.0.2
   fluttertoast: ^8.0.9
   pedantic: ^1.11.1
-
 
   at_client_mobile: ^3.1.8
   at_client: ^3.0.12
@@ -43,7 +42,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
 
   new_version: ^0.3.0
-        
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -58,7 +57,22 @@ dependency_overrides:
     git:
       url: git@github.com:atsign-foundation/at_widgets.git
       ref: trunk
-      path: at_contacts_group_flutter  
+      path: at_contacts_group_flutter
+  at_onboarding_flutter:
+    git:
+      url: git@github.com:atsign-foundation/at_widgets.git
+      ref: trunk
+      path: at_onboarding_flutter
+  at_location_flutter:
+    git:
+      url: git@github.com:atsign-foundation/at_widgets.git
+      ref: trunk
+      path: at_location_flutter
+  at_events_flutter:
+    git:
+      url: git@github.com:atsign-foundation/at_widgets.git
+      ref: trunk
+      path: at_events_flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
