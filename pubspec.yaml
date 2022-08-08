@@ -29,7 +29,6 @@ dependencies:
   fluttertoast: ^8.0.9
   pedantic: ^1.11.1
 
-
   at_client_mobile: ^3.1.18
   at_client: ^3.0.28
   at_contact: ^3.0.7
@@ -54,11 +53,12 @@ dependency_overrides:
     git:
       url: https://github.com/incrediblezayed/file_saver.git
       ref: main
-  at_location_flutter:
+  at_contacts_flutter:
     git:
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_location_flutter
-  at_contacts_group_flutter:  
+      url: git@github.com:atsign-foundation/at_widgets.git
+      ref: trunk
+      path: at_contacts_flutter
+  at_contacts_group_flutter:
     git:
       url: git@github.com:atsign-foundation/at_widgets.git
       ref: trunk
@@ -78,7 +78,6 @@ dependency_overrides:
       url: git@github.com:atsign-foundation/at_widgets.git
       ref: trunk
       path: at_events_flutter
-      
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
