@@ -51,46 +51,99 @@ class _SplashState extends State<Splash> {
 
       backendService = BackendService.getInstance();
       if (BackendService.getInstance().atClientPreference != null) {
-        Onboarding(
-            context: context,
-            atClientPreference: BackendService.getInstance().atClientPreference!,
+        final result = await AtOnboarding.onboard(
+          context: context,
+          config: AtOnboardingConfig(
             domain: MixedConstants.ROOT_DOMAIN,
-            appColor: Color.fromARGB(255, 240, 94, 62),
+            atClientPreference:
+                BackendService.getInstance().atClientPreference!,
             rootEnvironment: RootEnvironment.Production,
-            onboard: (value, atsign) async {
-              await AtClientManager.getInstance().setCurrentAtSign(
-                  atsign!,
-                  MixedConstants.appNamespace,
-                  BackendService.getInstance().atClientPreference!);
-              BackendService.getInstance().syncService =
-                  AtClientManager.getInstance().syncService;
+            appAPIKey: MixedConstants.ONBOARD_API_KEY,
+          ),
+        );
+        switch (result.status) {
+          case AtOnboardingResultStatus.success:
+            // TODO: Handle this case.
+            final atsign = result.atsign;
+            await AtClientManager.getInstance().setCurrentAtSign(
+                atsign!,
+                MixedConstants.appNamespace,
+                BackendService.getInstance().atClientPreference!);
+            BackendService.getInstance().syncService =
+                AtClientManager.getInstance().syncService;
 
-              Provider.of<LocationProvider>(context, listen: false).resetData();
+            Provider.of<LocationProvider>(context, listen: false).resetData();
 
-              print('_initBackendService onboarded: $value , atsign:$atsign');
-              BackendService.getInstance().atClientServiceMap = value;
-              await KeychainUtil.makeAtSignPrimary(atsign);
-              // await BackendService.getInstance().onboard();
-              // BackendService.getInstance().atClientInstance =
-              //     value[atsign].atClient;
-              BackendService.getInstance().atClientServiceInstance =
-                  value[atsign];
-              BackendService.getInstance().syncWithSecondary();
+            print('_initBackendService onboarded: $value , atsign:$atsign');
+            BackendService.getInstance().atClientServiceMap = value;
+            await KeychainUtil.makeAtSignPrimary(atsign);
+            // await BackendService.getInstance().onboard();
+            // BackendService.getInstance().atClientInstance =
+            //     value[atsign].atClient;
+            BackendService.getInstance().atClientServiceInstance =
+                value[atsign];
+            BackendService.getInstance().syncWithSecondary();
 
-              // AtClientManager.getInstance().syncService.sync();
-              // ignore: unawaited_futures
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomeScreen(),
-                ),
-              );
-            },
-            onError: (error) {
-              BackendService.getInstance().showErrorSnackBar(error);
-              print('_initBackendService error in onboarding: $error');
-            },
-            appAPIKey: MixedConstants.ONBOARD_API_KEY);
+            // AtClientManager.getInstance().syncService.sync();
+            // ignore: unawaited_futures
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+            break;
+          case AtOnboardingResultStatus.error:
+            // TODO: Handle this case.
+            BackendService.getInstance().showErrorSnackBar(result.errorCode);
+            print(
+                '_initBackendService error in onboarding: ${result.errorCode}');
+            break;
+          case AtOnboardingResultStatus.cancel:
+            // TODO: Handle this case.
+            break;
+        }
+        // Onboarding(
+        //     context: context,
+        //     atClientPreference:
+        //         BackendService.getInstance().atClientPreference!,
+        //     domain: MixedConstants.ROOT_DOMAIN,
+        //     appColor: Color.fromARGB(255, 240, 94, 62),
+        //     rootEnvironment: RootEnvironment.Production,
+        //     onboard: (value, atsign) async {
+        //       await AtClientManager.getInstance().setCurrentAtSign(
+        //           atsign!,
+        //           MixedConstants.appNamespace,
+        //           BackendService.getInstance().atClientPreference!);
+        //       BackendService.getInstance().syncService =
+        //           AtClientManager.getInstance().syncService;
+
+        //       Provider.of<LocationProvider>(context, listen: false).resetData();
+
+        //       print('_initBackendService onboarded: $value , atsign:$atsign');
+        //       BackendService.getInstance().atClientServiceMap = value;
+        //       await KeychainUtil.makeAtSignPrimary(atsign);
+        //       // await BackendService.getInstance().onboard();
+        //       // BackendService.getInstance().atClientInstance =
+        //       //     value[atsign].atClient;
+        //       BackendService.getInstance().atClientServiceInstance =
+        //           value[atsign];
+        //       BackendService.getInstance().syncWithSecondary();
+
+        //       // AtClientManager.getInstance().syncService.sync();
+        //       // ignore: unawaited_futures
+        //       Navigator.pushReplacement(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (context) => HomeScreen(),
+        //         ),
+        //       );
+        //     },
+        //     onError: (error) {
+        //       BackendService.getInstance().showErrorSnackBar(error);
+        //       print('_initBackendService error in onboarding: $error');
+        //     },
+        //     appAPIKey: MixedConstants.ONBOARD_API_KEY);
       } else {
         setState(() {
           authenticating = false;
@@ -219,29 +272,69 @@ class _SplashState extends State<Splash> {
                                           radius: 100.toHeight,
                                           onTap: () async {
                                             if (authenticating) return;
-                                            Onboarding(
-                                                context: context,
-                                                atClientPreference:
-                                                    BackendService.getInstance()
-                                                        .atClientPreference!,
-                                                domain:
-                                                    MixedConstants.ROOT_DOMAIN,
-                                                appColor: Color.fromARGB(
-                                                    255, 240, 94, 62),
-                                                onboard: onOnboardCompletes,
-                                                rootEnvironment:
-                                                    RootEnvironment.Production,
-                                                onError: (error) {
-                                                  print(
-                                                      'error in onboard plugin:$error');
-                                                  BackendService.getInstance()
-                                                      .showErrorSnackBar(error);
-                                                  setState(() {
-                                                    authenticating = false;
-                                                  });
-                                                },
-                                                appAPIKey: MixedConstants
-                                                    .ONBOARD_API_KEY);
+                                            final result =
+                                                await AtOnboarding.onboard(
+                                              context: context,
+                                              config: AtOnboardingConfig(
+                                                  atClientPreference:
+                                                      BackendService
+                                                              .getInstance()
+                                                          .atClientPreference!,
+                                                  rootEnvironment:
+                                                      RootEnvironment
+                                                          .Production,
+                                                  domain: MixedConstants
+                                                      .ROOT_DOMAIN,
+                                                  appAPIKey: MixedConstants
+                                                      .ONBOARD_API_KEY),
+                                            );
+                                            switch (result.status) {
+                                              case AtOnboardingResultStatus
+                                                  .success:
+                                                // TODO: Handle this case.
+                                                onOnboardCompletes;
+                                                break;
+                                              case AtOnboardingResultStatus
+                                                  .error:
+                                                // TODO: Handle this case.
+                                                print(
+                                                    'error in onboard plugin:${result.errorCode}');
+                                                BackendService.getInstance()
+                                                    .showErrorSnackBar(
+                                                        result.errorCode);
+                                                setState(() {
+                                                  authenticating = false;
+                                                });
+                                                break;
+                                              case AtOnboardingResultStatus
+                                                  .cancel:
+                                                // TODO: Handle this case.
+                                                break;
+                                            }
+                                            ;
+                                            // Onboarding(
+                                            //     context: context,
+                                            //     atClientPreference:
+                                            //         BackendService.getInstance()
+                                            //             .atClientPreference!,
+                                            //     domain:
+                                            //         MixedConstants.ROOT_DOMAIN,
+                                            //     appColor: Color.fromARGB(
+                                            //         255, 240, 94, 62),
+                                            //     onboard: onOnboardCompletes,
+                                            //     rootEnvironment:
+                                            //         RootEnvironment.Production,
+                                            //     onError: (error) {
+                                            //       print(
+                                            //           'error in onboard plugin:$error');
+                                            //       BackendService.getInstance()
+                                            //           .showErrorSnackBar(error);
+                                            //       setState(() {
+                                            //         authenticating = false;
+                                            //       });
+                                            //     },
+                                            //     appAPIKey: MixedConstants
+                                            //         .ONBOARD_API_KEY);
                                           },
                                           bgColor: AllColors().Black,
                                           child: authenticating
@@ -476,7 +569,8 @@ class _SplashState extends State<Splash> {
   }
 
   // ignore: always_declare_return_types
-  onOnboardCompletes(Map<String?, AtClientService> value, String? atsign) async {
+  onOnboardCompletes(
+      Map<String?, AtClientService> value, String? atsign) async {
     await AtClientManager.getInstance().setCurrentAtSign(
         atsign!,
         MixedConstants.appNamespace,
