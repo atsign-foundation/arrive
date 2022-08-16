@@ -65,6 +65,7 @@ class _SplashState extends State<Splash> {
           case AtOnboardingResultStatus.success:
             // TODO: Handle this case.
             final atsign = result.atsign;
+            final value = result;
             await AtClientManager.getInstance().setCurrentAtSign(
                 atsign!,
                 MixedConstants.appNamespace,
@@ -75,13 +76,13 @@ class _SplashState extends State<Splash> {
             Provider.of<LocationProvider>(context, listen: false).resetData();
 
             print('_initBackendService onboarded: $value , atsign:$atsign');
-            BackendService.getInstance().atClientServiceMap = value;
+            // BackendService.getInstance().atClientServiceMap = value;
             await KeychainUtil.makeAtSignPrimary(atsign);
             // await BackendService.getInstance().onboard();
             // BackendService.getInstance().atClientInstance =
             //     value[atsign].atClient;
-            BackendService.getInstance().atClientServiceInstance =
-                value[atsign];
+            //BackendService.getInstance().atClientServiceInstance =
+            //    value[atsign];
             BackendService.getInstance().syncWithSecondary();
 
             // AtClientManager.getInstance().syncService.sync();
@@ -428,17 +429,17 @@ class _SplashState extends State<Splash> {
   }
 
   _showResetDialog() async {
-    bool isSelectAtsign = false;
+    var isSelectAtsign = false;
     bool? isSelectAll = false;
     var atsignsList = await KeychainUtil.getAtsignList();
     if (atsignsList == null) {
       atsignsList = [];
     }
     Map atsignMap = {};
-    for (String atsign in atsignsList) {
+    for (var atsign in atsignsList) {
       atsignMap[atsign] = false;
     }
-    showDialog(
+    await showDialog(
         barrierDismissible: true,
         context: context,
         builder: (BuildContext context) {

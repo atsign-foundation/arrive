@@ -55,27 +55,27 @@ dependency_overrides:
       ref: main
   at_contacts_flutter:
     git:
-      url: git@github.com:atsign-foundation/at_widgets.git
+      url: https://github.com/atsign-foundation/at_widgets.git
       ref: trunk
       path: at_contacts_flutter
   at_contacts_group_flutter:
     git:
-      url: git@github.com:atsign-foundation/at_widgets.git
+      url: https://github.com/atsign-foundation/at_widgets.git
       ref: trunk
       path: at_contacts_group_flutter
   at_onboarding_flutter:
     git:
-      url: git@github.com:atsign-foundation/at_widgets.git
+      url: https://github.com/atsign-foundation/at_widgets.git
       ref: trunk
       path: at_onboarding_flutter
   at_location_flutter:
     git:
-      url: git@github.com:atsign-foundation/at_widgets.git
+      url: https://github.com/atsign-foundation/at_widgets.git
       ref: trunk
       path: at_location_flutter
   at_events_flutter:
     git:
-      url: git@github.com:atsign-foundation/at_widgets.git
+      url: https://github.com/atsign-foundation/at_widgets.git
       ref: trunk
       path: at_events_flutter
 

@@ -1,4 +1,5 @@
-import 'package:at_onboarding_flutter/services/size_config.dart';
+// import 'package:at_onboarding_flutter/services/size_config.dart';
+import '../../services/size_config.dart';
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
