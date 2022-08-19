@@ -35,8 +35,6 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    // BackendService.getInstance().getAtClientPreference().then(
-    //     (value) => BackendService.getInstance().atClientPreference = value);
     _initBackendService();
   }
 
@@ -76,18 +74,11 @@ class _SplashState extends State<Splash> {
             Provider.of<LocationProvider>(context, listen: false).resetData();
 
             print('_initBackendService onboarded: $value , atsign:$atsign');
-            // BackendService.getInstance().atClientServiceMap = value;
             await KeychainUtil.makeAtSignPrimary(atsign);
-            // await BackendService.getInstance().onboard();
-            // BackendService.getInstance().atClientInstance =
-            //     value[atsign].atClient;
-            //BackendService.getInstance().atClientServiceInstance =
-            //    value[atsign];
+
             BackendService.getInstance().syncWithSecondary();
 
-            // AtClientManager.getInstance().syncService.sync();
-            // ignore: unawaited_futures
-            Navigator.pushReplacement(
+            await Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => HomeScreen(),
@@ -95,56 +86,13 @@ class _SplashState extends State<Splash> {
             );
             break;
           case AtOnboardingResultStatus.error:
-            // TODO: Handle this case.
             BackendService.getInstance().showErrorSnackBar(result.errorCode);
             print(
                 '_initBackendService error in onboarding: ${result.errorCode}');
             break;
           case AtOnboardingResultStatus.cancel:
-            // TODO: Handle this case.
             break;
         }
-        // Onboarding(
-        //     context: context,
-        //     atClientPreference:
-        //         BackendService.getInstance().atClientPreference!,
-        //     domain: MixedConstants.ROOT_DOMAIN,
-        //     appColor: Color.fromARGB(255, 240, 94, 62),
-        //     rootEnvironment: RootEnvironment.Production,
-        //     onboard: (value, atsign) async {
-        //       await AtClientManager.getInstance().setCurrentAtSign(
-        //           atsign!,
-        //           MixedConstants.appNamespace,
-        //           BackendService.getInstance().atClientPreference!);
-        //       BackendService.getInstance().syncService =
-        //           AtClientManager.getInstance().syncService;
-
-        //       Provider.of<LocationProvider>(context, listen: false).resetData();
-
-        //       print('_initBackendService onboarded: $value , atsign:$atsign');
-        //       BackendService.getInstance().atClientServiceMap = value;
-        //       await KeychainUtil.makeAtSignPrimary(atsign);
-        //       // await BackendService.getInstance().onboard();
-        //       // BackendService.getInstance().atClientInstance =
-        //       //     value[atsign].atClient;
-        //       BackendService.getInstance().atClientServiceInstance =
-        //           value[atsign];
-        //       BackendService.getInstance().syncWithSecondary();
-
-        //       // AtClientManager.getInstance().syncService.sync();
-        //       // ignore: unawaited_futures
-        //       Navigator.pushReplacement(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder: (context) => HomeScreen(),
-        //         ),
-        //       );
-        //     },
-        //     onError: (error) {
-        //       BackendService.getInstance().showErrorSnackBar(error);
-        //       print('_initBackendService error in onboarding: $error');
-        //     },
-        //     appAPIKey: MixedConstants.ONBOARD_API_KEY);
       } else {
         setState(() {
           authenticating = false;
@@ -313,29 +261,6 @@ class _SplashState extends State<Splash> {
                                                 break;
                                             }
                                             ;
-                                            // Onboarding(
-                                            //     context: context,
-                                            //     atClientPreference:
-                                            //         BackendService.getInstance()
-                                            //             .atClientPreference!,
-                                            //     domain:
-                                            //         MixedConstants.ROOT_DOMAIN,
-                                            //     appColor: Color.fromARGB(
-                                            //         255, 240, 94, 62),
-                                            //     onboard: onOnboardCompletes,
-                                            //     rootEnvironment:
-                                            //         RootEnvironment.Production,
-                                            //     onError: (error) {
-                                            //       print(
-                                            //           'error in onboard plugin:$error');
-                                            //       BackendService.getInstance()
-                                            //           .showErrorSnackBar(error);
-                                            //       setState(() {
-                                            //         authenticating = false;
-                                            //       });
-                                            //     },
-                                            //     appAPIKey: MixedConstants
-                                            //         .ONBOARD_API_KEY);
                                           },
                                           bgColor: AllColors().Black,
                                           child: authenticating
