@@ -1,5 +1,5 @@
 // import 'package:at_onboarding_flutter/services/size_config.dart';
-import '../../services/size_config.dart';
+import 'package:atsign_location_app/services/size_config.dart';
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/text_strings.dart';
@@ -65,7 +65,7 @@ class _LocationPromptState extends State<LocationPrompt> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: SizeConfig().screenWidth! * 0.8,
+      width: SizeConfig().screenWidth * 0.8,
       child: AlertDialog(
         contentPadding: EdgeInsets.fromLTRB(15, 30, 15, 20),
         content: SingleChildScrollView(
