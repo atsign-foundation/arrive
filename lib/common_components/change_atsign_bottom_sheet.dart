@@ -160,6 +160,7 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
               GestureDetector(
                 onTap: () async {
                   final result = await AtOnboarding.onboard(
+                    isSwitchingAtsign: true,
                     context: context,
                     atsign: '',
                     config: AtOnboardingConfig(
