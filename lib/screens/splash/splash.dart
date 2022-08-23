@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/triple_dot_loading.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -18,6 +21,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:at_location_flutter/utils/constants/constants.dart'
     as location_package_constants;
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -49,8 +53,12 @@ class _SplashState extends State<Splash> {
 
       backendService = BackendService.getInstance();
       if (BackendService.getInstance().atClientPreference != null) {
+        if (Platform.isAndroid || Platform.isIOS) {
+          await _checkForPermissionStatus();
+        }
         final result = await AtOnboarding.onboard(
-          context: context,
+          context: NavService.navKey.currentContext!,
+          atsign: '',
           config: AtOnboardingConfig(
             domain: MixedConstants.ROOT_DOMAIN,
             atClientPreference:
@@ -118,6 +126,17 @@ class _SplashState extends State<Splash> {
           authenticating = false;
         });
       }
+    }
+  }
+
+  Future<void> _checkForPermissionStatus() async {
+    final existingCameraStatus = await Permission.camera.status;
+    if (existingCameraStatus != PermissionStatus.granted) {
+      await Permission.camera.request();
+    }
+    final existingStorageStatus = await Permission.storage.status;
+    if (existingStorageStatus != PermissionStatus.granted) {
+      await Permission.storage.request();
     }
   }
 

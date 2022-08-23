@@ -17,6 +17,7 @@ import 'package:atsign_location_app/routes/routes.dart';
 import 'package:at_client/src/service/sync_service.dart';
 import 'package:at_client/src/service/sync_service_impl.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BackendService {
   static final BackendService _singleton = BackendService._internal();
@@ -145,6 +146,9 @@ class BackendService {
       await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext!,
           Routes.SPLASH, (Route<dynamic> route) => false);
     } else {
+      if (Platform.isAndroid || Platform.isIOS) {
+        await _checkForPermissionStatus();
+      }
       final result = await AtOnboarding.onboard(
         context: NavService.navKey.currentContext!,
         atsign: tempAtsign,
@@ -221,6 +225,17 @@ class BackendService {
       //       print('Onboarding throws $error error');
       //     },
       //     appAPIKey: MixedConstants.ONBOARD_API_KEY);
+    }
+  }
+
+  Future<void> _checkForPermissionStatus() async {
+    final existingCameraStatus = await Permission.camera.status;
+    if (existingCameraStatus != PermissionStatus.granted) {
+      await Permission.camera.request();
+    }
+    final existingStorageStatus = await Permission.storage.status;
+    if (existingStorageStatus != PermissionStatus.granted) {
+      await Permission.storage.request();
     }
   }
 

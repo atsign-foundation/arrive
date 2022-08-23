@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -14,6 +15,7 @@ import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AtSignBottomSheet extends StatefulWidget {
   final List<String>? atSignList;
@@ -42,6 +44,17 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
       contactDetails['$_currentAtsign'] = contactDetail;
     });
     setState(() {});
+  }
+
+  Future<void> _checkForPermissionStatus() async {
+    final existingCameraStatus = await Permission.camera.status;
+    if (existingCameraStatus != PermissionStatus.granted) {
+      await Permission.camera.request();
+    }
+    final existingStorageStatus = await Permission.storage.status;
+    if (existingStorageStatus != PermissionStatus.granted) {
+      await Permission.storage.request();
+    }
   }
 
   BackendService backendService = BackendService.getInstance();
@@ -86,6 +99,9 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
 
                   return GestureDetector(
                     onTap: () async {
+                      if (Platform.isAndroid || Platform.isIOS) {
+                        await _checkForPermissionStatus();
+                      }
                       final result = await AtOnboarding.onboard(
                         context: context,
                         atsign: widget.atSignList![index],
@@ -159,6 +175,9 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
               ),
               GestureDetector(
                 onTap: () async {
+                  if (Platform.isAndroid || Platform.isIOS) {
+                    await _checkForPermissionStatus();
+                  }
                   final result = await AtOnboarding.onboard(
                     isSwitchingAtsign: true,
                     context: context,

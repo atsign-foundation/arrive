@@ -53,6 +53,11 @@ dependency_overrides:
     git:
       url: https://github.com/incrediblezayed/file_saver.git
       ref: main
+  at_onboarding_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets/
+      path: at_onboarding_flutter
+      ref: hotfix/qr-scanner-not-working
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
