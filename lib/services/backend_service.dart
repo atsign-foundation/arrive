@@ -27,6 +27,9 @@ class BackendService {
     return _singleton;
   }
   AtClientService? atClientServiceInstance;
+  String? currentAtSign;
+  Timer? periodicHistoryRefresh;
+
   // AtClientImpl atClientInstance;
   String? _atsign;
   // ignore: non_constant_identifier_names
@@ -94,9 +97,15 @@ class BackendService {
   }
 
   ///Fetches atsign from device keychain.
-  // Future<String> getAtSign() async {
-  //   return atClientServiceInstance.atClient.currentAtSign;
-  // }
+  Future<String?> getAtSign() async {
+    await getAtClientPreference().then((value) {
+      return atClientPreference = value;
+    });
+
+    atClientServiceInstance = AtClientService();
+
+    return await KeychainUtil.getAtSign();
+  }
 
   // // ///Fetches privatekey for [atsign] from device keychain.
   // Future<String> getPrivateKey(String atsign) async {
@@ -187,44 +196,6 @@ class BackendService {
           // TODO: Handle this case.
           break;
       }
-
-      // Onboarding(
-      //     atsign: tempAtsign,
-      //     context: NavService.navKey.currentContext!,
-      //     atClientPreference: atClientPrefernce,
-      //     domain: MixedConstants.ROOT_DOMAIN,
-      //     appColor: Color.fromARGB(255, 240, 94, 62),
-      //     rootEnvironment: RootEnvironment.Production,
-      //     onboard: (value, atsign) async {
-      //       await AtClientManager.getInstance().setCurrentAtSign(
-      //           atsign!,
-      //           MixedConstants.appNamespace,
-      //           BackendService.getInstance().atClientPreference!);
-      //       BackendService.getInstance().syncService =
-      //           AtClientManager.getInstance().syncService;
-
-      //       Provider.of<LocationProvider>(NavService.navKey.currentContext!,
-      //               listen: false)
-      //           .resetData();
-
-      //       atClientServiceMap = value;
-
-      //       String? atSign = atsign;
-
-      //       // await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
-      //       // atClientInstance = atClientServiceMap[atsign].atClient;
-      //       atClientServiceInstance = atClientServiceMap[atsign];
-      //       await KeychainUtil.makeAtSignPrimary(atsign);
-      //       BackendService.getInstance().syncWithSecondary();
-
-      //       SetupRoutes.pushAndRemoveAll(
-      //           NavService.navKey.currentContext!, Routes.HOME);
-      //     },
-      //     onError: (error) {
-      //       BackendService.getInstance().showErrorSnackBar(error);
-      //       print('Onboarding throws $error error');
-      //     },
-      //     appAPIKey: MixedConstants.ONBOARD_API_KEY);
     }
   }
 
@@ -265,12 +236,13 @@ class BackendService {
     }
   }
 
+  // ignore: always_declare_return_types
   resetDevice(List checkedAtsigns) async {
     Navigator.of(NavService.navKey.currentContext!).pop();
     await BackendService.getInstance()
         .resetAtsigns(checkedAtsigns)
         .then((value) async {
-      print('reset done');
+      print('reset done ');
     }).catchError((e) {
       print('error in reset: $e');
     });

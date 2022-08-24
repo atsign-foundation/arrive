@@ -44,6 +44,8 @@ class _SplashState extends State<Splash> {
 
   String? state;
   void _initBackendService() async {
+    var currentatSign = await KeychainUtil.getAtSign();
+    var atSignList = await KeychainUtil.getAtsignList();
     try {
       BackendService.getInstance().atClientPreference =
           await BackendService.getInstance().getAtClientPreference();
@@ -58,7 +60,7 @@ class _SplashState extends State<Splash> {
         }
         final result = await AtOnboarding.onboard(
           context: NavService.navKey.currentContext!,
-          atsign: '',
+          atsign: currentatSign == null ? '' : atSignList?.first,
           config: AtOnboardingConfig(
             domain: MixedConstants.ROOT_DOMAIN,
             atClientPreference:
