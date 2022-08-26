@@ -240,48 +240,8 @@ class _SplashState extends State<Splash> {
                                           height: 40,
                                           width: SizeConfig().screenWidth * 0.8,
                                           radius: 100.toHeight,
-                                          onTap: () async {
-                                            if (authenticating) return;
-                                            final result =
-                                                await AtOnboarding.onboard(
-                                              context: context,
-                                              config: AtOnboardingConfig(
-                                                  atClientPreference:
-                                                      BackendService
-                                                              .getInstance()
-                                                          .atClientPreference!,
-                                                  rootEnvironment:
-                                                      RootEnvironment
-                                                          .Production,
-                                                  domain: MixedConstants
-                                                      .ROOT_DOMAIN,
-                                                  appAPIKey: MixedConstants
-                                                      .ONBOARD_API_KEY),
-                                            );
-                                            switch (result.status) {
-                                              case AtOnboardingResultStatus
-                                                  .success:
-                                                // TODO: Handle this case.
-                                                onOnboardCompletes;
-                                                break;
-                                              case AtOnboardingResultStatus
-                                                  .error:
-                                                // TODO: Handle this case.
-                                                print(
-                                                    'error in onboard plugin:${result.errorCode}');
-                                                BackendService.getInstance()
-                                                    .showErrorSnackBar(
-                                                        result.errorCode);
-                                                setState(() {
-                                                  authenticating = false;
-                                                });
-                                                break;
-                                              case AtOnboardingResultStatus
-                                                  .cancel:
-                                                // TODO: Handle this case.
-                                                break;
-                                            }
-                                            ;
+                                          onTap: () {
+                                            onBoardingAtSign();
                                           },
                                           bgColor: AllColors().Black,
                                           child: authenticating
@@ -513,6 +473,38 @@ class _SplashState extends State<Splash> {
     }).catchError((e) {
       print('error in reset: $e');
     });
+  }
+
+  onBoardingAtSign() async {
+    if (authenticating) return;
+    final result = await AtOnboarding.onboard(
+      context: context,
+      config: AtOnboardingConfig(
+          atClientPreference: BackendService.getInstance().atClientPreference!,
+          rootEnvironment: RootEnvironment.Production,
+          domain: MixedConstants.ROOT_DOMAIN,
+          appAPIKey: MixedConstants.ONBOARD_API_KEY),
+    );
+    switch (result.status) {
+      case AtOnboardingResultStatus.success:
+        // TODO: Handle this case.
+        Map<String?, AtClientService> value;
+        value = BackendService.getInstance().atClientServiceMap;
+        onOnboardCompletes(value, result.atsign);
+        break;
+      case AtOnboardingResultStatus.error:
+        // TODO: Handle this case.
+        print('error in onboard plugin:${result.errorCode}');
+        BackendService.getInstance().showErrorSnackBar(result.errorCode);
+        setState(() {
+          authenticating = false;
+        });
+        break;
+      case AtOnboardingResultStatus.cancel:
+        // TODO: Handle this case.
+        break;
+    }
+    ;
   }
 
   // ignore: always_declare_return_types
