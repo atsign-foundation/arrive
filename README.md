@@ -1,8 +1,8 @@
 <img width=250px src="https://atsign.dev/assets/img/atPlatform_logo_gray.svg?sanitize=true">
 
-# @‎rrive README
+# atArrive README
 
-@‎rrive makes peer-to-peer encrypted location sharing easy. 
+atArrive makes peer-to-peer encrypted location sharing easy. 
 
 ## Who is this for?
 
