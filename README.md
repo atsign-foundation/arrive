@@ -6,8 +6,8 @@ atArrive makes peer-to-peer encrypted location sharing easy.
 
 ## Who is this for?
 
-We have open sourced @‎rrive so that you can see how apps on The @ Platform
-work. We also welcome issues and pull requests so that we can make @‎rrive
+We have open sourced atArrive so that you can see how apps on The atPlatform
+work. We also welcome issues and pull requests so that we can make atArrive
 better.
 
 To access map and location search:
