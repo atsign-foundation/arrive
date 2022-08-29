@@ -188,12 +188,10 @@ class BackendService {
               NavService.navKey.currentContext!, Routes.HOME);
           break;
         case AtOnboardingResultStatus.error:
-          // TODO: Handle this case.
           BackendService.getInstance().showErrorSnackBar(result.errorCode);
           print('Onboarding throws ${result.errorCode} error');
           break;
         case AtOnboardingResultStatus.cancel:
-          // TODO: Handle this case.
           break;
       }
     }

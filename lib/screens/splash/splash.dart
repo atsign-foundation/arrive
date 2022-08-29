@@ -71,7 +71,6 @@ class _SplashState extends State<Splash> {
         );
         switch (result.status) {
           case AtOnboardingResultStatus.success:
-            // TODO: Handle this case.
             final atsign = result.atsign;
             final value = result;
             await AtClientManager.getInstance().setCurrentAtSign(
@@ -487,13 +486,11 @@ class _SplashState extends State<Splash> {
     );
     switch (result.status) {
       case AtOnboardingResultStatus.success:
-        // TODO: Handle this case.
         Map<String?, AtClientService> value;
         value = BackendService.getInstance().atClientServiceMap;
         onOnboardCompletes(value, result.atsign);
         break;
       case AtOnboardingResultStatus.error:
-        // TODO: Handle this case.
         print('error in onboard plugin:${result.errorCode}');
         BackendService.getInstance().showErrorSnackBar(result.errorCode);
         setState(() {
@@ -501,7 +498,6 @@ class _SplashState extends State<Splash> {
         });
         break;
       case AtOnboardingResultStatus.cancel:
-        // TODO: Handle this case.
         break;
     }
     ;
