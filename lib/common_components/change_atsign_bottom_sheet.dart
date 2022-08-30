@@ -51,10 +51,6 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
     if (existingCameraStatus != PermissionStatus.granted) {
       await Permission.camera.request();
     }
-    final existingStorageStatus = await Permission.storage.status;
-    if (existingStorageStatus != PermissionStatus.granted) {
-      await Permission.storage.request();
-    }
   }
 
   BackendService backendService = BackendService.getInstance();
