@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/triple_dot_loading.dart';
 import 'package:atsign_location_app/screens/home/home_screen.dart';
 import 'package:atsign_location_app/services/backend_service.dart';
 import 'package:at_common_flutter/services/size_config.dart';
+import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/constants.dart';
 import 'package:atsign_location_app/utils/constants/images.dart';
@@ -18,6 +21,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:at_location_flutter/utils/constants/constants.dart'
     as location_package_constants;
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class Splash extends StatefulWidget {
   @override
@@ -35,13 +39,13 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    // BackendService.getInstance().getAtClientPreference().then(
-    //     (value) => BackendService.getInstance().atClientPreference = value);
     _initBackendService();
   }
 
   String? state;
   void _initBackendService() async {
+    var currentatSign = await KeychainUtil.getAtSign();
+    var atSignList = await KeychainUtil.getAtsignList();
     try {
       BackendService.getInstance().atClientPreference =
           await BackendService.getInstance().getAtClientPreference();
@@ -51,46 +55,51 @@ class _SplashState extends State<Splash> {
 
       backendService = BackendService.getInstance();
       if (BackendService.getInstance().atClientPreference != null) {
-        Onboarding(
-            context: context,
-            atClientPreference: BackendService.getInstance().atClientPreference!,
+        if (Platform.isAndroid || Platform.isIOS) {
+          await _checkForPermissionStatus();
+        }
+        final result = await AtOnboarding.onboard(
+          context: NavService.navKey.currentContext!,
+          atsign: currentatSign == null ? '' : atSignList?.first,
+          config: AtOnboardingConfig(
             domain: MixedConstants.ROOT_DOMAIN,
-            appColor: Color.fromARGB(255, 240, 94, 62),
+            atClientPreference:
+                BackendService.getInstance().atClientPreference!,
             rootEnvironment: RootEnvironment.Production,
-            onboard: (value, atsign) async {
-              await AtClientManager.getInstance().setCurrentAtSign(
-                  atsign!,
-                  MixedConstants.appNamespace,
-                  BackendService.getInstance().atClientPreference!);
-              BackendService.getInstance().syncService =
-                  AtClientManager.getInstance().syncService;
+            appAPIKey: MixedConstants.ONBOARD_API_KEY,
+          ),
+        );
+        switch (result.status) {
+          case AtOnboardingResultStatus.success:
+            final atsign = result.atsign;
+            await AtClientManager.getInstance().setCurrentAtSign(
+                atsign!,
+                MixedConstants.appNamespace,
+                BackendService.getInstance().atClientPreference!);
+            BackendService.getInstance().syncService =
+                AtClientManager.getInstance().syncService;
 
-              Provider.of<LocationProvider>(context, listen: false).resetData();
+            Provider.of<LocationProvider>(context, listen: false).resetData();
 
-              print('_initBackendService onboarded: $value , atsign:$atsign');
-              BackendService.getInstance().atClientServiceMap = value;
-              await KeychainUtil.makeAtSignPrimary(atsign);
-              // await BackendService.getInstance().onboard();
-              // BackendService.getInstance().atClientInstance =
-              //     value[atsign].atClient;
-              BackendService.getInstance().atClientServiceInstance =
-                  value[atsign];
-              BackendService.getInstance().syncWithSecondary();
+            await KeychainUtil.makeAtSignPrimary(atsign);
 
-              // AtClientManager.getInstance().syncService.sync();
-              // ignore: unawaited_futures
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HomeScreen(),
-                ),
-              );
-            },
-            onError: (error) {
-              BackendService.getInstance().showErrorSnackBar(error);
-              print('_initBackendService error in onboarding: $error');
-            },
-            appAPIKey: MixedConstants.ONBOARD_API_KEY);
+            BackendService.getInstance().syncWithSecondary();
+
+            await Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+            break;
+          case AtOnboardingResultStatus.error:
+            BackendService.getInstance().showErrorSnackBar(result.errorCode);
+            print(
+                '_initBackendService error in onboarding: ${result.errorCode}');
+            break;
+          case AtOnboardingResultStatus.cancel:
+            break;
+        }
       } else {
         setState(() {
           authenticating = false;
@@ -116,6 +125,13 @@ class _SplashState extends State<Splash> {
           authenticating = false;
         });
       }
+    }
+  }
+
+  Future<void> _checkForPermissionStatus() async {
+    final existingCameraStatus = await Permission.camera.status;
+    if (existingCameraStatus != PermissionStatus.granted) {
+      await Permission.camera.request();
     }
   }
 
@@ -217,31 +233,8 @@ class _SplashState extends State<Splash> {
                                           height: 40,
                                           width: SizeConfig().screenWidth * 0.8,
                                           radius: 100.toHeight,
-                                          onTap: () async {
-                                            if (authenticating) return;
-                                            Onboarding(
-                                                context: context,
-                                                atClientPreference:
-                                                    BackendService.getInstance()
-                                                        .atClientPreference!,
-                                                domain:
-                                                    MixedConstants.ROOT_DOMAIN,
-                                                appColor: Color.fromARGB(
-                                                    255, 240, 94, 62),
-                                                onboard: onOnboardCompletes,
-                                                rootEnvironment:
-                                                    RootEnvironment.Production,
-                                                onError: (error) {
-                                                  print(
-                                                      'error in onboard plugin:$error');
-                                                  BackendService.getInstance()
-                                                      .showErrorSnackBar(error);
-                                                  setState(() {
-                                                    authenticating = false;
-                                                  });
-                                                },
-                                                appAPIKey: MixedConstants
-                                                    .ONBOARD_API_KEY);
+                                          onTap: () {
+                                            onBoardingAtSign();
                                           },
                                           bgColor: AllColors().Black,
                                           child: authenticating
@@ -335,17 +328,17 @@ class _SplashState extends State<Splash> {
   }
 
   _showResetDialog() async {
-    bool isSelectAtsign = false;
+    var isSelectAtsign = false;
     bool? isSelectAll = false;
     var atsignsList = await KeychainUtil.getAtsignList();
     if (atsignsList == null) {
       atsignsList = [];
     }
     Map atsignMap = {};
-    for (String atsign in atsignsList) {
+    for (var atsign in atsignsList) {
       atsignMap[atsign] = false;
     }
-    showDialog(
+    await showDialog(
         barrierDismissible: true,
         context: context,
         builder: (BuildContext context) {
@@ -475,8 +468,38 @@ class _SplashState extends State<Splash> {
     });
   }
 
+  onBoardingAtSign() async {
+    if (authenticating) return;
+    final result = await AtOnboarding.onboard(
+      context: context,
+      config: AtOnboardingConfig(
+          atClientPreference: BackendService.getInstance().atClientPreference!,
+          rootEnvironment: RootEnvironment.Production,
+          domain: MixedConstants.ROOT_DOMAIN,
+          appAPIKey: MixedConstants.ONBOARD_API_KEY),
+    );
+    switch (result.status) {
+      case AtOnboardingResultStatus.success:
+        Map<String?, AtClientService> value;
+        value = BackendService.getInstance().atClientServiceMap;
+        onOnboardCompletes(value, result.atsign);
+        break;
+      case AtOnboardingResultStatus.error:
+        print('error in onboard plugin:${result.errorCode}');
+        BackendService.getInstance().showErrorSnackBar(result.errorCode);
+        setState(() {
+          authenticating = false;
+        });
+        break;
+      case AtOnboardingResultStatus.cancel:
+        break;
+    }
+    ;
+  }
+
   // ignore: always_declare_return_types
-  onOnboardCompletes(Map<String?, AtClientService> value, String? atsign) async {
+  onOnboardCompletes(
+      Map<String?, AtClientService> value, String? atsign) async {
     await AtClientManager.getInstance().setCurrentAtSign(
         atsign!,
         MixedConstants.appNamespace,

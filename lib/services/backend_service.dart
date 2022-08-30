@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
+import 'package:at_onboarding_flutter/services/onboarding_service.dart';
 import 'package:atsign_location_app/common_components/error_dialog.dart';
 import 'package:atsign_location_app/services/nav_service.dart';
 import 'package:atsign_location_app/utils/constants/colors.dart';
@@ -11,11 +12,11 @@ import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/routes/route_names.dart';
-import 'package:at_onboarding_flutter/screens/onboarding_widget.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:at_client/src/service/sync_service.dart';
 import 'package:at_client/src/service/sync_service_impl.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BackendService {
   static final BackendService _singleton = BackendService._internal();
@@ -25,6 +26,9 @@ class BackendService {
     return _singleton;
   }
   AtClientService? atClientServiceInstance;
+  String? currentAtSign;
+  Timer? periodicHistoryRefresh;
+
   // AtClientImpl atClientInstance;
   String? _atsign;
   // ignore: non_constant_identifier_names
@@ -92,9 +96,15 @@ class BackendService {
   }
 
   ///Fetches atsign from device keychain.
-  // Future<String> getAtSign() async {
-  //   return atClientServiceInstance.atClient.currentAtSign;
-  // }
+  Future<String?> getAtSign() async {
+    await getAtClientPreference().then((value) {
+      return atClientPreference = value;
+    });
+
+    atClientServiceInstance = AtClientService();
+
+    return await KeychainUtil.getAtSign();
+  }
 
   // // ///Fetches privatekey for [atsign] from device keychain.
   // Future<String> getPrivateKey(String atsign) async {
@@ -144,43 +154,52 @@ class BackendService {
       await Navigator.pushNamedAndRemoveUntil(NavService.navKey.currentContext!,
           Routes.SPLASH, (Route<dynamic> route) => false);
     } else {
-      Onboarding(
-          atsign: tempAtsign,
-          context: NavService.navKey.currentContext!,
-          atClientPreference: atClientPrefernce,
-          domain: MixedConstants.ROOT_DOMAIN,
-          appColor: Color.fromARGB(255, 240, 94, 62),
-          rootEnvironment: RootEnvironment.Production,
-          onboard: (value, atsign) async {
-            await AtClientManager.getInstance().setCurrentAtSign(
-                atsign!,
-                MixedConstants.appNamespace,
-                BackendService.getInstance().atClientPreference!);
-            BackendService.getInstance().syncService =
-                AtClientManager.getInstance().syncService;
+      if (Platform.isAndroid || Platform.isIOS) {
+        await _checkForPermissionStatus();
+      }
+      final result = await AtOnboarding.onboard(
+        context: NavService.navKey.currentContext!,
+        atsign: tempAtsign,
+        config: AtOnboardingConfig(
+            atClientPreference: atClientPrefernce,
+            domain: MixedConstants.ROOT_DOMAIN,
+            rootEnvironment: RootEnvironment.Production,
+            appAPIKey: MixedConstants.ONBOARD_API_KEY),
+      );
+      switch (result.status) {
+        case AtOnboardingResultStatus.success:
+          final atsign = result.atsign;
+          await AtClientManager.getInstance().setCurrentAtSign(
+            atsign!,
+            MixedConstants.appNamespace,
+            BackendService.getInstance().atClientPreference!,
+          );
+          BackendService.getInstance().syncService;
+          Provider.of<LocationProvider>(NavService.navKey.currentContext!,
+                  listen: false)
+              .resetData();
+          final value = OnboardingService.getInstance().atClientServiceMap;
+          String? atSign = atsign;
+          atClientServiceInstance = atClientServiceMap[atsign];
+          await KeychainUtil.makeAtSignPrimary(atsign);
+          BackendService.getInstance().syncWithSecondary();
+          SetupRoutes.pushAndRemoveAll(
+              NavService.navKey.currentContext!, Routes.HOME);
+          break;
+        case AtOnboardingResultStatus.error:
+          BackendService.getInstance().showErrorSnackBar(result.errorCode);
+          print('Onboarding throws ${result.errorCode} error');
+          break;
+        case AtOnboardingResultStatus.cancel:
+          break;
+      }
+    }
+  }
 
-            Provider.of<LocationProvider>(NavService.navKey.currentContext!,
-                    listen: false)
-                .resetData();
-
-            atClientServiceMap = value;
-
-            String? atSign = atsign;
-
-            // await atClientServiceMap[atSign].makeAtSignPrimary(atSign);
-            // atClientInstance = atClientServiceMap[atsign].atClient;
-            atClientServiceInstance = atClientServiceMap[atsign];
-            await KeychainUtil.makeAtSignPrimary(atsign);
-            BackendService.getInstance().syncWithSecondary();
-
-            SetupRoutes.pushAndRemoveAll(
-                NavService.navKey.currentContext!, Routes.HOME);
-          },
-          onError: (error) {
-            BackendService.getInstance().showErrorSnackBar(error);
-            print('Onboarding throws $error error');
-          },
-          appAPIKey: MixedConstants.ONBOARD_API_KEY);
+  Future<void> _checkForPermissionStatus() async {
+    final existingCameraStatus = await Permission.camera.status;
+    if (existingCameraStatus != PermissionStatus.granted) {
+      await Permission.camera.request();
     }
   }
 
@@ -210,12 +229,13 @@ class BackendService {
     }
   }
 
+  // ignore: always_declare_return_types
   resetDevice(List checkedAtsigns) async {
     Navigator.of(NavService.navKey.currentContext!).pop();
     await BackendService.getInstance()
         .resetAtsigns(checkedAtsigns)
         .then((value) async {
-      print('reset done');
+      print('reset done ');
     }).catchError((e) {
       print('error in reset: $e');
     });
