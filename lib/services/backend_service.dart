@@ -12,7 +12,6 @@ import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:atsign_location_app/routes/route_names.dart';
-// import 'package:at_onboarding_flutter/screens/onboarding_widget.dart';
 import 'package:atsign_location_app/routes/routes.dart';
 import 'package:at_client/src/service/sync_service.dart';
 import 'package:at_client/src/service/sync_service_impl.dart';
@@ -201,10 +200,6 @@ class BackendService {
     final existingCameraStatus = await Permission.camera.status;
     if (existingCameraStatus != PermissionStatus.granted) {
       await Permission.camera.request();
-    }
-    final existingStorageStatus = await Permission.storage.status;
-    if (existingStorageStatus != PermissionStatus.granted) {
-      await Permission.storage.request();
     }
   }
 

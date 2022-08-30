@@ -72,7 +72,6 @@ class _SplashState extends State<Splash> {
         switch (result.status) {
           case AtOnboardingResultStatus.success:
             final atsign = result.atsign;
-            final value = result;
             await AtClientManager.getInstance().setCurrentAtSign(
                 atsign!,
                 MixedConstants.appNamespace,
@@ -82,7 +81,6 @@ class _SplashState extends State<Splash> {
 
             Provider.of<LocationProvider>(context, listen: false).resetData();
 
-            print('_initBackendService onboarded: $value , atsign:$atsign');
             await KeychainUtil.makeAtSignPrimary(atsign);
 
             BackendService.getInstance().syncWithSecondary();
@@ -134,10 +132,6 @@ class _SplashState extends State<Splash> {
     final existingCameraStatus = await Permission.camera.status;
     if (existingCameraStatus != PermissionStatus.granted) {
       await Permission.camera.request();
-    }
-    final existingStorageStatus = await Permission.storage.status;
-    if (existingStorageStatus != PermissionStatus.granted) {
-      await Permission.storage.request();
     }
   }
 
