@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
@@ -14,6 +15,7 @@ import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AtSignBottomSheet extends StatefulWidget {
   final List<String>? atSignList;
@@ -42,6 +44,13 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
       contactDetails['$_currentAtsign'] = contactDetail;
     });
     setState(() {});
+  }
+
+  Future<void> _checkForPermissionStatus() async {
+    final existingCameraStatus = await Permission.camera.status;
+    if (existingCameraStatus != PermissionStatus.granted) {
+      await Permission.camera.request();
+    }
   }
 
   BackendService backendService = BackendService.getInstance();
@@ -86,56 +95,46 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
 
                   return GestureDetector(
                     onTap: () async {
-                      Onboarding(
-                          atsign: widget.atSignList![index],
-                          context: context,
-                          atClientPreference: atClientPrefernce,
-                          domain: MixedConstants.ROOT_DOMAIN,
-                          appColor: Color.fromARGB(255, 240, 94, 62),
-                          rootEnvironment: RootEnvironment.Production,
-                          onboard: (value, atsign) async {
-                            await AtClientManager.getInstance()
-                                .setCurrentAtSign(
-                                    atsign!,
-                                    MixedConstants.appNamespace,
-                                    atClientPrefernce);
-                            BackendService.getInstance().syncService =
-                                AtClientManager.getInstance().syncService;
+                      if (Platform.isAndroid || Platform.isIOS) {
+                        await _checkForPermissionStatus();
+                      }
+                      final result = await AtOnboarding.onboard(
+                        context: context,
+                        atsign: widget.atSignList![index],
+                        config: AtOnboardingConfig(
+                            atClientPreference: atClientPrefernce,
+                            domain: MixedConstants.ROOT_DOMAIN,
+                            rootEnvironment: RootEnvironment.Production,
+                            appAPIKey: MixedConstants.ONBOARD_API_KEY),
+                      );
+                      switch (result.status) {
+                        case AtOnboardingResultStatus.success:
+                          final atsign = result.atsign;
+                          await AtClientManager.getInstance().setCurrentAtSign(
+                            atsign!,
+                            MixedConstants.appNamespace,
+                            atClientPrefernce,
+                          );
+                          BackendService.getInstance().syncService =
+                              AtClientManager.getInstance().syncService;
+                          Provider.of<LocationProvider>(context, listen: false)
+                              .resetData();
+                          await KeychainUtil.makeAtSignPrimary(atsign);
 
-                            Provider.of<LocationProvider>(context,
-                                    listen: false)
-                                .resetData();
-                            backendService.atClientServiceMap = value;
-                            await KeychainUtil.makeAtSignPrimary(atsign);
-
-                            // var atSign = backendService
-                            //     .atClientServiceMap[atsign]
-                            //     .atClient
-                            //     .currentAtSign;
-
-                            // await backendService.atClientServiceMap[atsign]
-                            //     .makeAtSignPrimary(atSign);
-                            // BackendService.getInstance().atClientInstance =
-                            //     backendService
-                            //         .atClientServiceMap[atsign].atClient;
-                            BackendService.getInstance()
-                                    .atClientServiceInstance =
-                                backendService.atClientServiceMap[atsign];
-
-                            BackendService.getInstance().syncWithSecondary();
-
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              // TODO: Add LocationProvider init here if any issue
-                            });
-
-                            SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
-                          },
-                          onError: (error) {
-                            BackendService.getInstance()
-                                .showErrorSnackBar(error);
-                            print('Onboarding throws $error error');
-                          },
-                          appAPIKey: MixedConstants.ONBOARD_API_KEY);
+                          BackendService.getInstance().atClientServiceInstance =
+                              backendService.atClientServiceMap[atsign];
+                          BackendService.getInstance().syncWithSecondary();
+                          WidgetsBinding.instance.addPostFrameCallback((_) {});
+                          SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
+                          break;
+                        case AtOnboardingResultStatus.error:
+                          BackendService.getInstance()
+                              .showErrorSnackBar(result.errorCode);
+                          print('Onboarding throws ${result.errorCode} error');
+                          break;
+                        case AtOnboardingResultStatus.cancel:
+                          break;
+                      }
 
                       setState(() {});
                     },
@@ -171,49 +170,53 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                 width: 20,
               ),
               GestureDetector(
-                onTap: () {
-                  Onboarding(
-                      atsign: '',
-                      context: context,
-                      atClientPreference: atClientPrefernce,
-                      domain: MixedConstants.ROOT_DOMAIN,
-                      appColor: Color.fromARGB(255, 240, 94, 62),
-                      rootEnvironment: RootEnvironment.Production,
-                      onboard: (value, atsign) async {
-                        await AtClientManager.getInstance().setCurrentAtSign(
-                            atsign!,
-                            MixedConstants.appNamespace,
-                            atClientPrefernce);
-                        BackendService.getInstance().syncService =
-                            AtClientManager.getInstance().syncService;
-
-                        Provider.of<LocationProvider>(context, listen: false)
-                            .resetData();
-                        backendService.atClientServiceMap = value;
-                        await KeychainUtil.makeAtSignPrimary(atsign);
-
-                        // var atSign = backendService
-                        //     .atClientServiceMap[atsign].atClient.currentAtSign;
-                        // await backendService.atClientServiceMap[atsign]
-                        //     .makeAtSignPrimary(atSign);
-
-                        await BackendService.getInstance().onboard();
-                        BackendService.getInstance().syncWithSecondary();
-
-                        // ignore: unawaited_futures
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HomeScreen(),
-                          ),
-                        );
-                      },
-                      onError: (error) {
-                        BackendService.getInstance().showErrorSnackBar(error);
-                        print('Onboarding throws $error error');
-                      },
-                      appAPIKey: MixedConstants.ONBOARD_API_KEY);
-                  setState(() {});
+                onTap: () async {
+                  if (Platform.isAndroid || Platform.isIOS) {
+                    await _checkForPermissionStatus();
+                  }
+                  final result = await AtOnboarding.onboard(
+                    isSwitchingAtsign: true,
+                    context: context,
+                    atsign: '',
+                    config: AtOnboardingConfig(
+                        atClientPreference: atClientPrefernce,
+                        domain: MixedConstants.ROOT_DOMAIN,
+                        rootEnvironment: RootEnvironment.Production,
+                        appAPIKey: MixedConstants.ONBOARD_API_KEY),
+                  );
+                  switch (result.status) {
+                    case AtOnboardingResultStatus.success:
+                      final atsign = result.atsign;
+                      await AtClientManager.getInstance().setCurrentAtSign(
+                        atsign!,
+                        MixedConstants.appNamespace,
+                        atClientPrefernce,
+                      );
+                      BackendService.getInstance().syncService =
+                          AtClientManager.getInstance().syncService;
+                      Provider.of<LocationProvider>(context, listen: false)
+                          .resetData();
+                      // backendService.atClientServiceMap = value;
+                      final value = backendService.atClientServiceMap;
+                      await KeychainUtil.makeAtSignPrimary(atsign);
+                      await BackendService.getInstance().onboard();
+                      BackendService.getInstance().syncWithSecondary();
+                      //ignore: unawaited_futures
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
+                      break;
+                    case AtOnboardingResultStatus.error:
+                      BackendService.getInstance()
+                          .showErrorSnackBar(result.errorCode);
+                      print('Onboarding throws ${result.errorCode} error');
+                      break;
+                    case AtOnboardingResultStatus.cancel:
+                      break;
+                  }
                 },
                 child: Container(
                   margin: EdgeInsets.only(right: 10),

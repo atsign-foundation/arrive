@@ -197,8 +197,9 @@ class _SideBarState extends State<SideBar> {
               Icons.file_copy,
               () async {
                 BackupKeyWidget(
-                  atsign:
-                      AtClientManager.getInstance().atClient.getCurrentAtSign()!,
+                  atsign: AtClientManager.getInstance()
+                      .atClient
+                      .getCurrentAtSign()!,
                 ).showBackupDialog(context);
               },
             ),
@@ -289,15 +290,13 @@ class _SideBarState extends State<SideBar> {
             )),
             Expanded(child: Container(height: 0)),
             iconText(TextStrings.switchAtsign, Icons.logout, () async {
-              var currentAtsign = _currentAtsign;
-              var atSignList = await KeyChainManager.getInstance()
-                  .getAtSignListFromKeychain();
+              var atSignList = await KeychainUtil.getAtsignList();
 
               await showModalBottomSheet(
                 context: context,
                 backgroundColor: Colors.transparent,
                 builder: (context) => AtSignBottomSheet(
-                  atSignList: atSignList,
+                  atSignList: atSignList ?? [],
                 ),
               );
             }),
