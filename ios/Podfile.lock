@@ -52,7 +52,7 @@ PODS:
   - file_saver (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_image_compress (0.0.1):
+  - flutter_image_compress (1.0.0):
     - Flutter
     - Mantle
     - SDWebImage
@@ -81,14 +81,18 @@ PODS:
   - Mantle (2.1.6):
     - Mantle/extobjc (= 2.1.6)
   - Mantle/extobjc (2.1.6)
+  - MTBBarcodeScanner (5.0.11)
   - package_info (0.0.1):
     - Flutter
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_ios (0.0.1):
     - Flutter
-  - permission_handler_apple (9.0.2):
+  - permission_handler_apple (9.0.4):
     - Flutter
+  - qr_code_scanner (0.2.0):
+    - Flutter
+    - MTBBarcodeScanner
   - SDWebImage (5.11.1):
     - SDWebImage/Core (= 5.11.1)
   - SDWebImage/Core (5.11.1)
@@ -130,6 +134,7 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -143,6 +148,7 @@ SPEC REPOS:
     - FMDB
     - libwebp
     - Mantle
+    - MTBBarcodeScanner
     - SDWebImage
     - SDWebImageWebPCoder
     - SwiftyGif
@@ -189,6 +195,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  qr_code_scanner:
+    :path: ".symlinks/plugins/qr_code_scanner/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_ios:
@@ -214,7 +222,7 @@ SPEC CHECKSUMS:
   file_picker: 817ab1d8cd2da9d2da412a417162deee3500fc95
   file_saver: 503e386464dbe118f630e17b4c2e1190fa0cf808
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
-  flutter_image_compress: fd2b476345226e1a10ea352fa306af95704642c1
+  flutter_image_compress: 5a5e9aee05b6553048b8df1c3bc456d0afaac433
   flutter_keychain: 01aabf894ffe8b01adfda1d9df21c210c1b4b452
   flutter_qr_reader: d930dde3b2cfe2b3d0bb7d66e5ff3e514300a5e5
   fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
@@ -222,10 +230,12 @@ SPEC CHECKSUMS:
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
   Mantle: 4c0ed6ce47c96eccc4dc3bb071deb3def0e2c3be
+  MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
-  permission_handler_apple: d21b38e1a4b2e041c63af9568f9165e114e507a6
+  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
+  qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: bbf46e29fb8d1980a78ad3d5e9b4123c77f10ebc
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
@@ -234,7 +244,7 @@ SPEC CHECKSUMS:
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
-  webview_flutter_wkwebview: 005fbd90c888a42c5690919a1527ecc6649e1162
+  webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
 PODFILE CHECKSUM: be3641bcaef7a85afc04e2ed523c1b5ffa98afbe
 
