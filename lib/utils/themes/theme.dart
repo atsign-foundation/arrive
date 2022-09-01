@@ -1,6 +1,7 @@
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Themes {
   Themes._();
@@ -50,6 +51,7 @@ class Themes {
       appBarTheme: AppBarTheme(
           color: AllColors().WHITE,
           iconTheme: IconThemeData(color: AllColors().Black),
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
           textTheme: TextTheme(
               headline1: TextStyle(
                   fontSize: 18,
@@ -102,6 +104,7 @@ class Themes {
       appBarTheme: AppBarTheme(
           color: AllColors().Black,
           iconTheme: IconThemeData(color: AllColors().WHITE),
+          systemOverlayStyle: SystemUiOverlayStyle.light,
           textTheme: TextTheme(
               headline1: TextStyle(
                   fontSize: 18,

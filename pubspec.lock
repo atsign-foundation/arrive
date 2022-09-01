@@ -49,7 +49,7 @@ packages:
       name: at_backupkey_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.2"
+    version: "4.0.5"
   at_base2e15:
     dependency: transitive
     description:
@@ -63,14 +63,14 @@ packages:
       name: at_client
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.28"
+    version: "3.0.37"
   at_client_mobile:
     dependency: "direct main"
     description:
       name: at_client_mobile
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.1.18"
+    version: "3.2.4"
   at_common_flutter:
     dependency: transitive
     description:
@@ -84,7 +84,7 @@ packages:
       name: at_commons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.18"
+    version: "3.0.25"
   at_contact:
     dependency: "direct main"
     description:
@@ -113,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.7"
+  at_file_saver:
+    dependency: transitive
+    description:
+      name: at_file_saver
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   at_location_flutter:
     dependency: "direct main"
     description:
@@ -128,28 +135,30 @@ packages:
       name: at_lookup
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.26"
+    version: "3.0.30"
   at_onboarding_flutter:
     dependency: "direct main"
     description:
-      name: at_onboarding_flutter
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.0.3"
+      path: at_onboarding_flutter
+      ref: HEAD
+      resolved-ref: "1c577bb2256b4590fc87743f039c29e399bca751"
+      url: "https://github.com/atsign-foundation/at_widgets.git"
+    source: git
+    version: "5.0.1"
   at_persistence_secondary_server:
     dependency: transitive
     description:
       name: at_persistence_secondary_server
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.29"
+    version: "3.0.34"
   at_persistence_spec:
     dependency: transitive
     description:
       name: at_persistence_spec
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.6"
+    version: "2.0.7"
   at_server_status:
     dependency: transitive
     description:
@@ -157,6 +166,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
+  at_sync_ui_flutter:
+    dependency: transitive
+    description:
+      name: at_sync_ui_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
   at_utf7:
     dependency: transitive
     description:
@@ -268,7 +284,7 @@ packages:
       name: crypto
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   crypton:
     dependency: transitive
     description:
@@ -629,13 +645,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.8.1"
-  lints:
-    dependency: transitive
-    description:
-      name: lints
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.1"
   lists:
     dependency: transitive
     description:
@@ -958,6 +967,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
+  qr_code_scanner:
+    dependency: transitive
+    description:
+      name: qr_code_scanner
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   quiver:
     dependency: transitive
     description:
@@ -1098,6 +1114,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  showcaseview:
+    dependency: transitive
+    description:
+      name: showcaseview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.8"
   sky_engine:
     dependency: transitive
     description: flutter
