@@ -57,7 +57,7 @@ dependency_overrides:
     git:
       url: https://github.com/atsign-foundation/at_widgets.git
       path: at_onboarding_flutter
-      ref: trunk
+      ref: feat/onboarding-allowed-files
   at_location_flutter:
     git:
       url: https://github.com/atsign-foundation/at_widgets.git
