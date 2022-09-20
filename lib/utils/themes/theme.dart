@@ -1,6 +1,7 @@
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/view_models/theme_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Themes {
   Themes._();
@@ -14,6 +15,7 @@ class Themes {
   );
 
   static ThemeData get lightTheme {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: AllColors().Black,
@@ -66,6 +68,7 @@ class Themes {
   }
 
   static ThemeData get darkTheme {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: AllColors().WHITE,
