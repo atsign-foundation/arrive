@@ -53,17 +53,21 @@ dependency_overrides:
     git:
       url: https://github.com/incrediblezayed/file_saver.git
       ref: main
-  at_onboarding_flutter:
-    git:
-      url: https://github.com/atsign-foundation/at_widgets.git
-      path: at_onboarding_flutter
-      ref: feat/onboarding-allowed-files
   at_location_flutter:
     git:
       url: https://github.com/atsign-foundation/at_widgets.git
       path: at_location_flutter
       ref: trunk
-  at_backupkey_flutter: 4.0.2
+  at_backupkey_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_backupkey_flutter
+      ref: fix_flutter_qr_reader
+  at_onboarding_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: at_onboarding_flutter
+      ref: fix_flutter_qr_reader      
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
