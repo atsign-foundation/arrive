@@ -19,7 +19,7 @@ class RequestLocationSheet extends StatefulWidget {
 }
 
 class _RequestLocationSheetState extends State<RequestLocationSheet> {
-  List<AtContact?> selectedContacts = [];
+  List<AtContact> selectedContacts = [];
   late bool isLoading;
   @override
   void initState() {
@@ -72,13 +72,13 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
                               // to prevent one contact from getting added again
                               selectedContacts.forEach((_contact) {
                                 if (_groupElement.contact!.atSign ==
-                                    _contact!.atSign) {
+                                    _contact.atSign) {
                                   _containsContact = true;
                                 }
                               });
 
-                              if (!_containsContact) {
-                                selectedContacts.add(_groupElement.contact);
+                              if (!_containsContact && _groupElement.contact!=null) {
+                                selectedContacts.add(_groupElement.contact!);
                               }
                             } else if (_groupElement.group != null) {
                               // for groups
@@ -87,7 +87,7 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
 
                                 // to prevent one contact from getting added again
                                 selectedContacts.forEach((_contact) {
-                                  if (element.atSign == _contact!.atSign) {
+                                  if (element.atSign == _contact.atSign) {
                                     _containsContact = true;
                                   }
                                 });
@@ -153,10 +153,10 @@ class _RequestLocationSheetState extends State<RequestLocationSheet> {
     var result;
     if (selectedContacts.length > 1) {
       await RequestLocationService()
-          .sendRequestLocationToGroup(selectedContacts as List<AtContact>);
+          .sendRequestLocationToGroup(selectedContacts);
     } else {
       result =
-          await sendRequestLocationNotification(selectedContacts[0]!.atSign!);
+          await sendRequestLocationNotification(selectedContacts[0].atSign!);
     }
     if (result == null) {
       setState(() {
