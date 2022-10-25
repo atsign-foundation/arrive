@@ -21,7 +21,7 @@ class ShareLocationSheet extends StatefulWidget {
 }
 
 class _ShareLocationSheetState extends State<ShareLocationSheet> {
-  List<AtContact?> selectedContacts = [];
+  List<AtContact> selectedContacts = [];
   late bool isLoading;
   String? selectedOption;
 
@@ -76,13 +76,13 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
                               // to prevent one contact from getting added again
                               selectedContacts.forEach((_contact) {
                                 if (_groupElement.contact!.atSign ==
-                                    _contact!.atSign) {
+                                    _contact.atSign) {
                                   _containsContact = true;
                                 }
                               });
 
-                              if (!_containsContact) {
-                                selectedContacts.add(_groupElement.contact);
+                              if (!_containsContact && _groupElement.contact!=null) {
+                                selectedContacts.add(_groupElement.contact!);
                               }
                             } else if (_groupElement.group != null) {
                               // for groups
@@ -91,7 +91,7 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
 
                                 // to prevent one contact from getting added again
                                 selectedContacts.forEach((_contact) {
-                                  if (element.atSign == _contact!.atSign) {
+                                  if (element.atSign == _contact.atSign) {
                                     _containsContact = true;
                                   }
                                 });
@@ -225,11 +225,11 @@ class _ShareLocationSheetState extends State<ShareLocationSheet> {
     var result;
     if (selectedContacts.length > 1) {
       await SharingLocationService().sendShareLocationToGroup(
-          selectedContacts as List<AtContact>,
+          selectedContacts,
           minutes: minutes);
     } else {
       result = await sendShareLocationNotification(
-          selectedContacts[0]!.atSign!, minutes);
+          selectedContacts[0].atSign!, minutes);
     }
 
     if (result == null) {

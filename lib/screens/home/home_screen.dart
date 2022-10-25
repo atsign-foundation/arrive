@@ -183,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen>
   cleanKeychain() async {
     var _keyChainManager = KeyChainManager.getInstance();
     var _atSignsList = await _keyChainManager.getAtSignListFromKeychain();
-    _atSignsList?.forEach((element) {
+    _atSignsList.forEach((element) {
       _keyChainManager.deleteAtSignFromKeychain(element);
     });
   }
