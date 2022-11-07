@@ -7,6 +7,8 @@ PODS:
     - Flutter
   - at_events_flutter (0.0.1):
     - Flutter
+  - at_file_saver (0.0.1):
+    - Flutter
   - at_location_flutter (0.0.1):
     - Flutter
   - at_onboarding_flutter (0.0.1):
@@ -49,8 +51,6 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
-  - file_saver (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
   - flutter_image_compress (1.0.0):
     - Flutter
@@ -58,8 +58,6 @@ PODS:
     - SDWebImage
     - SDWebImageWebPCoder
   - flutter_keychain (0.0.1):
-    - Flutter
-  - flutter_qr_reader (0.0.1):
     - Flutter
   - fluttertoast (0.0.2):
     - Flutter
@@ -118,16 +116,15 @@ DEPENDENCIES:
   - at_contacts_flutter (from `.symlinks/plugins/at_contacts_flutter/ios`)
   - at_contacts_group_flutter (from `.symlinks/plugins/at_contacts_group_flutter/ios`)
   - at_events_flutter (from `.symlinks/plugins/at_events_flutter/ios`)
+  - at_file_saver (from `.symlinks/plugins/at_file_saver/ios`)
   - at_location_flutter (from `.symlinks/plugins/at_location_flutter/ios`)
   - at_onboarding_flutter (from `.symlinks/plugins/at_onboarding_flutter/ios`)
   - biometric_storage (from `.symlinks/plugins/biometric_storage/ios`)
   - emoji_picker_flutter (from `.symlinks/plugins/emoji_picker_flutter/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
-  - file_saver (from `.symlinks/plugins/file_saver/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress (from `.symlinks/plugins/flutter_image_compress/ios`)
   - flutter_keychain (from `.symlinks/plugins/flutter_keychain/ios`)
-  - flutter_qr_reader (from `.symlinks/plugins/flutter_qr_reader/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
@@ -163,6 +160,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/at_contacts_group_flutter/ios"
   at_events_flutter:
     :path: ".symlinks/plugins/at_events_flutter/ios"
+  at_file_saver:
+    :path: ".symlinks/plugins/at_file_saver/ios"
   at_location_flutter:
     :path: ".symlinks/plugins/at_location_flutter/ios"
   at_onboarding_flutter:
@@ -173,16 +172,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/emoji_picker_flutter/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
-  file_saver:
-    :path: ".symlinks/plugins/file_saver/ios"
   Flutter:
     :path: Flutter
   flutter_image_compress:
     :path: ".symlinks/plugins/flutter_image_compress/ios"
   flutter_keychain:
     :path: ".symlinks/plugins/flutter_keychain/ios"
-  flutter_qr_reader:
-    :path: ".symlinks/plugins/flutter_qr_reader/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   geolocator_apple:
@@ -213,6 +208,7 @@ SPEC CHECKSUMS:
   at_contacts_flutter: 11ad3deb3c2a8f1e9daf302ac5962dadd48e21fb
   at_contacts_group_flutter: 31bc718fdb2baca1ae36509009e48cf33a23fa5f
   at_events_flutter: 88b4a1773db9a4cb48ade0a7b9f79a1b351337b4
+  at_file_saver: c0e052c72d8c0296318bd70f2ae7f510887014ce
   at_location_flutter: 11cdb9f57b41159f51d1ce151f78c31b9b292607
   at_onboarding_flutter: e8219b6d0bfb236d3837ec3528871aebdcc56e8d
   biometric_storage: 1400f1382af3a4cc2bf05340e13c3d8de873ceb9
@@ -220,12 +216,10 @@ SPEC CHECKSUMS:
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   emoji_picker_flutter: df19dac03a2b39ac667dc8d1da939ef3a9e21347
   file_picker: 817ab1d8cd2da9d2da412a417162deee3500fc95
-  file_saver: 503e386464dbe118f630e17b4c2e1190fa0cf808
-  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_image_compress: 5a5e9aee05b6553048b8df1c3bc456d0afaac433
   flutter_keychain: 01aabf894ffe8b01adfda1d9df21c210c1b4b452
-  flutter_qr_reader: d930dde3b2cfe2b3d0bb7d66e5ff3e514300a5e5
-  fluttertoast: 16fbe6039d06a763f3533670197d01fc73459037
+  fluttertoast: 74526702fea2c060ea55dde75895b7e1bde1c86b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   geolocator_apple: cc556e6844d508c95df1e87e3ea6fa4e58c50401
   libwebp: e90b9c01d99205d03b6bb8f2c8c415e5a4ef66f0
@@ -246,6 +240,6 @@ SPEC CHECKSUMS:
   url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
   webview_flutter_wkwebview: b7e70ef1ddded7e69c796c7390ee74180182971f
 
-PODFILE CHECKSUM: be3641bcaef7a85afc04e2ed523c1b5ffa98afbe
+PODFILE CHECKSUM: a277f196c55f498e33864ca4702dd795613fb0d4
 
 COCOAPODS: 1.11.3
