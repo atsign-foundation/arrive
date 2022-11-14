@@ -109,23 +109,31 @@ class _AddContactState extends State<AddContact> {
                     buttonText: TextStrings.yes,
                     fontColor: Colors.white,
                     onPressed: () async {
-                      setState(() {
+                      try {
+                        setState(() {
                         isContactAdding = true;
-                      });
-                      await ContactService().addAtSign(
-                        atSign: widget.atSignName,
-                        nickName: nickName,
-                      );
-                      setState(() {
-                        isContactAdding = false;
-                      });
+                        });
+                        await ContactService().addAtSign(
+                          atSign: widget.atSignName,
+                          nickName: nickName,
+                        );
+                        setState(() {
+                          isContactAdding = false;
+                        });
 
-                      await ContactService().fetchContacts();
+                        await ContactService().fetchContacts();
 
-                      if (widget.onSuccessCallback != null) {
-                        widget.onSuccessCallback!();
+                        if (widget.onSuccessCallback != null) {
+                          widget.onSuccessCallback!();
+                        }
+                        Navigator.pop(context);
+                      } catch(e) {
+                        print('Error in adding contact $e');
+                        setState(() {
+                          isContactAdding = false;
+                        });
+                        Navigator.pop(context);
                       }
-                      Navigator.pop(context);
                     },
                   ),
                 ),
