@@ -109,9 +109,9 @@ packages:
   at_events_flutter:
     dependency: "direct main"
     description:
-      path: "/Users/niteshkumar/Desktop/client_projects/at_widgets/packages/at_events_flutter"
-      relative: false
-    source: path
+      name: at_events_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "3.1.9"
   at_file_saver:
     dependency: transitive
@@ -123,9 +123,9 @@ packages:
   at_location_flutter:
     dependency: "direct main"
     description:
-      path: "/Users/niteshkumar/Desktop/client_projects/at_widgets/packages/at_location_flutter"
-      relative: false
-    source: path
+      name: at_location_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "3.1.8"
   at_lookup:
     dependency: "direct main"
