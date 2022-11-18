@@ -20,7 +20,6 @@ import 'package:atsign_location_app/utils/constants/text_styles.dart';
 import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:package_info/package_info.dart';
 
@@ -467,45 +466,6 @@ class _SideBarState extends State<SideBar> {
   }
 
   Future<bool?> isLocationServiceEnabled() async {
-    try {
-      bool serviceEnabled;
-      LocationPermission permission;
-
-      serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-      if (!serviceEnabled) {
-        return false;
-      }
-
-      permission = await Geolocator.checkPermission();
-
-      if (permission == LocationPermission.deniedForever) {
-        return false;
-      }
-
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.deniedForever) {
-          return false;
-        }
-
-        if (permission == LocationPermission.denied) {
-          return false;
-        }
-      }
-
-      return true;
-    } catch (e) {
-      if (e is PermissionRequestInProgressException) {
-        CustomToast().show(
-            TextStrings.locationPermissionAlreadyRunning, context,
-            duration: 5, isError: true);
-      } else {
-        CustomToast().show(TextStrings.pleaseTryAgain, context, isError: true);
-      }
-
-      print('Error in isLocationServiceEnabled $e');
-      return null;
-    }
+    return await isLocationServiceEnabled();
   }
 }

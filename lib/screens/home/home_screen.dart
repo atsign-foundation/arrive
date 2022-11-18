@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_final_fields, missing_return
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:at_client_mobile/at_client_mobile.dart';
 import 'package:at_contacts_group_flutter/at_contacts_group_flutter.dart';
@@ -39,13 +40,12 @@ import 'package:atsign_location_app/view_models/location_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:at_common_flutter/services/size_config.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
 import 'package:new_version/new_version.dart';
-
 enum FilterScreenType { Event, Location }
 enum EventFilters { Sent, Received, None }
 enum LocationFilters { Pending, Sent, Received, None }
@@ -74,6 +74,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   Function? setFilterIconState,
       setFloatingActionState; // to re-render this when tab bar's index change
+
+  var _location = Location();
 
   @override
   void initState() {
@@ -136,19 +138,19 @@ class _HomeScreenState extends State<HomeScreen>
   void _getLocationStatus() async {
     await _getMyLocation();
 
-    Geolocator.getServiceStatusStream().listen((event) {
-      _mapKey = UniqueKey();
-      if (event == ServiceStatus.disabled) {
-        setState(() {
-          myLatLng = null;
-        });
-      } else if (event == ServiceStatus.enabled) {
-        _getMyLocation();
-      }
-    });
+    // Geolocator.getServiceStatusStream().listen((event) {
+    //   _mapKey = UniqueKey();
+    //   if (event == ServiceStatus.disabled) {
+    //     setState(() {
+    //       myLatLng = null;
+    //     });
+    //   } else if (event == ServiceStatus.enabled) {
+    //     _getMyLocation();
+    //   }
+    // });
   }
 
-  StreamSubscription<Position>? _positionStream;
+  StreamSubscription<LocationData>? _positionStream;
 
   Future<void> _getMyLocation() async {
     var newMyLatLng = await getMyLocation();
@@ -158,21 +160,22 @@ class _HomeScreenState extends State<HomeScreen>
       });
     }
 
-    var permission = await Geolocator.checkPermission();
+    var permission = await _location.hasPermission();
 
-    if (((permission == LocationPermission.always) ||
-        (permission == LocationPermission.whileInUse))) {
+    if (((permission == PermissionStatus.granted) ||
+        (permission == PermissionStatus.grantedLimited))) {
       if (_positionStream != null) {
         await _positionStream!.cancel();
       }
 
-      _positionStream = Geolocator.getPositionStream(
-              locationSettings: LocationSettings(distanceFilter: 2))
+      await _location.changeSettings(distanceFilter: 2);
+
+      _positionStream = _location.onLocationChanged
           .listen((locationStream) async {
-        if (mounted) {
+        if (mounted  && (locationStream.latitude != null && locationStream.longitude != null)) {
           setState(() {
             myLatLng =
-                LatLng(locationStream.latitude, locationStream.longitude);
+                LatLng(locationStream.latitude!, locationStream.longitude!);
           });
         }
       });
@@ -380,6 +383,7 @@ class _HomeScreenState extends State<HomeScreen>
               task: TextStrings.createEvent,
               icon: Icons.event,
               onTap: () {
+                // _demo();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -874,5 +878,27 @@ class _HomeScreenState extends State<HomeScreen>
         });
       },
     );
+  }
+
+  Future<void> _demo() async {
+     var currentLocation = 
+    //  await Geolocator.getCurrentPosition(
+    //   timeLimit: Duration(seconds: 10)
+    //  );
+     await getCurrentPosition();
+     print('currentLocation $currentLocation');
+
+    //  GeolocatorPlatform.instance
+    //       .getCurrentPosition(locationSettings: locationSettings);
+
+    // if(Platform.isIOS){
+    //   var locationSettings = LocationSettings(
+    //     accuracy: LocationAccuracy.best,
+    //     timeLimit: null,
+    //   );
+
+    //   var currentLocation = await MethodChannelGeolocator().getCurrentPosition(locationSettings: locationSettings);
+    //   print('currentLocation $currentLocation');
+    // }
   }
 }

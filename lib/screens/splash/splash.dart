@@ -17,9 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:at_onboarding_flutter/at_onboarding_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:at_location_flutter/utils/constants/constants.dart'
     as location_package_constants;
+import 'package:location/location.dart' as LocationPackage;
 import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -140,7 +140,7 @@ class _SplashState extends State<Splash> {
     try {
       /// So that we have the permission status beforehand & later we dont get
       /// PlatformException(PermissionHandler.PermissionManager) => Multiple Permissions exception
-      await Geolocator.requestPermission();
+      await LocationPackage.Location().requestPermission();
     } catch (e) {
       print('Error in checkLocationPermission $e');
     }
