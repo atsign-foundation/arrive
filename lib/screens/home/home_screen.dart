@@ -166,18 +166,29 @@ class _HomeScreenState extends State<HomeScreen>
         await _positionStream!.cancel();
       }
 
+      LatLng? _lastUpdatedLocation; 
+
       _positionStream = Geolocator.getPositionStream(
               locationSettings: LocationSettings(distanceFilter: 2))
           .listen((locationStream) async {
-        if (mounted) {
-          setState(() {
-            myLatLng =
-                LatLng(locationStream.latitude, locationStream.longitude);
-          });
-        }
+            var _newLoc = LatLng(locationStream.latitude, locationStream.longitude);
+            if (mounted 
+                 &&  (_lastUpdatedLocation == null ||
+                  (differenceInMeters(_lastUpdatedLocation!, _newLoc) > 2))
+              ) {
+              setState(() {
+                myLatLng = _newLoc;
+              });
+              _lastUpdatedLocation = _newLoc;
+            }
       });
     }
   }
+
+  double differenceInMeters(LatLng _previousLoc, LatLng _newLoc){
+    return Geolocator.distanceBetween(_newLoc.latitude, _newLoc.longitude, _previousLoc.latitude, _previousLoc.longitude);
+  } 
+
 
   // ignore: always_declare_return_types
   cleanKeychain() async {
@@ -277,7 +288,6 @@ class _HomeScreenState extends State<HomeScreen>
                 : SizedBox(),
             contactsLoaded!
                 ? ProviderHandler<LocationProvider>(
-                    key: UniqueKey(),
                     functionName: locationProvider.GET_ALL_NOTIFICATIONS,
                     showError: false,
                     load: (provider) => {},

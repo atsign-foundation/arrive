@@ -60,7 +60,7 @@ class _SplashState extends State<Splash> {
         }
         final result = await AtOnboarding.onboard(
           context: NavService.navKey.currentContext!,
-          atsign: currentatSign == null ? '' : atSignList?.first,
+          atsign: currentatSign,
           config: AtOnboardingConfig(
             domain: MixedConstants.ROOT_DOMAIN,
             atClientPreference:

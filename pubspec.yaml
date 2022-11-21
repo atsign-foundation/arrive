@@ -52,6 +52,12 @@ dependency_overrides:
   geolocator: ^9.0.2
   # on updating to compileSdkVersion 33, we need to upgrade this, 
   permission_handler: ^10.2.0
+  at_location_flutter:
+    git:
+      url: https://github.com/atsign-foundation/at_widgets.git
+      path: packages/at_location_flutter
+      ref: feat/manual-filter
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
