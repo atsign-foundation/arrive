@@ -47,12 +47,8 @@
 	<string>We need access to your bluetooth connection to message when wi-fi is not available</string>
 	<key>NSCameraUsageDescription</key>
 	<string>The camera is used to scan QR code to pair your device with your @sign</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
-	<key>NSLocationUsageDescription</key>
-	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
+	<!-- <key>NSLocationUsageDescription</key>
+	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string> -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location to display it in your map view and share with others that you choose to share with.</string>
 	<key>NSMicrophoneUsageDescription</key>
