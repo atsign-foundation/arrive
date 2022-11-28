@@ -112,6 +112,7 @@ class TextStrings {
   static const pleaseTryAgain = 'Please, try again!';
   static const locationPermissionAlreadyRunning =
       ' A request for location permissions is already running, please wait for it to complete before doing another request.';
+  static const sidebarSwitchOut = 'Switch atSign';
   // Splash Screen
   static const stayConnected = 'Stay connected!';
   static const whereEver = 'Wherever';
