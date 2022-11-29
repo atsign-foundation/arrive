@@ -142,4 +142,11 @@ class CustomTextStyles {
         letterSpacing: 0.1,
         fontWeight: FontWeight.w700,
       );
+
+  TextStyle blackBold({int size = 16}) => TextStyle(
+        color: Colors.black,
+        fontSize: size.toFont,
+        letterSpacing: 0.1,
+        fontWeight: FontWeight.w700,
+      );
 }
