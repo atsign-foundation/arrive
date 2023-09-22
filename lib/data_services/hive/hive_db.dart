@@ -51,7 +51,7 @@ class HiveDataProvider implements LocalDataProviderContract {
   @override
   Future<void> insertData(String table, Map<dynamic, dynamic> values) async {
     var box = await _getBox(table);
-    if (values != null && values.isNotEmpty) {
+    if (values.isNotEmpty) {
       values.forEach((k, v) => box.put(k, v));
     }
   }
@@ -86,7 +86,7 @@ class HiveDataProvider implements LocalDataProviderContract {
     List? whereClauseArgs,
   }) async {
     var box = await _getBox(table);
-    if (values != null && values.isNotEmpty) {
+    if (values.isNotEmpty) {
       values.forEach((k, v) => box.put(k, v));
     }
     return null;

@@ -9,7 +9,7 @@ import 'view_models/theme_view_model.dart';
 
 void main() {
   var themeProvider = ThemeProvider();
-  AtSignLogger.root_level = 'finer';
+  // AtSignLogger.root_level = 'finer';
   WidgetsFlutterBinding.ensureInitialized();
   runZoned<Future<void>>(() async {
     ThemeColor _themeColor = await themeProvider.checkTheme();
