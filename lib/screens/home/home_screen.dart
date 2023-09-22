@@ -10,13 +10,11 @@ import 'package:at_events_flutter/services/home_event_service.dart';
 import 'package:at_location_flutter/location_modal/location_notification.dart';
 import 'package:at_location_flutter/map_content/flutter_map/flutter_map.dart';
 import 'package:at_location_flutter/service/home_screen_service.dart';
-import 'package:at_location_flutter/service/key_stream_service.dart';
 import 'package:at_location_flutter/service/my_location.dart';
 import 'package:at_location_flutter/show_location.dart';
 import 'package:at_location_flutter/utils/constants/constants.dart'
     as LocationPackageConstants;
 import 'package:at_location_flutter/utils/constants/init_location_service.dart';
-import 'package:atsign_location_app/common_components/custom_button.dart';
 import 'package:atsign_location_app/common_components/dialog_box/delete_dialog_confirmation.dart';
 import 'package:atsign_location_app/models/event_and_location.dart';
 import 'package:atsign_location_app/common_components/bottom_sheet/bottom_sheet.dart';
@@ -44,10 +42,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:at_contacts_flutter/utils/init_contacts_service.dart';
-import 'package:new_version/new_version.dart';
 
 enum FilterScreenType { Event, Location }
+
 enum EventFilters { Sent, Received, None }
+
 enum LocationFilters { Pending, Sent, Received, None }
 
 class HomeScreen extends StatefulWidget {
@@ -166,29 +165,28 @@ class _HomeScreenState extends State<HomeScreen>
         await _positionStream!.cancel();
       }
 
-      LatLng? _lastUpdatedLocation; 
+      LatLng? _lastUpdatedLocation;
 
       _positionStream = Geolocator.getPositionStream(
               locationSettings: LocationSettings(distanceFilter: 2))
           .listen((locationStream) async {
-            var _newLoc = LatLng(locationStream.latitude, locationStream.longitude);
-            if (mounted 
-                 &&  (_lastUpdatedLocation == null ||
-                  (differenceInMeters(_lastUpdatedLocation!, _newLoc) > 2))
-              ) {
-              setState(() {
-                myLatLng = _newLoc;
-              });
-              _lastUpdatedLocation = _newLoc;
-            }
+        var _newLoc = LatLng(locationStream.latitude, locationStream.longitude);
+        if (mounted &&
+            (_lastUpdatedLocation == null ||
+                (differenceInMeters(_lastUpdatedLocation!, _newLoc) > 2))) {
+          setState(() {
+            myLatLng = _newLoc;
+          });
+          _lastUpdatedLocation = _newLoc;
+        }
       });
     }
   }
 
-  double differenceInMeters(LatLng _previousLoc, LatLng _newLoc){
-    return Geolocator.distanceBetween(_newLoc.latitude, _newLoc.longitude, _previousLoc.latitude, _previousLoc.longitude);
-  } 
-
+  double differenceInMeters(LatLng _previousLoc, LatLng _newLoc) {
+    return Geolocator.distanceBetween(_newLoc.latitude, _newLoc.longitude,
+        _previousLoc.latitude, _previousLoc.longitude);
+  }
 
   // ignore: always_declare_return_types
   cleanKeychain() async {
@@ -551,18 +549,19 @@ class _HomeScreenState extends State<HomeScreen>
       return ListView(
         children: allHybridNotifications.map((hybridElement) {
           return Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: 0.15,
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                caption: TextStrings.delete,
-                color: AllColors().RED,
-                icon: Icons.delete,
-                onTap: () {
-                  deleteDialogConfirmation(hybridElement);
-                },
-              ),
-            ],
+            endActionPane: ActionPane(
+              motion: const ScrollMotion(),
+              children: [
+                SlidableAction(
+                  label: TextStrings.delete,
+                  backgroundColor: AllColors().RED,
+                  icon: Icons.delete,
+                  onPressed: (c) {
+                    deleteDialogConfirmation(hybridElement);
+                  },
+                )
+              ],
+            ),
             child: shouldCurrentHybridBeRendered(hybridElement)
                 ? Column(
                     children: [
@@ -860,7 +859,10 @@ class _HomeScreenState extends State<HomeScreen>
                           Provider.of<LocationProvider>(context, listen: false)
                               .animateToIndex = -1; // reset animateToIndex
 
-                          locationProvider.setStatus(locationProvider.GET_ALL_NOTIFICATIONS, Status.Done);
+                          locationProvider.setStatus(
+                              locationProvider.GET_ALL_NOTIFICATIONS,
+                              Status.Done);
+
                           /// used to refresh screen after applying filter
                         },
                         child: Text(TextStrings.filter,

@@ -97,11 +97,12 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                               key: _one,
                               description:
                                   'You can pair multiple atSigns with this app.',
-                              shapeBorder: CircleBorder(),
-                              disableAnimation: true,
-                              radius: BorderRadius.all(Radius.circular(40)),
+                              targetShapeBorder: CircleBorder(),
+                              disableMovingAnimation: true,
+                              targetBorderRadius:
+                                  BorderRadius.all(Radius.circular(40)),
                               showArrow: false,
-                              overlayPadding: EdgeInsets.all(5),
+                              targetPadding: EdgeInsets.all(5),
                               blurValue: 2,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
@@ -144,16 +145,21 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                 itemBuilder: (context, index) {
                                   Uint8List? image;
 
-                                  if (contactDetails['${widget.atSignList![index]}'] != null) {
-                                    if (contactDetails['${widget.atSignList![index]}']!.tags !=
+                                  if (contactDetails[
+                                          '${widget.atSignList![index]}'] !=
+                                      null) {
+                                    if (contactDetails[
+                                                    '${widget.atSignList![index]}']!
+                                                .tags !=
                                             null &&
-                                        contactDetails['${widget.atSignList![index]}']!
+                                        contactDetails[
+                                                    '${widget.atSignList![index]}']!
                                                 .tags!['image'] !=
                                             null) {
-                                      List<int> intList =
-                                          contactDetails['${widget.atSignList![index]}']!
-                                              .tags!['image']
-                                              .cast<int>();
+                                      List<int> intList = contactDetails[
+                                              '${widget.atSignList![index]}']!
+                                          .tags!['image']
+                                          .cast<int>();
                                       image = Uint8List.fromList(intList);
                                     }
                                   }
@@ -161,44 +167,71 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                     onTap: isLoading
                                         ? () {}
                                         : () async {
-                                            if (Platform.isAndroid || Platform.isIOS) {
+                                            if (Platform.isAndroid ||
+                                                Platform.isIOS) {
                                               await _checkForPermissionStatus();
                                             }
-                                            final result = await AtOnboarding.onboard(
+                                            final result =
+                                                await AtOnboarding.onboard(
                                               context: context,
                                               atsign: widget.atSignList![index],
                                               config: AtOnboardingConfig(
-                                                  atClientPreference: atClientPrefernce,
-                                                  domain: MixedConstants.ROOT_DOMAIN,
-                                                  rootEnvironment: RootEnvironment.Production,
-                                                  appAPIKey: MixedConstants.ONBOARD_API_KEY),
+                                                  atClientPreference:
+                                                      atClientPrefernce,
+                                                  domain: MixedConstants
+                                                      .ROOT_DOMAIN,
+                                                  rootEnvironment:
+                                                      RootEnvironment
+                                                          .Production,
+                                                  appAPIKey: MixedConstants
+                                                      .ONBOARD_API_KEY),
                                             );
                                             switch (result.status) {
-                                              case AtOnboardingResultStatus.success:
+                                              case AtOnboardingResultStatus
+                                                    .success:
                                                 final atsign = result.atsign;
-                                                await AtClientManager.getInstance().setCurrentAtSign(
+                                                await AtClientManager
+                                                        .getInstance()
+                                                    .setCurrentAtSign(
                                                   atsign!,
                                                   MixedConstants.appNamespace,
                                                   atClientPrefernce,
                                                 );
-                                                BackendService.getInstance().syncService =
-                                                    AtClientManager.getInstance().syncService;
-                                                Provider.of<LocationProvider>(context, listen: false)
-                                                    .resetData();
-                                                await KeychainUtil.makeAtSignPrimary(atsign);
-
-                                                BackendService.getInstance().atClientServiceInstance =
-                                                    backendService.atClientServiceMap[atsign];
-                                                BackendService.getInstance().syncWithSecondary();
-                                                WidgetsBinding.instance.addPostFrameCallback((_) {});
-                                                SetupRoutes.pushAndRemoveAll(context, Routes.HOME);
-                                                break;
-                                              case AtOnboardingResultStatus.error:
                                                 BackendService.getInstance()
-                                                    .showErrorSnackBar(result.errorCode);
-                                                print('Onboarding throws ${result.errorCode} error');
+                                                        .syncService =
+                                                    AtClientManager
+                                                            .getInstance()
+                                                        .syncService;
+                                                Provider.of<LocationProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .resetData();
+                                                await KeychainUtil
+                                                    .makeAtSignPrimary(atsign);
+
+                                                BackendService.getInstance()
+                                                        .atClientServiceInstance =
+                                                    backendService
+                                                            .atClientServiceMap[
+                                                        atsign];
+                                                BackendService.getInstance()
+                                                    .syncWithSecondary();
+                                                WidgetsBinding.instance
+                                                    .addPostFrameCallback(
+                                                        (_) {});
+                                                SetupRoutes.pushAndRemoveAll(
+                                                    context, Routes.HOME);
                                                 break;
-                                              case AtOnboardingResultStatus.cancel:
+                                              case AtOnboardingResultStatus
+                                                    .error:
+                                                BackendService.getInstance()
+                                                    .showErrorSnackBar(
+                                                        result.errorCode);
+                                                print(
+                                                    'Onboarding throws ${result.errorCode} error');
+                                                break;
+                                              case AtOnboardingResultStatus
+                                                    .cancel:
                                                 break;
                                             }
 
@@ -225,8 +258,10 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                             child: Center(
                                               child: image != null
                                                   ? ClipRRect(
-                                                      borderRadius: BorderRadius.all(
-                                                          Radius.circular(30.toFont)),
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  30.toFont)),
                                                       child: Image.memory(
                                                         image,
                                                         width: 50.toFont,
@@ -265,26 +300,33 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                     config: AtOnboardingConfig(
                                         atClientPreference: atClientPrefernce,
                                         domain: MixedConstants.ROOT_DOMAIN,
-                                        rootEnvironment: RootEnvironment.Production,
-                                        appAPIKey: MixedConstants.ONBOARD_API_KEY),
+                                        rootEnvironment:
+                                            RootEnvironment.Production,
+                                        appAPIKey:
+                                            MixedConstants.ONBOARD_API_KEY),
                                   );
                                   switch (result.status) {
                                     case AtOnboardingResultStatus.success:
                                       final atsign = result.atsign;
-                                      await AtClientManager.getInstance().setCurrentAtSign(
+                                      await AtClientManager.getInstance()
+                                          .setCurrentAtSign(
                                         atsign!,
                                         MixedConstants.appNamespace,
                                         atClientPrefernce,
                                       );
                                       BackendService.getInstance().syncService =
-                                          AtClientManager.getInstance().syncService;
-                                      Provider.of<LocationProvider>(context, listen: false)
+                                          AtClientManager.getInstance()
+                                              .syncService;
+                                      Provider.of<LocationProvider>(context,
+                                              listen: false)
                                           .resetData();
                                       // backendService.atClientServiceMap = value;
-                                      final value = backendService.atClientServiceMap;
-                                      await KeychainUtil.makeAtSignPrimary(atsign);
-                                      await BackendService.getInstance().onboard();
-                                      BackendService.getInstance().syncWithSecondary();
+                                      await KeychainUtil.makeAtSignPrimary(
+                                          atsign);
+                                      await BackendService.getInstance()
+                                          .onboard();
+                                      BackendService.getInstance()
+                                          .syncWithSecondary();
                                       //ignore: unawaited_futures
                                       Navigator.pushReplacement(
                                         context,
@@ -296,7 +338,8 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                     case AtOnboardingResultStatus.error:
                                       BackendService.getInstance()
                                           .showErrorSnackBar(result.errorCode);
-                                      print('Onboarding throws ${result.errorCode} error');
+                                      print(
+                                          'Onboarding throws ${result.errorCode} error');
                                       break;
                                     case AtOnboardingResultStatus.cancel:
                                       break;
@@ -306,11 +349,12 @@ class _AtSignBottomSheetState extends State<AtSignBottomSheet> {
                                   key: _two,
                                   description:
                                       'Use the + icon to either generate a new free atSign or pair an existing one. All paired atSigns will appear here, where you can switch between them.',
-                                  shapeBorder: CircleBorder(),
-                                  radius: BorderRadius.all(Radius.circular(40)),
+                                  targetShapeBorder: CircleBorder(),
+                                  targetBorderRadius:
+                                      BorderRadius.all(Radius.circular(40)),
                                   showArrow: false,
-                                  disableAnimation: true,
-                                  overlayPadding: EdgeInsets.all(5),
+                                  disableMovingAnimation: true,
+                                  targetPadding: EdgeInsets.all(5),
                                   blurValue: 2,
                                   child: Container(
                                     margin: EdgeInsets.only(right: 10),

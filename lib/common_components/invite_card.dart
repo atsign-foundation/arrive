@@ -35,13 +35,11 @@ class _InviteCardState extends State<InviteCard> {
   // ignore: always_declare_return_types
   getAtsignDetails() async {
     var contact = await getAtSignDetails(widget.atSign!);
-    if (contact != null) {
-      if (contact.tags != null && contact.tags!['image'] != null) {
-        List<int>? intList = contact.tags!['image'].cast<int>();
-        setState(() {
-          memoryImage = Uint8List.fromList(intList!);
-        });
-      }
+    if (contact.tags != null && contact.tags!['image'] != null) {
+      List<int>? intList = contact.tags!['image'].cast<int>();
+      setState(() {
+        memoryImage = Uint8List.fromList(intList!);
+      });
     }
   }
 

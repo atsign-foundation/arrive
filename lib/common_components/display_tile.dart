@@ -49,15 +49,13 @@ class _DisplayTileState extends State<DisplayTile> {
   // ignore: always_declare_return_types
   getEventCreator() async {
     var contact = await getAtSignDetails(widget.atsignCreator!);
-    if (contact != null) {
-      if (contact.tags != null && contact.tags!['image'] != null) {
-        List<int>? intList = contact.tags!['image'].cast<int>();
-        if (mounted) {
-          setState(() {
-            image = Uint8List.fromList(intList!);
-            if (widget.showName) name = contact.tags!['name'].toString();
-          });
-        }
+    if (contact.tags != null && contact.tags!['image'] != null) {
+      List<int>? intList = contact.tags!['image'].cast<int>();
+      if (mounted) {
+        setState(() {
+          image = Uint8List.fromList(intList!);
+          if (widget.showName) name = contact.tags!['name'].toString();
+        });
       }
     }
   }
@@ -174,10 +172,13 @@ class _DisplayTileState extends State<DisplayTile> {
                   widget.semiTitle != null
                       ? Text(
                           widget.semiTitle!,
-                          style: (widget.semiTitle == TextStrings.actionRequired ||
-                                      widget.semiTitle == TextStrings.requestDeclined ) ||
+                          style: (widget.semiTitle ==
+                                          TextStrings.actionRequired ||
+                                      widget.semiTitle ==
+                                          TextStrings.requestDeclined) ||
                                   (widget.semiTitle == TextStrings.cancelled ||
-                                      (widget.semiTitle == TextStrings.requestRejected))
+                                      (widget.semiTitle ==
+                                          TextStrings.requestRejected))
                               ? CustomTextStyles().orange12
                               : CustomTextStyles().darkGrey12,
                           maxLines: 1,

@@ -99,25 +99,28 @@ class _EventLogState extends State<EventLog>
       },
       itemBuilder: (context, index) {
         return Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.15,
-          secondaryActions: <Widget>[
-            IconSlideAction(
-              caption: TextStrings.delete,
-              color: AllColors().RED,
-              icon: Icons.delete,
-              onTap: () async {
-                await deleteDialogConfirmation(upcomingEvents[index]);
-                setState(() {});
-              },
-            ),
-          ],
+          endActionPane: ActionPane(
+            motion: const ScrollMotion(),
+            children: [
+              SlidableAction(
+                label: TextStrings.delete,
+                backgroundColor: AllColors().RED,
+                icon: Icons.delete,
+                onPressed: (c) async {
+                  await deleteDialogConfirmation(upcomingEvents[index]);
+                  setState(() {});
+                },
+              )
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
             child: InkWell(
               onTap: () {
                 HomeEventService().onEventModelTap(
-                    upcomingEvents[index].eventKeyModel!.eventNotificationModel!,
+                    upcomingEvents[index]
+                        .eventKeyModel!
+                        .eventNotificationModel!,
                     upcomingEvents[index].eventKeyModel!.haveResponded);
               },
               child: DisplayTile(
@@ -154,22 +157,23 @@ class _EventLogState extends State<EventLog>
       },
       itemBuilder: (context, index) {
         return Slidable(
-          actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.15,
-          secondaryActions: <Widget>[
-            IconSlideAction(
-              caption: TextStrings.delete,
-              color: AllColors().RED,
-              icon: Icons.delete,
-              onTap: () async {
-                await deleteDialogConfirmation(EventAndLocationHybrid(
-                    NotificationModelType.EventModel,
-                    eventKeyModel: EventKeyLocationModel(
-                        eventNotificationModel: pastEvents[index])));
-                setState(() {});
-              },
-            ),
-          ],
+          endActionPane: ActionPane(
+            motion: ScrollMotion(),
+            children: [
+              SlidableAction(
+                label: TextStrings.delete,
+                backgroundColor: AllColors().RED,
+                icon: Icons.delete,
+                onPressed: (c) async {
+                  await deleteDialogConfirmation(EventAndLocationHybrid(
+                      NotificationModelType.EventModel,
+                      eventKeyModel: EventKeyLocationModel(
+                          eventNotificationModel: pastEvents[index])));
+                  setState(() {});
+                },
+              )
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.only(right: 10.0, left: 10, top: 10),
             child: InkWell(

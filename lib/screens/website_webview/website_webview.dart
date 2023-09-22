@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:atsign_location_app/utils/constants/colors.dart';
 import 'package:atsign_location_app/utils/constants/text_styles.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:at_common_flutter/services/size_config.dart';
@@ -15,11 +17,29 @@ class WebsiteScreen extends StatefulWidget {
 }
 
 class _WebsiteScreenState extends State<WebsiteScreen> {
+  late WebViewController webViewController;
+  final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers = {
+    Factory(() => EagerGestureRecognizer())
+  };
+
   late bool loading;
   @override
   void initState() {
+    webViewController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.white)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            setState(() {
+              loading = false;
+            });
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url ?? ''));
+
     super.initState();
-    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     loading = true;
   }
 
@@ -42,14 +62,9 @@ class _WebsiteScreenState extends State<WebsiteScreen> {
         title: Text(widget.title!, style: CustomTextStyles().black18),
       ),
       body: Stack(children: [
-        WebView(
-          initialUrl: widget.url,
-          javascriptMode: JavascriptMode.unrestricted,
-          onPageFinished: (test1) {
-            setState(() {
-              loading = false;
-            });
-          },
+        WebViewWidget(
+          controller: webViewController,
+          gestureRecognizers: gestureRecognizers,
         ),
         loading
             ? Center(

@@ -9,7 +9,7 @@ class CustomPopupRoutes<T> extends PopupRoute<T> {
     Duration transitionDuration = const Duration(milliseconds: 200),
     RouteTransitionsBuilder? transitionBuilder,
     RouteSettings? settings,
-  })  : assert(barrierDismissible != null),
+  })  : assert(barrierDismissible),
         _pageBuilder = pageBuilder,
         _barrierDismissible = barrierDismissible,
         _barrierLabel = barrierLabel,
